@@ -1,5 +1,5 @@
 baseURL: "https://gioleppe.github.io/"
-title: Tommaso Colella | Software Engineer
+title: Tommaso Colella | SWE
 paginate: 5
 theme: PaperMod
 
@@ -64,7 +64,7 @@ params:
   # home-info mode
   homeInfoParams:
     Title: "gioleppe 💾🎵🏳️‍🌈"
-    Content: "SWE. CS BSc @ University of Pisa. Find out more on the About page, or contact me using one of the channels below."
+    Content: "Software Engineer. Computer Science BSc @ University of Pisa. Find out more on the About page, or contact me using one of the channels below."
   socialIcons:
     - name: telegram
       url: "https://t.me/gotoxy"
