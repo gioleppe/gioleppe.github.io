@@ -4,16 +4,18 @@
     <title>Tommaso Colella | SWE</title>
     <link>https://gioleppe.github.io/</link>
     <description>Recent content on Tommaso Colella | SWE</description>
-    <generator>Hugo -- gohugo.io</generator><atom:link href="https://gioleppe.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language><atom:link href="https://gioleppe.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>About Me</title>
       <link>https://gioleppe.github.io/about/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://gioleppe.github.io/about/</guid>
-      <description>I’m a Software Engineer based in Florence, Italy. I have a BSc in Computer Science from the University of Pisa. I’m currently consulting at YNAP for Alten Italia.
-My interests lie in IoT, distributed architectures, and functional programming. You can find me either writing code or listening to music by some unknown band.
-Stuff I&amp;rsquo;m experienced into Developing and integrating REST APIs Integrating payment processors Working on legacy code Working with both SQL and noSQL DBMSs docker and docker-compose Unit Testing Developing Telegram bots (C# and Python bindings) git (git flow, conventional commits) Agile methodologies Languages/Frameworks I&amp;rsquo;ve worked with C#/.</description>
+      <description>I’m a Software Engineer based in Florence, Italy. I have a BSc in Computer Science from the University of Pisa, and I&amp;rsquo;m currently completing my MSc.
+I’m working as Tech Lead and Cloud Architect for Avanade.
+My interests lie in distributed architectures, LLMs, and programming languages. You can find me either writing code or listening to music by some unknown band.
+Stuff I&amp;rsquo;m experienced into Azure and Cloud-native architectures DevOps methodologies (IaC, CI/CD) Developing and integrating REST APIs Integrating payment processors Working on legacy code Working with both SQL and noSQL DBMSs Docker and Docker Compose Unit Testing Developing Telegram bots (C# and Python bindings) git (git flow, conventional commits, hooks) Agile methodologies Languages/Frameworks I&amp;rsquo;ve worked with C#/.</description>
     </item>
     
   </channel>
