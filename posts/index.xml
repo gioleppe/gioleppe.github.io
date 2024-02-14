@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Tommaso Colella | SWE</title>
-    <link>https://gioleppe.github.io/</link>
-    <description>Recent content on Tommaso Colella | SWE</description>
+    <title>Posts on Tommaso Colella | SWE</title>
+    <link>https://gioleppe.github.io/posts/</link>
+    <description>Recent content in Posts on Tommaso Colella | SWE</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Wed, 14 Feb 2024 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://gioleppe.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://gioleppe.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Deploying AzureOpenAI Service using OpenTofu/Terraform</title>
       <link>https://gioleppe.github.io/posts/azure-openai-opentofu/</link>
@@ -15,16 +15,6 @@
       <guid>https://gioleppe.github.io/posts/azure-openai-opentofu/</guid>
       <description>Lately, some friends have asked me to cooperate on a scientific paper regarding LLMs. As part of this collaboration, I had to assess the feasibility of the automatic deployment of an LLM on a public cloud.
 I&amp;rsquo;m lucky enough to work at a company focusing on AI and Microsoft-oriented system integration, and we&amp;rsquo;re always looking for new ways to bring value to the market using cutting-edge services. For this reason, I&amp;rsquo;ve been tinkering with the AzureOpenAi Service for a while: it offers business users the possibility to leverage the power of OpenAi&amp;rsquo;s most advanced models, such as GPT-4 Turbo, without sharing confidential organization data with third parties.</description>
-    </item>
-    <item>
-      <title>About Me</title>
-      <link>https://gioleppe.github.io/about/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://gioleppe.github.io/about/</guid>
-      <description>I’m a Software Engineer based in Florence, Italy. I have a BSc in Computer Science from the University of Pisa, and I&amp;rsquo;m currently completing my MSc.
-I’m working as Tech Lead and Cloud Architect for Avanade.
-My interests lie in distributed architectures, LLMs, and programming languages. You can find me either writing code or listening to music by some unknown band.
-Stuff I&amp;rsquo;m experienced into Azure and Cloud-native architectures DevOps methodologies (IaC, CI/CD) Developing and integrating REST APIs Integrating payment processors Working on legacy code Working with both SQL and noSQL DBMSs Docker and Docker Compose Unit Testing Developing Telegram bots (C# and Python bindings) git (git flow, conventional commits, hooks) Agile methodologies Languages/Frameworks I&amp;rsquo;ve worked with C#/.</description>
     </item>
   </channel>
 </rss>
