@@ -26,11 +26,7 @@ Before trying any of the following:
 
 From now on, I also assume you have some basic understanding of Azure, IaC, and LLMs, at least on a surface level.
 
-#### Why Opentofu?
-
-Some months back, Hashicorp changed the license of Terraform to the BUSL. Their action was very controversial. That encouraged many organizations to reconsider their usage of the tool.
-I'm interested in supporting open-source and free software when having a choice: that's why I'm using OpenTofu.
-The examples in this article are compatible with Terraform nonetheless.
+> 💡 **Why OpenTofu?** Some months back, Hashicorp changed the license of Terraform to the BUSL. Their action was very controversial. That encouraged many organizations to reconsider their usage of the tool.I'm interested in supporting open-source and free software when having a choice: that's why I'm using OpenTofu. The examples in this article are compatible with Terraform nonetheless.
 
 ### Choosing the right way
 
