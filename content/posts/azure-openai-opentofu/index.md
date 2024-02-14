@@ -1,5 +1,5 @@
 ---
-title: "Deploying AzureOpenAI Service using OpenTofu/Terraform"
+title: "Deploying AzureOpenAI Service using OpenTofu"
 draft: false
 date: "2024-02-14"
 ---
