@@ -1,6 +1,6 @@
 ---
 title: "Deploying AzureOpenAi Service using OpenTofu/Terraform"
-draft: true
+draft: false
 ---
 Lately, some friends have asked me to cooperate on a scientific paper regarding LLMs. As part of this collaboration, I had to assess the feasibility of the automatic deployment of an LLM on a public cloud. 
 
