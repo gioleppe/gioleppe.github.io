@@ -8,7 +8,7 @@ buildDrafts: false
 buildFuture: false
 buildExpired: false
 
-googleAnalytics: UA-123-45
+googleAnalytics: G-JHDYWZPGQF
 
 minify:
   disableXML: true
@@ -64,7 +64,7 @@ params:
   # home-info mode
   homeInfoParams:
     Title: "gioleppe 💾🎵🏳️‍🌈"
-    Content: "Software Engineer. Computer Science BSc @ University of Pisa. Find out more on the About page, or contact me using one of the channels below."
+    Content: "Software Engineer. Computer Science BSc @ University of Pisa. This is my personal blog, find out more on what I'm doing in the About page, or contact me using one of the channels below."
   socialIcons:
     - name: telegram
       url: "https://t.me/gotoxy"
@@ -73,9 +73,9 @@ params:
     - name: linkedin
       url: "https://www.linkedin.com/in/tommaso-colella-051012143/"
 
-  # analytics:
-  #   google:
-  #     SiteVerificationTag: "XYZabc"
+  analytics:
+    google:
+      SiteVerificationTag: "G-JHDYWZPGQF"
   #   bing:
   #     SiteVerificationTag: "XYZabc"
   #   yandex:
