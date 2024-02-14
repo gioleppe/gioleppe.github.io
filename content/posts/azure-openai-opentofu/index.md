@@ -1,6 +1,7 @@
 ---
-title: "Deploying AzureOpenAi Service using OpenTofu/Terraform"
+title: "Deploying AzureOpenAI Service using OpenTofu/Terraform"
 draft: false
+date: "2024-02-14"
 ---
 Lately, some friends have asked me to cooperate on a scientific paper regarding LLMs. As part of this collaboration, I had to assess the feasibility of the automatic deployment of an LLM on a public cloud. 
 
@@ -41,7 +42,7 @@ The module is not well known: when writing this article, on Feb 14th, 2024, the 
 
 Please be aware that the following examples have been run in a local environment, so this code is not ready for production deployment.
 
-```
+```terraform
 // everything in a single file for brevity
 
 terraform {
@@ -67,7 +68,8 @@ provider "modtm" {
   enabled = false
 }
 
-// be sure to select a location where AzureOpenAi and the model/model version are supported
+// be sure to select a location where AzureOpenAi
+// and the model/model version are supported
 resource "azurerm_resource_group" "openai_deployment_test" {
   name     = "rg-oai-dev"
   location = "France Central"
@@ -108,7 +110,7 @@ I assume you are already authenticated to your Azure subscription (perhaps using
 
 After running a ```tofu init``` and a ```tofu plan```, everything looks fine: the IaC tool wants to create the resources needed to make our deployment work.
 
-```
+```bash
 OpenTofu will perform the following actions:
 
   # azurerm_resource_group.openai_deployment_test will be created
@@ -136,7 +138,7 @@ Changes to Outputs:
 
 After proceeding with ```tofu apply``` and witnessing success, we can check if the resources have been provisioned correctly on our subscription.
 
-![image-20240213190159009](C:\Users\tommaso.colella\AppData\Roaming\Typora\typora-user-images\image-20240213190159009.png)
+![image-20240213190159009](images/successful_deployment.png)
 
 It seems everything worked correctly. Azure OpenAI Service generates a public endpoint and a primary key that we can use together to test our deployment.
 
@@ -146,7 +148,7 @@ Chatbox is a neat desktop client that supports various LLMs. I'm assuming you've
 
 First, we need to retrieve our deployment's endpoint and primary key: we can do so by using tofu output, having defined proper output blocks in the infrastructure code above.
 
-```
+```bash
 ➜  test-openai-automatic-provisioning tofu output endpoint
 "https://azure-openai-318516.openai.azure.com/"
 ➜  test-openai-automatic-provisioning tofu output primary_key
@@ -157,11 +159,11 @@ Be sure that the endpoint and the key will be long gone by the time I publish th
 
 We open the app and configure our deployment by going to the Settings tab. Check the "Model & Token" subsection if you want to manage model temperature and max generated tokens.
 
-![image-20240213191252951](C:\Users\tommaso.colella\AppData\Roaming\Typora\typora-user-images\image-20240213191252951.png)
+![image-20240213191252951](images/chatbox_settings.png)
 
 And that's it! You can now use Chatbox (maybe with a nice Persona prompting pattern) to test your deployment. It also supports some neat features such as export to Markdown, if you need them.
 
-![image-20240213191709114](C:\Users\tommaso.colella\AppData\Roaming\Typora\typora-user-images\image-20240213191709114.png)
+![image-20240213191709114](images/chatbox_chat.png)
 
 ### Security
 
