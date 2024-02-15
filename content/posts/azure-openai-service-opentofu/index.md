@@ -27,15 +27,15 @@ Before trying any of the following:
 
 - Obtain an Azure subscription with [access to AzureOpenAi](https://learn.microsoft.com/en-us/legal/cognitive-services/openai/limited-access#registration-process)
 - Download [OpenTofu](https://opentofu.org/)(or Terraform) and be sure to know how to authenticate to your Azure subscription using one of the methods listed on top of [this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/azure_cli) page  
-- Download [Chatbox](https://github.com/Bin-Huang/chatbox/tree/main) or any other LLM frontend to test the deployed model (optional)
+- Download [Chatbox](https://github.com/Bin-Huang/chatbox/tree/main) or any other OpenAI-API-compatible LLM frontend to test the deployed model (optional)
 
 From now on, I also assume you have some basic understanding of Azure, IaC, and LLMs, at least on a surface level.
 
-> 💡 **Why OpenTofu?** Some months back, Hashicorp changed the license of Terraform to the BUSL. Their action was very controversial. That encouraged many organizations to reconsider their usage of the tool.I'm interested in supporting open-source and free software when having a choice: that's why I'm using OpenTofu. The examples in this article are compatible with Terraform nonetheless.
+> 💡 **Why OpenTofu?** Some months back, Hashicorp changed the license of Terraform to the BUSL. Their action was very controversial. That encouraged many organizations to reconsider their usage of the tool. I'm interested in supporting open-source and free software when having a choice: that's why I'm using OpenTofu. The examples in this article are compatible with Terraform nonetheless.
 
 ### Choosing the right way
 
-I've already been experimenting with AzureOpenAi for a while. Moreover, I'm using Terraform daily at work, so the first thing I did was look at the docs of the Azure Terraform provider. I found there is a [resource to deploy Cognitive Services](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_deployment) in it but no direct way to deploy the AzureOpenAi Service itself.
+I've already been experimenting with AzureOpenAi for a while. Moreover, I'm using Terraform daily at work, so the first thing I did was look at the docs of the AzureRM Terraform provider. I found there is a [resource to deploy Cognitive Services](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cognitive_deployment) in it but no direct way to deploy the AzureOpenAi Service itself.
 
 Being lazy, I didn't want to write all the configurations myself. I instantly hit Google and quickly found [this](https://github.com/Azure/terraform-azurerm-openai/tree/main) neat module, [backed](https://www.hashicorp.com/blog/accelerating-ai-adoption-on-azure-with-terraform) by Microsoft and Hashicorp and developed by community contributors. At the moment, this seems like the fastest way to deploy an OpenAi model on Azure. 
 
