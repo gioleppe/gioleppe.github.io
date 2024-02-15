@@ -3,10 +3,10 @@ title: "Deploying AzureOpenAI Service using OpenTofu"
 draft: false
 date: "2024-02-14"
 cover: 
-  image: "images/article_cover.png"
+  image: "/images/azure-openai-article-cover.jpg"
   alt: "A lightbulb in a cloud with the Azure logo in it"
   caption: "Bing Chat couldn't get the logo right"
-  relative: true
+  relative: false
 ---
 Lately, some friends have asked me to cooperate on a scientific paper regarding LLMs. As part of this collaboration, I had to assess the feasibility of the automatic deployment of an LLM on a public cloud. 
 
