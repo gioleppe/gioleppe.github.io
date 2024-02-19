@@ -3,9 +3,9 @@ title: "DIY self-hosted Copilot using Phi-2 and Ollama"
 draft: false
 date: "2024-02-19"
 cover: 
-  image: "/images/azure-openai-article-cover.jpg"
-  alt: "A lightbulb in a cloud with the Azure logo in it"
-  caption: "Bing Chat couldn't get the logo right"
+  image: "/images/ollama_phi_cover.jpg"
+  alt: "A digital art llama with Microsoft's logo"
+  caption: "Microsoft lloves llamas"
   relative: false
 ---
 
