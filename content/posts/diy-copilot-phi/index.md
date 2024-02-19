@@ -1,7 +1,7 @@
 ---
-title: 'DIY "green" self-hosted Copilot using Phi-2 and Ollama'
+title: "DIY self-hosted Copilot using Phi-2 and Ollama"
 draft: false
-date: "2024-02-20"
+date: "2024-02-19"
 cover: 
   image: "/images/azure-openai-article-cover.jpg"
   alt: "A lightbulb in a cloud with the Azure logo in it"
@@ -9,7 +9,7 @@ cover:
   relative: false
 ---
 
-### DIY "green" self-hosted Copilot using Phi-2 and Ollama
+### DIY self-hosted Copilot using Phi-2 and Ollama
 
 On December 12th, [Microsoft released their latest "SML" or "Small Language Model"](https://www.microsoft.com/en-us/research/blog/phi-2-the-surprising-power-of-small-language-models/) Phi-2. This new model is MIT-Licensed. The permissive license makes it a perfect candidate for any experimentation, be it academic or commercial. Phi-2 is also a somewhat "green" model. The model was trained with a lot less power than some of its bigger cousins LLama-2 or Mistral, to name a few. Well, it's not **THAT** small (it has 2.7 billion parameters), but it is at least 2 to 3 orders of magnitude smaller than the state-of-the-art model GPT4 by OpenAI (public data on the internals of GPT4 is not available, so we can only raise conjectures).
 
@@ -56,7 +56,7 @@ The procedure is simple and is well documented on Ollama's website. If you're us
 
 I'm omitting the output of each command for brevity. The first command installs Ollama on your OS, and the second one automatically downloads the model and runs it interactively. If everything works correctly, you should have an interactive prompt just like this one:
 
-![image-20240216162707012](images/ollama_run_phi.png)
+![ollama phi interactive prompt](images/ollama_run_phi.png)
 
 You can test the model's output right away, such as:
 
@@ -73,7 +73,7 @@ original pieces of writing.
 
 Now, we have to confirm that Ollama's server API is working. I'm using Insomnia for this step, but you can also proceed with a curl (or Invoke-WebRequest if you're using Powershell). I'm making a POST HTTP request to the /api/chat endpoint as described in [Ollama's Phi examples documentation](https://ollama.com/library/phi). Make sure to include the "stream": false body parameter if you want to get back the complete response (if you don't do that, the API answers in a stream-like way, giving you back the first message only)
 
-![image-20240216163233288](images/insomnia_phi_test.png)
+![testing ollama api with insomnia](images/insomnia_phi_test.png)
 
 As you can see, the model answered our question. Now it's time to set up Continue on Visual Studio Code.
 
@@ -97,7 +97,7 @@ And that's it! We can then select the model from the dropdown in the left corner
 
 
 
-![image-20240216180015663](images/continue_model_selector.png)
+![selecting phi on continue](images/continue_model_selector.png)
 
 ### Testing the copilot
 
@@ -109,7 +109,7 @@ Now, we're interested in testing the capabilities of our Phi-powered copilot. Af
 
 To test the copilot, we provide it with the following prompt: *"write a python app with a framework of your choice that accepts GET requests on a endpoint and answers back with a list of Users. The Users must be stored in a local data structure, avoid adding database related code"*:
 
-![image-20240216192653931](images/continue_phi_create_endpoint.gif)
+![creating an api using continue](images/continue_phi_create_endpoint.gif)
 
 The copilot came up with the following python code:
 
@@ -139,7 +139,7 @@ ModuleNotFoundError: No module named 'flask'
 
 This is to be expected. VS Code warned us about the missing library on line 1. Let's hit the "ctrl+shift+R" shortcut to let Continue debug our terminal automatically:
 
-![image-20240216194025462](images/continue_phi_debugger.png)
+![debugging using continue](images/continue_phi_debugger.png)
 
 Phi-2 correctly identified the problem: we're missing the Flask web framework. We proceed as suggested and then run the app again:
 
@@ -177,7 +177,7 @@ PS C:\Users\tommaso.colella\projects\testOllama> curl http://127.0.0.1:5000
 
 Nice! Let's proceed by asking Phi-2 to add more CRUD functionalities. We highlight the existing code and bring it to the current context, then we provide Continue with the following prompt *"can you please add endpoints to add users, delete users, and get a user by its index in the list?"*
 
-![image-20240216195634305](images/continue_phi_add_CRUD.png)
+![adding more CRUD endpoints](images/continue_phi_add_CRUD.png)
 
 This is the code it came up with:
 
