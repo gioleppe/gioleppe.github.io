@@ -3,7 +3,7 @@ title: "DIY self-hosted Copilot using Phi-2 and Ollama"
 draft: false
 date: "2024-02-19"
 cover: 
-  image: "/images/ollama_phi_cover.jpg"
+  image: "/images/ollama_phi_cover_cropped.jpg"
   alt: "A digital art llama with Microsoft's logo"
   caption: "Microsoft lloves llamas"
   relative: false
