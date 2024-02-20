@@ -16,6 +16,4 @@ jobs:
         run: |
           COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
           ARTICLE_NAME=$(echo $COMMIT_MESSAGE | awk '{print $2}')
-          curl -X POST  $FUNCTION_URL \
-               -H "Content-Type: application/json" \
-               --data "{\"article_keyword\": \"$KEYWORD\"}"
+          curl $FUNCTION_URL
