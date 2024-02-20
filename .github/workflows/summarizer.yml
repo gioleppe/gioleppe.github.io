@@ -1,0 +1,17 @@
+name: Call Summarizer Azure Function
+
+on: 
+  push:
+    branches:
+      - 'main' # Replace with the branch you want to monitor
+
+jobs:
+  trigger-function:
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.head_commit.message, 'article:')
+    steps:
+      - name: Call Function
+        run: |
+          COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
+          KEYWORD=$(echo $COMMIT_MESSAGE | awk '/^article:/ {print $2}')echo $KEYWORD
+          echo $KEYWORD
