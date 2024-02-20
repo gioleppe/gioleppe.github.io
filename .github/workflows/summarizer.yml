@@ -11,7 +11,11 @@ jobs:
     if: startsWith(github.event.head_commit.message, 'article:')
     steps:
       - name: Call Function
+        env:
+            FUNCTION_URL: ${{ secrets.FUNCTION_URL }}
         run: |
           COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
-          KEYWORD=$(echo $COMMIT_MESSAGE | awk '{print $2}')
-          echo $KEYWORD
+          ARTICLE_NAME=$(echo $COMMIT_MESSAGE | awk '{print $2}')
+          curl -X POST  $FUNCTION_URL \
+               -H "Content-Type: application/json" \
+               --data "{\"article_keyword\": \"$KEYWORD\"}"
