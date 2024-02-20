@@ -13,5 +13,5 @@ jobs:
       - name: Call Function
         run: |
           COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
-          KEYWORD=$(echo $COMMIT_MESSAGE | awk '/^article:/ {print $2}')echo $KEYWORD
+          KEYWORD=$(echo $COMMIT_MESSAGE | awk '/^article:/ {print $2}')
           echo $KEYWORD
