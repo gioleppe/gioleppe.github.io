@@ -1,7 +1,7 @@
 name: Call Summarizer Azure Function
 
 on: 
-    workflow_run:
+  workflow_run:
     workflows: ["github pages"]
     types:
       - completed
