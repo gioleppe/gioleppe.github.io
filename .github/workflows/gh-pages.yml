@@ -34,6 +34,7 @@ jobs:
   trigger-summarizer:
     runs-on: ubuntu-latest
     if: startsWith(github.event.head_commit.message, 'article:')
+    needs: deploy
     steps:
       - name: Call Summarizer
         env:
