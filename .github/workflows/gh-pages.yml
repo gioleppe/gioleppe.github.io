@@ -40,7 +40,7 @@ jobs:
         env:
             LOGIC_APP_URL: ${{ secrets.LOGIC_APP_URL }}
         run: |
-          sleep 5
+          sleep 6
           COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
           ARTICLE_NAME=$(echo $COMMIT_MESSAGE | awk '{print $2}')
           curl -X POST  $LOGIC_APP_URL \
