@@ -1,9 +1,10 @@
 name: Call Summarizer Azure Function
 
 on: 
-  push:
-    branches:
-      - 'main' # Replace with the branch you want to monitor
+    workflow_run:
+    workflows: ["github pages"]
+    types:
+      - completed
 
 jobs:
   trigger-function:
@@ -12,8 +13,11 @@ jobs:
     steps:
       - name: Call Function
         env:
-            FUNCTION_URL: ${{ secrets.FUNCTION_URL }}
+            LOGIC_APP_URL: ${{ secrets.LOGIC_APP_URL }}
         run: |
+          sleep 5
           COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
           ARTICLE_NAME=$(echo $COMMIT_MESSAGE | awk '{print $2}')
-          curl $FUNCTION_URL
+          curl -X POST  $LOGIC_APP_URL \
+            -H "Content-Type: application/json" \
+            --data "{\"articleName\": \"$ARTICLE_NAME\"}"
