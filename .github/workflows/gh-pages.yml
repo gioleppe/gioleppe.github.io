@@ -30,3 +30,18 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
+
+  trigger-summarizer:
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.head_commit.message, 'article:')
+    steps:
+      - name: Call Summarizer
+        env:
+            LOGIC_APP_URL: ${{ secrets.LOGIC_APP_URL }}
+        run: |
+          sleep 5
+          COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
+          ARTICLE_NAME=$(echo $COMMIT_MESSAGE | awk '{print $2}')
+          curl -X POST  $LOGIC_APP_URL \
+            -H "Content-Type: application/json" \
+            --data "{\"articleName\": \"$ARTICLE_NAME\"}"
