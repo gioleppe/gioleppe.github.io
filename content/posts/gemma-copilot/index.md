@@ -9,8 +9,6 @@ cover:
   relative: false
 ---
 
-#### Self-hosted Copilot using Google Gemma and Ollama (+ Phi-2 comparison)
-
 It's impossible to keep up with the rapid developments in the field of LLMs. On Feb 21, Google released a new family of models called Gemma. These models promise top performance for their size. According to the [Gemma technical report](https://goo.gle/GemmaReport), the 7B model outperforms all other open-weight models of the same or even bigger sizes, such as Llama-2 13B.
 
 > 💡According to the technical report accompanying Gemma's announcement, the new models were trained using the same methodologies as Google's top-tier Gemini models
