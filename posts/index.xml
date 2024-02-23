@@ -6,8 +6,16 @@
     <description>Recent content in Posts on Tommaso Colella | SWE</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 19 Feb 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 23 Feb 2024 21:07:36 +0000</lastBuildDate>
     <atom:link href="https://gioleppe.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Self-hosted Copilot using Google Gemma and Ollama (&#43; Phi-2 comparison)</title>
+      <link>https://gioleppe.github.io/posts/gemma-copilot/</link>
+      <pubDate>Fri, 23 Feb 2024 21:07:36 +0000</pubDate>
+      <guid>https://gioleppe.github.io/posts/gemma-copilot/</guid>
+      <description>Self-hosted Copilot using Google Gemma and Ollama (+ Phi-2 comparison) It&amp;rsquo;s impossible to keep up with the rapid developments in the field of LLMs. On Feb 21, Google released a new family of models called Gemma. These models promise top performance for their size. According to the Gemma technical report, the 7B model outperforms all other open-weight models of the same or even bigger sizes, such as Llama-2 13B.
+💡According to the technical report accompanying Gemma&amp;rsquo;s announcement, the new models were trained using the same methodologies as Google&amp;rsquo;s top-tier Gemini models</description>
+    </item>
     <item>
       <title>DIY self-hosted Copilot using Phi-2 and Ollama</title>
       <link>https://gioleppe.github.io/posts/diy-copilot-phi/</link>
