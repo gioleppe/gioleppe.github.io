@@ -21,7 +21,7 @@
       <link>https://gioleppe.github.io/posts/diy-copilot-phi/</link>
       <pubDate>Mon, 19 Feb 2024 00:00:00 +0000</pubDate>
       <guid>https://gioleppe.github.io/posts/diy-copilot-phi/</guid>
-      <description>DIY self-hosted Copilot using Phi-2 and Ollama On December 12th, Microsoft released their latest &amp;ldquo;SML&amp;rdquo; or &amp;ldquo;Small Language Model&amp;rdquo; Phi-2. This new model is MIT-Licensed. The permissive license makes it a perfect candidate for any experimentation, be it academic or commercial. Phi-2 is also a somewhat &amp;ldquo;green&amp;rdquo; model. The model was trained with a lot less power than some of its bigger cousins LLama-2 or Mistral, to name a few. Well, it&amp;rsquo;s not THAT small (it has 2.</description>
+      <description>On December 12th, Microsoft released their latest &amp;ldquo;SML&amp;rdquo; or &amp;ldquo;Small Language Model&amp;rdquo; Phi-2. This new model is MIT-Licensed. The permissive license makes it a perfect candidate for any experimentation, be it academic or commercial. Phi-2 is also a somewhat &amp;ldquo;green&amp;rdquo; model. The model was trained with a lot less power than some of its bigger cousins LLama-2 or Mistral, to name a few. Well, it&amp;rsquo;s not THAT small (it has 2.</description>
     </item>
     <item>
       <title>Deploying AzureOpenAI Service using OpenTofu</title>
