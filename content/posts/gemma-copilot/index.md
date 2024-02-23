@@ -169,7 +169,9 @@ Overall, I think Gemma performed slightly better in this task, but these tests a
 
 The Gemma model family, especially its smaller version Gemma 2B, is a very welcome addition to the world of LLMs (or, SLMs, as these models are often called). The openness of this model (and its cousin Phi-2) makes it very easy for researchers and developers to experiment with them. 
 
-Overall I'm happy with the performance Gemma 2B demonstrated, in code completion, 
+Overall I'm happy with the performance Gemma 2B demonstrated in code completion tasks. 2024 is really starting with a bang, and I'm quite sure we will see a lot more SLMs in the near future.
+
+Thank you for coming this far, power to the nerds!
 
 ### References
 
