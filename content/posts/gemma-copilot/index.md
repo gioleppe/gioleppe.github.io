@@ -41,7 +41,7 @@ The copilot was tested on a Dell Latitude 7430 with 16GB of RAM and an Intel i5 
 
 ##### Install Ollama and run the model
 
-Follow the steps in the Phi-2 tutorial, so if you haven't installed Ollama yet (or if you want to update Ollama like me), run:
+The steps are the same as in the Phi-2 tutorial, so if you haven't installed Ollama yet (or if you want to update Ollama like me), run:
 
 ``````bash
 ➜  ~ curl -fsSL https://ollama.com/install.sh | sh 
