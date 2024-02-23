@@ -9,8 +9,6 @@ cover:
   relative: false
 ---
 
-### DIY self-hosted Copilot using Phi-2 and Ollama
-
 On December 12th, [Microsoft released their latest "SML" or "Small Language Model"](https://www.microsoft.com/en-us/research/blog/phi-2-the-surprising-power-of-small-language-models/) Phi-2. This new model is MIT-Licensed. The permissive license makes it a perfect candidate for any experimentation, be it academic or commercial. Phi-2 is also a somewhat "green" model. The model was trained with a lot less power than some of its bigger cousins LLama-2 or Mistral, to name a few. Well, it's not **THAT** small (it has 2.7 billion parameters), but it is at least 2 to 3 orders of magnitude smaller than the state-of-the-art model GPT4 by OpenAI (public data on the internals of GPT4 is not available, so we can only raise conjectures).
 
 > 💡In the last months, interest in SMLs has been rapidly rising. What they really shine on, other than being suitable for deployment on edge devices such as mobile phones is performance per watt. Reducing the carbon footprint for these natural language models (for both the training and inference phases) is increasingly important in a world where companies and policymakers should be very considerate about climate change and actions to combat it.
