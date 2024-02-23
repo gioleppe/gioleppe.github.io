@@ -107,7 +107,7 @@ if __name__ == "__main__":
 
 It is pretty close to what Phi-2 came up with. Here, Gemma preferred to use Python's standard library in place of Flask's JSON implementation to serialize the data. 
 
-Let's try the terminal debug feature with Gemma, if we run the application, we are going to get an error (we are clearly missing the Flask module)
+Let's try the terminal debug feature with Gemma. If we run the application, we are going to get an error (we are clearly missing the Flask module):
 
 ![run-error](images/run_error.png)
 
