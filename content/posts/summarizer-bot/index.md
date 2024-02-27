@@ -1,7 +1,12 @@
 ---
 title: "How to build a Summarizer Bot using GPT4, Azure Functions, GitHub Actions"
 date: 2024-02-27T16:48:19Z
-draft: true
+draft: false
+cover: 
+  image: "/images/summarizer-hero-cropped-small.jpg"
+  alt: "Railway in Lisbon"
+  caption: "Photo by [Chris Blonk](https://unsplash.com/@chriskristiansen) on Unsplash"
+  relative: false
 ---
 
 A friend asked me to create a Telegram channel to cross-post my articles onto (I did! You can find it [here](https://t.me/tomstechcorner)). The idea seemed nice, but I didn't want to bother with writing a small summary for each article every time, and most of all, forgetful as I am, I would absolutely forget to post to the channel.

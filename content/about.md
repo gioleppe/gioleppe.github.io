@@ -1,6 +1,7 @@
 ---
 title: "About Me"
 draft: false
+
 ---
 
 I’m a Software Engineer based in Florence, Italy. I have a BSc in Computer Science from the University of Pisa, and I'm currently completing my MSc. 
