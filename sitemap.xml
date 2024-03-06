@@ -2,13 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://gioleppe.github.io/posts/summarizer-bot/</loc>
-    <lastmod>2024-02-27T16:48:19+00:00</lastmod>
+    <loc>https://gioleppe.github.io/posts/opa-terraform-azure-one/</loc>
+    <lastmod>2024-03-06T00:27:25+00:00</lastmod>
   </url><url>
     <loc>https://gioleppe.github.io/posts/</loc>
-    <lastmod>2024-02-27T16:48:19+00:00</lastmod>
+    <lastmod>2024-03-06T00:27:25+00:00</lastmod>
   </url><url>
     <loc>https://gioleppe.github.io/</loc>
+    <lastmod>2024-03-06T00:27:25+00:00</lastmod>
+  </url><url>
+    <loc>https://gioleppe.github.io/posts/summarizer-bot/</loc>
     <lastmod>2024-02-27T16:48:19+00:00</lastmod>
   </url><url>
     <loc>https://gioleppe.github.io/posts/gemma-copilot/</loc>

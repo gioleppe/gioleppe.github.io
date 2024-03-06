@@ -6,8 +6,16 @@
     <description>Recent content on Tommaso Colella | SWE</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 27 Feb 2024 16:48:19 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 06 Mar 2024 00:27:25 +0000</lastBuildDate>
     <atom:link href="https://gioleppe.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Enforcing OPA policies with Terraform / OpenTofu in network-isolated Azure VNet - Part 1</title>
+      <link>https://gioleppe.github.io/posts/opa-terraform-azure-one/</link>
+      <pubDate>Wed, 06 Mar 2024 00:27:25 +0000</pubDate>
+      <guid>https://gioleppe.github.io/posts/opa-terraform-azure-one/</guid>
+      <description>Enforcing OPA policies with Terraform / OpenTofu in network-isolated Azure VNet - Part 1 Recently, we had a couple of naming-related incidents at work. We respect certain naming conventions, but sometimes errors slip into our Terraform infrastructure&amp;rsquo;s code, and remediation may be costly.
+I had to find a way to simplify resource naming policy enforcement: at first, I thought about using Git Hooks (with a custom HCL parser) or local linters.</description>
+    </item>
     <item>
       <title>How to build a Summarizer Bot using GPT4, Azure Functions, GitHub Actions</title>
       <link>https://gioleppe.github.io/posts/summarizer-bot/</link>
