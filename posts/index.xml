@@ -13,8 +13,8 @@
       <link>https://gioleppe.github.io/posts/opa-terraform-azure-one/</link>
       <pubDate>Wed, 06 Mar 2024 00:27:25 +0000</pubDate>
       <guid>https://gioleppe.github.io/posts/opa-terraform-azure-one/</guid>
-      <description>Enforcing OPA policies with Terraform / OpenTofu in network-isolated Azure VNet - Part 1 Recently, we had a couple of naming-related incidents at work. We respect certain naming conventions, but sometimes errors slip into our Terraform infrastructure&amp;rsquo;s code, and remediation may be costly.
-I had to find a way to simplify resource naming policy enforcement: at first, I thought about using Git Hooks (with a custom HCL parser) or local linters.</description>
+      <description>Recently, we had a couple of naming-related incidents at work. We respect certain naming conventions, but sometimes errors slip into our Terraform infrastructure&amp;rsquo;s code, and remediation may be costly.
+I had to find a way to simplify resource naming policy enforcement: at first, I thought about using Git Hooks (with a custom HCL parser) or local linters. Both of these approaches came with downsides that would make it unpractical to employ them on multiple repositories: first of all, the necessity to set up hooks or linter configurations in each repo.</description>
     </item>
     <item>
       <title>How to build a Summarizer Bot using GPT4, Azure Functions, GitHub Actions</title>
