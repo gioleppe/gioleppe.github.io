@@ -294,3 +294,18 @@ Running the `opa exec --bundle .\general_policies\ --decision general/production
 The policy works! We still have to integrate it with an Azure DevOps pipeline running on a self-hosted agent. I will do that in the second part of the article, so stay tuned.
 
 Thank you for coming this far. Power to the nerds!
+
+---
+
+#### References
+
+[Open Policy Agent](https://www.openpolicyagent.org/)
+
+[Open Policy Agent - Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=tsandall.opa)
+
+[StyraInc/regal: Regal is a linter for Rego, with the goal of making your Rego magnificent! (github.com)](https://github.com/StyraInc/regal)
+
+[Open Policy Agent | Documentation](https://www.openpolicyagent.org/docs/latest/)
+
+[Open Policy Agent and Terraform - Using opa exec to Evaluate Policies Against an Execution Plan (youtube.com)](https://www.youtube.com/watch?v=wfhU72d1qqw)
+
