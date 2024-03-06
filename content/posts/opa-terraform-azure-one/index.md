@@ -9,8 +9,6 @@ cover:
   relative: false
 ---
 
-### Enforcing OPA policies with Terraform / OpenTofu in network-isolated Azure VNet - Part 1
-
 Recently, we had a couple of naming-related incidents at work. We respect certain naming conventions, but sometimes errors slip into our Terraform infrastructure's code, and remediation may be costly. 
 
 I had to find a way to simplify resource naming policy enforcement: at first, I thought about using Git Hooks (with a custom HCL parser) or local linters. Both of these approaches came with downsides that would make it unpractical to employ them on multiple repositories: first of all, the necessity to set up hooks or linter configurations in each repo. 
@@ -23,7 +21,7 @@ Read this two-article series to see how OPA integrates with Azure DevOps and a n
 
 ---
 
-#### OPA and Policy as Code
+### OPA and Policy as Code
 
 OPA is an open-source, vendor-agnostic policy engine. It is a CNCF graduate project and can be adapted to work in many different use cases and situations: in particular, it can be run both as a CLI tool or as a REST server. 
 
@@ -116,7 +114,7 @@ Now, let's jump to our Azure DevOps example!
 
 ---
 
-#### **OPA usage over network-isolated infrastructure** 
+### **OPA usage over network-isolated infrastructure** 
 
 Let's have a quick look at our deployed infrastructure: 
 
@@ -143,7 +141,7 @@ The following flowchart diagram describes the steps of our OPA-augmented provisi
 
 ---
 
-#### Preparing a Terraform plan to test our policy against
+### Preparing a Terraform plan to test our policy against
 
 Now that we have a clear path, it's time to write the policies. We will start by using this simple Terraform code that creates some resources. 
 
@@ -192,7 +190,7 @@ We are mainly interested in the Function Apps provisioned by the *azurerm_linux_
 
 ---
 
-#### **Writing a naming convention Policy for Function Apps**
+### **Writing a naming convention Policy for Function Apps**
 
 Having decided how to run our policy evaluation, we can proceed by writing a naming convention policy. I will start with a simple one. The plan is to grow the scope of the policies as I get more confidence with the Rego language.
 
@@ -261,7 +259,7 @@ I placed all the rego files inside the *policies* folder. I will pass its path a
 
 ---
 
-#### Running the policy locally
+### Running the policy locally
 
 If you've been following along, you should already have a *functions.json* plan file on which we can try to enforce our policies. In my case, I've generated a plan by passing the following value to the *fap_names* variable:
 
@@ -297,7 +295,7 @@ Thank you for coming this far. Power to the nerds!
 
 ---
 
-#### References
+### References
 
 [Open Policy Agent](https://www.openpolicyagent.org/)
 
