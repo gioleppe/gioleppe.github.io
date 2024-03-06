@@ -4,7 +4,7 @@ date: 2024-03-06T00:27:25Z
 draft: false
 cover: 
   image: "/images/opa-gavel-cropped.jpg"
-  alt: "Picture of an gavel"
+  alt: "Picture of a gavel"
   caption: "Picture by [Tingey Injury Law Firm](https://unsplash.com/@tingeyinjurylawfirm) on Unsplash"
   relative: false
 ---
