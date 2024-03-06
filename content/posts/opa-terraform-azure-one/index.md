@@ -108,7 +108,7 @@ Which produces the following output:
 
 Indeed, Hedy is old enough, so she is allowed as well. 
 
-Further exploration of Rego and OPA is outside the scope of this article. You can check the [official documentation](https://www.openpolicyagent.org/docs/latest/) if you are interested in learning more. It suffices to say that we will use the opa exec command instead of opa eval because it is the intended way to run OPA in [one shot](https://www.openpolicyagent.org/docs/latest/cli/#synopsis-6). 
+In-depth exploration of Rego and OPA is outside the scope of this article. You can check the [official documentation](https://www.openpolicyagent.org/docs/latest/) if you are interested in learning more. It suffices to say that we will use the opa exec command instead of opa eval because it is the intended way to run OPA in [one shot](https://www.openpolicyagent.org/docs/latest/cli/#synopsis-6). 
 
 Now, let's jump to our Azure DevOps example! 
 
