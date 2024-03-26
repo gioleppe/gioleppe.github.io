@@ -6,8 +6,16 @@
     <description>Recent content on Tommaso Colella | SWE</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 06 Mar 2024 00:27:25 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 26 Mar 2024 13:11:50 +0000</lastBuildDate>
     <atom:link href="https://gioleppe.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Dirt-cheap Computer Science books</title>
+      <link>https://gioleppe.github.io/posts/used-books/</link>
+      <pubDate>Tue, 26 Mar 2024 13:11:50 +0000</pubDate>
+      <guid>https://gioleppe.github.io/posts/used-books/</guid>
+      <description>If you&amp;rsquo;re a bookworm like me, you can&amp;rsquo;t resist the fascination of the paper medium. Reading a proper book is a much more relaxing experience than reading on a screen. Some studies also found a correlation between phone usage in bed and increased risk of having poor sleep quality. These are some reasons I&amp;rsquo;ve always preferred reading from paper books, especially at nighttime.
+Computer Science books are often expensive, and one could always object that paper production has an undeniable carbon footprint.</description>
+    </item>
     <item>
       <title>Enforcing OPA policies with Terraform / OpenTofu in network-isolated Azure VNet - Part 1</title>
       <link>https://gioleppe.github.io/posts/opa-terraform-azure-one/</link>
