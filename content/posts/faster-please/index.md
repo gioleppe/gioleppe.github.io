@@ -1,5 +1,5 @@
 ---
-title: "Faster, please! (Or, how I reverse engineered an app to cater for my needs)"
+title: "Faster, please! (Or, how I reverse engineered an app to cater to my needs)"
 date: 2025-04-27T23:20:50Z
 draft: false
 cover: 
@@ -11,13 +11,13 @@ cover:
 
 I love listening to podcasts, and news in general. For a couple of years, I've been subscribed to a somewhat-niche (but really high quality) Italian weekly magazine. I like their Android application, and I use its Text To Speech functionality, but there's a big problem with that: it's impossible to increase the audio reproduction speed.
 
-I usually listen to articles while doing something else, such as washing the dishes, or commuting to the office. This means I only have a fixed amount of time for this activity. Because of the time restriction, **I like to cram as much content as possible in my daily listening**. I also get bored very quickly when someone speaks slowly (sorry, I'm engineered like this!). That's exactly why **I set the speed to 2x** for most of the podcasts I'm listening to. Being unable to do the same with the magazine's articles really bothered me.
+I usually listen to articles while doing something else, such as washing the dishes, or commuting to the office. This means I only have a fixed amount of time for this activity. Because of these time restrictions, **I like to cram as much content as possible in my daily listening**. I also get bored very quickly when someone speaks slowly (sorry, I'm engineered like this!). That's exactly why **I set the speed to 2x** for most of the podcasts I'm listening to. Being unable to do the same with the magazine's articles really bothered me.
 
-I had to find a solution to the abysmal slowness of the TTS. I read online that I could use some exotic app from the Play Store, I tried to find such apps, but nothing worked as intended. A friend suggested using a famous Android automation app, but after quickly checking the official website, I realized increasing audio speed is not supported. I don't know if that is even possible on an unrooted device, and **rooting the phone was out of the question**, as some of the apps I'm regularly using (including my bank's) need an unrooted device.
+I had to find a solution to the slowness of the TTS. I read online that I could use some exotic app from the Play Store, I tried to find such apps, but nothing worked as intended. A friend suggested using a famous Android automation app, but after quickly checking the official website, I realized increasing audio speed is not supported. I don't know if that is even possible on an unrooted device, and **rooting the phone was out of the question**, as some of the apps I'm regularly using (including my bank's) need an unrooted device.
 
-> 💡Keep in mind, I'm definitely not an Android expert, so maybe there was a better way to achieve my goal. If you think so, feel free to contact me! I'd be glad to learn something new.
+> 💡 Keep in mind, I'm definitely not an Android expert, so maybe there was a better way to achieve my goal. If you think so, feel free to contact me! I'd be glad to learn something new.
 
-At that point, the only thing that came to my mind was **modifying the app's bytecode** to somehow increase the reproduction speed. It was Saturday evening, and I had nothing to do, so I thought it was the right time to go down the rabbit hole, if only a little. Broadly speaking, I thought the modification would require the following steps:
+At that point, the only thing that came to my mind was **modifying the app's bytecode** to somehow increase the reproduction speed. It was Saturday evening and I had nothing to do, so I thought it was the right time to go down the rabbit hole, if only a little. Broadly speaking, I thought the modification would require the following steps:
 
 1. **decompile** the application
 2. **modify** the application's byte code to increase audio reproduction speed
@@ -29,7 +29,7 @@ Before this small project, I knew nothing of Android decompiling / reverse engin
 
 ## Drinking from the firehose
 
-While a little outdated, the two blog posts gave me a more specific idea of what to do, along with many general information on Android reverse engineering, and opportunities for in depth analyses: 
+While a little outdated, the two blog posts gave me a more specific idea of what to do, along with general information on Android reverse engineering, and opportunities for in depth analyses: 
 
 1. I'd have to use [jadx](https://github.com/skylot/jadx) to produce a **somewhat** readable Java version of the DEX bytecode. 
 2. After inspecting the higher-level code, and finding the part where the speed is set, I'd have to modify its pertaining [Smali](https://paulsec.github.io/posts/android-smali-primer/) code which I previously had to extract from the bytecode contained in classes.dex by using [apktool](https://bitbucket.org/iBotPeaches/apktool/src/master/).
@@ -88,9 +88,9 @@ Below I outline the steps I followed to repackage the app and install it on my d
 
 If you made it to this point (or if you skipped to the conclusions), you really are interested in the outcome! Well, **I'm happy to say this worked like a charm!** I can now listen to my articles at double the speed. The modification has already saved me significant time and improved my listening experience. Of course there are some minor downsides (namely, the speed is set to 2x for all the audio played by the app), but those don't bother me at all.
 
-> 💡 You'd have to believe me it worked, since I won't share neither the name of the app, nor proof that the modification worked, since that would make the name of the magazine obvious. Reverse engineering/software modifications are a little bit of a gray-zone in Italy. Mostly, you can do as you please as long as you don't redistribute the software, but I'd rather be safe than sorry.
+> 💡 You'd have to believe me it worked, since I won't share neither the name of the app, nor proof that the modification worked, since that would make the name of the magazine obvious. Reverse engineering/software modifications are a little bit of a gray area in Italy. Mostly, you can do as you please as long as you don't redistribute the software, but I'd rather be safe than sorry.
 
-Now you might ask yourself how long it took to pull off this trick: actually, writing this article took way longer: **I got lucky** and got the app modification working at first try. I couldn't believe it myself, since I'm very used to trial and error at work and in life in general. The most difficult thing was understanding the various CLI tools and navigating some of the more-outdated information. The ROI on my time will be very quick. In fact, I calculated I will break even on my time spent in just about one month. All in all, this was a funny weekend project, I should have done it earlier, but I guess it's better late than never.
+Now you might ask yourself how long it took to pull off this trick: actually, writing this article took way longer. **I got lucky** and got the app modification working at first try. I couldn't believe it myself, since I'm very used to trial and error at work and in life in general. The most difficult thing was understanding the various CLI tools and navigating some of the more-outdated information. The ROI on my time will be very quick. In fact, I calculated I will break even on my time spent in just about one month. All in all, this was a fun weekend project, I should have done it earlier, but I guess it's better late than never.
 
 Thank you for reading my ramblings, power to the nerds!
 
