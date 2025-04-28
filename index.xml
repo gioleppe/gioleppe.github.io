@@ -6,8 +6,15 @@
     <description>Recent content on Tommaso Colella | SWE</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Tue, 26 Mar 2024 13:11:50 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 27 Apr 2025 23:20:50 +0000</lastBuildDate>
     <atom:link href="https://gioleppe.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Faster, please! (Or, how I reverse engineered an app to cater for my needs)</title>
+      <link>https://gioleppe.github.io/posts/faster-please/</link>
+      <pubDate>Sun, 27 Apr 2025 23:20:50 +0000</pubDate>
+      <guid>https://gioleppe.github.io/posts/faster-please/</guid>
+      <description>I love listening to podcasts, and news in general. For a couple of years, I&amp;rsquo;ve been subscribed to a somewhat-niche (but really high quality) Italian weekly magazine. I like their Android application, and I use its Text To Speech functionality, but there&amp;rsquo;s a big problem with that: it&amp;rsquo;s impossible to increase the audio reproduction speed. I usually listen to articles while doing something else, such as washing the dishes, or commuting to the office.</description>
+    </item>
     <item>
       <title>Dirt-cheap Computer Science books</title>
       <link>https://gioleppe.github.io/posts/used-books/</link>
