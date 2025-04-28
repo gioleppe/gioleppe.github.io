@@ -1,6 +1,6 @@
 ---
 title: "Faster, please! (Or, how I reverse engineered an app to cater for my needs)"
-date: 2025-04-28T01:58:50Z
+date: 2025-04-27T23:20:50Z
 draft: false
 cover: 
   image: "/images/cover-faster-please.jpg"
