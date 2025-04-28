@@ -31,18 +31,18 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
 
-  trigger-summarizer:
-    runs-on: ubuntu-latest
-    if: startsWith(github.event.head_commit.message, 'article:')
-    needs: deploy
-    steps:
-      - name: Call Summarizer
-        env:
-            FUNCTION_URL: ${{ secrets.FUNCTION_URL }}
-        run: |
-          sleep 6
-          COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
-          ARTICLE_NAME=$(echo $COMMIT_MESSAGE | awk '{print $2}')
-          curl -X POST  $FUNCTION_URL \
-            -H "Content-Type: application/json" \
-            --data "{\"articleName\": \"$ARTICLE_NAME\"}"
+  # trigger-summarizer:
+  #   runs-on: ubuntu-latest
+  #   if: startsWith(github.event.head_commit.message, 'article:')
+  #   needs: deploy
+  #   steps:
+  #     - name: Call Summarizer
+  #       env:
+  #           FUNCTION_URL: ${{ secrets.FUNCTION_URL }}
+  #       run: |
+  #         sleep 6
+  #         COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
+  #         ARTICLE_NAME=$(echo $COMMIT_MESSAGE | awk '{print $2}')
+  #         curl -X POST  $FUNCTION_URL \
+  #           -H "Content-Type: application/json" \
+  #           --data "{\"articleName\": \"$ARTICLE_NAME\"}"
