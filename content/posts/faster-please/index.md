@@ -51,9 +51,9 @@ I searched for "setSpeed" and "speed" in the decompiled Java code, and with a li
 
 ![Decompiled Java code](images/java-image.png)
 
-I continued inspecting the code for a while (I will spare you of more unintelligible decompiled Java classes, don't worry!), and convinced myself that it was worth trying to fix the value of the second argument of "c504n.m9994k", i.e, to 2.0. It was time to check the Smali code.
+I continued inspecting the code for a while (I will spare you of more unintelligible decompiled Java classes, don't worry!), and convinced myself that it was worth trying to modify the value of the second argument of "c504n.m9994k". It was time to check the Smali code.
 
-> 💡 I was lucky enough they that developers hadn't used any String Obfuscation techniques in the executable (at least for the external libraries), otherwise it would've been almost impossible to reach my goal. I guess it's not really worth it to implement such security measures for the app of a magazine!
+> 💡 I was lucky enough that developers hadn't used any String Obfuscation techniques in the executable (at least for the external libraries), otherwise it would've been almost impossible to reach my goal. I guess it's not really worth it to implement such security measures for the app of a magazine!
 
 ## Smali assembly
 
@@ -88,7 +88,7 @@ Below I outline the steps I followed to repackage the app and install it on my d
 
 If you made it to this point (or if you skipped to the conclusions), you really are interested in the outcome! Well, **I'm happy to say this worked like a charm!** I can now listen to my articles at double the speed. The modification has already saved me significant time and improved my listening experience. Of course there are some minor downsides (namely, the speed is set to 2x for all the audio played by the app), but those don't bother me at all.
 
-> 💡 You'd have to believe me it worked, since I won't share neither the name of the app, nor proof that the modification worked, since that would make the name of the magazine obvious. Reverse engineering/software modifications are a little bit of a gray area in Italy. Mostly, you can do as you please as long as you don't redistribute the software, but I'd rather be safe than sorry.
+> 💡 You'd have to believe me it worked. I won't share neither the name of the app, nor proof that the modification worked, since that would make the name of the magazine obvious. Reverse engineering and unauthorised software modifications are a little bit of a gray area in Italy. Mostly, you can do as you please as long as you don't redistribute the software, but I'd rather be safe than sorry.
 
 Now you might ask yourself how long it took to pull off this trick: actually, writing this article took way longer. **I got lucky** and got the app modification working at first try. I couldn't believe it myself, since I'm very used to trial and error at work and in life in general. The most difficult thing was understanding the various CLI tools and navigating some of the more-outdated information. The ROI on my time will be very quick. In fact, I calculated I will break even on my time spent in just about one month. All in all, this was a fun weekend project, I should have done it earlier, but I guess it's better late than never.
 
