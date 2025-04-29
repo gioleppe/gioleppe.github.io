@@ -53,7 +53,7 @@ I searched for "setSpeed" and "speed" in the decompiled Java code, and with a li
 
 I continued inspecting the code for a while (I will spare you of more unintelligible decompiled Java classes, don't worry!), and convinced myself that it was worth trying to modify the value of the second argument of "c504n.m9994k". It was time to check the Smali code.
 
-> 💡 I was lucky enough that developers hadn't used any String Obfuscation techniques in the executable (at least for the external libraries), otherwise it would've been almost impossible to reach my goal. I guess it's not really worth it to implement such security measures for the app of a magazine!
+> 💡 I was lucky enough that the developers hadn't used any String Obfuscation techniques in the executable (at least for the external libraries), otherwise it would've been almost impossible to reach my goal. I guess it's not really worth it to implement such security measures for the app of a magazine!
 
 ## Smali assembly
 
