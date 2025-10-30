@@ -6,8 +6,15 @@
     <description>Recent content on Tommaso Colella | SWE</description>
     <generator>Hugo -- 0.148.0</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 27 Apr 2025 23:20:50 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 30 Oct 2025 10:00:00 +0000</lastBuildDate>
     <atom:link href="https://gioleppe.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>On Generative AI, Simplicity, and Easiness</title>
+      <link>https://gioleppe.github.io/posts/genai-simple-easy/</link>
+      <pubDate>Thu, 30 Oct 2025 10:00:00 +0000</pubDate>
+      <guid>https://gioleppe.github.io/posts/genai-simple-easy/</guid>
+      <description>&lt;p&gt;Last week I presented a speech at &lt;a href=&#34;https://day.linux.prato.it/&#34;&gt;Linux Day 2025, in Prato&lt;/a&gt;, about meta-search engines. Specifically, I was talking about SearXNG. While preparing the slides for the speech, I came across &lt;a href=&#34;https://www.pewresearch.org/short-reads/2025/07/22/google-users-are-less-likely-to-click-on-links-when-an-ai-summary-appears-in-the-results/&#34;&gt;articles&lt;/a&gt; talking about &amp;ldquo;AI Overview&amp;rdquo;, the new feature/product by Google Search giving out answers for your queries in a LLM generated box on top of standard search results. According to many sources, AI Overview has already had a great impact on websites&amp;rsquo; traffic across many industries since its release: notably, newspapers and websites giving out generic information such as &lt;a href=&#34;https://www.cnet.com/tech/services-and-software/why-wikipedia-is-losing-traffic-to-ai-overviews-on-google/&#34;&gt;Wikipedia&lt;/a&gt;, have seen their traffic reduced. Preliminary research on the topic seems to confirm this trend.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Faster, please! (Or, how I reverse engineered an app to cater to my needs)</title>
       <link>https://gioleppe.github.io/posts/faster-please/</link>
