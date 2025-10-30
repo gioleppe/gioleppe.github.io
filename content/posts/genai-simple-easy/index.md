@@ -3,9 +3,9 @@ title: "On Generative AI, Simplicity, and Easiness"
 date: 2025-10-30T10:00:00Z
 draft: false
 cover: 
-  image: "/images/cover-faster-please.png"
+  image: "/images/cover-knots-genai.png"
   alt: 'Knots from swedish enciclopedia "Nordisk familjebok" (1911), vol.14'
-  caption: 'Knots from swedish enciclopedia "Nordisk familjebok" (1911), vol.14, on [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Nf_knots.png), puvblic domain'
+  caption: 'Knots from swedish enciclopedia "Nordisk familjebok" (1911), vol.14, on [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Nf_knots.png), public domain'
   relative: false
 ---
 
