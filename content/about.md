@@ -4,13 +4,11 @@ draft: false
 
 ---
 
-I'm Tommaso, an Infrastructure Architect and Software Engineer based in Florence, Italy. I enjoy solving complex problems: designing robust systems, automating workflows, and finding ways to make infrastructure more efficient.
-My work spans software development, cloud infrastructure, and system design—from building APIs to designing deployment processes.
-Lately, I've been trying to navigate the change introduced by Generative AI while helping our client's company transition to on-prem Kubernetes.
+I'm Tommaso, an Infrastructure Architect and Software Engineer based in Florence. I enjoy solving problems across software and infrastructure, from building APIs to designing better ways to deploy them.
 
-At Avanade, I lead a team of IT professionals and help clients adopt Infrastructure as Code, improve their delivery processes, improve their Software Engineering practices, and manage cloud infrastructure. I like to share knowledge, and I led internal workshops at Avanade on generative AI and developer tools.
+At Avanade, I lead an engineering team, help clients improve their systems and delivery practices, and share what I learn through workshops. Lately, I've been exploring generative AI and helping a client move to on-premises Kubernetes.
 
-Previously, I built cloud infrastructure and APIs at YOOX NET-A-PORTER, developed software and Azure solutions at Giuneco, and worked as a freelance developer across many industries (public research sector, retail, marketing).
+Previously, I worked on cloud infrastructure and software at YOOX NET-A-PORTER, Giuneco, and as a freelancer.
 
 ## What I work with
 
