@@ -1,0 +1,12 @@
+# Tommaso Colella | SWE
+- [About Me](https://gioleppe.github.io/about/)
+
+## Posts
+- [On Generative AI, Simplicity, and Easiness](https://gioleppe.github.io/posts/genai-simple-easy/)
+- [Faster, please! (Or, how I reverse engineered an app to cater to my needs)](https://gioleppe.github.io/posts/faster-please/)
+- [Dirt-cheap Computer Science books](https://gioleppe.github.io/posts/used-books/)
+- [Enforcing OPA policies with Terraform / OpenTofu in network-isolated Azure VNet - Part 1](https://gioleppe.github.io/posts/opa-terraform-azure-one/)
+- [How to build a Summarizer Bot using GPT4, Azure Functions, GitHub Actions](https://gioleppe.github.io/posts/summarizer-bot/)
+- [Self-hosted Copilot using Google Gemma and Ollama (+ Phi-2 comparison)](https://gioleppe.github.io/posts/gemma-copilot/)
+- [DIY self-hosted Copilot using Phi-2 and Ollama](https://gioleppe.github.io/posts/diy-copilot-phi/)
+- [Deploying AzureOpenAI Service using OpenTofu](https://gioleppe.github.io/posts/azure-openai-service-opentofu/)
