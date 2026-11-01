@@ -4,6 +4,19 @@ pagination:
   pagerSize: 5
 theme: PaperMod
 
+outputFormats:
+  llms:
+    mediaType: "text/plain"
+    baseName: "llms"
+    isPlainText: true
+    notAlternative: true
+
+outputs:
+  home:
+    - HTML
+    - RSS
+    - llms
+
 enableRobotsTXT: true
 buildDrafts: false
 buildFuture: false
