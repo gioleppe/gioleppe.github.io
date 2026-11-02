@@ -29,7 +29,7 @@ export const HELP_SECTIONS = Object.freeze([
   {
     heading: "The guided tour",
     paragraphs: [
-      "The bar above the charts answers the question in four short steps. Use Next and Back. Each step sets the charts for you, and the charts it talks about get a blue outline.",
+      "The bar above the charts answers the question in four short steps. Use Next and Back. Each step sets the charts for you, and the charts it talks about get a purple outline.",
       "Choose \"Explore on my own\" whenever you want to play with the charts yourself. You can come back to the tour at any time. On a phone the tour shows one chart per step.",
     ],
   },
