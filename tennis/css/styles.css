@@ -1,0 +1,1662 @@
+/* ==========================================================================
+   Tennis Visual Analytics - scoped stylesheet (docs/api_contract.md,
+   "Phase 3 shared conventions"; guideline sections 4, 5.1, 6.2).
+
+   Everything is scoped under .tva-root so the dashboard can be dropped into
+   any static host page. The surface tokens (--tva-bg-canvas, --tva-bg-panel,
+   --tva-border, --tva-text, --tva-text-2, --tva-accent) mirror
+   js/core/palette.js getThemeTokens("dark" | "light") exactly; the remaining
+   chrome tokens (control background, glass panel, soft tints, warning and
+   danger) are CSS-only derivations of palette.js values (slate neutrals,
+   PALETTE.winRateDiverging[1] amber, PALETTE.returnerWinner /
+   returnerInducedErr rose) so that no colour literal lives outside this block.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Theme tokens
+   -------------------------------------------------------------------------- */
+/* COLOURS ARE NOT DEFINED HERE. js/core/palette.js (THEME) is the single source: main.js writes
+   them onto the dashboard root as --tva-* custom properties (bg-canvas, bg-panel, bg-panel-glass,
+   bg-control, border, text, text-2, accent, accent-soft, mark, context, warning*, danger*,
+   shadow, backdrop, chevron). This block only holds the non-colour tokens. */
+.tva-root,
+.tva-root[data-theme="light"] {
+  --tva-font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --tva-radius: 10px;
+  --tva-transition: 300ms;
+  --tva-ease: cubic-bezier(0.215, 0.61, 0.355, 1); /* easeCubicOut */
+  --tva-gap: 10px;
+}
+
+/* --------------------------------------------------------------------------
+   2. Root grid: 12 columns, header 12 / court 5 / dag 7 / rally 12
+   -------------------------------------------------------------------------- */
+.tva-root,
+.tva-root *,
+.tva-root *::before,
+.tva-root *::after {
+  box-sizing: border-box;
+}
+
+.tva-root {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  /* header, story strip, court + flow graph, rally chart, footer */
+  grid-template-rows: auto auto minmax(0, 1fr) minmax(280px, 0.66fr) auto;
+  grid-auto-rows: auto;
+  gap: var(--tva-gap);
+  width: 100%;
+  min-height: 0;
+  padding: 12px;
+  margin: 0;
+  background: var(--tva-bg-canvas);
+  color: var(--tva-text);
+  font-family: var(--tva-font);
+  font-size: 13px;
+  line-height: 1.35;
+  -webkit-font-smoothing: antialiased;
+  color-scheme: light;
+}
+
+/* Standalone mount: fill the viewport, no vertical scroll at 1920x1080. */
+.tva-root--fill {
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+/* Embedded in a host element that has its own height: fill exactly that box
+   (below 1024px the stacked layout scrolls inside the box). */
+.tva-root--contained {
+  height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+/* Embedded mount (no definite height): give each view a definite, usable
+   height so `height:100%` SVGs scale to the panel instead of inflating it. */
+.tva-root:not(.tva-root--fill):not(.tva-root--contained) .tva-view {
+  height: clamp(360px, 44vh, 640px);
+  min-height: 360px;
+}
+
+.tva-header,
+.tva-story {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+.tva-view--court {
+  grid-column: span 5;
+}
+
+.tva-view--dag {
+  grid-column: span 7;
+}
+
+.tva-view--rally {
+  grid-column: 1 / -1;
+}
+
+.tva-footer {
+  grid-column: 1 / -1;
+}
+
+/* --------------------------------------------------------------------------
+   3. Panel cards
+   -------------------------------------------------------------------------- */
+.tva-view {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding: 10px 12px;
+  background: var(--tva-bg-panel);
+  border: 1px solid var(--tva-border);
+  border-radius: var(--tva-radius);
+  overflow: hidden;
+}
+
+.tva-view__title {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tva-text-2);
+}
+
+.tva-view__title-note {
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--tva-text-2);
+}
+
+.tva-view__body {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.tva-view__body > svg,
+.tva-view__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   4. Header: title + filter row, KPI strip
+   -------------------------------------------------------------------------- */
+.tva-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 12px;
+  background: var(--tva-bg-panel);
+  border: 1px solid var(--tva-border);
+  border-radius: var(--tva-radius);
+}
+
+.tva-header__controls {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* Dataset-source line (main.js); ControlHeader adopts it into the title block. */
+.tva-header__subtitle {
+  margin: 0;
+  font-size: 11px;
+  color: var(--tva-text-2);
+}
+
+.tva-title {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 0 1 auto;
+  min-width: 0;
+  margin-right: 10px;
+}
+
+.tva-title__h1 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  color: var(--tva-text);
+  white-space: nowrap;
+}
+
+.tva-title__sub,
+.tva-title .tva-header__subtitle {
+  margin: 0;
+  max-width: 560px;
+  font-size: 11px;
+  line-height: 1.25;
+  color: var(--tva-text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tva-brand {
+  flex: 0 0 auto;
+  margin: 0 8px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--tva-text);
+}
+
+.tva-filters {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  min-width: 0;
+}
+
+.tva-filters__fields {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  min-width: 0;
+}
+
+.tva-filters__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* The fold-away toggle exists for phones only. */
+.tva-btn.tva-filters__toggle {
+  display: none;
+}
+
+.tva-filter,
+.tva-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.tva-filter__label,
+.tva-field__label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tva-text-2);
+  white-space: nowrap;
+}
+
+/* View 1: portrait court SVG (full panel height) + HTML legend column in the spare width. */
+.tva-court-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+/* The schematic court is landscape: it takes the width left by the legend and derives its height
+   from the aspect ratio, capped by the panel height (no letterboxing on either axis). */
+.tva-court-wrap > svg.tva-court {
+  display: block;
+  flex: 1 1 auto;
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  min-width: 0;
+  aspect-ratio: 640 / 472;
+}
+
+.tva-court-legend {
+  flex: 0 0 196px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--tva-text-2);
+}
+
+.tva-court-legend__title {
+  margin-bottom: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--tva-text);
+}
+
+.tva-court-legend__bar {
+  height: 12px;
+  border-radius: 2px;
+}
+
+.tva-court-legend__ticks {
+  position: relative;
+  height: 16px;
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+.tva-court-legend__tick {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+}
+
+.tva-court-legend__tick.is-first {
+  transform: none;
+}
+
+.tva-court-legend__tick.is-last {
+  transform: translateX(-100%);
+}
+
+.tva-court-legend__ends {
+  display: flex;
+  justify-content: space-between;
+}
+
+.tva-court-legend__volume {
+  display: block;
+  overflow: visible;
+}
+
+.tva-court-legend__dot {
+  fill: none;
+  stroke: var(--tva-text);
+  stroke-width: 1;
+}
+
+.tva-court-legend__leader {
+  fill: none;
+  stroke: var(--tva-text-2);
+  stroke-width: 0.75;
+  stroke-dasharray: 2 2;
+}
+
+.tva-court-legend__dot-label {
+  font-size: 12px;
+  fill: var(--tva-text-2);
+}
+
+.tva-court-legend__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tva-court-legend__swatch {
+  flex: 0 0 auto;
+  display: block;
+}
+
+.tva-court-legend__note {
+  margin: 0;
+  font-size: 12px;
+}
+
+/* Views the active story step is about. */
+.tva-view.is-story-focus {
+  border-color: var(--tva-accent);
+  box-shadow: inset 0 0 0 1px var(--tva-accent);
+}
+
+.tva-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--tva-gap);
+  width: 100%;
+}
+
+.tva-kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  padding: 6px 12px;
+  background: var(--tva-bg-control);
+  border: 1px solid var(--tva-border);
+  border-radius: 8px;
+  cursor: default;
+  transition: border-color 120ms ease;
+}
+
+.tva-kpi.is-hovered {
+  border-color: var(--tva-accent);
+}
+
+.tva-kpi.is-empty .tva-kpi__value {
+  color: var(--tva-text-2);
+}
+
+.tva-kpi__label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tva-text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Greek letters (mu) must not be upper-cased. */
+.tva-kpi__label .tva-kpi__symbol {
+  text-transform: none;
+}
+
+.tva-kpi__value {
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  color: var(--tva-text);
+  white-space: nowrap;
+}
+
+.tva-kpi__sub {
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--tva-text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --------------------------------------------------------------------------
+   5. Controls: select, buttons, pills
+   -------------------------------------------------------------------------- */
+.tva-select,
+.tva-btn,
+.tva-pill {
+  font-family: var(--tva-font);
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--tva-text);
+  background: var(--tva-bg-control);
+  border: 1px solid var(--tva-border);
+  border-radius: 6px;
+  margin: 0;
+  transition: border-color 120ms ease, background-color 120ms ease, color 120ms ease;
+}
+
+.tva-select {
+  min-width: 120px;
+  max-width: 220px;
+  height: 28px;
+  padding: 0 26px 0 8px;
+  appearance: none;
+  -webkit-appearance: none;
+  /* One SVG chevron coloured with the theme's secondary ink (palette.js themeCssVariables).
+     Two gradient half-triangles used to leave a gap at their seam at some widths and zooms. */
+  background-image: var(--tva-chevron);
+  background-position: right 9px center;
+  background-size: 10px 6px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.tva-select:hover,
+.tva-btn:hover,
+.tva-pill:hover {
+  border-color: var(--tva-accent);
+}
+
+.tva-select:disabled,
+.tva-btn:disabled,
+.tva-pill:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tva-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+}
+
+.tva-btn--primary {
+  color: var(--tva-bg-canvas);
+  background: var(--tva-accent);
+  border-color: var(--tva-accent);
+}
+
+.tva-btn--primary:hover {
+  filter: brightness(1.08);
+}
+
+.tva-btn--ghost {
+  background: transparent;
+}
+
+.tva-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  color: var(--tva-text-2);
+  cursor: pointer;
+  user-select: none;
+}
+
+.tva-pill--active,
+.tva-pill[aria-pressed="true"] {
+  color: var(--tva-accent);
+  background: var(--tva-accent-soft);
+  border-color: var(--tva-accent);
+}
+
+/* Pill whose whole range lies inside a wider brush (e.g. 5-8 and 9+ under a 5-13+ brush). */
+.tva-pill--covered,
+.tva-pill[aria-pressed="mixed"] {
+  color: var(--tva-accent);
+  border-color: var(--tva-accent);
+  border-style: dashed;
+}
+
+.tva-root :is(button, select, a, [tabindex]):focus-visible,
+.tva-root svg :is([tabindex], a):focus-visible {
+  outline: 2px solid var(--tva-accent);
+  outline-offset: 2px;
+}
+
+/* Pointer focus shows no ring; keyboard focus keeps the :focus-visible ring above. */
+.tva-root svg [tabindex]:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* --------------------------------------------------------------------------
+   6. Tooltip (glassmorphic, fixed, flips at viewport edges)
+   -------------------------------------------------------------------------- */
+.tva-tooltip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  max-width: 280px;
+  padding: 8px 10px;
+  pointer-events: none;
+  font-family: var(--tva-font);
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--tva-text);
+  background: var(--tva-bg-panel-glass);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--tva-border);
+  border-radius: 8px;
+  box-shadow: var(--tva-shadow);
+  opacity: 1;
+  transition: opacity 120ms ease;
+}
+
+.tva-tooltip[aria-hidden="true"] {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 120ms ease, visibility 0s linear 120ms;
+}
+
+.tva-tooltip__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tva-text);
+}
+
+.tva-tooltip__subtitle {
+  margin-top: 1px;
+  font-size: 11px;
+  color: var(--tva-text-2);
+}
+
+.tva-tooltip__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--tva-border);
+}
+
+.tva-tooltip__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.tva-tooltip__label {
+  color: var(--tva-text-2);
+  white-space: nowrap;
+}
+
+.tva-tooltip__value {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.tva-tooltip__notice {
+  margin-top: 6px;
+  padding: 3px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--tva-warning);
+  background: var(--tva-warning-soft);
+  border: 1px solid var(--tva-warning-border);
+  border-radius: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   7. Generic SVG helpers (axes, grid, legend, highlight states)
+   -------------------------------------------------------------------------- */
+.tva-root svg {
+  font-family: var(--tva-font);
+  overflow: visible;
+}
+
+/* Default text colour for SVG text that carries no explicit fill attribute; views set
+   per-mark fills (contrast against glyphs, secondary labels) as attributes, which must win. */
+.tva-root svg text {
+  user-select: none;
+}
+
+.tva-root svg text:not([fill]) {
+  fill: var(--tva-text);
+}
+
+.tva-axis text {
+  font-size: 11px;
+  fill: var(--tva-text-2);
+}
+
+.tva-axis line,
+.tva-axis path,
+.tva-axis .domain {
+  stroke: var(--tva-border);
+  shape-rendering: crispEdges;
+}
+
+.tva-axis__title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  fill: var(--tva-text-2);
+}
+
+.tva-grid line,
+.tva-grid path {
+  stroke: var(--tva-border);
+  stroke-dasharray: 2 3;
+  shape-rendering: crispEdges;
+}
+
+.tva-grid .domain {
+  stroke: none;
+}
+
+.tva-legend text {
+  font-size: 11px;
+  fill: var(--tva-text-2);
+}
+
+.tva-label {
+  font-size: 11px;
+  fill: var(--tva-text);
+  pointer-events: none;
+}
+
+.tva-label--muted {
+  fill: var(--tva-text-2);
+}
+
+.tva-court-line {
+  fill: none;
+  stroke: var(--tva-text-2);
+  stroke-width: 1.5;
+  opacity: 0.6;
+}
+
+.tva-parity-line {
+  fill: none;
+  stroke: var(--tva-text);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 4;
+  opacity: 0.8;
+}
+
+.tva-ci-band {
+  fill: var(--tva-mark);
+  fill-opacity: 0.18;
+  stroke: none;
+}
+
+.tva-winrate-line {
+  fill: none;
+  stroke: var(--tva-text);
+  stroke-width: 2;
+}
+
+.tva-interactive {
+  cursor: pointer;
+}
+
+/* State classes on SVG marks are semantic hooks only (tests, cross-view queries): opacity
+   is owned by the views' transitioned `opacity` attribute (CourtMapView.cellOpacity), so
+   `.tva-dimmed` / `.tva-low-sample` carry no presentation here. Highlight strokes are
+   scoped to the mark rect so they are never inherited by the N / win % labels. */
+.tva-court__cell.tva-hovered > .tva-court__cell-rect {
+  stroke: var(--tva-accent);
+  stroke-opacity: 1;
+  stroke-width: 2px;
+  filter: drop-shadow(0 0 3px var(--tva-accent));
+}
+
+.tva-court__cell text {
+  stroke: none;
+}
+
+.tva-root :is(div, button, section).tva-hovered,
+.tva-root :is(div, button, section).tva-selected {
+  outline: 2px solid var(--tva-accent);
+  outline-offset: -1px;
+  filter: none;
+}
+
+.tva-brush .selection {
+  fill: var(--tva-accent);
+  fill-opacity: 0.12;
+  stroke: var(--tva-accent);
+  stroke-width: 1;
+}
+
+.tva-brush .handle {
+  fill: var(--tva-accent);
+  fill-opacity: 0.35;
+}
+
+/* --------------------------------------------------------------------------
+   7b. View-specific chrome (View 3 toolbar / wrapper, View 2 labels)
+   -------------------------------------------------------------------------- */
+.tva-rally {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.tva-rally__toolbar {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 14px;
+  margin: 0 0 4px;
+}
+
+.tva-rally__pills {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.tva-rally__range {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--tva-text-2);
+}
+
+.tva-rally__svg {
+  display: block;
+  flex: 1 1 0%;
+  width: 100%;
+  min-height: 0;
+}
+
+.tva-rally__hit.is-hovered {
+  fill: var(--tva-accent);
+  fill-opacity: 0.06;
+}
+
+.tva-dag__label {
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   8. Loading overlay, error message, footer
+   -------------------------------------------------------------------------- */
+.tva-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--tva-text-2);
+  font-size: 13px;
+  background: var(--tva-bg-panel-glass);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  border-radius: var(--tva-radius);
+  transition: opacity 200ms ease;
+}
+
+.tva-loading[aria-hidden="true"],
+.tva-loading--hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.tva-loading__spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--tva-border);
+  border-top-color: var(--tva-accent);
+  border-radius: 50%;
+  animation: tva-spin 900ms linear infinite;
+}
+
+@keyframes tva-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.tva-error {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 8px 12px;
+  font-family: var(--tva-font, system-ui, sans-serif);
+  font-size: 12px;
+  white-space: pre-wrap;
+  color: var(--tva-danger);
+  background: var(--tva-danger-soft);
+  border: 1px solid var(--tva-danger-border);
+  border-radius: 8px;
+}
+
+.tva-error:empty {
+  display: none;
+}
+
+.tva-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: var(--tva-text-2);
+  pointer-events: none;
+}
+
+.tva-footer {
+  margin: 0;
+  padding: 0 4px;
+  font-size: 11px;
+  line-height: 1.2;
+  color: var(--tva-text-2);
+  text-align: right;
+}
+
+.tva-footer a {
+  color: var(--tva-accent);
+  text-decoration: none;
+}
+
+.tva-footer a:hover {
+  text-decoration: underline;
+}
+
+.tva-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --------------------------------------------------------------------------
+   9. Responsive: stack to a single column below 1024px (page scrolls)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1023.98px) {
+  .tva-root,
+  .tva-root--fill {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-auto-rows: auto;
+    height: auto;
+    max-height: none;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .tva-root--contained {
+    min-height: 0;
+    height: 100%;
+    overflow: auto;
+  }
+
+  .tva-header,
+  .tva-story,
+  .tva-view--court,
+  .tva-view--dag,
+  .tva-view--rally,
+  .tva-footer,
+  .tva-error {
+    grid-column: 1 / -1;
+  }
+
+  .tva-root .tva-view,
+  .tva-root--fill .tva-view {
+    height: clamp(360px, 55vh, 560px);
+    min-height: 360px;
+  }
+
+  /* The court SVG is portrait (500x560) with the legend column beside it: size the panel
+     from the width left after the legend so the court fills the panel height. */
+  .tva-root .tva-view--court,
+  .tva-root--fill .tva-view--court {
+    height: clamp(380px, calc((100vw - 290px) * 0.74 + 44px), 720px);
+    min-height: 360px;
+  }
+
+  .tva-story {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tva-title__sub,
+  .tva-title .tva-header__subtitle {
+    white-space: normal;
+  }
+}
+
+@media (max-width: 640px) {
+  .tva-root {
+    padding: 8px;
+  }
+
+  /* Phones: the court legend moves below the court and wraps. */
+  .tva-root .tva-view--court,
+  .tva-root--fill .tva-view--court {
+    height: calc(74vw + 300px);
+  }
+
+  .tva-court-wrap {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .tva-court-wrap > svg.tva-court {
+    flex: 1 1 auto;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+  }
+
+  .tva-court-legend {
+    flex: 0 0 auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 10px 18px;
+  }
+
+  .tva-court-legend__block {
+    flex: 0 0 190px;
+  }
+
+  .tva-kpi__value {
+    font-size: 20px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   10. Reduced motion
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .tva-root {
+    --tva-transition: 0ms;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tva-root *,
+  .tva-root *::before,
+  .tva-root *::after,
+  .tva-tooltip,
+  .tva-loading {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   11. Story strip (one guided question, four steps)
+   -------------------------------------------------------------------------- */
+.tva-story {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.9fr) auto minmax(0, 3fr) auto;
+  align-items: center;
+  gap: 6px 16px;
+  padding: 8px 12px;
+  background: var(--tva-bg-panel);
+  border: 1px solid var(--tva-accent);
+  border-left-width: 4px;
+  border-radius: var(--tva-radius);
+}
+
+.tva-story[data-active="false"] {
+  grid-template-columns: minmax(0, 1fr) auto;
+  border-color: var(--tva-border);
+  border-left-color: var(--tva-accent);
+}
+
+.tva-story__head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.tva-story__kicker {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tva-accent);
+}
+
+.tva-story__question {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--tva-text);
+}
+
+.tva-story[data-active="false"] .tva-story__question {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.tva-story__nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tva-story__nav[hidden],
+.tva-story__body[hidden] {
+  display: none;
+}
+
+.tva-story__progress {
+  min-width: 190px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--tva-text-2);
+  white-space: nowrap;
+}
+
+.tva-story__body {
+  min-width: 0;
+}
+
+.tva-story__headline {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--tva-text);
+}
+
+.tva-story__text {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--tva-text-2);
+}
+
+.tva-btn.tva-story__toggle {
+  white-space: nowrap;
+}
+
+@media (max-width: 1023.98px) {
+  .tva-story,
+  .tva-story[data-active="false"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tva-story__progress {
+    min-width: 0;
+  }
+
+  .tva-btn.tva-story__toggle {
+    justify-self: start;
+  }
+}
+
+/* Headline figures: bullet-style meter (value bar from zero, tick for all points). */
+.tva-kpi__meter {
+  position: relative;
+  display: block;
+  height: 6px;
+  margin: 3px 0 2px;
+  background: var(--tva-border);
+  border-radius: 3px;
+}
+
+.tva-kpi__meter-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0;
+  background: var(--tva-text-2);   /* a data value: neutral, not the selection accent */
+  border-radius: 3px;
+  transition: width var(--tva-transition) var(--tva-ease);
+}
+
+.tva-kpi__meter-mark {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--tva-text);
+  border-radius: 1px;
+  transition: left var(--tva-transition) var(--tva-ease);
+}
+
+.tva-kpi__meter-mark[hidden] {
+  display: none;
+}
+
+/* Searchable server field (combobox + listbox). */
+.tva-combo {
+  position: relative;
+}
+
+.tva-combo__input {
+  width: 220px;
+  cursor: text;
+}
+
+.tva-combo__input::placeholder {
+  color: var(--tva-text-2);
+}
+
+.tva-combo__list {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 4px);
+  left: 0;
+  width: max(100%, 300px);
+  max-height: 320px;
+  margin: 0;
+  padding: 4px;
+  overflow-y: auto;
+  list-style: none;
+  background: var(--tva-bg-panel);
+  border: 1px solid var(--tva-border);
+  border-radius: 8px;
+  box-shadow: var(--tva-shadow);
+}
+
+.tva-combo__list[hidden] {
+  display: none;
+}
+
+.tva-combo__option {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--tva-text);
+  cursor: pointer;
+}
+
+.tva-combo__option[aria-selected="true"],
+.tva-combo__option:hover {
+  background: var(--tva-accent-soft);
+}
+
+.tva-combo__option.is-current .tva-combo__name {
+  font-weight: 700;
+}
+
+.tva-combo__count {
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+  color: var(--tva-text-2);
+}
+
+.tva-combo__more {
+  padding: 6px 8px;
+  font-size: 12px;
+  color: var(--tva-text-2);
+}
+
+@media (max-width: 640px) {
+  .tva-field--combo {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .tva-combo__input {
+    width: 100%;
+    max-width: none;
+    min-height: 40px;
+    font-size: 16px;
+  }
+
+  .tva-combo__list {
+    width: 100%;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   12. Buttons: primary, help
+   -------------------------------------------------------------------------- */
+.tva-btn.tva-btn--primary {
+  color: var(--tva-bg-canvas);
+  background: var(--tva-accent);
+  border-color: var(--tva-accent);
+  font-weight: 700;
+}
+
+.tva-btn.tva-btn--primary:hover {
+  filter: brightness(1.08);
+}
+
+.tva-btn.tva-btn--primary:disabled {
+  color: var(--tva-text-2);
+  background: transparent;
+  border-color: var(--tva-border);
+  filter: none;
+}
+
+.tva-btn.tva-btn--help {
+  color: var(--tva-accent);
+  border-color: var(--tva-accent);
+  font-weight: 600;
+}
+
+.tva-btn.tva-btn--help::before {
+  content: "?";
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--tva-bg-canvas);
+  background: var(--tva-accent);
+}
+
+/* --------------------------------------------------------------------------
+   13. "How it works" modal (native <dialog>, showModal)
+   -------------------------------------------------------------------------- */
+.tva-help {
+  width: min(720px, calc(100vw - 32px));
+  max-height: min(86vh, 900px);
+  padding: 0;
+  color: var(--tva-text);
+  background: var(--tva-bg-panel);
+  border: 1px solid var(--tva-border);
+  border-radius: 14px;
+  box-shadow: var(--tva-shadow);
+  font-family: var(--tva-font);
+  overflow: hidden;
+}
+
+.tva-help::backdrop {
+  background: var(--tva-backdrop);
+  backdrop-filter: blur(2px);
+}
+
+.tva-help__panel {
+  display: flex;
+  flex-direction: column;
+  max-height: min(86vh, 900px);
+}
+
+.tva-help__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px 10px;
+  border-bottom: 1px solid var(--tva-border);
+}
+
+.tva-help__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.tva-help__close {
+  width: 36px;
+  height: 36px;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--tva-text-2);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.tva-help__close:hover,
+.tva-help__close:focus-visible {
+  color: var(--tva-text);
+  border-color: var(--tva-accent);
+}
+
+.tva-help__body {
+  padding: 6px 20px 8px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.tva-help__section {
+  padding: 10px 0;
+}
+
+.tva-help__section + .tva-help__section {
+  border-top: 1px solid var(--tva-border);
+}
+
+.tva-help__heading {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--tva-accent);
+}
+
+.tva-help__text,
+.tva-help__item {
+  margin: 0 0 6px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--tva-text);
+}
+
+.tva-help__list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.tva-help__item strong {
+  color: var(--tva-text);
+}
+
+.tva-help__foot {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 20px 16px;
+  border-top: 1px solid var(--tva-border);
+}
+
+.tva-help__ok {
+  min-width: 110px;
+  justify-content: center;
+}
+
+.tva-dag-scroll-hint {
+  display: none;
+  margin: 0 0 4px;
+  font-size: 12px;
+  color: var(--tva-text-2);
+}
+
+/* --------------------------------------------------------------------------
+   14. Phones (< 640 px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .tva-header {
+    padding: 10px;
+  }
+
+  /* Title row: name + data line on the left, Filters / How it works on the right. */
+  .tva-filters {
+    align-items: flex-start;
+  }
+
+  .tva-title {
+    flex: 1 1 100%;
+    margin-right: 0;
+  }
+
+  .tva-filters__actions {
+    flex: 1 1 100%;
+    margin-left: 0;
+  }
+
+  .tva-btn.tva-filters__toggle {
+    display: inline-flex;
+  }
+
+  .tva-filters__actions .tva-btn {
+    flex: 1 1 0;
+    justify-content: center;
+    min-height: 40px;
+  }
+
+  .tva-filters__fields {
+    display: none;
+    order: 3;
+    flex: 1 1 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .tva-filters.is-open .tva-filters__fields {
+    display: flex;
+  }
+
+  .tva-filters__fields .tva-field {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr);
+  }
+
+  .tva-filters__fields .tva-select {
+    width: 100%;
+    max-width: none;
+    min-height: 40px;
+    font-size: 15px;
+  }
+
+  .tva-filters__fields .tva-btn--reset {
+    min-height: 40px;
+    justify-content: center;
+  }
+
+  /* Headline figures: three compact tiles, labels allowed to wrap. */
+  .tva-kpis {
+    gap: 6px;
+  }
+
+  .tva-kpi {
+    padding: 6px 8px;
+  }
+
+  .tva-kpi__label,
+  .tva-kpi__sub {
+    white-space: normal;
+    overflow: visible;
+  }
+
+  .tva-kpi__value {
+    font-size: 18px;
+  }
+
+  /* Guided tour: big tap targets. */
+  .tva-story__nav {
+    justify-content: space-between;
+  }
+
+  .tva-story__nav .tva-btn,
+  .tva-btn.tva-story__toggle {
+    min-height: 40px;
+  }
+
+  .tva-btn.tva-story__toggle {
+    justify-self: stretch;
+    justify-content: center;
+  }
+
+  .tva-story__headline {
+    font-size: 16px;
+  }
+
+  .tva-story__text {
+    font-size: 14px;
+  }
+
+  /* Flow chart: keep a readable size and scroll sideways instead of shrinking. */
+  .tva-root .tva-view--dag,
+  .tva-root--fill .tva-view--dag {
+    height: auto;
+    min-height: 0;
+  }
+
+  .tva-view--dag .tva-view__body {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tva-view--dag .tva-view__body > svg.tva-dag {
+    width: 820px !important;
+    height: 394px !important;
+    max-width: none;
+  }
+
+  .tva-dag-scroll-hint {
+    display: block;
+  }
+
+  /* Rally chart: a bit taller so the stacked legend and the plot both fit. */
+  .tva-root .tva-view--rally,
+  .tva-root--fill .tva-view--rally {
+    height: 440px;
+  }
+
+  .tva-rally__toolbar {
+    flex-wrap: wrap;
+  }
+
+  .tva-pill {
+    min-height: 34px;
+  }
+
+  /* The modal fills the phone screen. */
+  .tva-help {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  .tva-help__panel {
+    max-height: 100dvh;
+    height: 100%;
+  }
+
+  .tva-help__body {
+    flex: 1 1 auto;
+  }
+
+  .tva-help__ok {
+    flex: 1 1 auto;
+    min-height: 44px;
+  }
+}
+
+/* Phones: while the guided tour is active, only the step's main chart is shown. */
+.tva-story__phone-note {
+  display: none;
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  color: var(--tva-text-2);
+}
+
+@media (max-width: 640px) {
+  .tva-story[data-active="true"] .tva-story__phone-note {
+    display: block;
+  }
+
+  .tva-root[data-story-view="court"] .tva-view:not(.tva-view--court),
+  .tva-root[data-story-view="dag"] .tva-view:not(.tva-view--dag),
+  .tva-root[data-story-view="rally"] .tva-view:not(.tva-view--rally) {
+    display: none;
+  }
+}
+
+/* Phones: compact guided tour, anchored to the top of the screen on Back / Next (StoryStrip). */
+.tva-story__more {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .tva-story {
+    scroll-margin-top: 6px;
+    gap: 6px 12px;
+    padding: 8px 10px;
+  }
+
+  .tva-story__question {
+    font-size: 13px;
+  }
+
+  .tva-story__headline {
+    font-size: 15px;
+  }
+
+  .tva-story__more {
+    display: inline;
+    margin: 2px 0 0;
+    padding: 4px 0;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--tva-text-2);
+    text-decoration: underline;
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .tva-story:not(.is-expanded) .tva-story__text {
+    display: none;
+  }
+
+  /* Buttons keep their label on one line; the step title wraps between them. */
+  .tva-story__nav .tva-btn {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .tva-story__nav .tva-story__progress {
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: normal;
+    font-size: 12.5px;
+    line-height: 1.3;
+  }
+
+  /* The one-chart note matters once: on the first step. */
+  .tva-story[data-step]:not([data-step="1"]) .tva-story__phone-note {
+    display: none;
+  }
+}

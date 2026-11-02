@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Holding Serve · when the server loses the edge</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./css/styles.css">
+  <meta name="description" content="Interactive tennis visual analytics: serve &amp; return court lattice, tactical flow DAG and rally-length survival horizon (Match Charting Project data).">
+  <style>
+    /* The dashboard root paints its own themed canvas (css/styles.css); the host page only
+       removes the default margins so the 100vh root covers the viewport. */
+    html, body { margin: 0; padding: 0; min-height: 100%; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    #tennis-viz-root { width: 100%; min-height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="tennis-viz-root"></div>
+  <script type="module">
+    import { mountTennisDashboard } from './js/main.js';
+    import { applyTheme } from './js/core/palette.js';
+
+    mountTennisDashboard(document.getElementById('tennis-viz-root'), {
+      dataUrl: './data/recent_mcp_points.json'
+    }).catch((err) => {
+      console.error('Tennis dashboard failed to mount', err);
+      // A themed .tva-root wrapper so the error box resolves the theme's colour variables.
+      const host = document.createElement('div');
+      host.className = 'tva-root';
+      host.dataset.theme = 'light';
+      applyTheme(host);
+      const box = document.createElement('pre');
+      box.className = 'tva-error';
+      box.setAttribute('role', 'alert');
+      box.textContent = 'Tennis dashboard failed to mount: ' + (err && err.message ? err.message : String(err));
+      host.appendChild(box);
+      document.getElementById('tennis-viz-root').appendChild(host);
+    });
+  </script>
+</body>
+</html>
