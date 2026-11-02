@@ -17,8 +17,6 @@ if (titleNode) {
 }
 
 document.querySelector(".floppy-trigger").addEventListener("click", () => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
     for (let i = 0; i < 8; i++) {
         const floppy = document.createElement("span");
         floppy.className = "falling-floppy";
