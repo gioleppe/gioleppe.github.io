@@ -59,11 +59,14 @@
   color-scheme: light;
 }
 
-/* Standalone mount: fill the viewport, no vertical scroll at 1920x1080. */
+/* Standalone mount: fill the viewport, no vertical scroll at 1920x1080. On shorter windows
+   (laptops, browser zoom) the chart rows keep a usable minimum height and the page scrolls
+   instead of squeezing the court and flow charts to a sliver. */
 .tva-root--fill {
   height: 100vh;
-  max-height: 100vh;
+  min-height: min-content;
   overflow: hidden;
+  grid-template-rows: auto auto minmax(320px, 1fr) minmax(280px, 0.66fr) auto;
 }
 
 /* Embedded in a host element that has its own height: fill exactly that box
