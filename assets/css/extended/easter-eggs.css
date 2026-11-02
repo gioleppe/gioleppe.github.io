@@ -1,0 +1,61 @@
+.easter-egg-trigger {
+    display: inline-block;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    line-height: inherit;
+    cursor: pointer;
+    vertical-align: baseline;
+}
+
+.easter-egg-trigger:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+.rainbow-letter {
+    display: inline-block;
+}
+
+body:has(.pride-trigger:is(:hover, :focus)) .rainbow-letter {
+    animation: rainbow-wave 2.4s ease-in-out infinite;
+    animation-delay: calc(var(--letter-index) * 0.12s);
+}
+
+@keyframes rainbow-wave {
+    0%, 12%, 100% {
+        color: inherit;
+        transform: scale(1);
+    }
+    6% {
+        color: hsl(calc(var(--letter-index) * 35) 80% 45%);
+        transform: scale(1.3);
+    }
+}
+
+.falling-floppy {
+    position: fixed;
+    top: -3rem;
+    left: var(--floppy-x);
+    z-index: 1000;
+    pointer-events: none;
+    font-size: 2rem;
+    line-height: 1;
+    animation: floppy-fall var(--floppy-duration) linear forwards;
+}
+
+@keyframes floppy-fall {
+    to {
+        transform: translateY(calc(100vh + 4rem)) rotate(var(--floppy-rotation));
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body:has(.pride-trigger:is(:hover, :focus)) .rainbow-letter {
+        animation: none;
+        color: hsl(calc(var(--letter-index) * 35) 80% 45%);
+    }
+}

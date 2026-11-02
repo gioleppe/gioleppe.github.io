@@ -1,0 +1,16 @@
+{{- with site.Params.homeInfoParams }}
+<article class="first-entry home-info">
+    <header class="entry-header">
+        <h1>{{ .Title | markdownify }} <button class="easter-egg-trigger floppy-trigger" type="button" aria-label="Make floppy disks fall">💾</button><a class="easter-egg-trigger music-link" href="https://www.youtube.com/watch?v=DLzxrzFCyOs" aria-label="Listen to music">🎵</a><button class="easter-egg-trigger pride-trigger" type="button" aria-label="Animate the site title in rainbow colors">🏳️‍🌈</button></h1>
+    </header>
+    <div class="entry-content md-content">
+        {{ $opts := dict "display" "block" }}
+        {{ .Content | $.Page.RenderString $opts }}
+    </div>
+    <footer class="entry-footer">
+        {{ partial "social_icons.html" (dict "align" site.Params.homeInfoParams.AlignSocialIconsTo) }}
+    </footer>
+</article>
+{{- $script := resources.Get "js/easter-eggs.js" }}
+<script src="{{ $script.RelPermalink }}" defer></script>
+{{- end -}}

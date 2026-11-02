@@ -77,7 +77,7 @@ params:
 
   # home-info mode
   homeInfoParams:
-    Title: "gioleppe 💾🎵🏳️‍🌈"
+    Title: "gioleppe"
     Content: "Software Engineer. Computer Science BSc @ University of Pisa. This is my personal blog, find out more on what I'm doing in the About page, or contact me using one of the channels below."
   socialIcons:
     - name: telegram
