@@ -117,7 +117,7 @@ const TILE_DEFS = Object.freeze([
   {
     id: "win",
     label: "Won by the server",
-    definition: "Share of these points won by the player serving, with its 95% range and the difference from all points. With few points the share is pulled slightly towards 50%.",
+    definition: "Share of these points won by the player serving, with its 95% range and the difference from all points.",
     format: (v) => pct(v, 1),
   },
   {
@@ -401,8 +401,8 @@ export function createControlHeader(headerEl, ctx) {
     }, false);
 
     const ci = kpi.ci || { low: NaN, high: NaN };
-    setMeter(win, kpi.smoothedRate, base.smoothedRate, 1);
-    tweenValue(win, kpi.smoothedRate, tileDef.win.format, immediate);
+    setMeter(win, kpi.rawRate, base.rawRate, 1);
+    tweenValue(win, kpi.rawRate, tileDef.win.format, immediate);
     const delta = kpi.deltaVsBaseline;
     const versus = Number.isFinite(delta) && Math.abs(delta) >= 0.0005 ? ` · ${signedPp(delta)} vs all points` : "";
     setTileMeta(win, `95% range ${pct(ci.low, 1)}–${pct(ci.high, 1)}${versus}`, {
@@ -412,7 +412,6 @@ export function createControlHeader(headerEl, ctx) {
         n: kpi.n,
         wins: kpi.wins,
         rawRate: kpi.rawRate,
-        smoothedRate: kpi.smoothedRate,
         ci,
         deltaVsBaseline: kpi.deltaVsBaseline,
       },

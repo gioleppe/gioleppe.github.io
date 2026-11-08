@@ -451,7 +451,6 @@ export function createRallyHorizonView(bodyEl, ctx) {
         n: b.n,
         wins: b.wins,
         rawRate: b.rawRate,
-        smoothedRate: b.smoothedRate,
         ci: b.ci,
         deltaVsBaseline: computeDeltaVsBaseline(b, base),
       },

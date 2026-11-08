@@ -43,26 +43,6 @@ export function formatPct(x, digits = 1) {
 }
 
 /**
- * Laplace / additive smoothing of a win rate toward a prior.
- * Formula: (wins + weight * prior) / (total + weight).
- * With the defaults this is equivalent to adding 10 pseudo-observations at 50%.
- *
- * @param {number} wins
- * @param {number} total
- * @param {number} [prior=0.5]  prior success probability
- * @param {number} [weight=10]  pseudo-count strength of the prior
- * @returns {number} smoothed rate in [0, 1]; a non-finite or non-positive total is "no data"
- *   and yields the prior, a non-finite wins count is treated as 0
- */
-export function computeLaplaceWinRate(wins, total, prior = 0.5, weight = 10) {
-  if (!Number.isFinite(total) || total <= 0) return prior;
-  const w = Number.isFinite(wins) ? Math.max(0, wins) : 0;
-  const denom = total + weight;
-  if (!(denom > 0)) return prior;
-  return clamp((w + weight * prior) / denom, 0, 1);
-}
-
-/**
  * Wilson score interval for a binomial proportion.
  * Bounds are clamped to [0, 1]. When total is 0 (or non-finite) the proportion is
  * undefined and the interval is maximally uninformative: { p: NaN, low: 0, high: 1 }.
@@ -93,10 +73,10 @@ export function computeWilsonCI(wins, total, z = 1.96) {
  * Summarise server outcomes for a set of canonical point records.
  * Uses `rec.serverWon` (boolean) and `rec.rallyLength` (integer >= 1).
  * Safe for an empty array: n = 0, rawRate = NaN, meanRally = NaN,
- * smoothedRate = prior (0.5), ci = { low: 0, high: 1 }.
+ * ci = { low: 0, high: 1 }.
  *
  * @param {Array<{ serverWon: boolean, rallyLength?: number }>} points
- * @returns {{ n: number, wins: number, rawRate: number, smoothedRate: number,
+ * @returns {{ n: number, wins: number, rawRate: number,
  *             ci: { low: number, high: number }, meanRally: number }}
  */
 export function summarizeOutcomes(points) {
@@ -120,26 +100,25 @@ export function summarizeOutcomes(points) {
     n,
     wins,
     rawRate: n > 0 ? wins / n : NaN,
-    smoothedRate: computeLaplaceWinRate(wins, n),
     ci: { low: ci.low, high: ci.high },
     meanRally: rallyCount > 0 ? rallySum / rallyCount : NaN,
   };
 }
 
 /**
- * Difference between a subset's smoothed win rate and a baseline's smoothed
- * win rate (positive => the subset favours the server more than the baseline).
- * Returns NaN if either summary is missing or has no smoothedRate, or when the subset
- * carries an explicit sample size `n` that is not > 0 (an empty cell has no delta; its
- * smoothedRate is just the prior). Views must render NaN as "n/a".
+ * Difference between a subset's win share and a baseline's win share
+ * (positive => the subset favours the server more than the baseline).
+ * Returns NaN if either summary is missing or has no rawRate, or when the subset
+ * carries an explicit sample size `n` that is not > 0 (an empty cell has no share).
+ * Views must render NaN as "n/a".
  *
- * @param {{ smoothedRate: number, n?: number }} subsetSummary
- * @param {{ smoothedRate: number }} baselineSummary
+ * @param {{ rawRate: number, n?: number }} subsetSummary
+ * @param {{ rawRate: number }} baselineSummary
  * @returns {number}
  */
 export function computeDeltaVsBaseline(subsetSummary, baselineSummary) {
-  const a = subsetSummary && subsetSummary.smoothedRate;
-  const b = baselineSummary && baselineSummary.smoothedRate;
+  const a = subsetSummary && subsetSummary.rawRate;
+  const b = baselineSummary && baselineSummary.rawRate;
   if (typeof a !== "number" || typeof b !== "number") return NaN;
   if (subsetSummary.n !== undefined && !(subsetSummary.n > 0)) return NaN;
   return a - b;
