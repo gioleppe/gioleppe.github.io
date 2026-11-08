@@ -11,7 +11,7 @@
  * independent scales invite false readings such as "the 50% line meets the zero line"):
  *  - TOP, the message: the share of points won by the server per pair, as position on a common
  *    scale from just below the lowest 95% bound (at most 30 %) to 100 % (a line is read by
- *    position, so the scale need not start at zero; bars below it do), with its Wilson 95 % band, a dashed 50 % line and a "clearly below 50%"
+ *    position, so the scale need not start at zero; bars below it do), with its Wilson 95 % band, a dashed 50 % line and a "95% range below 50%"
  *    marker on the first pair whose whole 95 % range lies under 50 % inside the brush. With a
  *    View 1 / View 2 selection, a dotted line shows the same pairs without the selection.
  *  - BOTTOM, the context: how many points each pair holds (plain bars from zero, one colour).
@@ -38,7 +38,7 @@ const DEFAULT_H = 330;
 /** Lower bounds of the viewBox so the plot never collapses in a tiny container. */
 const MIN_W = 320;
 const MIN_H = 220;
-/** Margins; the top margin holds the top panel's title and the "clearly below 50%" label. */
+/** Margins; the top margin holds the top panel's title and the "95% range below 50%" label. */
 const MARGIN = Object.freeze({ top: 44, right: 78, bottom: 40, left: 64 });
 /** Vertical gap between the two panels (holds the bottom panel's title). */
 const PANEL_GAP = 26;
@@ -606,7 +606,7 @@ export function createRallyHorizonView(bodyEl, ctx) {
       (instant ? rateEndLabel : rateEndLabel.transition(t)).attr("x", xc(last.r) + 10).attr("y", nudged);
     }
 
-    // -- "clearly below 50%" annotation: first pair inside the brush whose whole 95% range
+    // -- "95% range below 50%" annotation (about certainty, not size: the gap can be small): first pair inside the brush whose whole 95% range
     //    lies below 50% (an estimate that merely dips under 50% is not claimed)
     const crossing = buckets.find((b) => b.inBrush && b.n >= LOW_SAMPLE_THRESHOLD && b.ci && b.ci.high < 0.5) || null;
     const ann = annotationLayer.selectAll("g.tva-rally__crossing").data(crossing ? [crossing] : [], () => "crossing")
@@ -623,7 +623,7 @@ export function createRallyHorizonView(bodyEl, ctx) {
           .attr("font-family", "var(--tva-font)").attr("fill", "var(--tva-text)");
         return g;
       });
-    ann.select("text").text((d) => `clearly below 50% from ${d.label} shots`)
+    ann.select("text").text((d) => `95% range below 50% from ${d.label} shots`)
       .attr("text-anchor", (d) => (xc(d.r) > plotW - 130 ? "end" : xc(d.r) < 130 ? "start" : "middle"));
     const markerY = (d) => Math.max(8, yRate(d.ci.high) - 12);
     ann.transition(t).attr("opacity", 1).attr("transform", (d) => `translate(${xc(d.r)},0)`);
