@@ -37,7 +37,6 @@ import {
   validateRecord,
 } from "./DataAdapter.js";
 import {
-  computeLaplaceWinRate,
   computeWilsonCI,
   summarizeOutcomes,
   computeBarycentricOrder,
@@ -199,6 +198,16 @@ function rallyLabel(r) {
 function ciOf(wins, n) {
   const c = computeWilsonCI(wins, n);
   return { low: c.low, high: c.high };
+}
+
+/**
+ * Win share of a group; NaN for an empty group (nothing to show).
+ * @param {number} wins
+ * @param {number} n
+ * @returns {number}
+ */
+function rateOf(wins, n) {
+  return n > 0 ? wins / n : NaN;
 }
 
 /**
@@ -465,15 +474,11 @@ export class StateStore {
    * @param {ReadonlyArray<object>} points  CanonicalPointRecord[] (records are frozen; an unfrozen
    *   record is replaced by a frozen shallow copy). Every record is validated with validateRecord()
    *   and a TypeError is thrown on the first invalid one.
-   * @param {{ laplaceWeight?: number, prior?: number }} [options]
+   * @param {object} [options] reserved, no options yet
    */
   constructor(points, options = {}) {
     if (!Array.isArray(points)) throw new TypeError("StateStore: points must be an array");
     const opts = options && typeof options === "object" ? options : {};
-    /** Laplace pseudo-count weight used for every smoothedRate. @type {number} */
-    this.laplaceWeight = Number.isFinite(opts.laplaceWeight) ? opts.laplaceWeight : 10;
-    /** Laplace prior used for every smoothedRate. @type {number} */
-    this.prior = Number.isFinite(opts.prior) ? opts.prior : 0.5;
     /** Last error thrown by a subscriber (swallowed so other listeners still run). @type {Error|null} */
     this.lastListenerError = null;
 
@@ -490,12 +495,9 @@ export class StateStore {
     this._pending = [];
     this._notifying = false;
     this._allocateCounters();
-    // The baseline shares the store's Laplace parameters so that kpi.deltaVsBaseline is exactly
-    // 0 for the unfiltered state whatever options.laplaceWeight / options.prior are.
     const baseline = summarizeOutcomes(this._points);
     this._baseline = Object.freeze({
       ...baseline,
-      smoothedRate: this._smooth(baseline.wins, baseline.n),
       ci: Object.freeze({ ...baseline.ci }),
     });
     this._recompute(true);
@@ -1013,16 +1015,6 @@ export class StateStore {
   }
 
   /**
-   * @param {number} wins
-   * @param {number} total
-   * @returns {number}
-   * @private
-   */
-  _smooth(wins, total) {
-    return computeLaplaceWinRate(wins, total, this.prior, this.laplaceWeight);
-  }
-
-  /**
    * KPI strip model. thirdShotKillRate = P(rallyLength === 3 && serverWon | rallyLength >= 3),
    * 0 when the denominator is 0; thirdShotKillN is that denominator (points with
    * rallyLength >= 3) and thirdShotKillWins the numerator. meanRally uses raw (uncapped)
@@ -1034,7 +1026,6 @@ export class StateStore {
       n,
       wins,
       rawRate: n > 0 ? wins / n : NaN,
-      smoothedRate: this._smooth(wins, n),
       ci: Object.freeze(ciOf(wins, n)),
       thirdShotKillRate: killDen > 0 ? killNum / killDen : 0,
       thirdShotKillN: killDen,
@@ -1075,7 +1066,6 @@ export class StateStore {
           n,
           wins,
           rawRate: n > 0 ? wins / n : NaN,
-          smoothedRate: this._smooth(wins, n),
           ci: Object.freeze(ciOf(wins, n)),
           volumeShare: total > 0 ? n / total : 0,
           lowSample: n < LOW_SAMPLE_THRESHOLD,
@@ -1215,14 +1205,14 @@ export class StateStore {
     for (let sd = 0; sd < N_SD; sd += 1) {
       const id = SERVE_DIRS[sd];
       nodes.push(Object.freeze({
-        id, layer: 1, label: NODE_LABELS[id], n: n1[sd], wins: w1[sd], smoothedRate: this._smooth(w1[sd], n1[sd]),
+        id, layer: 1, label: NODE_LABELS[id], n: n1[sd], wins: w1[sd], rawRate: rateOf(w1[sd], n1[sd]),
         share: share(n1[sd]), nActive: n1a[sd], order: sd, selected: sdSel.has(id), aggregated: false,
       }));
     }
     for (let rd = 0; rd < N_RD; rd += 1) {
       const id = RETURN_DEPTHS[rd];
       nodes.push(Object.freeze({
-        id, layer: 2, label: NODE_LABELS[id], n: n2[rd], wins: w2[rd], smoothedRate: this._smooth(w2[rd], n2[rd]),
+        id, layer: 2, label: NODE_LABELS[id], n: n2[rd], wins: w2[rd], rawRate: rateOf(w2[rd], n2[rd]),
         share: share(n2[rd]), nActive: n2a[rd], order: rank2.get(id), selected: rdSel.has(id), aggregated: false,
       }));
     }
@@ -1232,7 +1222,7 @@ export class StateStore {
       const isSink = ts === OTHER_INDEX && aggregated;
       nodes.push(Object.freeze({
         id, layer: 3, label: isSink ? OTHER_SINK_LABEL : NODE_LABELS[id], n: n3m[ts], wins: w3m[ts],
-        smoothedRate: this._smooth(w3m[ts], n3m[ts]), share: share(n3m[ts]), nActive: n3a[ts], order: rank3.get(id),
+        rawRate: rateOf(w3m[ts], n3m[ts]), share: share(n3m[ts]), nActive: n3a[ts], order: rank3.get(id),
         selected: tsMatches(ts), aggregated: isSink,
         members: isSink ? Object.freeze(members.slice()) : Object.freeze([]),
       }));
@@ -1248,7 +1238,7 @@ export class StateStore {
         const source = SERVE_DIRS[sd];
         const target = RETURN_DEPTHS[rd];
         links.push(Object.freeze({
-          source, target, layerPair: "12", n: ln, wins: e12W[k], smoothedRate: this._smooth(e12W[k], ln),
+          source, target, layerPair: "12", n: ln, wins: e12W[k], rawRate: rateOf(e12W[k], ln),
           share: share(ln), pruned: ln < pruneBelow,
           nActive: e12Flow[k], winsActive: e12FlowW[k],
           emphasized: hasSelection && e12Flow[k] > 0,
@@ -1273,7 +1263,7 @@ export class StateStore {
         const source = RETURN_DEPTHS[rd];
         const target = THIRD_SHOTS[ts];
         links.push(Object.freeze({
-          source, target, layerPair: "23", n: ln, wins: m23W[k], smoothedRate: this._smooth(m23W[k], ln),
+          source, target, layerPair: "23", n: ln, wins: m23W[k], rawRate: rateOf(m23W[k], ln),
           share: share(ln), pruned: ln < pruneBelow,
           nActive: e23Flow[k], winsActive: e23FlowW[k],
           emphasized: hasSelection && e23Flow[k] > 0,
@@ -1325,7 +1315,6 @@ export class StateStore {
         returnerInducedErr,
         wins,
         rawRate: n > 0 ? wins / n : NaN,
-        smoothedRate: this._smooth(wins, n),
         ci: Object.freeze(ciOf(wins, n)),
         inBrush: r >= lo && r <= hi,
         contextN: this._rallyCtxN[r - 1],
@@ -1338,7 +1327,7 @@ export class StateStore {
       hasSelection,
       brush: Object.freeze([lo, hi]),
       buckets: Object.freeze(buckets),
-      pairs: Object.freeze(pairBuckets(buckets, lo, hi, (w, n) => this._smooth(w, n))),
+      pairs: Object.freeze(pairBuckets(buckets, lo, hi)),
     });
   }
 }
@@ -1351,10 +1340,9 @@ export class StateStore {
  * @param {ReadonlyArray<object>} buckets exact-length buckets (r = 1..RALLY_CAP)
  * @param {number} lo brush start
  * @param {number} hi brush end
- * @param {(wins: number, n: number) => number} smooth
  * @returns {object[]}
  */
-export function pairBuckets(buckets, lo, hi, smooth) {
+export function pairBuckets(buckets, lo, hi) {
   const out = [];
   for (let start = 1; start <= RALLY_CAP; start += 2) {
     const end = Math.min(start + 1, RALLY_CAP);
@@ -1376,7 +1364,6 @@ export function pairBuckets(buckets, lo, hi, smooth) {
       returnerWinner: sum("returnerWinner"),
       returnerInducedErr: sum("returnerInducedErr"),
       rawRate: n > 0 ? wins / n : NaN,
-      smoothedRate: smooth(wins, n),
       ci: Object.freeze(ciOf(wins, n)),
       inBrush: start <= hi && end >= lo,
       contextN,

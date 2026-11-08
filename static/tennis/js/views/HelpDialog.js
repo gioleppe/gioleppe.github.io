@@ -54,7 +54,7 @@ export const HELP_SECTIONS = Object.freeze([
     heading: "Reading the numbers",
     paragraphs: [
       "Each percentage comes with the number of points behind it and a 95% range: the value we would expect if many more matches were charted very likely lies in that range. Few points mean a wide range.",
-      "Colours are pulled slightly towards 50% when there are few points, so a lucky handful of points does not look like a pattern.",
+      "Boxes and flows with fewer than 10 points are painted grey instead of coloured (the court boxes are also striped), so a lucky handful of points does not look like a pattern. Their share is still printed.",
     ],
   },
   {

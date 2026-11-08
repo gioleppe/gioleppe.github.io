@@ -8,7 +8,7 @@
  * (mental-map preservation: this view never reorders nodes). Bar heights and ribbon widths share
  * one px-per-point scale so that ribbons tile the bars exactly. Ribbons are horizontal cubic
  * Bezier curves (control points at x + 0.5 * dx, i.e. d3.linkHorizontal geometry) coloured by
- * the Laplace-smoothed server win rate of the transition; sub-1% ribbons are drawn as a 1 px
+ * the server win rate of the transition (grey when it holds fewer than 10 points); sub-1% ribbons are drawn as a 1 px
  * dashed wireframe. When any node selection exists, every context ribbon fades to 0.12 and the
  * emphasized ribbons carry an overlay path of width nActive at 0.90.
  *
@@ -33,7 +33,7 @@ import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 import { computeWilsonCI, formatPct } from "../core/StatsEngine.js";
 import { getThemeTokens, THEME } from "../core/palette.js";
 import { NODE_LABELS } from "../core/StateStore.js";
-import { createWinRateColorScale, TRANSITION_MS } from "./scales.js";
+import { createWinRateColorScale, rateFill, TRANSITION_MS } from "./scales.js";
 import { DAG_GEOMETRY, computeDagLayout, wrapWords, resolveLabelCollisions, r2 } from "./layout.js";
 
 const { W, H, LAYER_X, BAR_W, TOP, BOTTOM } = DAG_GEOMETRY;
@@ -238,7 +238,7 @@ export function createTacticalDagView(bodyEl, ctx) {
    * @param {import("./layout.js").NodeLayout} d
    * @returns {string}
    */
-  const labelText = (d) => `${d.label} · ${countText(d)} · ${d.n > 0 ? pct(d.smoothedRate) : "–"}`;
+  const labelText = (d) => `${d.label} · ${countText(d)} · ${d.n > 0 ? pct(d.rawRate) : "–"}`;
 
   /**
    * Label x position, anchor and available width per layer (left of layer 1, right of layers
@@ -282,7 +282,7 @@ export function createTacticalDagView(bodyEl, ctx) {
    * @returns {{ compact: boolean, height: number, lines: Array<{ text: string, size: number, primary: boolean, width: number, y: number }> }}
    */
   const fitLabel = (d, maxWidth) => {
-    const win = d.n > 0 ? pct(d.smoothedRate) : "–";
+    const win = d.n > 0 ? pct(d.rawRate) : "–";
     const build = (size) => {
       if (d.layer === 2) {
         const text = labelText(d);
@@ -363,19 +363,18 @@ export function createTacticalDagView(bodyEl, ctx) {
 
   /**
    * Tooltip model shared stats block.
-   * @param {{ n: number, wins: number, smoothedRate: number }} d
+   * @param {{ n: number, wins: number, rawRate: number }} d
    * @returns {object}
    */
   const statsOf = (d) => {
-    const baseline = lastSnapshot && lastSnapshot.baseline ? lastSnapshot.baseline.smoothedRate : NaN;
+    const baseline = lastSnapshot && lastSnapshot.baseline ? lastSnapshot.baseline.rawRate : NaN;
     const ci = computeWilsonCI(d.wins, d.n);
     return {
       n: d.n,
       wins: d.wins,
-      rawRate: d.n > 0 ? d.wins / d.n : NaN,
-      smoothedRate: d.smoothedRate,
+      rawRate: d.rawRate,
       ci: { low: ci.low, high: ci.high },
-      deltaVsBaseline: d.n > 0 && Number.isFinite(baseline) ? d.smoothedRate - baseline : NaN,
+      deltaVsBaseline: d.n > 0 && Number.isFinite(baseline) ? d.rawRate - baseline : NaN,
     };
   };
 
@@ -427,7 +426,7 @@ export function createTacticalDagView(bodyEl, ctx) {
    * @returns {string}
    */
   const linkAriaLabel = (d) => `${d.sourceNode.label} → ${d.targetNode.label}: ${d.n} points, `
-    + `${d.n > 0 ? pct(d.smoothedRate) : "n/a"} smoothed server win rate${d.pruned ? ", pruned" : ""}`;
+    + `${d.n > 0 ? pct(d.rawRate) : "n/a"} server win rate${d.pruned ? ", pruned" : ""}`;
 
   /**
    * Hover element for a node.
@@ -566,7 +565,7 @@ export function createTacticalDagView(bodyEl, ctx) {
     };
     linksG.selectAll("path.tva-dag__link")
       .classed("is-hover", (l) => linkMatches(l))
-      .attr("stroke", (l) => (!l.pruned && linkMatches(l) ? colorScale(l.smoothedRate) : neutralStroke(l)));
+      .attr("stroke", (l) => (!l.pruned && linkMatches(l) ? rateFill(colorScale, l) : neutralStroke(l)));
   };
 
   /**
@@ -648,7 +647,7 @@ export function createTacticalDagView(bodyEl, ctx) {
         (enter) => enter.append("path")
           .attr("class", "tva-dag__link-active")
           .attr("d", (l) => l.dActive)
-          .attr("stroke", (l) => colorScale(l.smoothedRate))
+          .attr("stroke", (l) => rateFill(colorScale, l))
           .attr("stroke-width", 0)
           .attr("opacity", OPACITY.emphasized),
         (update) => update,
@@ -656,7 +655,7 @@ export function createTacticalDagView(bodyEl, ctx) {
       )
       .call((sel) => sel.transition(t)
         .attr("d", (l) => l.dActive)
-        .attr("stroke", (l) => colorScale(l.smoothedRate))
+        .attr("stroke", (l) => rateFill(colorScale, l))
         .attr("stroke-width", (l) => Math.max(l.widthActive, 1))
         .attr("opacity", OPACITY.emphasized));
 
@@ -677,7 +676,7 @@ export function createTacticalDagView(bodyEl, ctx) {
             .attr("width", BAR_W)
             .attr("height", 0)
             .attr("rx", 2)
-            .attr("fill", (nd) => colorScale(nd.smoothedRate));
+            .attr("fill", (nd) => rateFill(colorScale, nd));
           g.append("text")
             .attr("class", "tva-dag__label")
             .attr("dominant-baseline", "middle")
@@ -709,7 +708,7 @@ export function createTacticalDagView(bodyEl, ctx) {
       .classed("is-aggregated", (nd) => nd.aggregated)
       .attr("aria-pressed", (nd) => (nd.selected ? "true" : "false"))
       .attr("aria-label", (nd) => `${LAYER_TITLES[nd.layer - 1]}: ${nd.label}, ${countAria(nd)}, `
-        + `${nd.n > 0 ? pct(nd.smoothedRate) : "n/a"} smoothed server win rate`)
+        + `${nd.n > 0 ? pct(nd.rawRate) : "n/a"} server win rate`)
       .call(bindNodeListeners);
 
     // Nodes without active flow are greyed out while a selection exists (a faded data colour
@@ -724,7 +723,7 @@ export function createTacticalDagView(bodyEl, ctx) {
       .attr("x", (nd) => nd.x)
       .attr("y", (nd) => nd.y)
       .attr("height", (nd) => nd.h)
-      .attr("fill", (nd) => (nodeDimmed(nd) ? NODE_DIM_FILL : colorScale(nd.smoothedRate)));
+      .attr("fill", (nd) => (nodeDimmed(nd) ? NODE_DIM_FILL : rateFill(colorScale, nd)));
 
     nodeSel.select("text")
       .attr("aria-hidden", (nd) => (nd.n > 0 ? null : "true"))

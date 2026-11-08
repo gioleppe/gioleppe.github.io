@@ -21,7 +21,6 @@ import { signedPp } from "./scales.js";
  * @property {number} n
  * @property {number} [wins]
  * @property {number} rawRate
- * @property {number} smoothedRate
  * @property {{ low: number, high: number }} [ci]
  * @property {number} [deltaVsBaseline]
  */
@@ -44,7 +43,6 @@ export const LOW_SAMPLE_NOTICE = "⚠ Fewer than 10 points: read with care";
 export const STAT_LABELS = Object.freeze({
   n: "Points",
   rawRate: "Won by the server",
-  smoothedRate: "Adjusted for few points (colour)",
   ci: "95% range",
   delta: "Compared with all points"
 });
@@ -74,7 +72,6 @@ export function buildTooltipRows(model) {
   if (stats && typeof stats === "object") {
     rows.push({ label: STAT_LABELS.n, value: formatCount(stats.n) });
     rows.push({ label: STAT_LABELS.rawRate, value: formatPct(stats.rawRate) });
-    rows.push({ label: STAT_LABELS.smoothedRate, value: formatPct(stats.smoothedRate) });
     const ci = stats.ci;
     const ciText =
       ci && typeof ci === "object" && Number.isFinite(ci.low) && Number.isFinite(ci.high)

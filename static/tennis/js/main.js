@@ -73,7 +73,6 @@ const HEADER_SPEC = Object.freeze({
 /**
  * @typedef {Object} MountOptions
  * @property {string}  [dataUrl="./data/recent_mcp_points.json"]
- * @property {number}  [laplaceWeight=10]
  * @property {boolean|"auto"} [fill="auto"] true: 100vh standalone layout; false: natural height;
  *   "auto": fill the host container when it has its own height, else the viewport
  * @property {boolean} [expose=true]   expose the controller as `window.__tva`
@@ -322,7 +321,6 @@ export async function mountTennisDashboard(containerEl, opts = {}) {
   }
   const {
     dataUrl = "./data/recent_mcp_points.json",
-    laplaceWeight = 10,
     fill = "auto",
     expose = true,
     syncHash = true,
@@ -338,7 +336,7 @@ export async function mountTennisDashboard(containerEl, opts = {}) {
   // ---- dataset ---------------------------------------------------------------
   const loaded = await loadDataset({ dataUrl });
   const datasetMeta = { ...(loaded.meta || {}), fallback: loaded.source === "fallback" };
-  const store = new StateStore(loaded.points, { laplaceWeight });
+  const store = new StateStore(loaded.points);
 
   // Initial filter state from location.hash (ignored silently when invalid).
   if (syncHash && win.location && typeof win.location.hash === "string" && win.location.hash.length > 1) {

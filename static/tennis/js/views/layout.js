@@ -69,7 +69,7 @@ export function ribbonPath(sx, sy, tx, ty, alpha = DAG_GEOMETRY.ALPHA) {
  * @property {string} label
  * @property {number} n
  * @property {number} wins
- * @property {number} smoothedRate
+ * @property {number} rawRate
  * @property {number} share
  * @property {number} nActive
  * @property {number} order
@@ -93,7 +93,7 @@ export function ribbonPath(sx, sy, tx, ty, alpha = DAG_GEOMETRY.ALPHA) {
  * @property {"12"|"23"} layerPair
  * @property {number} n
  * @property {number} wins
- * @property {number} smoothedRate
+ * @property {number} rawRate
  * @property {number} share
  * @property {number} nActive
  * @property {number} winsActive
@@ -158,7 +158,7 @@ export function computeDagLayout(dag, geometry = DAG_GEOMETRY) {
         label: nd.label,
         n: nd.n,
         wins: nd.wins,
-        smoothedRate: nd.smoothedRate,
+        rawRate: nd.rawRate,
         share: nd.share,
         nActive: nd.nActive,
         order: nd.order,
@@ -232,7 +232,7 @@ export function computeDagLayout(dag, geometry = DAG_GEOMETRY) {
       layerPair: l.layerPair,
       n: l.n,
       wins: l.wins,
-      smoothedRate: l.smoothedRate,
+      rawRate: l.rawRate,
       share: l.share,
       nActive: l.nActive,
       winsActive: l.winsActive,

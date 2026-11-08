@@ -60,6 +60,7 @@ export const PALETTE = Object.freeze({
  *   mark      neutral data marks (count bars, meters, 95% band): >= 3:1 on bgPanel (WCAG 1.4.11)
  *   context   de-emphasized context (resting flow bands)
  *   nodeDim   flow-chart nodes without active flow (greyed out, never a faded data colour)
+ *   lowSample  fill of a box or flow with too few points to colour (greyed out, with stripes in the court)
  *   caution*  neutral cautions ("fewer than 10 points"): never orange or brown, which would read as
  *             "returner ahead" on the brown-teal scale
  *   danger*   error boxes
@@ -79,6 +80,7 @@ export const THEME = Object.freeze({
   mark: "#968a7b",
   context: "#c9bdac",
   nodeDim: "#d9cfc1",
+  lowSample: "#bdb2a2",
   caution: "#2a241e",
   cautionSoft: "#f4eee4",
   cautionBorder: "#968a7b",

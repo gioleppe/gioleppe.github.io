@@ -11,7 +11,8 @@
  * @module views/scales
  */
 
-import { PALETTE, winRateStops } from "../core/palette.js";
+import { PALETTE, winRateStops, getThemeTokens } from "../core/palette.js";
+import { LOW_SAMPLE_THRESHOLD } from "../core/StatsEngine.js";
 
 /**
  * Duration of every filter-driven transition, in milliseconds
@@ -36,6 +37,20 @@ export function createWinRateColorScale(d3) {
     .range(PALETTE.winRateDiverging.slice())
     .interpolate(d3.interpolateLab)
     .clamp(true);
+}
+
+/**
+ * Fill of a box, node or flow: the diverging colour of its win share, or the neutral grey of
+ * THEME.lowSample when it holds fewer than LOW_SAMPLE_THRESHOLD points (too little evidence to
+ * colour; the raw share stays readable in the label and tooltip).
+ * @param {(rate: number) => string} colorScale
+ * @param {{ n: number, rawRate: number }} d
+ * @returns {string}
+ */
+export function rateFill(colorScale, d) {
+  return d.n >= LOW_SAMPLE_THRESHOLD && Number.isFinite(d.rawRate)
+    ? colorScale(d.rawRate)
+    : getThemeTokens("light").lowSample;
 }
 
 /**

@@ -9,14 +9,14 @@
  * kept as orientation cues only; cell sizes carry no data.
  *
  * Encoding (Cleveland & McGill):
- *   - cell fill            : Lab-diverging smoothed server win % centred at 0.50, with the exact
+ *   - cell fill            : Lab-diverging server win % centred at 0.50, with the exact
  *                            rate (large) and point count printed in the cell
  *   - marginal bar charts  : share of points per return depth (bars right of the rows) and per
  *                            serve direction (bars under the columns), each on one scale from
  *                            zero: volume is read as length from a common baseline, never as area
- *   - hatch                : low-sample cells (N < LOW_SAMPLE_THRESHOLD); their colour is NOT
- *                            faded: on a lightness-coded diverging scale, fading towards the page
- *                            would read as "closer to 50%"
+ *   - grey + hatch         : low-sample cells (N < LOW_SAMPLE_THRESHOLD): too few points to colour,
+ *                            so they get the neutral grey of THEME.lowSample and stripes; the raw
+ *                            share is still printed in the cell and in the tooltip
  *   - 2px accent stroke    : selected cells; unselected cells are GREYED OUT (paper fill, muted
  *                            labels) rather than made transparent, for the same reason; selected
  *                            rows / columns turn their marginal bar accent
@@ -45,7 +45,7 @@ import { getThemeTokens, winRateStops } from "../core/palette.js";
 import { LOW_SAMPLE_THRESHOLD, computeDeltaVsBaseline, formatPct } from "../core/StatsEngine.js";
 import { SERVE_DIRS, RETURN_DEPTHS } from "../core/DataAdapter.js";
 import { NODE_LABELS, courtCellToggle } from "../core/StateStore.js";
-import { createWinRateColorScale, hatchPatternId, TRANSITION_MS } from "./scales.js";
+import { createWinRateColorScale, hatchPatternId, rateFill, TRANSITION_MS } from "./scales.js";
 
 // ---------------------------------------------------------------------------
 // Geometry (SVG user units; landscape viewBox)
@@ -156,7 +156,7 @@ function isDimmed(cell, hasSelection) {
  */
 function rateLabel(cell) {
   if (!(cell.n > 0)) return "n/a";
-  return formatPct(cell.smoothedRate, 0);
+  return formatPct(cell.rawRate, 0);
 }
 
 /**
@@ -353,10 +353,10 @@ export function createCourtMapView(bodyEl, ctx) {
     .attr("width", 30).attr("height", 18).attr("viewBox", "0 0 30 18")
     .attr("aria-hidden", "true");
   hatchSvg.append("rect").attr("width", 30).attr("height", 18).attr("rx", 2)
-    .attr("fill", colorScale(0.5));
+    .attr("fill", getThemeTokens("light").lowSample);
   const hatchSwatch = hatchSvg.append("rect").attr("width", 30).attr("height", 18).attr("rx", 2)
     .attr("stroke-width", 1);
-  hatchRow.append("span").text("striped: read with care");
+  hatchRow.append("span").text("grey and striped: too few points to colour");
 
   legend.append("p").attr("class", "tva-court-legend__note")
     .text("One service box seen from above (not to scale): net at the top, the server's baseline at the bottom. Columns: where the serve went. Rows: where the return landed. Grey bars: how many points fall in each row and column. Click or tap a box to keep only those points.");
@@ -514,7 +514,7 @@ export function createCourtMapView(bodyEl, ctx) {
             const sel = d3.select(this);
             sel.append("rect").attr("class", "tva-court__cell-rect").attr("rx", 4)
               .attr("x", box.x).attr("y", box.y).attr("width", box.w).attr("height", box.h)
-              .attr("fill", colorScale(d.smoothedRate));
+              .attr("fill", rateFill(colorScale, d));
             sel.append("rect").attr("class", "tva-court__cell-hatch").attr("rx", 4)
               .attr("x", box.x).attr("y", box.y).attr("width", box.w).attr("height", box.h)
               .attr("stroke", "none")
@@ -566,14 +566,14 @@ export function createCourtMapView(bodyEl, ctx) {
 
     withT(groups).attr("opacity", 1);
 
-    const fillOf = (d) => (isDimmed(d, hasSelection) ? DIMMED_FILL : colorScale(d.smoothedRate));
+    const fillOf = (d) => (isDimmed(d, hasSelection) ? DIMMED_FILL : rateFill(colorScale, d));
     withT(groups.select("rect.tva-court__cell-rect"))
       .attr("fill", fillOf)
       .attr("stroke", (d) => (d.selected ? tokens.accentFocus : tokens.textSecondary))
       .attr("stroke-opacity", (d) => (d.selected ? 1 : 0.45))
       .attr("stroke-width", (d) => (d.selected ? 2 : 0.75));
 
-    const labelFill = (d) => (isDimmed(d, hasSelection) ? INK_MUTED : contrastingText(colorScale(d.smoothedRate)));
+    const labelFill = (d) => (isDimmed(d, hasSelection) ? INK_MUTED : contrastingText(rateFill(colorScale, d)));
     withT(groups.select("text.tva-court__cell-rate")).attr("fill", labelFill);
     withT(groups.select("text.tva-court__cell-n")).attr("fill", labelFill);
   }
