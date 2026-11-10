@@ -22,8 +22,8 @@ export const HELP_SECTIONS = Object.freeze([
   {
     heading: "What you are looking at",
     paragraphs: [
-      "Every point of about 2,200 men's singles matches played between 31 October 2022 and 21 May 2026, recorded shot by shot by the volunteers of the Match Charting Project.",
-      "It asks one question: serving is a big advantage in tennis, so when does the server lose it?",
+      "The charts hold every point of about 2,200 men's singles matches played between 31 October 2022 and 21 May 2026. Volunteers of the Match Charting Project recorded each one shot by shot.",
+      "Serving is a big advantage in tennis. This page asks when the server loses it.",
     ],
   },
   {
@@ -38,7 +38,7 @@ export const HELP_SECTIONS = Object.freeze([
     items: [
       { term: "Where serves and returns land.", text: "One service box, seen from above and drawn as a simple grid (not to scale), with the net at the top. Columns show where the serve went (wide, at the body, or down the middle, the \"T\"); rows show where the return landed. The strip above the net holds serves that never came back. Colour shows how often the server won those points (teal: server ahead, brown: returner ahead); the grey bars to the right and underneath show how many points fall in each row and column. Striped boxes have fewer than 10 points, so read them with care." },
       { term: "What happens after the serve.", text: "Follow the points from left to right: where the serve went, where the return landed, then the server's next shot. The thicker a band, the more points took that path; its colour shows how often the server won them." },
-      { term: "Who wins as rallies get longer.", text: "Points grouped by how many shots were played. The top panel shows the share of points the server won, with its 95% range shaded and a dashed line at 50%; the bars below show how many points there were. Hover a column to see how those points ended (winners and errors). Lengths are grouped in pairs because the charting counts the final missed shot, so single lengths alternate between server and returner endings." },
+      { term: "Who wins as rallies get longer.", text: "Points grouped by how many shots were played. The top panel shows the share of points the server won, with its 95% range shaded and a dashed line at 50%; the bars below show how many points there were. Hover a column to see how those points ended (winners and errors). Lengths are grouped in pairs. The charting counts the final missed shot, so odd lengths always end on the server's shot and even lengths on the returner's, and single lengths would zig-zag." },
     ],
   },
   {
@@ -53,7 +53,7 @@ export const HELP_SECTIONS = Object.freeze([
   {
     heading: "Reading the numbers",
     paragraphs: [
-      "Each percentage comes with the number of points behind it and a 95% range: the value we would expect if many more matches were charted very likely lies in that range. Few points mean a wide range.",
+      "Each percentage comes with the number of points behind it and a 95% range. If many more matches were charted, the percentage would very likely stay inside that range. The fewer the points, the wider the range.",
       "Boxes and flows with fewer than 10 points are painted grey instead of coloured (the court boxes are also striped), so a lucky handful of points does not look like a pattern. Their share is still printed.",
     ],
   },
