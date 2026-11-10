@@ -94,7 +94,7 @@ export const STORY = Object.freeze({
     {
       id: "deep-long",
       title: "Longer rallies barely change it",
-      text: "Same deep returns, now in rallies of five shots or more. If long rallies were what wears the server down, this share would drop clearly below the previous step. It hardly moves: the deep return had already taken the advantage. The data shows what tends to happen together, not proof of cause.",
+      text: "Same deep returns, now in rallies of five shots or more. If long rallies wore the server down, this share would fall well below the one in the previous step. It hardly moves, because the deep return had already taken the advantage. The data shows what tends to happen together, not proof of cause.",
       patch: { selectedReturnDepths: ["Deep", "VeryDeep"], rallyRangeBrush: [5, RALLY_CAP] },
       focus: ["rally", "court"],
       groups: [{ include: (p) => !short(p) && deep(p) }, { include: (p) => short(p) && deep(p) }],

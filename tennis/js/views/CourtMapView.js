@@ -359,7 +359,7 @@ export function createCourtMapView(bodyEl, ctx) {
   hatchRow.append("span").text("grey and striped: too few points to colour");
 
   legend.append("p").attr("class", "tva-court-legend__note")
-    .text("One service box seen from above (not to scale): net at the top, the server's baseline at the bottom. Columns: where the serve went. Rows: where the return landed. Grey bars: how many points fall in each row and column. Click or tap a box to keep only those points.");
+    .text("One service box seen from above (not to scale): net at the top, the server's baseline at the bottom. Columns show where the serve went, rows where the return landed, and the grey bars how many points fall in each. Click or tap a box to keep only those points.");
 
   // ----- theme colours for the static parts -----
 
