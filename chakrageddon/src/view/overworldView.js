@@ -6,6 +6,7 @@ import { bandOf, bandIndex } from '../core/intox.js';
 import { routeHint } from '../core/goals.js';
 import { hashOf } from './anim.js';
 import { questMarker } from '../core/quests.js';
+const SWAY_BAND = 4;   // rows per band when a prop sways (see prop)
 
 const BAND_COLORS = ['#00FF66', '#FFD23F', '#FF4FA8', '#C86BFF'];
 // quest markers as little pixel icons: K outline, Y fill, W highlight
@@ -64,12 +65,14 @@ export const overworldView = {
     const still = game.settings.reducedMotion, t = this.t;
     const bpm = game.data.zones[game.engine.state.zoneId]?.baseBpm || 140, beat = Math.max(0, 1 - (((t * bpm) / 60) % 1) * 4);
     const sway = still ? 0 : name === 'palm' || name === 'tree' ? Math.sin(t * 1.3 + tx * 0.9 + ty * 0.4) * 0.05 : name === 'bamboo' ? Math.sin(t * 1.7 + tx) * 0.08 : name === 'flag' ? Math.sin(t * 6 + tx) * 0.14 : 0;
-    const pump = !still && name === 'speaker' ? beat * 0.06 : 0;
-    g.save(); g.translate(bx, by);
-    if (sway) g.transform(1, 0, sway, 1, 0, 0);
-    if (pump) g.scale(1 + pump * 0.5, 1 - pump);
-    g.drawImage(img, -pr.w / 2, -pr.h);
-    g.restore();
+    // Whole pixels only: a skew or a fractional scale resamples every row differently and shows as stripes.
+    // A sway shifts 4-pixel bands of the sprite, more towards the top; a speaker hops 1 pixel on the beat.
+    const x0 = Math.round(bx - pr.w / 2), y0 = Math.round(by - pr.h) - (!still && name === 'speaker' && beat > 0.5 ? 1 : 0);
+    if (!sway) g.drawImage(img, 0, 0, pr.w, pr.h, x0, y0, pr.w, pr.h);
+    else for (let y = 0; y < pr.h; y += SWAY_BAND) {
+      const h = Math.min(SWAY_BAND, pr.h - y), shift = Math.round(sway * (pr.h - y - h / 2));
+      g.drawImage(img, 0, y, pr.w, h, x0 + shift, y0 + y, pr.w, h);
+    }
     if (name === 'lamp' && !still) { g.globalAlpha = 0.18 + 0.08 * Math.sin(t * 9 + tx * 3); g.fillStyle = '#FFE066'; g.beginPath(); g.arc(bx, by - pr.h + 5, 8, 0, 7); g.fill(); g.globalAlpha = 1; }
   },
   /** a dancer bouncing to the zone's BPM on a dancefloor tile */

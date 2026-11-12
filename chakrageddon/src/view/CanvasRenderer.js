@@ -25,7 +25,10 @@ export class CanvasRenderer {
     const portrait = vh > vw;
     // portrait touch layout keeps the lower part of the screen free for the controls
     const availH = touch && portrait ? vh * 0.58 : vh;
-    this.scale = Math.max(1, Math.floor(Math.min((vw * dpr) / W, (availH * dpr) / H)));
+    // the largest whole scale that fits (sharp pixels), less the steps chosen in Options (Picture size)
+    this.fit = Math.max(1, Math.floor(Math.min((vw * dpr) / W, (availH * dpr) / H)));
+    this.scale = Math.max(1, this.fit - (this.shrink || 0));
+    this.cssW = Math.round((W * this.scale) / dpr); this.cssH = Math.round((H * this.scale) / dpr);
     const c = this.canvas;
     if (c.width !== W * this.scale) { c.width = W * this.scale; c.height = H * this.scale; }
     c.style.width = `${(W * this.scale) / dpr}px`;

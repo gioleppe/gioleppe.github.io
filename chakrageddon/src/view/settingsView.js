@@ -4,6 +4,7 @@ import { drawText, wrap, panel, list, C } from './ui.js';
 
 const SPEED = ['Slow', 'Normal', 'Fast'];
 const BATTLE_SPEED = ['Normal', 'Fast', 'Very fast'];
+const PICTURE = ['Full', 'Large', 'Medium', 'Small'];
 
 export const settingsView = {
   screen: true, titleEntry: 'Options', cursor: 0, from: 'title',
@@ -22,6 +23,7 @@ export const settingsView = {
       { id: 'textSpeed', label: 'Text speed', right: SPEED[st.textSpeed], help: 'How fast dialogue types out.' },
       { id: 'battleSpeed', label: 'Battle speed', right: BATTLE_SPEED[st.battleSpeed || 0], help: 'How fast battles play out. Holding B also fast-forwards.' },
       { id: 'battleStyle', label: 'Battle style', right: st.battleStyle === 'set' ? 'Set' : 'Shift', help: st.battleStyle === 'set' ? 'Set: a trainer sends their next Astral straight in.' : 'Shift: when you knock out an Astral of a trainer, you may swap yours before the next one comes out.' },
+      { id: 'pictureSize', label: 'Picture size', right: PICTURE[st.pictureSize || 0], help: pictureHelp(game) },
       { id: 'volume', label: 'Volume', right: `${Math.round(st.volume * 100)}%`, help: 'Music and sound. 0% is mute.' },
       { id: 'jukebox', label: 'Sound test', right: '', help: 'Listen to the music of every zone, battles and bosses.' },
       { id: 'keys', label: 'Remap keyboard', right: '', help: 'Choose your own keys. Arrow keys, Enter and Esc always keep working.' },
@@ -29,7 +31,7 @@ export const settingsView = {
       { id: 'import', label: 'Import save from file', right: '', help: 'Loads a save file. This replaces the save on this device.' },
       { id: 'back', label: 'Back', right: '', help: '' },
     ];
-    const r = list(game, g, rows, 28, 25, W - 56, this.cursor, { rowH: 11 });   // 11 rows above the help text
+    const r = list(game, g, rows, 28, 25, W - 56, this.cursor, { rowH: 11, maxRows: 10 });   // scrolls: 10 rows above the help text
     this.cursor = r.cursor;
     const row = rows[this.cursor];
     wrap(row.help, W - 64).slice(0, 2).forEach((ln, i) => drawText(g, ln, 32, 150 + i * 10, { color: C.chai }));
@@ -42,6 +44,7 @@ export const settingsView = {
       else if (id === 'textSpeed') st.textSpeed = (st.textSpeed + (act > 0 ? 1 : 2)) % 3;
       else if (id === 'battleSpeed') st.battleSpeed = ((st.battleSpeed || 0) + (act > 0 ? 1 : 2)) % 3;
       else if (id === 'battleStyle') st.battleStyle = st.battleStyle === 'set' ? 'shift' : 'set';
+      else if (id === 'pictureSize') st.pictureSize = ((st.pictureSize || 0) + (act > 0 ? 1 : 3)) % 4;
       else if (id === 'volume') st.volume = Math.max(0, Math.min(1, Math.round((st.volume + act * 0.1) * 10) / 10)) % 1.1;
       else if (id === 'keys' && r.chosen >= 0) { this.remap = { i: 0 }; return; }
       else if (id === 'jukebox' && r.chosen >= 0) { this.juke = { i: 0, playing: null }; return; }
@@ -91,3 +94,10 @@ export const settingsView = {
 };
 
 export function install(game) { game.register('settings', settingsView); }
+
+/** what Picture size gives on this screen: the size in pixels, and whether it can go any smaller */
+function pictureHelp(game) {
+  const r = game.renderer, now = r?.cssW ? ` Now ${r.cssW}x${r.cssH}.` : '';
+  const floor = r && r.scale === 1 && (game.settings.pictureSize || 0) > 0 && r.fit - (game.settings.pictureSize || 0) < 1;
+  return `Smaller picture in sharp whole steps, centred on black.${now}${floor ? ' (As small as it goes.)' : ''}`;
+}

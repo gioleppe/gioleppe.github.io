@@ -43,7 +43,9 @@ export const dialogueView = {
   },
 
   draw(game, g) {
-    const d = game.engine.state.dialogue;
+    // sync first: a line can advance during this frame's update (or a choice in the last draw), and drawing the
+    // new dialogue with the old line's progress would flash its choice box before the question is typed
+    const d = this.sync(game);
     if (!d || !this.pages.length) return;
     const y = H - BOX_H - 3, intox = game.fxLevel();
     panel(g, 3, y, W - 6, BOX_H, { bg: C.cream, accent: C.terracotta });

@@ -8,7 +8,7 @@ import { dialogueView } from './dialogueView.js';
 import { CUES, CUE_SECONDS } from './WebGLPostProcess.js';
 
 const SAVE_KEY = 'chakrageddon.save.v1', SETTINGS_KEY = 'chakrageddon.settings.v1';
-export const VERSION = '1.0.33';
+export const VERSION = '1.0.34';
 
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
@@ -20,6 +20,7 @@ export class Game {
   constructor({ assets, input, renderer, audio }) {
     this.data = assets.data; this.atlas = assets.atlas; this.images = assets.images;
     this.input = input; this.renderer = renderer; this.audio = audio;
+    queueMicrotask?.(() => this.applyPictureSize());
     this.settings = { grounded: false, reducedMotion: false, textSpeed: 1, volume: 0.7, battleSpeed: 0, ...JSON.parse(store.get(SETTINGS_KEY) || '{}') };
     this.engine = null;
     this.screen = 'title';
@@ -34,7 +35,9 @@ export class Game {
   }
 
   register(name, view) { this.extra[name] = view; this.views.push(view); }
-  saveSettings() { store.set(SETTINGS_KEY, JSON.stringify(this.settings)); this.audio?.setVolume(this.settings.volume); }
+  saveSettings() { store.set(SETTINGS_KEY, JSON.stringify(this.settings)); this.audio?.setVolume(this.settings.volume); this.applyPictureSize(); }
+  /** Options: Picture size, in whole-scale steps below the largest that fits */
+  applyPictureSize() { if (!this.renderer) return; if (this.renderer.shrink !== (this.settings.pictureSize || 0)) { this.renderer.shrink = this.settings.pictureSize || 0; this.renderer.resize?.(); } }
   hasSave() { return !!store.get(SAVE_KEY); }
   rawSave() { return store.get(SAVE_KEY); }
 
