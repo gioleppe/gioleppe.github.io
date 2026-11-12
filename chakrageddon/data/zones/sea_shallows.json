@@ -1,0 +1,185 @@
+{
+  "zoneId": "sea_shallows",
+  "name": "Arabian Sea Shallows",
+  "paletteId": "ANJUNA_DUST",
+  "baseBpm": 120,
+  "ground": "sand",
+  "ground2": "path",
+  "wall": "cliff",
+  "encounter": "incense",
+  "cordonFlag": "beat_chloe",
+  "cordonText": "A sadhu bars the cave mouth with his staff. \"Baba Smoke sees nobody without a press pass. He likes the coverage.\"",
+  "rows": [
+    "^^^^^^^^^,,^^^^^^^^^",
+    "^^^^^^^^^BB^^^^^^^^^",
+    "^^^^^^^......^^^^^^^",
+    "^^^^^^.......^^^^^^^",
+    "WwwwwwwwwwwwwwwwwwwW",
+    "Wwwo...wwwwwwoowwwwW",
+    "Wwww....wwwwwwwwwwww",
+    "Wwwww..wwwwwxx.wwwww",
+    "WwwwwwwwwwwoxwwwwwwW",
+    "WWwwwwwwwwwwwww..owW",
+    "WwwwoowwwwwwwwwwwwwW",
+    "WWWWWWwwwwwwwwWWWWWW",
+    "WWWWWWWWwwwwWWWWWWWW",
+    "WWWWWWWWwwwwWWWWWWWW"
+  ],
+  "warps": [
+    {
+      "x": 8,
+      "y": 13,
+      "to": "scooter_ditch",
+      "tx": 9,
+      "ty": 1,
+      "dir": "DOWN"
+    },
+    {
+      "x": 9,
+      "y": 13,
+      "to": "scooter_ditch",
+      "tx": 10,
+      "ty": 1,
+      "dir": "DOWN"
+    },
+    {
+      "x": 10,
+      "y": 13,
+      "to": "scooter_ditch",
+      "tx": 11,
+      "ty": 1,
+      "dir": "DOWN"
+    },
+    {
+      "x": 11,
+      "y": 13,
+      "to": "scooter_ditch",
+      "tx": 12,
+      "ty": 1,
+      "dir": "DOWN"
+    },
+    {
+      "x": 19,
+      "y": 6,
+      "to": "sweetwater_lake",
+      "tx": 1,
+      "ty": 6,
+      "dir": "RIGHT"
+    },
+    {
+      "x": 19,
+      "y": 7,
+      "to": "sweetwater_lake",
+      "tx": 1,
+      "ty": 7,
+      "dir": "RIGHT"
+    },
+    {
+      "x": 9,
+      "y": 0,
+      "to": "sadhu_cave",
+      "tx": 8,
+      "ty": 14,
+      "dir": "UP"
+    },
+    {
+      "x": 10,
+      "y": 0,
+      "to": "sadhu_cave",
+      "tx": 9,
+      "ty": 14,
+      "dir": "UP"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "sea_sadhu",
+      "x": 8,
+      "y": 2,
+      "sprite": "baba",
+      "dir": "DOWN",
+      "script": "sea_sadhu"
+    },
+    {
+      "id": "sea_sign",
+      "x": 11,
+      "y": 3,
+      "tile": "sign",
+      "script": "sign_sea"
+    }
+  ],
+  "pickups": [
+    {
+      "id": "sea_vial",
+      "x": 7,
+      "y": 3,
+      "item": "amber_vial",
+      "n": 2
+    },
+    {
+      "id": "sea_sandbar",
+      "x": 5,
+      "y": 6,
+      "item": "coconut_water",
+      "n": 2
+    },
+    {
+      "id": "sea_wreck",
+      "x": 14,
+      "y": 7,
+      "item": "amber_vial",
+      "n": 2,
+      "hidden": true
+    },
+    {
+      "id": "sea_spit",
+      "x": 16,
+      "y": 9,
+      "item": "watermelon_slice",
+      "n": 1
+    }
+  ],
+  "encounters": {
+    "encounterRate": 0.1,
+    "table": [
+      {
+        "speciesId": "ketacrab",
+        "minLevel": 20,
+        "maxLevel": 23,
+        "weight": 1
+      }
+    ],
+    "water": [
+      {
+        "speciesId": "ketacrab",
+        "minLevel": 20,
+        "maxLevel": 23,
+        "weight": 30
+      },
+      {
+        "speciesId": "wonkrab",
+        "minLevel": 24,
+        "maxLevel": 24,
+        "weight": 15
+      },
+      {
+        "speciesId": "neighbula",
+        "minLevel": 20,
+        "maxLevel": 24,
+        "weight": 25
+      },
+      {
+        "speciesId": "nitroxide",
+        "minLevel": 20,
+        "maxLevel": 23,
+        "weight": 15
+      },
+      {
+        "speciesId": "lobsterlad",
+        "minLevel": 22,
+        "maxLevel": 24,
+        "weight": 15
+      }
+    ]
+  }
+}

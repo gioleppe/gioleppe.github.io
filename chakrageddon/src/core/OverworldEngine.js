@@ -1,0 +1,280 @@
+// Grid movement, collision, warps, field techniques, trainer line-of-sight and wild encounter rolls.
+// Pure functions over ctx = { data, state, rng, emit }.
+import { check } from './quests.js';
+import { bandOf } from './intox.js';
+import { runScript, startScript } from './ScriptEngine.js';
+
+export const DIRS = { UP: [0, -1], DOWN: [0, 1], LEFT: [-1, 0], RIGHT: [1, 0] };
+const key = (x, y) => `${x},${y}`;
+
+export const T = { FLOOR: 0, SOLID: 1, ENCOUNTER: 2, WATER: 3, CORDON: 4, FAIRY: 5, PUSH: 6, PADLOCK: 7, ROOTS: 8, CHAI: 9 };
+
+export function zoneOf(ctx) { return ctx.data.zones[ctx.state.zoneId]; }
+
+/** Tile character at x,y after clears and pushes; null outside the map. */
+export function charAt(ctx, x, y, zone = zoneOf(ctx)) {
+  if (y < 0 || y >= zone.rows.length || x < 0 || x >= zone.rows[y].length) return null;
+  const s = ctx.state, k = key(x, y);
+  const pushed = s.pushed[zone.zoneId];
+  if (pushed && k in pushed) return pushed[k];
+  const cleared = s.cleared[zone.zoneId];
+  if (cleared && cleared[k]) return '.';
+  return zone.rows[y][x];
+}
+export function logicAt(ctx, x, y, zone = zoneOf(ctx)) {
+  const ch = charAt(ctx, x, y, zone);
+  if (ch === null) return T.SOLID;
+  const def = ctx.data.legend[ch];
+  return def ? def.id : T.SOLID;
+}
+
+export function npcVisible(ctx, npc) {
+  const f = ctx.state.flags;
+  if (npc.showIf && !f[npc.showIf]) return false;
+  if (npc.hideIf && f[npc.hideIf]) return false;
+  if (npc.minIntox !== undefined && ctx.state.intox < npc.minIntox) return false;   // only there when you are high enough to see them
+  if (npc.showWhen && !check(ctx.state, npc.showWhen, ctx.data)) return false;      // any quest condition (src/core/quests.js)
+  if (npc.hideWhen && check(ctx.state, npc.hideWhen, ctx.data)) return false;
+  if (npc.maxIntox !== undefined && ctx.state.intox > npc.maxIntox) return false;
+  return true;
+}
+/** where an NPC is now: wanderers keep their position in state.npcPos, everyone else stays put */
+export function npcPos(ctx, npc, zone = zoneOf(ctx)) {
+  const p = ctx.state.npcPos?.[zone.zoneId]?.[npc.id];
+  return p ? { x: p[0], y: p[1], dir: p[2] || npc.dir } : { x: npc.x, y: npc.y, dir: npc.dir };
+}
+export function entityAt(ctx, x, y, zone = zoneOf(ctx)) {
+  for (const n of zone.npcs || []) { const p = npcPos(ctx, n, zone); if (p.x === x && p.y === y && npcVisible(ctx, n)) return { kind: 'npc', npc: n }; }
+  for (const p of zone.pickups || []) {
+    if (p.x !== x || p.y !== y || ctx.state.picked[p.id]) continue;
+    if (p.hidden && !canUse(ctx, 'blacklight_uv_pulse')) continue;   // hidden stashes need the UV pulse
+    return { kind: 'pickup', pickup: p };
+  }
+  return null;
+}
+
+/** A field technique works when the wristband is owned and a party member has a matching type. */
+export function canUse(ctx, techId) {
+  const t = ctx.data.rules.techniques?.[techId];
+  if (!t) return false;
+  if (!ctx.state.wristbands.includes(t.wristband)) return false;
+  if (!t.types || !t.types.length) return true;
+  return ctx.state.party.some((m) => ctx.data.dex[m.speciesId].types.some((ty) => t.types.includes(ty)));
+}
+const TECH_FOR = { [T.WATER]: 'pink_flamingo_float', [T.FAIRY]: 'machete_hack', [T.PUSH]: 'bass_drop_shove', [T.PADLOCK]: 'jaw_grind', [T.ROOTS]: 'banyan_root_climb' };
+
+function cordonOpen(ctx, zone) { return !!(zone.cordonFlag && ctx.state.flags[zone.cordonFlag]); }
+
+function walkable(ctx, x, y, zone) {
+  const id = logicAt(ctx, x, y, zone);
+  if (id === T.FLOOR || id === T.ENCOUNTER) return true;
+  if (id === T.CORDON) return cordonOpen(ctx, zone);
+  if (id === T.WATER) return canUse(ctx, 'pink_flamingo_float');
+  if (id === T.ROOTS) return canUse(ctx, 'banyan_root_climb');
+  return false;
+}
+
+function useTechnique(ctx, id, x, y, dir, zone) {
+  const s = ctx.state, techId = TECH_FOR[id];
+  if (!techId || !canUse(ctx, techId)) return false;
+  if (id === T.FAIRY || id === T.PADLOCK) {
+    (s.cleared[zone.zoneId] ||= {})[key(x, y)] = 1;
+    ctx.emit({ type: 'FIELD_TECHNIQUE', techniqueId: techId, x, y });
+    ctx.emit({ type: 'AUDIO_CUE', sfxId: 'technique' });
+    return true;
+  }
+  if (id === T.PUSH) {
+    const [dx, dy] = DIRS[dir], tx = x + dx, ty = y + dy;
+    if (logicAt(ctx, tx, ty, zone) !== T.FLOOR || entityAt(ctx, tx, ty, zone) || (zone.warps || []).some((w) => w.x === tx && w.y === ty)) return false;
+    const pushed = (s.pushed[zone.zoneId] ||= {});
+    const ch = charAt(ctx, x, y, zone);
+    pushed[key(x, y)] = '.';
+    pushed[key(tx, ty)] = ch;
+    ctx.emit({ type: 'FIELD_TECHNIQUE', techniqueId: techId, x, y, to: [tx, ty] });
+    ctx.emit({ type: 'AUDIO_CUE', sfxId: 'push' });
+    return true;
+  }
+  return false;
+}
+
+export function isNight(state) { const h = Math.floor(state.clock / 60) % 24; return h >= 19 || h < 6; }
+
+export function enterZone(ctx, zoneId, x, y, dir) {
+  if (ctx.state.npcPos) delete ctx.state.npcPos[zoneId];          // wanderers start from home on each visit
+  for (const f of ctx.data.zones[zoneId].resetOnEnter || []) delete ctx.state.flags[f];   // e.g. a legendary that slipped away comes back
+  const s = ctx.state, from = s.zoneId;
+  s.zoneId = zoneId; s.player.x = x; s.player.y = y; if (dir) s.player.dir = dir;
+  delete s.pushed[zoneId];
+  s.visited[zoneId] = 1;
+  const zone = ctx.data.zones[zoneId];
+  ctx.emit({ type: 'ZONE_CHANGED', from, to: zoneId, name: zone.name });
+  ctx.emit({ type: 'AUDIO_CUE', trackBpm: zone.baseBpm, lowPassFilterHz: 20000 });
+}
+
+export function step(ctx, dir) {
+  const s = ctx.state, zone = zoneOf(ctx), [dx, dy] = DIRS[dir];
+  s.player.dir = dir;
+  const from = [s.player.x, s.player.y], nx = from[0] + dx, ny = from[1] + dy;
+  if (entityAt(ctx, nx, ny, zone)) return bump(ctx);
+  if (!walkable(ctx, nx, ny, zone)) {
+    const id = logicAt(ctx, nx, ny, zone);
+    if (useTechnique(ctx, id, nx, ny, dir, zone)) return;
+    return bump(ctx);
+  }
+  s.player.x = nx; s.player.y = ny;
+  s.steps++; s.clock = (s.clock + 1) % 1440;
+  s.intox = Math.max(0, s.intox - (ctx.data.rules.intoxStepDecay ?? 0.002));
+  if (s.repel > 0) s.repel--;
+  const id = logicAt(ctx, nx, ny, zone);
+  ctx.emit({ type: 'ENTITY_MOVED', entityId: 'player', from, to: [nx, ny], floating: id === T.WATER });
+
+  const warp = (zone.warps || []).find((w) => w.x === nx && w.y === ny);
+  if (warp) { enterZone(ctx, warp.to, warp.tx, warp.ty, warp.dir); return; }
+
+  if (checkTrainerSight(ctx, zone)) return;
+  wander(ctx, zone);
+
+  const enc = zone.encounters;
+  if (enc && s.party.length && (id === T.ENCOUNTER || (id === T.WATER && enc.water)) && s.repel <= 0) {
+    const band = bandOf(ctx.data.rules, s.intox);
+    if (ctx.rng.chance(Math.min(0.9, enc.encounterRate * (band.encounter ?? 1)))) {
+      const base = (id === T.WATER && enc.water) || (isNight(s) && enc.nightTable) || enc.table;
+      // some Astrals only show themselves to people who are high enough (minIntox)
+      const table = base.filter((e) => !(e.minIntox > s.intox));
+      // higher bands tilt the odds towards species with a high intoxication weight
+      const tilt = band.tilt || 0;
+      const weightOf = (e) => (tilt ? Math.max(e.weight * 0.2, e.weight * (1 + tilt * ((ctx.data.dex[e.speciesId].intoxicationWeight ?? 0.4) - 0.4) * 2)) : e.weight);
+      const pick = ctx.rng.weighted(table, weightOf);
+      const level = Math.min(60, ctx.rng.int(pick.minLevel, pick.maxLevel) + (band.wildLevel || 0));
+      ctx.emit({ type: 'WILD_ENCOUNTER', speciesId: pick.speciesId, level });
+      ctx.hooks.startWildBattle?.(ctx, pick.speciesId, level);
+    }
+  }
+}
+/** small deterministic hash, so wandering does not touch the game's random numbers */
+function hash(str) { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return h; }
+/** NPCs with wander: [x0, y0, x1, y1] take a step inside that box now and then, as the player walks */
+function wander(ctx, zone) {
+  const s = ctx.state;
+  for (const n of zone.npcs || []) {
+    if (!n.wander || n.trainer || !npcVisible(ctx, n)) continue;
+    const h = hash(`${n.id}:${s.steps}`);
+    if (h % 3) continue;                                   // about one step in three
+    const p = npcPos(ctx, n, zone), dir = Object.keys(DIRS)[(h >>> 4) % 4], [dx, dy] = DIRS[dir];
+    const nx = p.x + dx, ny = p.y + dy, [x0, y0, x1, y1] = n.wander;
+    (s.npcPos ||= {})[zone.zoneId] ||= {};
+    const id = logicAt(ctx, nx, ny, zone);
+    const free = nx >= x0 && nx <= x1 && ny >= y0 && ny <= y1 && (id === T.FLOOR || id === T.ENCOUNTER) && !entityAt(ctx, nx, ny, zone)
+      && !(nx === s.player.x && ny === s.player.y) && !(zone.warps || []).some((w) => w.x === nx && w.y === ny);
+    s.npcPos[zone.zoneId][n.id] = free ? [nx, ny, dir] : [p.x, p.y, dir];
+    if (free) ctx.emit({ type: 'NPC_MOVED', npcId: n.id, from: [p.x, p.y], to: [nx, ny], dir });
+  }
+}
+function bump(ctx) { ctx.emit({ type: 'BUMP', dir: ctx.state.player.dir }); }
+
+function sightRange(ctx, npc) {
+  let r = npc.sight ?? 4;
+  if ((ctx.state.bag.wraparound_shades || 0) > 0) r -= 1;
+  return Math.max(1, r);
+}
+export function checkTrainerSight(ctx, zone) {
+  const s = ctx.state;
+  if (!s.party.length) return false;
+  for (const npc of zone.npcs || []) {
+    if (!npc.trainer || s.defeated[npc.trainer] || !npcVisible(ctx, npc) || npc.sight === 0) continue;
+    const [dx, dy] = DIRS[npc.dir || 'DOWN'];
+    for (let d = 1; d <= sightRange(ctx, npc); d++) {
+      const x = npc.x + dx * d, y = npc.y + dy * d;
+      if (x === s.player.x && y === s.player.y) {
+        ctx.emit({ type: 'EYE_CONTACT', npcId: npc.id, x: npc.x, y: npc.y });
+        ctx.emit({ type: 'AUDIO_CUE', sfxId: 'alert' });
+        // they walk right up to you before they start talking
+        if (d > 1) {
+          const ax = npc.x + dx * (d - 1), ay = npc.y + dy * (d - 1);
+          ((s.npcPos ||= {})[zone.zoneId] ||= {})[npc.id] = [ax, ay, npc.dir || 'DOWN'];
+          ctx.emit({ type: 'NPC_MOVED', npcId: npc.id, from: [npc.x, npc.y], to: [ax, ay], dir: npc.dir || 'DOWN', walkUp: true });
+        }
+        startTrainerFlow(ctx, npc, 'EYE_CONTACT_CUTSCENE');
+        return true;
+      }
+      const id = logicAt(ctx, x, y, zone);
+      if (!(id === T.FLOOR || id === T.ENCOUNTER) || entityAt(ctx, x, y, zone)) break;
+    }
+  }
+  return false;
+}
+
+export function startTrainerFlow(ctx, npc, mode = 'DIALOGUE') {
+  const t = ctx.data.trainers[npc.trainer];
+  const steps = [];
+  for (const line of t.intro || []) steps.push({ s: t.name, t: line, style: t.textStyle });
+  steps.push({ battle: t.id });
+  for (const line of t.defeat || []) steps.push({ s: t.name, t: line, style: t.textStyle });
+  if (t.wristband) steps.push({ wristband: t.wristband });
+  if (t.gives) steps.push({ give: t.gives, n: 1 });
+  if (t.setFlag) steps.push({ set: t.setFlag });
+  if (t.then) steps.push({ run: t.then });
+  startScript(ctx, steps, mode);
+}
+
+/** a beaten trainer with { rematch, rematchBands, rematchFlag } offers a stronger rematch once you have progressed */
+export function rematchReady(ctx, t) {
+  const s = ctx.state, re = t?.rematch && ctx.data.trainers[t.rematch];
+  if (!re || s.defeated[re.id] || !s.defeated[t.id]) return false;
+  if (t.rematchBands !== undefined && s.wristbands.length < t.rematchBands) return false;
+  if (t.rematchFlag && !s.flags[t.rematchFlag]) return false;
+  return true;
+}
+function startRematch(ctx, t) {
+  const re = ctx.data.trainers[t.rematch], st = t.textStyle;
+  const steps = [
+    { s: t.name, t: re.offer || 'You again. Want to see how much I have grown?', style: st, choice: ['Bring it', 'Not now'], goto: ['go', 'no'] },
+    { label: 'go' },
+    ...(re.intro || []).map((line) => ({ s: re.name, t: line, style: st })),
+    { battle: re.id },
+    ...(re.defeat || []).map((line) => ({ s: re.name, t: line, style: st })),
+    { end: true },
+    { label: 'no' },
+    { s: t.name, t: t.after || '...', style: st },
+  ];
+  startScript(ctx, steps);
+}
+
+const HINTS = {
+  [T.WATER]: 'Foam and shallows. You would need something that floats.',
+  [T.FAIRY]: 'A knot of fairy lights and bamboo. Something sharp would help.',
+  [T.PUSH]: 'Far too heavy to move. For now.',
+  [T.PADLOCK]: 'A padlocked VIP fence. Somebody could chew through that.',
+  [T.ROOTS]: 'Banyan roots climb the cliff. Not for a beginner.',
+  [T.CORDON]: 'A bouncer cordon. "Not tonight, boss."',
+};
+
+export function interact(ctx) {
+  const s = ctx.state, zone = zoneOf(ctx), [dx, dy] = DIRS[s.player.dir];
+  const x = s.player.x + dx, y = s.player.y + dy;
+  const ent = entityAt(ctx, x, y, zone);
+  if (ent?.kind === 'npc') {
+    const npc = ent.npc;
+    ctx.emit({ type: 'NPC_FACE', npcId: npc.id, dir: { UP: 'DOWN', DOWN: 'UP', LEFT: 'RIGHT', RIGHT: 'LEFT' }[s.player.dir] });
+    if (npc.trainer && !s.defeated[npc.trainer]) return startTrainerFlow(ctx, npc);
+    if (npc.trainer && rematchReady(ctx, ctx.data.trainers[npc.trainer])) return startRematch(ctx, ctx.data.trainers[npc.trainer]);
+    if (npc.trainer && !npc.script) {
+      const t = ctx.data.trainers[npc.trainer];
+      return startScript(ctx, [{ s: t.name, t: t.after || '...', style: t.textStyle }]);
+    }
+    if (npc.script) return startScript(ctx, ctx.data.dialogues[npc.script] || [{ t: `(missing script ${npc.script})` }]);
+    return;
+  }
+  if (ent?.kind === 'pickup') {
+    const p = ent.pickup;
+    s.picked[p.id] = 1;
+    return startScript(ctx, [{ give: p.item, n: p.n || 1 }]);
+  }
+  const id = logicAt(ctx, x, y, zone);
+  if (id === T.CHAI) return startScript(ctx, ctx.data.dialogues.chai_tent || [{ heal: true }], 'CHAI_TENT_RECOVERY');
+  if (id === T.CORDON && cordonOpen(ctx, zone)) return;
+  if (useTechnique(ctx, id, x, y, s.player.dir, zone)) return;
+  if (HINTS[id] && !(TECH_FOR[id] && canUse(ctx, TECH_FOR[id]))) startScript(ctx, [{ t: (id === T.CORDON && zone.cordonText) || HINTS[id] }]);
+}
+
+export { runScript };

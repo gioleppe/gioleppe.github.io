@@ -1,0 +1,45 @@
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; height: 100%; background: #0B0314; overflow: hidden; overscroll-behavior: none; }
+body {
+  display: flex; flex-direction: column; align-items: center;
+  font: 600 14px system-ui, sans-serif; color: #F9DCC4;
+  touch-action: none; user-select: none; -webkit-user-select: none;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+#stage { flex: none; display: flex; justify-content: center; align-items: center; width: 100%; }
+#game { image-rendering: pixelated; image-rendering: crisp-edges; display: block; background: #000; }
+
+/* touch pad: portrait = below the picture, in the free space */
+#pad { flex: 1; width: 100%; max-width: 560px; position: relative; display: none; min-height: 0; }
+.touch #pad { display: block; }
+#dpad {
+  position: absolute; left: 6%; top: 50%; width: 150px; height: 150px; margin-top: -75px; border-radius: 50%;
+  background: radial-gradient(circle, #2A1248 0 28%, #1A0B2E 29% 100%); border: 2px solid #8F00FF55;
+}
+#dpad i { position: absolute; width: 0; height: 0; border: 12px solid transparent; opacity: .75; }
+#dpad .u { left: 50%; top: 12px; margin-left: -12px; border-bottom-color: #F9DCC4; border-top-width: 0; }
+#dpad .d { left: 50%; bottom: 12px; margin-left: -12px; border-top-color: #F9DCC4; border-bottom-width: 0; }
+#dpad .l { top: 50%; left: 12px; margin-top: -12px; border-right-color: #F9DCC4; border-left-width: 0; }
+#dpad .r { top: 50%; right: 12px; margin-top: -12px; border-left-color: #F9DCC4; border-right-width: 0; }
+#dpad[data-dir="up"] .u, #dpad[data-dir="down"] .d, #dpad[data-dir="left"] .l, #dpad[data-dir="right"] .r { opacity: 1; filter: drop-shadow(0 0 6px #FF007F); }
+#ab { position: absolute; right: 5%; top: 50%; width: 160px; height: 130px; margin-top: -65px; }
+button { font: inherit; color: inherit; border: 0; padding: 0; touch-action: none; }
+.round { position: absolute; width: 72px; height: 72px; border-radius: 50%; font-size: 22px; border: 2px solid #ffffff33; }
+.round.a { right: 0; top: 0; background: #FF007F; color: #0B0314; }
+.round.b { left: 0; bottom: 0; background: #00B8C8; color: #0B0314; }
+.round.on, #btn-start.on { filter: brightness(1.5); transform: scale(.94); }
+#btn-start {
+  position: absolute; left: 50%; bottom: 8%; width: 88px; height: 44px; margin-left: -44px; border-radius: 22px;
+  background: #2A1248; border: 2px solid #8F00FF88; font-size: 12px; letter-spacing: 1px;
+}
+
+/* landscape phones: picture centred, controls overlaid at the sides */
+@media (orientation: landscape) {
+  body { justify-content: center; }
+  .touch #pad { position: fixed; inset: 0; max-width: none; pointer-events: none; }
+  .touch #pad > * { pointer-events: auto; opacity: .55; }
+  /* --pad-lift (set by the renderer) keeps them above the text box, where dialogue and the battle menu are */
+  #dpad { left: max(12px, env(safe-area-inset-left)); top: auto; bottom: var(--pad-lift, 16px); margin-top: 0; width: 132px; height: 132px; }
+  #ab { right: max(12px, env(safe-area-inset-right)); top: auto; bottom: var(--pad-lift, 16px); margin-top: 0; }
+  #btn-start { left: auto; right: max(12px, env(safe-area-inset-right)); bottom: auto; top: 12px; margin-left: 0; }
+}

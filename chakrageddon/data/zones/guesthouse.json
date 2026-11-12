@@ -1,0 +1,82 @@
+{
+  "zoneId": "guesthouse",
+  "name": "Sunrise Guesthouse",
+  "paletteId": "CHAI_TENT_WARMTH",
+  "baseBpm": 104,
+  "ground": "wood",
+  "ground2": "mat",
+  "wall": "inwall",
+  "encounter": "incense",
+  "indoor": true,
+  "interior": true,
+  "parent": "flea_market",
+  "rows": [
+    "KKKKKKKKKK!KKK",
+    "KZFZFZFFFFFFNK",
+    "KFFFFFFFJJFFFK",
+    "KFFFFFFFFFFFFK",
+    "KFFUUFFFFFFFAK",
+    "KFFUUFFFFFFFFK",
+    "KAFFFFFFFFFFFK",
+    "KKKKKKaKKKKKKK"
+  ],
+  "warps": [
+    {
+      "x": 6,
+      "y": 7,
+      "to": "flea_market",
+      "tx": 7,
+      "ty": 4,
+      "dir": "DOWN"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "guest_host",
+      "x": 10,
+      "y": 2,
+      "sprite": "local",
+      "dir": "DOWN",
+      "script": "guest_host"
+    },
+    {
+      "id": "guest_board",
+      "x": 7,
+      "y": 1,
+      "tile": "notice",
+      "script": "guest_board"
+    },
+    {
+      "id": "guest_grunt",
+      "x": 2,
+      "y": 5,
+      "sprite": "guard",
+      "dir": "RIGHT",
+      "trainer": "guest_grunt",
+      "sight": 3
+    },
+    {
+      "id": "guest_tourist",
+      "x": 12,
+      "y": 5,
+      "sprite": "tourist",
+      "dir": "LEFT",
+      "script": "guest_tourist",
+      "wander": [
+        10,
+        4,
+        12,
+        6
+      ]
+    }
+  ],
+  "pickups": [
+    {
+      "id": "guest_rizla",
+      "x": 12,
+      "y": 6,
+      "item": "rizla_paper",
+      "n": 2
+    }
+  ]
+}

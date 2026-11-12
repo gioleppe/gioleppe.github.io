@@ -1,0 +1,2016 @@
+{
+  "intro": [
+    {
+      "scene": "dream"
+    },
+    {
+      "t": "Warm sand under your back. A bassline you can feel in your teeth. Something is blocking the sun.",
+      "style": "DOWNER"
+    },
+    {
+      "s": "???",
+      "t": "Hey. Hey. Do not try to sit up. You will only make the sky move."
+    },
+    {
+      "t": "A face hangs over you, haloed by the light. White beard. Kind eyes. Pupils like dinner plates."
+    },
+    {
+      "s": "???",
+      "t": "You are dreaming, probably. Good. That makes this easier. Listen."
+    },
+    {
+      "s": "???",
+      "t": "This festival is not only people. It is full of Astrals: what a state of mind looks like when it gets loose."
+    },
+    {
+      "scene": "dream",
+      "show": "wooklet"
+    },
+    {
+      "s": "???",
+      "t": "That one is a Wooklet. Harmless. Mostly hair. Every mood at this party has a creature like it, somewhere."
+    },
+    {
+      "s": "???",
+      "t": "People keep them as friends. People battle with them. Nobody here fights with fists any more. Too much effort."
+    },
+    {
+      "s": "???",
+      "t": "Wear a wild one down in battle, then stabilise it in a baggie. That is how you make friends here."
+    },
+    {
+      "s": "???",
+      "t": "Look after your team. Hydration is their stamina. Serotonin is their health. Run out and they crash."
+    },
+    {
+      "s": "???",
+      "t": "There is a blotter in your fanny pack. Lick a corner and the festival opens up: rarer Astrals, bigger lessons. Harder hits, clumsier hands. Water brings you down."
+    },
+    {
+      "s": "???",
+      "t": "Eight festival bosses hand out Wristbands of Enlightenment. With all eight, the VIP Shaman Council will see you."
+    },
+    {
+      "scene": "dream"
+    },
+    {
+      "s": "???",
+      "t": "Now. Who are you, in there?",
+      "choice": [
+        "Moonbeam",
+        "Dave",
+        "Ziggy"
+      ],
+      "nameChoice": true,
+      "goto": [
+        "named",
+        "named",
+        "named"
+      ]
+    },
+    {
+      "label": "named"
+    },
+    {
+      "s": "???",
+      "t": "{player}. Of course. You look like a {player}."
+    },
+    {
+      "s": "???",
+      "t": "Any questions?",
+      "choice": [
+        "Are you real?",
+        "Is this a dream?",
+        "Where are my shoes?"
+      ],
+      "goto": [
+        "q_real",
+        "q_dream",
+        "q_shoes"
+      ]
+    },
+    {
+      "label": "q_real"
+    },
+    {
+      "s": "???",
+      "t": "Real enough to owe me for the coconut water."
+    },
+    {
+      "goto": "wake"
+    },
+    {
+      "label": "q_dream"
+    },
+    {
+      "s": "???",
+      "t": "Of course it is. The question is whose."
+    },
+    {
+      "goto": "wake"
+    },
+    {
+      "label": "q_shoes"
+    },
+    {
+      "s": "???",
+      "t": "With your passport, I expect. Wherever that is."
+    },
+    {
+      "label": "wake"
+    },
+    {
+      "s": "???",
+      "t": "Sleep it off, {player}. When you can stand, come and find me by the shack."
+    },
+    {
+      "scene": null
+    },
+    {
+      "t": "4:00 PM. You wake up face-down in the sand."
+    },
+    {
+      "t": "Your backpack is gone. So are your shoes. So, you slowly realise, is your passport."
+    },
+    {
+      "t": "In their place: a fanny pack, half a bottle of warm coconut water, and a headache shaped like a bassline."
+    },
+    {
+      "give": "glowing_blotter",
+      "n": 1
+    },
+    {
+      "t": "An old man with a white beard is watching you from the shack. You are almost sure you have met him before."
+    }
+  ],
+  "banyan": [
+    {
+      "if": "got_starter",
+      "goto": "after"
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Ah, you are alive. Good. I am Banyan. I came to Goa in 1994 for two weeks."
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "You were talking in your sleep, {player}. Astrals, baggies, wristbands. Good. Saves me the speech."
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "How do I know your name? You told me. You were very chatty for someone unconscious."
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Your passport is with the VIP Shaman Council at the Mainstage Temple. To get in you need all 8 Wristbands of Enlightenment."
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "You will not last an hour alone. Here, I found my stash. Three Astrals. Take one."
+    },
+    {
+      "label": "pick"
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Which one calls to you?",
+      "choice": [
+        "Ganjapod (Organic)",
+        "Jawling (Stimulant)",
+        "Blottertot (Psychedelic)"
+      ],
+      "goto": [
+        "g",
+        "j",
+        "b"
+      ],
+      "show": [
+        "ganjapod",
+        "jawling",
+        "blottertot"
+      ]
+    },
+    {
+      "label": "g"
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Ganjapod. A sleepy coconut. Slow, sturdy, and it heals itself on the couch. Sure?",
+      "choice": [
+        "Yes",
+        "Let me think"
+      ],
+      "goto": [
+        "g2",
+        "pick"
+      ],
+      "default": 1
+    },
+    {
+      "label": "g2"
+    },
+    {
+      "giveMon": "ganjapod",
+      "level": 5
+    },
+    {
+      "set": "starter_ganjapod"
+    },
+    {
+      "goto": "got"
+    },
+    {
+      "label": "j"
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Jawling. A gecko that never stops talking. Fast and fragile. Sure?",
+      "choice": [
+        "Yes",
+        "Let me think"
+      ],
+      "goto": [
+        "j2",
+        "pick"
+      ],
+      "default": 1
+    },
+    {
+      "label": "j2"
+    },
+    {
+      "giveMon": "jawling",
+      "level": 5
+    },
+    {
+      "set": "starter_jawling"
+    },
+    {
+      "goto": "got"
+    },
+    {
+      "label": "b"
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Blottertot. A paper frog. Strange powers, and it bends the rules. Sure?",
+      "choice": [
+        "Yes",
+        "Let me think"
+      ],
+      "goto": [
+        "b2",
+        "pick"
+      ],
+      "default": 1
+    },
+    {
+      "label": "b2"
+    },
+    {
+      "giveMon": "blottertot",
+      "level": 5
+    },
+    {
+      "set": "starter_blottertot"
+    },
+    {
+      "goto": "got"
+    },
+    {
+      "label": "got"
+    },
+    {
+      "set": "got_starter"
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Good. Now, wild Astrals drift out of the incense clouds. Wear one down, then stabilise it in one of these."
+    },
+    {
+      "give": "ziploc_baggie",
+      "n": 5
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "And fill your Trip Journal. Come and show me now and then. I pay in snacks."
+    },
+    {
+      "give": "coconut_water",
+      "n": 3
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Watch its Hydration. Every move costs water, and a parched Astral can only dry heave."
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "The Chai Mama tent heals everything. The first wristband is with DJ Diabolo at the Poi Pit, north along the trail."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "after"
+    },
+    {
+      "ifCaught": 10,
+      "goto": "j10"
+    },
+    {
+      "goto": "normal"
+    },
+    {
+      "label": "j10"
+    },
+    {
+      "if": "journal_10",
+      "goto": "c20"
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Ten Astrals in your Journal already! Here, wraps for the next ten."
+    },
+    {
+      "give": "rizla_paper",
+      "n": 5
+    },
+    {
+      "set": "journal_10"
+    },
+    {
+      "label": "c20"
+    },
+    {
+      "ifCaught": 20,
+      "goto": "j20"
+    },
+    {
+      "goto": "normal"
+    },
+    {
+      "label": "j20"
+    },
+    {
+      "if": "journal_20",
+      "goto": "c30"
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Twenty! When I was your age I had seen two, and one of them was a cloud."
+    },
+    {
+      "give": "amber_vial",
+      "n": 3
+    },
+    {
+      "set": "journal_20"
+    },
+    {
+      "label": "c30"
+    },
+    {
+      "ifCaught": 30,
+      "goto": "j30"
+    },
+    {
+      "goto": "normal"
+    },
+    {
+      "label": "j30"
+    },
+    {
+      "if": "journal_30",
+      "goto": "c36"
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Thirty. You are filling that Journal faster than I fill a chillum. Chai for the road."
+    },
+    {
+      "give": "masala_chai",
+      "n": 3
+    },
+    {
+      "set": "journal_30"
+    },
+    {
+      "label": "c36"
+    },
+    {
+      "ifCaught": 38,
+      "goto": "j36"
+    },
+    {
+      "goto": "normal"
+    },
+    {
+      "label": "j36"
+    },
+    {
+      "if": "journal_36",
+      "goto": "normal"
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Every single one. The whole state of mind of this festival, in one duct-taped notebook. I think I can finally go home. I will not, but I could."
+    },
+    {
+      "rupees": 5000
+    },
+    {
+      "give": "mystery_powder",
+      "n": 2
+    },
+    {
+      "set": "journal_36"
+    },
+    {
+      "label": "normal"
+    },
+    {
+      "ifBands": 1,
+      "goto": "band"
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "DJ Diabolo. Poi Pit. North. Catch a few Astrals on the way, one is never enough."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "band"
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "A wristband already! In 1994 it took me... well. I never got one. Keep going."
+    }
+  ],
+  "sign_beach": [
+    {
+      "ifIntox": 0.6,
+      "goto": "high"
+    },
+    {
+      "t": "DRIFTWOOD SHACK BEACH. North: Sandy Trail. Lost property: no."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "high"
+    },
+    {
+      "t": "DRIFTWOOD SHACK BEACH. North: Sandy Trail. The letters are breathing. Lost property: you.",
+      "style": "PSYCHEDELIC"
+    }
+  ],
+  "sign_trail": [
+    {
+      "t": "SANDY TRAIL. Mind the incense clouds. Things come out of them."
+    }
+  ],
+  "beach_hippie": [
+    {
+      "ifIntox": 0.6,
+      "goto": "high"
+    },
+    {
+      "s": "Hippie",
+      "t": "The Chai Mama tent over there fixes everything. Serotonin, hydration, the feeling that your hands are too big."
+    },
+    {
+      "s": "Hippie",
+      "t": "If your whole party fades out you white out, and wake up there six hours later with lighter pockets."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "high"
+    },
+    {
+      "s": "Hippie",
+      "t": "Whoa. Your aura is doing the thing. You can see the stranger by the water now, right? Say hi from me.",
+      "style": "PSYCHEDELIC"
+    }
+  ],
+  "beach_tourist": [
+    {
+      "ifIntox": 0.6,
+      "goto": "high"
+    },
+    {
+      "s": "Tourist",
+      "t": "I only came for a yoga retreat. That was in March. What month is it?"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "high"
+    },
+    {
+      "s": "Tourist",
+      "t": "Is it me, or is that crab talking? It says the month is irrelevant. I think it is right.",
+      "style": "PSYCHEDELIC"
+    }
+  ],
+  "chai_tent": [
+    {
+      "s": "Chai Mama",
+      "t": "Sit. Drink. Here is watermelon and a heavy blanket."
+    },
+    {
+      "heal": true
+    },
+    {
+      "s": "Chai Mama",
+      "t": "There. Your party is rested and watered. Do not tell me what you saw."
+    }
+  ],
+  "beach_vendor": [
+    {
+      "s": "Vendor",
+      "t": "Baggies, water, balm. Good price, my friend. Festival price."
+    },
+    {
+      "shop": "beach_stall"
+    }
+  ],
+  "trail_yogi": [
+    {
+      "s": "Yogi",
+      "t": "If somebody locks eyes with you out here, there is no walking away. Wraparound shades help. So does looking at your feet."
+    }
+  ],
+  "sign_pit": [
+    {
+      "t": "THE POI PIT. Resident: DJ Diabolo (set time: ongoing)."
+    }
+  ],
+  "pit_vendor": [
+    {
+      "s": "Vendor",
+      "t": "You made it to the Pit! Same stock, same price. Maybe a little more."
+    },
+    {
+      "shop": "beach_stall"
+    }
+  ],
+  "pit_hippie": [
+    {
+      "if": "beat_diabolo",
+      "goto": "won"
+    },
+    {
+      "s": "Hippie",
+      "t": "Diabolo will not even look at you unless you walk right up on stage and talk to him."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "won"
+    },
+    {
+      "s": "Hippie",
+      "t": "You made his record skip! With that wristband, just walk into the fairy lights up north."
+    }
+  ],
+  "pit_local": [
+    {
+      "s": "Local",
+      "t": "Every type hits two others hard and bounces off two others. Stimulant flattens Organic and Downer. Check your Journal."
+    }
+  ],
+  "sign_yurt": [
+    {
+      "t": "THE TANTRIC YURT. Shoes off. Ego off. East: Anjuna Flea Market."
+    }
+  ],
+  "yurt_tourist": [
+    {
+      "s": "Tourist",
+      "t": "I paid for a ten-day retreat. On day two she told me I was already enlightened and kept the money."
+    }
+  ],
+  "sign_market": [
+    {
+      "t": "ANJUNA FLEA MARKET. North: Clogged Dirt Road. East: Omelette Stall. South: Dry Ice Corridor (VIP)."
+    }
+  ],
+  "market_vendor": [
+    {
+      "s": "Vendor",
+      "t": "Everything a traveller needs! Papers, sachets, shades, catalysts. I also have a cousin who sells carpets."
+    },
+    {
+      "shop": "flea_market"
+    }
+  ],
+  "market_lassi": [
+    {
+      "s": "Lassi Wallah",
+      "t": "Catalysts change certain Astrals when they drink them. Lassi for the sleepy ones, Kingfisher for the sunburned, powder for the glowing."
+    }
+  ],
+  "market_guard": [
+    {
+      "ifIntox": 0.9,
+      "goto": "gone"
+    },
+    {
+      "if": "beat_svetlana",
+      "goto": "ok"
+    },
+    {
+      "s": "Security",
+      "t": "Road north is closed. Guru Svetlana decides who passes. Her yurt is west."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "ok"
+    },
+    {
+      "s": "Security",
+      "t": "The Guru vouched for you. Bring a light, it is black as a speaker cone up there."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "gone"
+    },
+    {
+      "s": "Security",
+      "t": "Pupils like that, at this hour? I am not even going to ask. Do not lick the barrier.",
+      "style": "STIMULANT"
+    }
+  ],
+  "market_hippie": [
+    {
+      "if": "exposed_undercover",
+      "goto": "done"
+    },
+    {
+      "ifHas": "memo_guesthouse",
+      "goto": "m1"
+    },
+    {
+      "ifHas": "memo_villa",
+      "goto": "some"
+    },
+    {
+      "ifHas": "memo_greenroom",
+      "goto": "some"
+    },
+    {
+      "goto": "base"
+    },
+    {
+      "label": "m1"
+    },
+    {
+      "ifHas": "memo_villa",
+      "goto": "m2"
+    },
+    {
+      "goto": "some"
+    },
+    {
+      "label": "m2"
+    },
+    {
+      "ifHas": "memo_greenroom",
+      "goto": "all"
+    },
+    {
+      "label": "some"
+    },
+    {
+      "s": "Hippie",
+      "t": "A Team Undercover memo! They write everything down. There will be more: try the guesthouse, the villa on the cliff, and the green room backstage."
+    },
+    {
+      "s": "Hippie",
+      "t": "Bring me all three and we can show the whole festival what they are planning."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "all"
+    },
+    {
+      "s": "Hippie",
+      "t": "All three. Buy the beds, fence the sunset, cut the power to every free party. That is the whole plan, in their own handwriting."
+    },
+    {
+      "s": "Hippie",
+      "t": "I will pin copies in every Chai Tent from here to Arambol. Take this, from all of us."
+    },
+    {
+      "rupees": 2000
+    },
+    {
+      "give": "mystery_powder",
+      "n": 1
+    },
+    {
+      "set": "exposed_undercover"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "done"
+    },
+    {
+      "s": "Hippie",
+      "t": "The memos are up in every Chai Tent and the fence on the cliff came down. They say the sunset itself comes out to look now, if you go at sunset, and go high."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "base"
+    },
+    {
+      "ifIntox": 0.6,
+      "goto": "high"
+    },
+    {
+      "s": "Hippie",
+      "t": "Team Undercover are all over the market. Guards on the take, dealers selling oregano, influencers fencing off the sunset."
+    },
+    {
+      "s": "Hippie",
+      "t": "They want to bottle the whole festival's dopamine and shut the free party down."
+    },
+    {
+      "s": "Hippie",
+      "t": "If you ever find their paperwork, bring it to me. They write everything down."
+    },
+    {
+      "set": "memos_heard"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "high"
+    },
+    {
+      "s": "Hippie",
+      "t": "Your pupils are the size of the problem. Team Undercover would bottle that. Keep moving.",
+      "style": "PSYCHEDELIC"
+    }
+  ],
+  "market_tourist": [
+    {
+      "ifIntox": 0.6,
+      "goto": "high"
+    },
+    {
+      "s": "Tourist",
+      "t": "The time of day changes what comes out of the incense. I only ever see mosquitoes. I think that is just Goa."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "high"
+    },
+    {
+      "s": "Tourist",
+      "t": "You see them too? The Astrals behind the Astrals? I thought it was just the mosquitoes.",
+      "style": "PSYCHEDELIC"
+    }
+  ],
+  "market_wook": [
+    {
+      "if": "beat_keta",
+      "goto": "ok"
+    },
+    {
+      "s": "Wook",
+      "t": "That subwoofer in the gap is way too heavy. Captain Keta could shift it. If he could find it."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "ok"
+    },
+    {
+      "s": "Wook",
+      "t": "Push it right through, friend. It rolls back when nobody is looking."
+    }
+  ],
+  "market_tuktuk": [
+    {
+      "ifBands": 6,
+      "goto": "ok"
+    },
+    {
+      "s": "Driver",
+      "t": "Tuk-tuk? Very cheap. But only for press. You have a press pass? No? Then you walk."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "ok"
+    },
+    {
+      "s": "Driver",
+      "t": "Press pass! Open your Fanny Pack and choose Tuk-tuk. I take you to any Chai Tent you have rested at."
+    }
+  ],
+  "sign_road": [
+    {
+      "t": "CLOGGED DIRT ROAD. No lights. No refunds."
+    }
+  ],
+  "sign_ditch": [
+    {
+      "t": "THE SUNKEN SCOOTER DITCH. Captain Keta presiding, approximately."
+    }
+  ],
+  "ditch_wook": [
+    {
+      "if": "beat_raju",
+      "goto": "ok"
+    },
+    {
+      "s": "Wook",
+      "t": "The sea goes to the lake, and the lake goes to the forest stage. You would need to float though."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "ok"
+    },
+    {
+      "s": "Wook",
+      "t": "You have the cheese stamp! Just walk into the shallows with something Dissociative."
+    }
+  ],
+  "sign_stall": [
+    {
+      "t": "THE 5 AM OMELETTE STALL. Open at 5 AM. It is always 5 AM."
+    }
+  ],
+  "stall_local": [
+    {
+      "s": "Local",
+      "t": "Raju's kitchen is all Organic and Downer. Stimulants cut through both. So does Psychedelic, a little."
+    }
+  ],
+  "sign_sea": [
+    {
+      "t": "ARABIAN SEA SHALLOWS. East: Sweetwater Lake. North: the Sadhu Cave (by appointment)."
+    }
+  ],
+  "sea_sadhu": [
+    {
+      "if": "beat_chloe",
+      "goto": "ok"
+    },
+    {
+      "s": "Sadhu",
+      "t": "Baba Smoke sees nobody without a press pass. He says the last blogger got his good side wrong."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "ok"
+    },
+    {
+      "s": "Sadhu",
+      "t": "A press pass. Go in. Mind your head, and your sense of self."
+    }
+  ],
+  "sign_lake": [
+    {
+      "t": "ARAMBOL SWEETWATER LAKE. South: 190 BPM Forest Stage. Earplugs advised."
+    }
+  ],
+  "lake_local": [
+    {
+      "s": "Local",
+      "t": "Things swim in the lake that do not swim anywhere else. Float out on the water and see."
+    }
+  ],
+  "sign_forest": [
+    {
+      "t": "190 BPM FOREST STAGE. Resident: Baron Von Darkpsy. No requests. Especially not that one."
+    }
+  ],
+  "forest_wook": [
+    {
+      "s": "Wook",
+      "t": "His Astrals are Bummer and Psychedelic. Downers put both to sleep. I would know. I am one."
+    }
+  ],
+  "sign_cliff": [
+    {
+      "t": "THE SUNSET CLIFF. This sunset is brought to you by a brand partner."
+    }
+  ],
+  "cliff_tourist": [
+    {
+      "if": "beat_sergeant",
+      "goto": "ok"
+    },
+    {
+      "s": "Tourist",
+      "t": "A man in a uniform is charging people to look west. He says he has a permit."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "ok"
+    },
+    {
+      "s": "Tourist",
+      "t": "The sunset is free again! It was always free. That is rather the point of it."
+    }
+  ],
+  "sign_cave": [
+    {
+      "t": "THE SADHU CAVE. Silence. (Smoke permitted.)"
+    },
+    {
+      "t": "Scratched underneath: 'Something turns in the east wall. It notices you noticing it.'"
+    },
+    {
+      "set": "read_carving"
+    }
+  ],
+  "mandalord": [
+    {
+      "t": "A pattern in the rock. It is turning, very slowly. It has noticed you noticing it."
+    },
+    {
+      "t": "Reach out to it?",
+      "choice": [
+        "Reach out",
+        "Back away"
+      ],
+      "goto": [
+        "go",
+        "no"
+      ]
+    },
+    {
+      "label": "go"
+    },
+    {
+      "set": "met_mandalord"
+    },
+    {
+      "set": "mandalord_rest"
+    },
+    {
+      "wild": "mandalord",
+      "level": 37
+    },
+    {
+      "ifCond": {
+        "caughtSpecies": "mandalord"
+      },
+      "goto": "caught"
+    },
+    {
+      "t": "The pattern folds back into the rock. It is still in there. Leave the cave, come back, and it will be turning again."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "caught"
+    },
+    {
+      "t": "The rock is just rock now. The pattern is in your Journal, still turning."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "no"
+    },
+    {
+      "t": "You back away. It does not mind. It has time."
+    }
+  ],
+  "shadowcop_bribe": [
+    {
+      "t": "A shape made of torch beams blocks the fog. A whistle blows somewhere. It rubs two fingers together."
+    },
+    {
+      "t": "Slip it Rs 500?",
+      "choice": [
+        "Pay Rs 500",
+        "Refuse"
+      ],
+      "goto": [
+        "pay",
+        "no"
+      ]
+    },
+    {
+      "label": "pay"
+    },
+    {
+      "pay": 500,
+      "else": "broke"
+    },
+    {
+      "t": "The beams dim, satisfied. Something small and sheepish drifts out of the light."
+    },
+    {
+      "set": "cop_done"
+    },
+    {
+      "wild": "shadowcop",
+      "level": 25
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "broke"
+    },
+    {
+      "t": "You pat your pockets. Not enough. The shape takes this personally."
+    },
+    {
+      "label": "no"
+    },
+    {
+      "t": "The shape swells with indignation. It is growing. It has a hat now."
+    },
+    {
+      "set": "cop_done"
+    },
+    {
+      "wild": "bribe_asaurus",
+      "level": 29
+    }
+  ],
+  "sign_backstage": [
+    {
+      "t": "BACKSTAGE CONTAINER. If you can read this you should not be here."
+    }
+  ],
+  "backstage_bar": [
+    {
+      "s": "Barman",
+      "t": "Backstage bar. Artist prices. You are not an artist, so double."
+    },
+    {
+      "shop": "backstage_bar"
+    }
+  ],
+  "backstage_roadie": [
+    {
+      "s": "Roadie",
+      "t": "The Promoter carries one of everything. No type will save you. Bring a full party and a lot of water."
+    }
+  ],
+  "sign_temple": [
+    {
+      "t": "MAINSTAGE TEMPLE. The Four-on-the-Floor hold the four doors. Rest at the tent first. There is no tent past the first door."
+    }
+  ],
+  "temple_local": [
+    {
+      "s": "Roadie",
+      "t": "Kick, bass, hat, lead. Heavy, wobbly, fast, clever. Then whoever is sulking in the last doorway."
+    }
+  ],
+  "council_side": [
+    {
+      "s": "Shaman Council",
+      "t": "Hmmmmmm."
+    }
+  ],
+  "council": [
+    {
+      "if": "finished",
+      "goto": "again"
+    },
+    {
+      "s": "Shaman Council",
+      "t": "So. The barefoot one. Eight wristbands, four doors, and one very well dressed ego, all behind you."
+    },
+    {
+      "s": "Shaman Council",
+      "t": "You came for a passport. We have had it the whole time. It fell out of your pocket on the beach. We kept it safe."
+    },
+    {
+      "s": "Shaman Council",
+      "t": "We could have just handed it back. But then you would have gone home on Tuesday with a clean shirt and no stories."
+    },
+    {
+      "give": "passport",
+      "n": 1
+    },
+    {
+      "s": "Shaman Council",
+      "t": "Your return flight left six days ago. Or it leaves tomorrow. Time is not our department."
+    },
+    {
+      "t": "You look at the passport. You look at your feet. You have not worn shoes in a week.",
+      "choice": [
+        "Go home",
+        "Two more weeks"
+      ],
+      "goto": [
+        "home",
+        "stay"
+      ]
+    },
+    {
+      "label": "home"
+    },
+    {
+      "s": "Shaman Council",
+      "t": "A sensible choice. Banyan made the same one in 1994. He is still packing."
+    },
+    {
+      "goto": "end"
+    },
+    {
+      "label": "stay"
+    },
+    {
+      "s": "Shaman Council",
+      "t": "Two more weeks. Yes. That is what they all say. That is what we said."
+    },
+    {
+      "label": "end"
+    },
+    {
+      "set": "finished"
+    },
+    {
+      "heal": true
+    },
+    {
+      "credits": true
+    },
+    {
+      "warp": {
+        "zone": "driftwood_beach",
+        "x": 6,
+        "y": 6,
+        "dir": "DOWN"
+      }
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Ah, you are back. With a passport! Put it somewhere safe. Not too safe."
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "The festival goes on. Your Journal still has blank pages, and there is something in the Sadhu Cave that has been watching for a very long time."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "again"
+    },
+    {
+      "s": "Shaman Council",
+      "t": "Still here? Good. So are we."
+    }
+  ],
+  "glow_stranger": [
+    {
+      "if": "got_stranger_gift",
+      "goto": "after"
+    },
+    {
+      "s": "Glowing Stranger",
+      "t": "You can see me? Then you are high enough to listen.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "s": "Glowing Stranger",
+      "t": "The Astrals that hide from sober people come out now. The two creatures Banyan did not give you wander these trails, for those who look while peaking.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "s": "Glowing Stranger",
+      "t": "Take these. Your hands will shake. Vials forgive shaking.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "give": "amber_vial",
+      "n": 2
+    },
+    {
+      "set": "got_stranger_gift"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "after"
+    },
+    {
+      "if": "peak_done",
+      "goto": "done"
+    },
+    {
+      "ifCond": {
+        "all": [
+          {
+            "caughtSpecies": "ganjapod"
+          },
+          {
+            "caughtSpecies": "jawling"
+          },
+          {
+            "caughtSpecies": "blottertot"
+          }
+        ]
+      },
+      "goto": "reward"
+    },
+    {
+      "s": "Glowing Stranger",
+      "t": "Banyan's three. One of them came to you on the beach. The other two only show themselves to people who are peaking.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "s": "Glowing Stranger",
+      "t": "Bag all three and come back to me. High, ideally. I am hard to find otherwise.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "set": "peak_asked"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "reward"
+    },
+    {
+      "s": "Glowing Stranger",
+      "t": "All three. You have seen what the festival keeps for the ones who look properly.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "s": "Glowing Stranger",
+      "t": "This one only lives for thirty seconds at a time. It wants to spend them with you.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "giveMon": "nitroxide",
+      "level": 25
+    },
+    {
+      "set": "peak_done"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "done"
+    },
+    {
+      "s": "Glowing Stranger",
+      "t": "Water brings you down. A Chai Tent brings you all the way down. The blotter brings you back up. Choose.",
+      "style": "PSYCHEDELIC"
+    }
+  ],
+  "astral_auntie": [
+    {
+      "if": "got_auntie_gift",
+      "goto": "after"
+    },
+    {
+      "s": "Astral Auntie",
+      "t": "Beta, your aura is leaking all over my stall. Here. Wraps for shaky hands.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "give": "rizla_paper",
+      "n": 3
+    },
+    {
+      "set": "got_auntie_gift"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "after"
+    },
+    {
+      "s": "Astral Auntie",
+      "t": "When the ego goes, so does your grip. And your wallet, if you white out. Peaking is the sweet spot.",
+      "style": "PSYCHEDELIC"
+    }
+  ],
+  "shack_hammock": [
+    {
+      "t": "You lie down in Banyan's hammock for a minute. It smells of incense and 1994."
+    },
+    {
+      "heal": true
+    },
+    {
+      "t": "Your Astrals are rested. If you white out, you will wake up here."
+    }
+  ],
+  "shack_diary": [
+    {
+      "if": "read_banyan_diary",
+      "goto": "again"
+    },
+    {
+      "t": "Banyan's diary, open at a page from 1994: 'Day 3. Two weeks is not enough.' The next page: 'Day 9000. Still not enough.'"
+    },
+    {
+      "t": "Underneath, in newer ink: 'The blotter shows what hides. The Stranger by the water only talks to people who are peaking.'"
+    },
+    {
+      "t": "A bottle of masala chai is wedged in as a bookmark. Banyan would want you to have it."
+    },
+    {
+      "give": "masala_chai",
+      "n": 1
+    },
+    {
+      "set": "read_banyan_diary"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "again"
+    },
+    {
+      "t": "'Day 9001. A kid washed up on the beach talking about wristbands in their sleep. Gave them my old stash.'"
+    },
+    {
+      "t": "On the last page, a drawing of a turning pattern and the words: 'Sadhu Cave. East wall. Do not stare. It stares back.'"
+    }
+  ],
+  "guest_host": [
+    {
+      "s": "Host",
+      "t": "Sunrise Guesthouse. Beds for the broken, Rs 100 a nap."
+    },
+    {
+      "s": "Host",
+      "t": "Rest a while?",
+      "choice": [
+        "Yes, Rs 100",
+        "No thanks"
+      ],
+      "goto": [
+        "rest",
+        "bye"
+      ]
+    },
+    {
+      "label": "rest"
+    },
+    {
+      "pay": 100,
+      "else": "broke"
+    },
+    {
+      "heal": true
+    },
+    {
+      "t": "You sleep like a rock. Your Astrals do too. You wake up sober and slightly ashamed."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "broke"
+    },
+    {
+      "s": "Host",
+      "t": "No money, no mattress. The Chai Tent is free, beta."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "bye"
+    },
+    {
+      "s": "Host",
+      "t": "The noticeboard is for guests. Everyone is a guest. That is the problem."
+    }
+  ],
+  "guest_board": [
+    {
+      "t": "NOTICEBOARD. 'Lost: one pair of sandals, very sentimental. Ask the tourist in the corner.'"
+    },
+    {
+      "t": "'Rooms not for rent to Team Undercover.' Someone has crossed out the word 'not'."
+    }
+  ],
+  "guest_tourist": [
+    {
+      "if": "sandals_returned",
+      "goto": "thanks"
+    },
+    {
+      "ifHas": "lost_sandals",
+      "goto": "found"
+    },
+    {
+      "s": "Tourist",
+      "t": "I lost my sandals somewhere on the Sandy Trail. They were a gift from my ex. Not the ex. The other one."
+    },
+    {
+      "s": "Tourist",
+      "t": "If you find them I will pay you. I will pay you so much. I will pay you a reasonable amount."
+    },
+    {
+      "set": "sandals_asked"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "found"
+    },
+    {
+      "s": "Tourist",
+      "t": "My sandals! You found them! The hair tie is still there! I could cry. I am crying."
+    },
+    {
+      "take": "lost_sandals",
+      "n": 1
+    },
+    {
+      "set": "sandals_returned"
+    },
+    {
+      "rupees": 800
+    },
+    {
+      "give": "weighted_blanket",
+      "n": 1
+    },
+    {
+      "give": "festival_poncho",
+      "n": 1
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "thanks"
+    },
+    {
+      "s": "Tourist",
+      "t": "I am never taking them off again. I am going to sleep in them."
+    }
+  ],
+  "temple_water": [
+    {
+      "if": "temple_water_used",
+      "goto": "empty"
+    },
+    {
+      "s": "Water Auntie",
+      "t": "Halfway up the temple and you look like a raisin. Drink. All of you."
+    },
+    {
+      "heal": true
+    },
+    {
+      "set": "temple_water_used"
+    },
+    {
+      "t": "Your Astrals are fully refreshed."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "empty"
+    },
+    {
+      "s": "Water Auntie",
+      "t": "The jug is empty, beta. The Chai Tent downstairs still pours."
+    }
+  ],
+  "pit_spinner": [
+    {
+      "if": "spinner_done",
+      "goto": "thanks"
+    },
+    {
+      "ifCond": {
+        "has": "coconut_water",
+        "n": 2
+      },
+      "goto": "give"
+    },
+    {
+      "s": "Fire Spinner",
+      "t": "Six hours of spinning fire and nobody has brought me a drink. Not one coconut. My mouth is a desert."
+    },
+    {
+      "s": "Fire Spinner",
+      "t": "Two coconut waters. That is all I ask. The beach stall sells them."
+    },
+    {
+      "set": "spinner_asked"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "give"
+    },
+    {
+      "s": "Fire Spinner",
+      "t": "Is that coconut water? Two of them? You beautiful human."
+    },
+    {
+      "take": "coconut_water",
+      "n": 2
+    },
+    {
+      "set": "spinner_done"
+    },
+    {
+      "s": "Fire Spinner",
+      "t": "Here. I found it in the ashes. It brings luck, or at least it has a hole in it."
+    },
+    {
+      "give": "lucky_rupee",
+      "n": 1
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "thanks"
+    },
+    {
+      "s": "Fire Spinner",
+      "t": "Hydrated and spinning. Watch the eyebrows."
+    }
+  ],
+  "market_collector": [
+    {
+      "if": "collector_done",
+      "goto": "thanks"
+    },
+    {
+      "ifCond": {
+        "partyType": "DOWNER"
+      },
+      "goto": "show"
+    },
+    {
+      "s": "Collector",
+      "t": "I collect moods. I have every kind of high in my notebook, but I have never seen a proper Downer up close."
+    },
+    {
+      "s": "Collector",
+      "t": "Bring one along in your party and let me look. I will make it worth your while."
+    },
+    {
+      "set": "collector_asked"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "show"
+    },
+    {
+      "s": "Collector",
+      "t": "Oh. Oh, look at it. So heavy. So unbothered. It has not checked its phone in a year."
+    },
+    {
+      "set": "collector_done"
+    },
+    {
+      "s": "Collector",
+      "t": "Take this. A friend made it for me. Your friends should have one too."
+    },
+    {
+      "give": "friendship_band",
+      "n": 1
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "thanks"
+    },
+    {
+      "s": "Collector",
+      "t": "My notebook is complete. I am now collecting naps."
+    }
+  ],
+  "booth_roadie": [
+    {
+      "if": "crates_returned",
+      "goto": "returned"
+    },
+    {
+      "if": "crates_kept",
+      "goto": "kept"
+    },
+    {
+      "ifCond": {
+        "has": "record_crate",
+        "n": 3
+      },
+      "goto": "hand"
+    },
+    {
+      "s": "Roadie",
+      "t": "Someone nicked our record crates and dumped them around the jungle. The stage, the bamboo, the lake. Three of them."
+    },
+    {
+      "s": "Roadie",
+      "t": "No crates, no closing set. Bring them back and the Selector will owe you one."
+    },
+    {
+      "set": "crates_asked"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "hand"
+    },
+    {
+      "s": "Roadie",
+      "t": "All three crates! You found them! Hand them over and the set goes on."
+    },
+    {
+      "t": "A dealer at the market would pay well for rare vinyl. Nobody would know.",
+      "choice": [
+        "Give them back",
+        "Keep one and sell it"
+      ],
+      "goto": [
+        "back",
+        "keep"
+      ]
+    },
+    {
+      "label": "back"
+    },
+    {
+      "take": "record_crate",
+      "n": 3
+    },
+    {
+      "set": "crates_returned"
+    },
+    {
+      "s": "Roadie",
+      "t": "Legend. The Selector says this is yours. It makes everything louder, including you."
+    },
+    {
+      "give": "neon_glowstick",
+      "n": 1
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "keep"
+    },
+    {
+      "take": "record_crate",
+      "n": 3
+    },
+    {
+      "set": "crates_kept"
+    },
+    {
+      "s": "Roadie",
+      "t": "Only two came back? Fine. FINE. The closing set will be... short."
+    },
+    {
+      "t": "Later, a dealer pays you for the crate you kept. It feels exactly as good as you expected."
+    },
+    {
+      "rupees": 1500
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "returned"
+    },
+    {
+      "s": "Roadie",
+      "t": "Best closing set of the season. You are on the guest list forever."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "kept"
+    },
+    {
+      "s": "Roadie",
+      "t": "The set was short. Somebody's crate went missing. I am not saying it was you. I am looking at you, though."
+    }
+  ],
+  "sunraga": [
+    {
+      "t": "The sun stops halfway into the sea. Then it turns round and looks at you.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "Nobody has fenced it off. Nobody is selling tickets. It seems relieved.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "Reach out to it?",
+      "choice": [
+        "Reach out",
+        "Back away"
+      ],
+      "goto": [
+        "go",
+        "no"
+      ]
+    },
+    {
+      "label": "go"
+    },
+    {
+      "set": "met_sunraga"
+    },
+    {
+      "set": "sunraga_rest"
+    },
+    {
+      "wild": "sunraga",
+      "level": 42
+    },
+    {
+      "ifCond": {
+        "caughtSpecies": "sunraga"
+      },
+      "goto": "caught"
+    },
+    {
+      "t": "The sun drops into the sea after all. It will be back. It always is, at sunset, for the ones who are high enough to see it."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "caught"
+    },
+    {
+      "t": "For the first time all week the sunset is free. Some of it is in your Journal now."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "no"
+    },
+    {
+      "t": "You back away. It does not mind. It has time."
+    }
+  ],
+  "bassilisk": [
+    {
+      "t": "The speaker stack is humming a note too low to hear. The floor hears it. Your teeth hear it."
+    },
+    {
+      "t": "Something uncoils behind the grille."
+    },
+    {
+      "t": "Reach into the bass?",
+      "choice": [
+        "Reach out",
+        "Back away"
+      ],
+      "goto": [
+        "go",
+        "no"
+      ]
+    },
+    {
+      "label": "go"
+    },
+    {
+      "set": "met_bassilisk"
+    },
+    {
+      "set": "bassilisk_rest"
+    },
+    {
+      "wild": "bassilisk",
+      "level": 50
+    },
+    {
+      "ifCond": {
+        "caughtSpecies": "bassilisk"
+      },
+      "goto": "caught"
+    },
+    {
+      "t": "The bass sinks back into the speakers. Walk out, walk back in, and it will be humming again."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "caught"
+    },
+    {
+      "t": "The speakers fall quiet. The whole of Backstage feels lighter. The bass is in your Journal, still humming."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "no"
+    },
+    {
+      "t": "You back away. It does not mind. It has time."
+    }
+  ],
+  "sunset_watcher": [
+    {
+      "ifCond": {
+        "hour": [
+          17,
+          20
+        ]
+      },
+      "goto": "now"
+    },
+    {
+      "s": "Sunset Watcher",
+      "t": "I come here every evening. Since Chloe fenced it off I watch the sunset through the gaps.",
+      "style": "DOWNER"
+    },
+    {
+      "s": "Sunset Watcher",
+      "t": "Sit with me until it goes down?",
+      "choice": [
+        "Wait for the sunset",
+        "Not now"
+      ],
+      "goto": [
+        "wait",
+        "no"
+      ]
+    },
+    {
+      "label": "wait"
+    },
+    {
+      "clock": 1080
+    },
+    {
+      "t": "You sit on the warm rock. The hours slide off. The sky goes orange, then pink, then the colour of a good decision."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "now"
+    },
+    {
+      "s": "Sunset Watcher",
+      "t": "It is happening right now. Look. If you are high enough, it looks back.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "no"
+    },
+    {
+      "s": "Sunset Watcher",
+      "t": "It is not going anywhere. Well. It is going down. But it comes back."
+    }
+  ],
+  "crab_raver": [
+    {
+      "if": "crab_rave_done",
+      "goto": "after"
+    },
+    {
+      "ifCond": {
+        "all": [
+          {
+            "caughtSpecies": "crabcake"
+          },
+          {
+            "caughtSpecies": "lobsterlad"
+          },
+          {
+            "caughtSpecies": "ketacrab"
+          },
+          {
+            "caughtSpecies": "wonkrab"
+          }
+        ]
+      },
+      "goto": "rave"
+    },
+    {
+      "if": "crab_rave_asked",
+      "goto": "waiting"
+    },
+    {
+      "s": "Crab Raver",
+      "t": "Shh. Listen. Under the bass there is a second bass. That is the crabs. They have been raving on this beach since before the festival, before the road, before the Portuguese."
+    },
+    {
+      "s": "Crab Raver",
+      "t": "Four of them run it: Crabcake, Lobsterlad, Ketacrab and Wonkrab. Get all four in your Journal and come back. I will open the floor."
+    },
+    {
+      "set": "crab_rave_asked"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "waiting"
+    },
+    {
+      "s": "Crab Raver",
+      "t": "Crabcake, Lobsterlad, Ketacrab, Wonkrab. All four, or the floor stays shut. Crabs are strict about the guest list."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "rave"
+    },
+    {
+      "s": "Crab Raver",
+      "t": "You have all four? All four! Get them out here. Clear the sand. It is time."
+    },
+    {
+      "scene": "crab_rave"
+    },
+    {
+      "s": "Crab Raver",
+      "t": "Claws up! Sideways! No, the other sideways!"
+    },
+    {
+      "s": "",
+      "t": "The crabs dance until the tide comes in. Nobody films it. It is better that way."
+    },
+    {
+      "set": "crab_rave_done"
+    },
+    {
+      "s": "Crab Raver",
+      "t": "You have earned this. Hand-sewn from a lilo and two oven gloves. Wear it with pride."
+    },
+    {
+      "give": "crab_suit",
+      "n": 1
+    },
+    {
+      "scene": null
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "after"
+    },
+    {
+      "s": "Crab Raver",
+      "t": "Still hearing it? The second bass? Good. Once you hear it, you never stop."
+    }
+  ]
+}

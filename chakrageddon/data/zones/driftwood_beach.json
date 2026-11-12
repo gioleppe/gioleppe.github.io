@@ -1,0 +1,166 @@
+{
+  "zoneId": "driftwood_beach",
+  "name": "Driftwood Shack Beach",
+  "paletteId": "ANJUNA_DUST",
+  "baseBpm": 138,
+  "ground": "sand",
+  "ground2": "path",
+  "wall": "cliff",
+  "encounter": "incense",
+  "rows": [
+    "TTTTTTTTTTT,,TTTTTTTTTTTT",
+    "T....~~~~..BB..~~~~.....T",
+    "T..rrr.~~..,,..~~~...b..T",
+    "T..HEH.....,,.......~~.TT",
+    "T...,......,,......~~~..T",
+    "Tb..,,,,,,,,,,,,,..~~...T",
+    "T..........,,...,..x....T",
+    "T..o...h...,,.m.,.......T",
+    "T.......o..,,...,...C...T",
+    "T.x..T.....,,...,,,,,..R,",
+    "T.....................o.T",
+    "T..x.......T.....o......T",
+    "wwwwwwwwwwwwwwwwwwwwwwwww",
+    "WWWWWWWWWWWWWWWWWWWWWWWWW"
+  ],
+  "warps": [
+    {
+      "x": 11,
+      "y": 0,
+      "to": "sandy_trail",
+      "tx": 7,
+      "ty": 16,
+      "dir": "UP"
+    },
+    {
+      "x": 12,
+      "y": 0,
+      "to": "sandy_trail",
+      "tx": 8,
+      "ty": 16,
+      "dir": "UP"
+    },
+    {
+      "x": 4,
+      "y": 3,
+      "to": "banyan_shack",
+      "tx": 5,
+      "ty": 4,
+      "dir": "UP"
+    },
+    {
+      "x": 24,
+      "y": 9,
+      "to": "sunset_cliff",
+      "tx": 1,
+      "ty": 11,
+      "dir": "RIGHT",
+      "needs": "banyan_root_climb"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "banyan",
+      "x": 6,
+      "y": 4,
+      "sprite": "banyan",
+      "dir": "DOWN",
+      "script": "banyan"
+    },
+    {
+      "id": "beach_sign",
+      "x": 10,
+      "y": 6,
+      "tile": "sign",
+      "script": "sign_beach"
+    },
+    {
+      "id": "beach_hippie",
+      "x": 18,
+      "y": 10,
+      "sprite": "hippie",
+      "dir": "LEFT",
+      "script": "beach_hippie"
+    },
+    {
+      "id": "beach_tourist",
+      "x": 14,
+      "y": 11,
+      "sprite": "tourist",
+      "dir": "DOWN",
+      "script": "beach_tourist",
+      "wander": [
+        13,
+        10,
+        17,
+        11
+      ]
+    },
+    {
+      "id": "beach_vendor",
+      "x": 15,
+      "y": 7,
+      "sprite": "vendor",
+      "dir": "DOWN",
+      "script": "beach_vendor"
+    },
+    {
+      "id": "glow_stranger",
+      "x": 21,
+      "y": 7,
+      "sprite": "yogi",
+      "dir": "LEFT",
+      "script": "glow_stranger",
+      "minIntox": 0.6
+    },
+    {
+      "id": "crab_raver",
+      "x": 8,
+      "y": 10,
+      "sprite": "raver",
+      "dir": "DOWN",
+      "script": "crab_raver"
+    }
+  ],
+  "pickups": [
+    {
+      "id": "beach_water",
+      "x": 21,
+      "y": 11,
+      "item": "water_bottle",
+      "n": 1
+    }
+  ],
+  "encounters": {
+    "encounterRate": 0.14,
+    "table": [
+      {
+        "speciesId": "crabcake",
+        "minLevel": 2,
+        "maxLevel": 3,
+        "weight": 50
+      },
+      {
+        "speciesId": "ketacrab",
+        "minLevel": 2,
+        "maxLevel": 4,
+        "weight": 30
+      },
+      {
+        "speciesId": "snoozel",
+        "minLevel": 2,
+        "maxLevel": 3,
+        "weight": 20
+      },
+      {
+        "speciesId": "ganjapod",
+        "minLevel": 3,
+        "maxLevel": 4,
+        "weight": 10,
+        "minIntox": 0.6
+      }
+    ]
+  },
+  "cordonFlag": "got_starter",
+  "cordonText": "A length of festival tape. Prof. Banyan calls over: \"Not without an Astral, my friend!\""
+}

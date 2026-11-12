@@ -1,0 +1,199 @@
+{
+  "zoneId": "tantric_yurt",
+  "name": "The Tantric Yurt",
+  "paletteId": "ANJUNA_DUST",
+  "baseBpm": 132,
+  "ground": "grass",
+  "ground2": "path",
+  "wall": "cliff",
+  "encounter": "incense",
+  "rows": [
+    "tttttttttttttttttttt",
+    "t....yyyyyyyyyy....t",
+    "t....yaaaaaaaay....t",
+    "t....yaaaaaaaay....t",
+    "t....yaaaaaaaay....t",
+    "t....yyyyaayyyy....t",
+    "t..M.....,,.....M..t",
+    "t........,,........t",
+    "t.~~~....,,....~~~.t",
+    "t.~~~....,,,,,,,,,,,",
+    "t.~~~....,,....~~~.t",
+    "t........,,........t",
+    "t...L....,,....C...t",
+    "t........,,........t",
+    "t..~~~~..,,..~~~~..t",
+    "t..~~~~..,,..~~~~..t",
+    "t........,,........t",
+    "ttttttttt,,ttttttttt"
+  ],
+  "warps": [
+    {
+      "x": 9,
+      "y": 17,
+      "to": "poi_pit",
+      "tx": 10,
+      "ty": 1,
+      "dir": "DOWN"
+    },
+    {
+      "x": 10,
+      "y": 17,
+      "to": "poi_pit",
+      "tx": 11,
+      "ty": 1,
+      "dir": "DOWN"
+    },
+    {
+      "x": 19,
+      "y": 9,
+      "to": "flea_market",
+      "tx": 1,
+      "ty": 6,
+      "dir": "RIGHT"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "svetlana",
+      "x": 9,
+      "y": 2,
+      "sprite": "guru",
+      "dir": "DOWN",
+      "trainer": "boss_svetlana",
+      "sight": 0
+    },
+    {
+      "id": "yurt_acolyte",
+      "x": 12,
+      "y": 4,
+      "sprite": "yogi",
+      "dir": "LEFT",
+      "trainer": "yurt_acolyte",
+      "sight": 2
+    },
+    {
+      "id": "yurt_yogi",
+      "x": 5,
+      "y": 7,
+      "sprite": "yogi",
+      "dir": "RIGHT",
+      "trainer": "yurt_yogi",
+      "sight": 4
+    },
+    {
+      "id": "yurt_hippie",
+      "x": 13,
+      "y": 13,
+      "sprite": "hippie",
+      "dir": "LEFT",
+      "trainer": "yurt_hippie",
+      "sight": 3
+    },
+    {
+      "id": "yurt_sign",
+      "x": 8,
+      "y": 6,
+      "tile": "sign",
+      "script": "sign_yurt"
+    },
+    {
+      "id": "yurt_tourist",
+      "x": 17,
+      "y": 7,
+      "sprite": "tourist",
+      "dir": "DOWN",
+      "script": "yurt_tourist",
+      "wander": [
+        16,
+        6,
+        18,
+        8
+      ]
+    }
+  ],
+  "pickups": [
+    {
+      "id": "yurt_chai",
+      "x": 1,
+      "y": 12,
+      "item": "watermelon_slice",
+      "n": 2
+    },
+    {
+      "id": "yurt_lassi",
+      "x": 18,
+      "y": 1,
+      "item": "banana_lassi",
+      "n": 1
+    }
+  ],
+  "encounters": {
+    "encounterRate": 0.14,
+    "table": [
+      {
+        "speciesId": "tridog",
+        "minLevel": 8,
+        "maxLevel": 11,
+        "weight": 25
+      },
+      {
+        "speciesId": "shroomba",
+        "minLevel": 8,
+        "maxLevel": 11,
+        "weight": 20
+      },
+      {
+        "speciesId": "glowkid",
+        "minLevel": 9,
+        "maxLevel": 11,
+        "weight": 20
+      },
+      {
+        "speciesId": "lassiblob",
+        "minLevel": 9,
+        "maxLevel": 11,
+        "weight": 15
+      },
+      {
+        "speciesId": "snoozel",
+        "minLevel": 8,
+        "maxLevel": 10,
+        "weight": 20
+      },
+      {
+        "speciesId": "fractoad",
+        "minLevel": 10,
+        "maxLevel": 12,
+        "weight": 10,
+        "minIntox": 0.6
+      }
+    ],
+    "nightTable": [
+      {
+        "speciesId": "mozzquito",
+        "minLevel": 9,
+        "maxLevel": 11,
+        "weight": 30
+      },
+      {
+        "speciesId": "shadowcop",
+        "minLevel": 9,
+        "maxLevel": 11,
+        "weight": 20
+      },
+      {
+        "speciesId": "tridog",
+        "minLevel": 9,
+        "maxLevel": 12,
+        "weight": 30
+      },
+      {
+        "speciesId": "sirenowl",
+        "minLevel": 11,
+        "maxLevel": 12,
+        "weight": 20
+      }
+    ]
+  }
+}

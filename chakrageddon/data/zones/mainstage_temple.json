@@ -1,0 +1,196 @@
+{
+  "zoneId": "mainstage_temple",
+  "name": "Mainstage Temple",
+  "paletteId": "UV_BLACKLIGHT",
+  "baseBpm": 145,
+  "ground": "temple_floor",
+  "ground2": "path",
+  "wall": "temple_wall",
+  "encounter": "incense",
+  "indoor": true,
+  "noFly": true,
+  "rows": [
+    "nnnnnnnnnnnnnnnnnnnn",
+    "nlllllllllllllllllln",
+    "nlllllllllllllllllln",
+    "nnnnnnnnnlnnnnnnnnnn",
+    "nlllllllllllllllllln",
+    "nlllllllllllllllllln",
+    "nnnnnnnnnlnnnnnnnnnn",
+    "nlllllllllllllllllln",
+    "nlllllllllllllllllln",
+    "nnnnnnnnnlnnnnnnnnnn",
+    "nlllllllllllllllllln",
+    "nlllllllllllllllllln",
+    "nnnnnnnnnlnnnnnnnnnn",
+    "nlllllllllllllllllln",
+    "nlllllllllllllllllln",
+    "nnnnnnnnnlnnnnnnnnnn",
+    "nlllllllllllllllllln",
+    "nlllllllllllllllllln",
+    "nnnnnnnnnlnnnnnnnnnn",
+    "nllCllllllllllllllln",
+    "nlllllllllllllllllln",
+    "nnnnnnnnn,,nnnnnnnnn"
+  ],
+  "warps": [
+    {
+      "x": 9,
+      "y": 21,
+      "to": "backstage",
+      "tx": 10,
+      "ty": 14,
+      "dir": "DOWN"
+    },
+    {
+      "x": 10,
+      "y": 21,
+      "to": "backstage",
+      "tx": 11,
+      "ty": 14,
+      "dir": "DOWN"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "elite_kick",
+      "x": 9,
+      "y": 15,
+      "sprite": "dj",
+      "dir": "DOWN",
+      "trainer": "elite_kick",
+      "sight": 3,
+      "hideIf": "beat_elite_kick"
+    },
+    {
+      "id": "elite_bass",
+      "x": 9,
+      "y": 12,
+      "sprite": "captain",
+      "dir": "DOWN",
+      "trainer": "elite_bass",
+      "sight": 3,
+      "hideIf": "beat_elite_bass"
+    },
+    {
+      "id": "elite_hat",
+      "x": 9,
+      "y": 9,
+      "sprite": "raver",
+      "dir": "DOWN",
+      "trainer": "elite_hat",
+      "sight": 3,
+      "hideIf": "beat_elite_hat"
+    },
+    {
+      "id": "elite_lead",
+      "x": 9,
+      "y": 6,
+      "sprite": "guru",
+      "dir": "DOWN",
+      "trainer": "elite_lead",
+      "sight": 3,
+      "hideIf": "beat_elite_lead"
+    },
+    {
+      "id": "chad3_g",
+      "x": 9,
+      "y": 3,
+      "sprite": "chad",
+      "dir": "DOWN",
+      "trainer": "chad3_g",
+      "sight": 3,
+      "showIf": "starter_ganjapod",
+      "hideIf": "beat_chad3"
+    },
+    {
+      "id": "chad3_j",
+      "x": 9,
+      "y": 3,
+      "sprite": "chad",
+      "dir": "DOWN",
+      "trainer": "chad3_j",
+      "sight": 3,
+      "showIf": "starter_jawling",
+      "hideIf": "beat_chad3"
+    },
+    {
+      "id": "chad3_b",
+      "x": 9,
+      "y": 3,
+      "sprite": "chad",
+      "dir": "DOWN",
+      "trainer": "chad3_b",
+      "sight": 3,
+      "showIf": "starter_blottertot",
+      "hideIf": "beat_chad3"
+    },
+    {
+      "id": "council",
+      "x": 9,
+      "y": 1,
+      "sprite": "shaman",
+      "dir": "DOWN",
+      "script": "council"
+    },
+    {
+      "id": "council_l",
+      "x": 7,
+      "y": 1,
+      "sprite": "shaman",
+      "dir": "DOWN",
+      "script": "council_side"
+    },
+    {
+      "id": "council_r",
+      "x": 11,
+      "y": 1,
+      "sprite": "shaman",
+      "dir": "DOWN",
+      "script": "council_side"
+    },
+    {
+      "id": "temple_sign",
+      "x": 12,
+      "y": 19,
+      "tile": "sign",
+      "script": "sign_temple"
+    },
+    {
+      "id": "temple_local",
+      "x": 15,
+      "y": 20,
+      "sprite": "local",
+      "dir": "LEFT",
+      "script": "temple_local"
+    },
+    {
+      "id": "temple_water",
+      "x": 15,
+      "y": 10,
+      "sprite": "chaimama",
+      "dir": "LEFT",
+      "script": "temple_water"
+    }
+  ],
+  "pickups": [
+    {
+      "id": "temple_chai",
+      "x": 17,
+      "y": 19,
+      "item": "masala_chai",
+      "n": 3
+    },
+    {
+      "id": "temple_blanket",
+      "x": 2,
+      "y": 20,
+      "item": "weighted_blanket",
+      "n": 2
+    }
+  ],
+  "encounters": {
+    "encounterRate": 0,
+    "table": []
+  }
+}

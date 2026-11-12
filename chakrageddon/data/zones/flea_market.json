@@ -1,0 +1,298 @@
+{
+  "zoneId": "flea_market",
+  "name": "Anjuna Flea Market",
+  "paletteId": "ANJUNA_DUST",
+  "baseBpm": 136,
+  "ground": "sand",
+  "ground2": "path",
+  "wall": "cliff",
+  "encounter": "incense",
+  "cordonFlag": "beat_svetlana",
+  "cordonText": "Security: \"Road is closed. Guru Svetlana decides who is enlightened enough to go north.\"",
+  "rows": [
+    "ttttttttttt,,ttttttttttttt",
+    "t.v..vQQQQ.BB..v...v..=..t",
+    "t.mmq.XXXX.,,.qmm.mmq.=..t",
+    "t.....XGXX.,,.........=..t",
+    "t.mqm..,...,,..mm.L...=.xt",
+    "t..x...,...,,.....x...=..,",
+    ",,,,,,,,,,,,,,,,,,,,,,S,,,",
+    "t.L..x.....,,..m...L..=..,",
+    "t.mmq.mm...,,.mm.u....=..t",
+    "t.....m....,,.........=..t",
+    "t.~~~.m.qmm,,.~~~~.m..=..t",
+    "t.~~~~...m.,,.~~~~.mm.=x.t",
+    "t..~~......,,....x....=..t",
+    "t.x.L..xm..,,..L..mq..=..t",
+    "tttttttttttPPttttttttttttt",
+    "ttttttttttt,,ttttttttttttt"
+  ],
+  "warps": [
+    {
+      "x": 0,
+      "y": 6,
+      "to": "tantric_yurt",
+      "tx": 18,
+      "ty": 9,
+      "dir": "LEFT"
+    },
+    {
+      "x": 11,
+      "y": 0,
+      "to": "dirt_road",
+      "tx": 7,
+      "ty": 14,
+      "dir": "UP"
+    },
+    {
+      "x": 12,
+      "y": 0,
+      "to": "dirt_road",
+      "tx": 8,
+      "ty": 14,
+      "dir": "UP"
+    },
+    {
+      "x": 25,
+      "y": 5,
+      "to": "omelette_stall",
+      "tx": 1,
+      "ty": 5,
+      "dir": "RIGHT"
+    },
+    {
+      "x": 25,
+      "y": 6,
+      "to": "omelette_stall",
+      "tx": 1,
+      "ty": 6,
+      "dir": "RIGHT"
+    },
+    {
+      "x": 25,
+      "y": 7,
+      "to": "omelette_stall",
+      "tx": 1,
+      "ty": 7,
+      "dir": "RIGHT"
+    },
+    {
+      "x": 11,
+      "y": 15,
+      "to": "dry_ice_corridor",
+      "tx": 7,
+      "ty": 1,
+      "dir": "DOWN"
+    },
+    {
+      "x": 12,
+      "y": 15,
+      "to": "dry_ice_corridor",
+      "tx": 8,
+      "ty": 1,
+      "dir": "DOWN"
+    },
+    {
+      "x": 7,
+      "y": 3,
+      "to": "guesthouse",
+      "tx": 6,
+      "ty": 6,
+      "dir": "UP"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "market_vendor",
+      "x": 3,
+      "y": 3,
+      "sprite": "vendor",
+      "dir": "DOWN",
+      "script": "market_vendor"
+    },
+    {
+      "id": "market_lassi",
+      "x": 17,
+      "y": 3,
+      "sprite": "local",
+      "dir": "DOWN",
+      "script": "market_lassi"
+    },
+    {
+      "id": "market_guard",
+      "x": 10,
+      "y": 1,
+      "sprite": "guard",
+      "dir": "DOWN",
+      "script": "market_guard"
+    },
+    {
+      "id": "market_sign",
+      "x": 10,
+      "y": 7,
+      "tile": "sign",
+      "script": "sign_market"
+    },
+    {
+      "id": "market_hippie",
+      "x": 7,
+      "y": 9,
+      "sprite": "hippie",
+      "dir": "RIGHT",
+      "script": "market_hippie"
+    },
+    {
+      "id": "market_tourist",
+      "x": 15,
+      "y": 9,
+      "sprite": "tourist",
+      "dir": "LEFT",
+      "script": "market_tourist",
+      "wander": [
+        14,
+        9,
+        18,
+        9
+      ]
+    },
+    {
+      "id": "market_dealer",
+      "x": 19,
+      "y": 12,
+      "sprite": "dealer",
+      "dir": "LEFT",
+      "trainer": "market_dealer",
+      "sight": 3
+    },
+    {
+      "id": "market_wook",
+      "x": 20,
+      "y": 7,
+      "sprite": "wook",
+      "dir": "DOWN",
+      "script": "market_wook"
+    },
+    {
+      "id": "market_tuktuk",
+      "x": 18,
+      "y": 8,
+      "sprite": "local",
+      "dir": "DOWN",
+      "script": "market_tuktuk"
+    },
+    {
+      "id": "astral_auntie",
+      "x": 5,
+      "y": 12,
+      "sprite": "chaimama",
+      "dir": "DOWN",
+      "script": "astral_auntie",
+      "minIntox": 0.6,
+      "wander": [
+        3,
+        12,
+        7,
+        13
+      ]
+    },
+    {
+      "id": "market_collector",
+      "x": 20,
+      "y": 10,
+      "sprite": "guru",
+      "dir": "LEFT",
+      "script": "market_collector"
+    }
+  ],
+  "pickups": [
+    {
+      "id": "market_shades",
+      "x": 23,
+      "y": 13,
+      "item": "incense_stick",
+      "n": 2
+    },
+    {
+      "id": "market_sachet",
+      "x": 1,
+      "y": 13,
+      "item": "electrolyte_sachet",
+      "n": 1
+    },
+    {
+      "id": "market_alley",
+      "x": 21,
+      "y": 2,
+      "item": "masala_chai",
+      "n": 2,
+      "hidden": true
+    }
+  ],
+  "encounters": {
+    "encounterRate": 0.13,
+    "table": [
+      {
+        "speciesId": "lassiblob",
+        "minLevel": 11,
+        "maxLevel": 14,
+        "weight": 25
+      },
+      {
+        "speciesId": "snoozel",
+        "minLevel": 11,
+        "maxLevel": 13,
+        "weight": 15
+      },
+      {
+        "speciesId": "tridog",
+        "minLevel": 11,
+        "maxLevel": 14,
+        "weight": 20
+      },
+      {
+        "speciesId": "chillem",
+        "minLevel": 12,
+        "maxLevel": 14,
+        "weight": 15
+      },
+      {
+        "speciesId": "selfiend",
+        "minLevel": 13,
+        "maxLevel": 14,
+        "weight": 10
+      },
+      {
+        "speciesId": "djembe_monk",
+        "minLevel": 11,
+        "maxLevel": 14,
+        "weight": 15
+      }
+    ],
+    "nightTable": [
+      {
+        "speciesId": "shadowcop",
+        "minLevel": 12,
+        "maxLevel": 14,
+        "weight": 30
+      },
+      {
+        "speciesId": "mozzquito",
+        "minLevel": 11,
+        "maxLevel": 14,
+        "weight": 30
+      },
+      {
+        "speciesId": "sirenowl",
+        "minLevel": 12,
+        "maxLevel": 14,
+        "weight": 20
+      },
+      {
+        "speciesId": "glowkid",
+        "minLevel": 12,
+        "maxLevel": 14,
+        "weight": 20
+      }
+    ]
+  }
+}

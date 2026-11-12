@@ -1,0 +1,223 @@
+{
+  "zoneId": "poi_pit",
+  "name": "The Poi Pit",
+  "paletteId": "ANJUNA_DUST",
+  "baseBpm": 145,
+  "ground": "sand",
+  "ground2": "path",
+  "wall": "cliff",
+  "encounter": "incense",
+  "rows": [
+    "tttttttttt,,tttttttttttt",
+    "t.........,,...........t",
+    "tttttttttIffIttttttttttt",
+    "t....kkeeeeeeeekk......t",
+    "t....keeeeeeeeeek..v...t",
+    "t..L..dddddddddd..L....t",
+    "t.....dddddddddd...M...t",
+    "t..v..dddddddddd.......t",
+    "t..L..dddd,,dddd..L....t",
+    "t.........,,.......mq..t",
+    "t...C.....,,...........t",
+    "t...,,,,,,,,,,,,,,,,...t",
+    "t.........,,...........t",
+    "t..~~~~...,,....~~~~.b.t",
+    "t..~~~~...,,....~~~~.h.t",
+    "t.........,,.........h.t",
+    "tttttttttt,,tttttttttttt"
+  ],
+  "warps": [
+    {
+      "x": 10,
+      "y": 16,
+      "to": "sandy_trail",
+      "tx": 7,
+      "ty": 1,
+      "dir": "DOWN"
+    },
+    {
+      "x": 11,
+      "y": 16,
+      "to": "sandy_trail",
+      "tx": 8,
+      "ty": 1,
+      "dir": "DOWN"
+    },
+    {
+      "x": 10,
+      "y": 0,
+      "to": "tantric_yurt",
+      "tx": 9,
+      "ty": 16,
+      "dir": "UP"
+    },
+    {
+      "x": 11,
+      "y": 0,
+      "to": "tantric_yurt",
+      "tx": 10,
+      "ty": 16,
+      "dir": "UP"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "diabolo",
+      "x": 10,
+      "y": 4,
+      "sprite": "dj",
+      "dir": "DOWN",
+      "trainer": "boss_diabolo",
+      "sight": 0
+    },
+    {
+      "id": "pit_raver",
+      "x": 7,
+      "y": 7,
+      "sprite": "raver",
+      "dir": "RIGHT",
+      "trainer": "pit_raver",
+      "sight": 4
+    },
+    {
+      "id": "pit_wook",
+      "x": 14,
+      "y": 6,
+      "sprite": "wook",
+      "dir": "LEFT",
+      "trainer": "pit_wook",
+      "sight": 4
+    },
+    {
+      "id": "pit_vendor",
+      "x": 18,
+      "y": 9,
+      "sprite": "vendor",
+      "dir": "DOWN",
+      "script": "pit_vendor"
+    },
+    {
+      "id": "pit_sign",
+      "x": 9,
+      "y": 12,
+      "tile": "sign",
+      "script": "sign_pit"
+    },
+    {
+      "id": "pit_hippie",
+      "x": 16,
+      "y": 12,
+      "sprite": "hippie",
+      "dir": "LEFT",
+      "script": "pit_hippie"
+    },
+    {
+      "id": "pit_local",
+      "x": 6,
+      "y": 11,
+      "sprite": "local",
+      "dir": "UP",
+      "script": "pit_local"
+    },
+    {
+      "id": "pit_spinner",
+      "x": 20,
+      "y": 12,
+      "sprite": "firespinner",
+      "dir": "LEFT",
+      "script": "pit_spinner"
+    }
+  ],
+  "pickups": [
+    {
+      "id": "pit_balm",
+      "x": 21,
+      "y": 3,
+      "item": "tiger_balm",
+      "n": 1
+    },
+    {
+      "id": "pit_rizla",
+      "x": 13,
+      "y": 1,
+      "item": "rizla_paper",
+      "n": 3
+    },
+    {
+      "id": "pit_corner",
+      "x": 22,
+      "y": 15,
+      "item": "watermelon_slice",
+      "n": 2,
+      "hidden": true
+    }
+  ],
+  "encounters": {
+    "encounterRate": 0.15,
+    "table": [
+      {
+        "speciesId": "djembe_monk",
+        "minLevel": 5,
+        "maxLevel": 7,
+        "weight": 25
+      },
+      {
+        "speciesId": "glowkid",
+        "minLevel": 5,
+        "maxLevel": 7,
+        "weight": 20
+      },
+      {
+        "speciesId": "shroomba",
+        "minLevel": 5,
+        "maxLevel": 7,
+        "weight": 20
+      },
+      {
+        "speciesId": "wooklet",
+        "minLevel": 5,
+        "maxLevel": 7,
+        "weight": 15
+      },
+      {
+        "speciesId": "ketacrab",
+        "minLevel": 5,
+        "maxLevel": 7,
+        "weight": 20
+      },
+      {
+        "speciesId": "blottertot",
+        "minLevel": 6,
+        "maxLevel": 8,
+        "weight": 10,
+        "minIntox": 0.6
+      }
+    ],
+    "nightTable": [
+      {
+        "speciesId": "mozzquito",
+        "minLevel": 5,
+        "maxLevel": 7,
+        "weight": 35
+      },
+      {
+        "speciesId": "glowkid",
+        "minLevel": 6,
+        "maxLevel": 8,
+        "weight": 30
+      },
+      {
+        "speciesId": "shadowcop",
+        "minLevel": 6,
+        "maxLevel": 7,
+        "weight": 15
+      },
+      {
+        "speciesId": "tridog",
+        "minLevel": 5,
+        "maxLevel": 7,
+        "weight": 20
+      }
+    ]
+  }
+}

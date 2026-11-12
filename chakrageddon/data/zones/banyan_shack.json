@@ -1,0 +1,56 @@
+{
+  "zoneId": "banyan_shack",
+  "name": "Banyan's Shack",
+  "paletteId": "CHAI_TENT_WARMTH",
+  "baseBpm": 96,
+  "ground": "wood",
+  "ground2": "mat",
+  "wall": "inwall",
+  "encounter": "incense",
+  "indoor": true,
+  "interior": true,
+  "parent": "driftwood_beach",
+  "rows": [
+    "KKKK!KKKKNKK",
+    "KFFFFFFFFFFK",
+    "KFFFFUUFFFFK",
+    "KFFFFUUFFFFK",
+    "KAFFFFFFFFxK",
+    "KKKKKaKKKKKK"
+  ],
+  "warps": [
+    {
+      "x": 5,
+      "y": 5,
+      "to": "driftwood_beach",
+      "tx": 4,
+      "ty": 4,
+      "dir": "DOWN"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "shack_hammock",
+      "x": 1,
+      "y": 1,
+      "tile": "hammock",
+      "script": "shack_hammock"
+    },
+    {
+      "id": "shack_diary",
+      "x": 10,
+      "y": 1,
+      "tile": "table",
+      "script": "shack_diary"
+    }
+  ],
+  "pickups": [
+    {
+      "id": "shack_water",
+      "x": 2,
+      "y": 3,
+      "item": "water_bottle",
+      "n": 2
+    }
+  ]
+}
