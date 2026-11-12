@@ -142,6 +142,18 @@
    "h": 30,
    "frames": 1
   },
+  "cow_stand": {
+   "file": "prop_cow_stand.png",
+   "w": 32,
+   "h": 22,
+   "frames": 3
+  },
+  "lifeguard_chair": {
+   "file": "prop_lifeguard_chair.png",
+   "w": 16,
+   "h": 30,
+   "frames": 1
+  },
   "surfboard": {
    "file": "prop_surfboard.png",
    "w": 16,
@@ -195,7 +207,9 @@
   "sergeant": "char_sergeant.png",
   "mantequilla": "char_mantequilla.png",
   "player_sombrero": "char_player_sombrero.png",
-  "wook": "char_wook.png"
+  "wook": "char_wook.png",
+  "banyan_young": "char_banyan_young.png",
+  "lifeguard": "char_lifeguard.png"
  },
  "creatures": {
   "ganjapod": "mon_ganjapod.png",
@@ -236,7 +250,9 @@
   "sunraga": "mon_sunraga.png",
   "bassilisk": "mon_bassilisk.png",
   "mandalord": "mon_mandalord.png",
-  "vicchiomorph": "mon_vicchiomorph.png"
+  "vicchiomorph": "mon_vicchiomorph.png",
+  "mirrorling": "mon_mirrorling.png",
+  "lucidra": "mon_lucidra.png"
  },
  "icons": {
   "app": "icon.png"
@@ -246,7 +262,10 @@
  },
  "dancers": {
   "looks": 6,
-  "poses": 3
+  "poses": 3,
+  "cols": 5,
+  "still": 3,
+  "back": 4
  },
  "portraits": {
   "player": "portrait_player.png",
@@ -288,6 +307,8 @@
   "sergeant": "portrait_sergeant.png",
   "mantequilla": "portrait_mantequilla.png",
   "player_sombrero": "portrait_player_sombrero.png",
-  "wook": "portrait_wook.png"
+  "wook": "portrait_wook.png",
+  "banyan_young": "portrait_banyan_young.png",
+  "lifeguard": "portrait_lifeguard.png"
  }
 }

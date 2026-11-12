@@ -20,8 +20,8 @@
     "^...eeeeeeeeeeeeee..b^",
     "^..C..............M..^",
     ",....................^",
-    "wwwwwwwwwwwwwwwwwwwwww",
-    "WWWWWWWWWWWWWWWWWWWWWW"
+    "wwwwwwwwwwwwwwłwwwwwww",
+    "WWWWWWWWWWWWWWŁŁŁŁWWWW"
   ],
   "warps": [
     {
@@ -186,6 +186,14 @@
       "y": 1,
       "item": "neon_glowstick",
       "n": 1
+    },
+    {
+      "id": "cliff_light",
+      "x": 17,
+      "y": 13,
+      "item": "neon_glowstick",
+      "n": 1,
+      "minIntox": 0.9
     }
   ],
   "encounters": {
@@ -231,5 +239,24 @@
   },
   "resetOnEnter": [
     "sunraga_rest"
+  ],
+  "egoFall": {
+    "zone": "driftwood_beach",
+    "x": 20,
+    "y": 11,
+    "dir": "DOWN",
+    "text": "The light gives way under you. You wake up on the beach, covered in sand, with a mouthful of sea. Nothing is missing. Probably."
+  },
+  "hallucinations": [
+    {
+      "kind": "two_suns",
+      "x": 4,
+      "y": 12,
+      "face": {
+        "cliff_influencer": "DOWN",
+        "chloe": "LEFT",
+        "cliff_tourist": "LEFT"
+      }
+    }
   ]
 }

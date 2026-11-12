@@ -226,5 +226,10 @@
         "weight": 20
       }
     ]
-  }
+  },
+  "hallucinations": [
+    {
+      "kind": "crowd_turn"
+    }
+  ]
 }

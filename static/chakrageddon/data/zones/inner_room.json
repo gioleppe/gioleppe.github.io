@@ -1,0 +1,67 @@
+{
+  "zoneId": "inner_room",
+  "name": "The Inner Room",
+  "paletteId": "CHAI_TENT_WARMTH",
+  "baseBpm": 60,
+  "ground": "cave",
+  "ground2": "path",
+  "wall": "cave_wall",
+  "encounter": "incense",
+  "indoor": true,
+  "interior": true,
+  "parent": "sadhu_cave",
+  "noFly": true,
+  "egoOnly": {
+    "zone": "sadhu_cave",
+    "x": 14,
+    "y": 10,
+    "dir": "RIGHT",
+    "text": "The room folds shut like a book. You are standing in the cave again, facing the wall. The pattern turns, very slowly."
+  },
+  "rows": [
+    "zzzzzzzzzz",
+    "z........z",
+    "z........z",
+    "z...UU...z",
+    "z...UU...z",
+    "z........z",
+    "zzzzaazzzz"
+  ],
+  "warps": [
+    {
+      "x": 4,
+      "y": 6,
+      "to": "sadhu_cave",
+      "tx": 14,
+      "ty": 10,
+      "dir": "LEFT"
+    },
+    {
+      "x": 5,
+      "y": 6,
+      "to": "sadhu_cave",
+      "tx": 14,
+      "ty": 10,
+      "dir": "LEFT"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "inner_teacher",
+      "x": 5,
+      "y": 2,
+      "sprite": "chaimama",
+      "dir": "DOWN",
+      "script": "inner_teacher"
+    }
+  ],
+  "pickups": [
+    {
+      "id": "inner_gift",
+      "x": 8,
+      "y": 5,
+      "item": "mystery_powder",
+      "n": 1
+    }
+  ]
+}

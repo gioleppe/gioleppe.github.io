@@ -36,7 +36,7 @@ export const battleView = {
       this.on = true; this.queue = []; this.cur = null; this.intro = 1; this.outro = 0; this.menu = 'main'; this.capture = null; this.learn = null;
       this.disp = { p: { ...e.player }, e: { ...e.enemy } };
       this.info = { kind: e.kind, trainerName: e.trainerName, trainerSprite: e.trainerSprite, boss: e.boss, paletteId: e.paletteId };
-      this.effects = []; this.portrait = e.kind === 'trainer' && e.trainerSprite ? 2.2 : 0;   // the trainer shows up before their Astral
+      this.effects = []; this.portrait = (e.kind === 'trainer' || e.kind === 'mirror') && e.trainerSprite ? 2.2 : 0;   // the trainer shows up before their Astral
       this.fx = { p: POSE(), e: POSE() }; this.move = null; this.pending = null; this.chartFlip = 0;
       this.loop = { p: false, e: false };
       game.audio?.sfx('encounter');
@@ -348,7 +348,7 @@ export const battleView = {
     g.restore();
     this.hud(game, g, 'e', 6, 6);
     this.hud(game, g, 'p', W - 134, 90);
-    if (b && b.kind === 'trainer') for (let i = 0; i < b.enemy.length; i++) { g.fillStyle = b.enemy[i].hp > 0 ? C.magenta : C.grey; g.fillRect(140 + i * 7, 9, 5, 5); }
+    if (b && (b.kind === 'trainer' || b.kind === 'mirror')) for (let i = 0; i < b.enemy.length; i++) { g.fillStyle = b.enemy[i].hp > 0 ? C.magenta : C.grey; g.fillRect(140 + i * 7, 9, 5, 5); }
     if (this.flash > 0 && !game.settings.reducedMotion) { g.fillStyle = `rgba(255,255,255,${Math.min(0.6, this.flash * 2)})`; g.fillRect(0, 0, W, H); }
 
     panel(g, 3, BOX_Y - 2, W - 6, BOX_H + 2, { bg: C.cream, accent: C.purple });

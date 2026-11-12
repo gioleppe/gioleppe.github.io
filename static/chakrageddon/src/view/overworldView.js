@@ -2,7 +2,8 @@
 import { W, H } from './CanvasRenderer.js';
 import { drawText, textWidth, wrap, panel, C } from './ui.js';
 import { charAt, npcVisible, npcPos, isNight, nightLevel } from '../core/OverworldEngine.js';
-import { bandOf, bandIndex } from '../core/intox.js';
+import { bandOf, bandIndex, egoGone } from '../core/intox.js';
+import { highWorld, TRAIL_SPRITES } from './highWorld.js';
 import { routeHint } from '../core/goals.js';
 import { hashOf } from './anim.js';
 import { questMarker } from '../core/quests.js';
@@ -113,7 +114,9 @@ export const overworldView = {
   onEvent(game, e) {
     if (e.type === 'ENTITY_MOVED' && e.entityId === 'player') { this.anim = { from: e.from, to: e.to, t: 0 }; this.walkFlip ^= 1; }
     else if (e.type === 'BUMP') { this.bumpT = 0.18; game.audio?.sfx('bump'); }
-    else if (e.type === 'ZONE_CHANGED') { this.anim = null; this.fade = 1; this.banner = e.name; this.bannerT = 3.2; this.npcDir = {}; this.npcAnim = {}; this.hint = routeHint(game.data, game.engine.state)?.text || null; }
+    else if (e.type === 'PLAYER_PLACED') this.anim = null;                      // set down somewhere else (coming down off the stairs of light)
+    else if (e.type === 'FX' && e.fx === 'rainbow_burst') highWorld.burst(game, e);
+    else if (e.type === 'ZONE_CHANGED') { highWorld.reset(); this.anim = null; this.fade = 1; this.banner = e.name; this.bannerT = 3.2; this.npcDir = {}; this.npcAnim = {}; this.hint = routeHint(game.data, game.engine.state)?.text || null; }
     else if (e.type === 'EYE_CONTACT') { this.alert = { x: e.x, y: e.y, t: 0.8 }; }
     else if (e.type === 'NPC_FACE') this.npcDir[e.npcId] = e.dir;
     else if (e.type === 'NPC_MOVED') { (this.npcAnim ||= {})[e.npcId] = { from: e.from, to: e.to, t: 0, dist: Math.abs(e.to[0] - e.from[0]) + Math.abs(e.to[1] - e.from[1]), walkUp: !!e.walkUp }; this.npcDir[e.npcId] = e.dir; }
@@ -121,6 +124,7 @@ export const overworldView = {
 
   update(game, dt) {
     this.t += dt;
+    highWorld.update(this, game, dt);
     // when the day turns (half way through dusk or dawn), a sun or a moon sweeps across the top of the screen
     const night = isNight(game.engine.state);
     if (this.dayFor !== game.engine) { this.dayFor = game.engine; this.wasNight = night; this.sky = null; }
@@ -160,8 +164,10 @@ export const overworldView = {
     // Each one keeps its own rhythm, from where it stands; a speaker hops 1 pixel on the beat.
     const frames = pr.frames || 1, rate = { palm: 0.9, tree: 0.6, bamboo: 1.1, flag: 4 }[name] || 0;
     const step = still || frames < 2 || !rate ? 0 : Math.floor(t * rate + ((tx * 7 + ty * 13) % 10) / 10 * 4) % 4;
-    const frame = frames >= 3 ? [0, 1, 0, 2][step] : frames === 2 ? step % 2 : 0;
-    const x0 = Math.round(bx - pr.w / 2), y0 = Math.round(by - pr.h) - (!still && name === 'speaker' && beat > 0.5 ? 1 : 0);
+    // at Ego gone on the Forest Stage the trees dance: a lean on every beat, a hop on each (a hallucination)
+    const treeDance = !still && rate && frames >= 3 && name !== 'flag' && this.treesDance, beats = (t * bpm) / 60 + ((tx + ty) % 2) / 2;
+    const frame = treeDance ? 1 + (Math.floor(beats) % 2) : frames >= 3 ? [0, 1, 0, 2][step] : frames === 2 ? step % 2 : 0;
+    const x0 = Math.round(bx - pr.w / 2), y0 = Math.round(by - pr.h) - (!still && name === 'speaker' && beat > 0.5 ? 1 : 0) - (treeDance && beats % 1 < 0.3 ? 1 : 0);
     g.drawImage(img, frame * pr.w, 0, pr.w, pr.h, x0, y0, pr.w, pr.h);
     if (name === 'lamp' && !still) { g.globalAlpha = 0.18 + 0.08 * Math.sin(t * 9 + tx * 3); g.fillStyle = '#FFE066'; g.beginPath(); g.arc(bx, by - pr.h + 5, 8, 0, 7); g.fill(); g.globalAlpha = 1; }
   },
@@ -172,13 +178,15 @@ export const overworldView = {
     const img = game.images.dancers, meta = game.atlas.dancers || { looks: 1, poses: 1 };
     const still = game.settings.reducedMotion, bpm = game.data.zones[game.engine.state.zoneId]?.baseBpm || 140;
     const beats = (this.t * bpm) / 60 + ((x * 3 + y * 5) % 4) / 4;
-    const look = (x * 7 + y * 13) % meta.looks, pose = still ? 0 : [0, 1, 0, 2][Math.floor(beats) % 4] % meta.poses;
-    const hop = !still && beats % 1 < 0.3 ? 1 : 0;
+    const turned = highWorld.crowdPose(this, game, y);          // the crowd stops and stares at you (Ego gone, the Poi Pit)
+    const look = (x * 7 + y * 13) % meta.looks, pose = turned ?? (still ? 0 : [0, 1, 0, 2][Math.floor(beats) % 4] % meta.poses);
+    const hop = turned === null && !still && beats % 1 < 0.3 ? 1 : 0;
     g.fillStyle = 'rgba(11,3,20,0.3)'; g.fillRect(dx + 4, dy + 13, 8, 2);
     if (img) g.drawImage(img, pose * 16, look * 24, 16, 24, dx, dy - 10 - hop, 16, 24);
   },
   /** small loops for people with something in their hands */
-  trick(g, sprite, x, y, t) {
+  trick(g, sprite, x, y, t, bpm = 140) {
+    if (sprite === 'chef') { const k = ((t * bpm) / 60) % 1, up = Math.round(Math.sin(k * Math.PI) * 5); g.fillStyle = '#3A3A46'; g.fillRect(x + 10, y + 15, 5, 1); g.fillStyle = '#FFE066'; g.fillRect(x + 11, y + 13 - up, 3, 2); }
     if (sprite === 'juggler') for (let i = 0; i < 3; i++) { const a = t * 5 + i * 2.1; g.fillStyle = ['#FF4FA8', '#FFE066', '#5FF4FF'][i]; g.fillRect(Math.round(x + 7 + Math.cos(a) * 6), Math.round(y - 2 - Math.abs(Math.sin(a)) * 7), 2, 2); }
     if (sprite === 'firespinner') for (let i = 0; i < 2; i++) { const a = t * 8 + i * Math.PI; g.fillStyle = i ? '#FFD23F' : '#FF6A2A'; g.fillRect(Math.round(x + 7 + Math.cos(a) * 9), Math.round(y + 12 + Math.sin(a) * 5), 2, 2); }
   },
@@ -234,6 +242,8 @@ export const overworldView = {
         let sp = resolve(def.sprite);
         const dx = x * TS - cx, dy = y * TS - cy;
         this.tile(game, g, zone.ground, dx, dy);
+        const ego = egoGone(game.data.rules, s.intox);
+        if (def.egoFloor && ego && def.under) sp = resolve(def.under);                 // the sacred cow has walked off
         if (sp === 'water' && wave) sp = 'water_b';
         if (sp === 'cordon' && zone.cordonFlag && s.flags[zone.cordonFlag]) sp = zone.ground2 || zone.ground;   // taken down once it opens
         // fences and cable runs: a north-south run gets its own upright piece, not a ladder of east-west segments
@@ -241,6 +251,7 @@ export const overworldView = {
         const top = WALL_TOPS[sp];
         if (top && isWall(classOf(x, y + 1), sp)) wallTop(g, top, dx, dy, [classOf(x, y - 1), classOf(x + 1, y), classOf(x, y + 1), classOf(x - 1, y)].map((c) => !isWall(c, sp)));
         else if (sp !== zone.ground) this.tile(game, g, sp, dx, dy);
+        if (def.light && ego) highWorld.lightStep(this, game, g, dx, dy, x, y);
         if (sp === 'bonfire' && !game.settings.reducedMotion) for (let i = 0; i < 3; i++) {   // sparks rising off the fire
           const k = (this.t * 0.9 + i / 3 + x * 0.17) % 1;
           g.globalAlpha = 1 - k; g.fillStyle = i % 2 ? '#FFD23F' : '#FF6A2A';
@@ -270,8 +281,10 @@ export const overworldView = {
         }
       }
     }
+    highWorld.ground(this, game, g, cx, cy, x0, y0, x1, y1);
+    this.treesDance = highWorld.treesDance(game);
     // row-sorted pass: props, characters, pickups (lower rows overlap upper ones)
-    const ents = [];
+    const ents = highWorld.ents(this, game, g, cx, cy);
     const px0 = Math.max(0, x0 - 2), px1 = Math.min(zone.rows[0].length - 1, x1 + 2), py1 = Math.min(zone.rows.length - 1, y1 + 3);
     const taken = new Set([`${s.player.x},${s.player.y}`, ...(this.anim ? [`${this.anim.from[0]},${this.anim.from[1]}`] : [])]);
     for (const n of zone.npcs || []) if (npcVisible(ctx, n)) { const p = npcPos(ctx, n, zone); taken.add(`${p.x},${p.y}`); }
@@ -287,11 +300,12 @@ export const overworldView = {
       ents.push({ y: fy, npc: n, nx: fx, ny: fy, walking: !!a });
     }
     const flash = game.canFlash();
-    for (const p of zone.pickups || []) if (!s.picked[p.id] && (!p.hidden || flash)) ents.push({ y: p.y, pickup: p });
+    for (const p of zone.pickups || []) if (!s.picked[p.id] && (!p.hidden || flash) && !(p.minIntox > s.intox)) ents.push({ y: p.y, pickup: p });
     ents.push({ y: py / TS, player: true });
     ents.sort((a, b) => a.y - b.y);
     const shadow = (x, y) => { g.fillStyle = 'rgba(20,10,40,0.27)'; g.fillRect(x + 3, y + 21, 10, 3); g.fillRect(x + 4, y + 20, 8, 5); };
     for (const e of ents) {
+      if (e.draw) { e.draw(); continue; }
       if (e.dancer) { this.dancer(game, g, e.x * TS - cx, e.ty * TS - cy, e.x, e.ty); continue; }
       if (e.prop) {
         const pr = game.atlas.props[e.prop], img = game.images[`prop:${e.prop}`], ty = Math.round(e.y + 0.01);
@@ -336,17 +350,33 @@ export const overworldView = {
           // standing people shift their weight now and then; a few have a loop of their own
           const still = game.settings.reducedMotion, h = hashOf(n.id), fidget = !still && !e.walking && ((this.t + (h % 97) / 10) % 4.5) < 0.25;
           const nod = !still && n.sprite === 'dj' ? Math.floor(this.t * (game.data.zones[s.zoneId].baseBpm || 140) / 60) % 2 : 0;
-          const beats = this.t * (game.data.zones[s.zoneId].baseBpm || 140) / 60, dancing = n.dance && !still && !e.walking && !(this.alert && this.alert.x === e.nx && this.alert.y === e.ny);
+          const bpm = game.data.zones[s.zoneId].baseBpm || 140, beats = this.t * bpm / 60, turned = highWorld.crowdTurning(this);
+          const dancing = n.dance && !still && !turned && !e.walking && !(this.alert && this.alert.x === e.nx && this.alert.y === e.ny);
           const hop = dancing && beats % 1 < 0.3 ? 1 : 0;
-          shadow(dx, dy - 10);
-          this.char(game, g, n.sprite, dancing ? 'DOWN' : this.npcDir[n.id] || n.dir || 'DOWN', dancing ? Math.floor(beats / 2) % 2 : e.walking ? Math.floor(this.t * 8) % 2 : fidget ? 1 : 0, dx, dy - 10 + nod - hop);
-          if (!still) this.trick(g, n.sprite, dx, dy - 10, this.t + (h % 13));
+          const sprite = n.mirror ? s.outfit || 'player' : n.sprite;
+          const dir = dancing ? 'DOWN' : turned && n.dance ? (e.ny < s.player.y ? 'DOWN' : 'UP') : highWorld.face(game, n.id) || this.npcDir[n.id] || n.dir || 'DOWN';
+          const step = dancing ? Math.floor(beats / 2) % 2 : e.walking ? Math.floor(this.t * 8) % 2 : fidget ? 1 : 0;
+          // the performers leave trails of colour when you are Peaking
+          if (TRAIL_SPRITES.has(n.sprite) && bandIndex(game.data.rules, s.intox) >= 2 && !still && !game.settings.grounded) {
+            for (const k of [2, 1]) {
+              const off = Math.round(Math.sin(beats * Math.PI + k) * k * 2);
+              g.globalAlpha = 0.14 * k; const f = 'filter' in g ? g.filter : null;
+              if (f !== null) g.filter = `hue-rotate(${k * 120}deg) saturate(1.6)`;
+              this.char(game, g, sprite, dir, step, dx + off, dy - 10 + nod - hop + k);
+              if (f !== null) g.filter = f;
+              g.globalAlpha = 1;
+            }
+          }
+          if (n.ghost) highWorld.ghost(this, game, g, (jx, jy) => this.char(game, g, sprite, dir, step, dx + jx, dy - 10 + jy));
+          else { shadow(dx, dy - 10); this.char(game, g, sprite, dir, step, dx, dy - 10 + nod - hop); }
+          if (!still && !n.ghost) this.trick(g, n.sprite, dx, dy - 10, this.t + (h % 13), bpm);
         }
         // a quest to pick up (!) or a step to hand in (?)
         const mark = questMarker(game.data, s, zone.zoneId, n.id);
         if (mark) drawMarker(g, mark, dx + 5, dy - 23 - (mark === '?' ? 1 : 0) + (game.settings.reducedMotion ? 0 : Math.round(Math.abs(Math.sin(this.t * 3.5)) * -2)));
       } else this.tile(game, g, 'stash', e.pickup.x * TS - cx, e.pickup.y * TS - cy);
     }
+    highWorld.overlay(this, game, g, cx, cy);
     if (this.alert) drawText(g, '!', this.alert.x * TS - cx + 6, this.alert.y * TS - cy - 20, { color: C.red, shadow: C.white });
 
     // strobes on the stage: on each beat one of them throws a cone of white light onto the floor, the corners taking
@@ -372,6 +402,7 @@ export const overworldView = {
       g.fillStyle = grd; g.fillRect(0, 0, W, H);
     } else if (zone.dark) { g.fillStyle = 'rgba(40,10,90,0.25)'; g.fillRect(0, 0, W, H); }
     else if (zone.indoor !== true) daylight(g, s.clock + (s.clockSteps || 0) / (game.data.rules.stepsPerMinute || 1));
+    highWorld.glow(this, game, g, cx, cy, x0, y0, x1, y1);
     if (this.sky) drawSky(g, this.sky, game.settings.reducedMotion);
 
     if (this.bannerT > 0 && this.banner) {

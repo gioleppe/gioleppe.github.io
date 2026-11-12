@@ -49,7 +49,7 @@ export function profileFor(mood, zoneId = '') {
 const hash = (a, b) => { let h = (a * 374761393 + b * 668265263) >>> 0; h = ((h ^ (h >>> 13)) * 1274126177) >>> 0; return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
 
 export class SynthAudio {
-  constructor() { this.ctx = null; this.vol = 0.7; this.bpm = 140; this.mood = null; this.zone = ''; this.prof = null; this.step = 0; this.next = 0; this.pending = { bpm: 140, mood: 'TITLE' }; this.lastSfx = {}; }
+  constructor() { this.highPad = 0; this.mute = null; this.ctx = null; this.vol = 0.7; this.bpm = 140; this.mood = null; this.zone = ''; this.prof = null; this.step = 0; this.next = 0; this.pending = { bpm: 140, mood: 'TITLE' }; this.lastSfx = {}; }
 
   /** Call from inside a user gesture. Creates the audio graph the first time, and resumes it whenever it is not
    *  running (a phone may start it suspended, or suspend it in the background). Returns true once sound is running. */
@@ -84,8 +84,9 @@ export class SynthAudio {
   resume() { if (this.ctx && this.vol > 0) this.ctx.resume(); }
   setVolume(v) { this.vol = v; if (this.master) this.master.gain.setTargetAtTime(v * 0.6, this.ctx.currentTime, 0.05); }
 
-  /** { bpm, mood, zone, lowPass } - any subset */
+  /** { bpm, mood, zone, lowPass, highPad } - any subset. highPad (0..1): a warm chord under the music from the Come-up on */
   setTrack(t) {
+    if (t.highPad !== undefined) this.highPad = t.highPad;
     if (!this.ctx) { this.pending = { ...this.pending, ...t }; return; }
     if (t.bpm) this.bpm = t.bpm;
     const zone = t.zone ?? this.zone;
@@ -122,7 +123,22 @@ export class SynthAudio {
     s.connect(f); f.connect(g); g.connect(out); s.start(t); s.stop(t + dur + 0.02);
   }
 
+  /** The music stops dead for one bar, from the start of the next one, then drops back in with a crash (the Poi Pit's
+   *  crowd turning to stare at you). Returns when that happens, in seconds from now, and for how long. */
+  breakdown() {
+    const c = this.ctx, spb = 60 / this.bpm / 4;
+    if (!c || c.state !== 'running' || !this.mood) return { delay: 0, dur: spb * 16 };
+    const at = this.next + ((16 - (this.step % 16)) % 16) * spb, end = at + spb * 16;
+    this.mute = { from: at, to: end };
+    this.music.gain.setValueAtTime(this.music.gain.value, at - 0.01); this.music.gain.linearRampToValueAtTime(0.0001, at);
+    this.music.gain.setValueAtTime(0.0001, end - 0.01); this.music.gain.linearRampToValueAtTime(MUSIC_LEVEL * (this.prof?.level || 1), end);
+    this.hiss(end, 1.2, 0.35, 3000, this.fx); this.voice('sine', 150, end, 0.4, 1, this.fx, { to: 40 });   // and back in
+    return { delay: Math.max(0, at - c.currentTime), dur: end - at };
+  }
+
   playStep(i, t, spb) {
+    if (this.mute && t >= this.mute.from && t < this.mute.to) return;
+    if (this.mute && t >= this.mute.to) this.mute = null;
     const m = this.prof || profileFor(this.mood), beat = i % 4, bar = Math.floor(i / 16);
     const scale = m.major ? MAJOR : SCALE;
     if (m.kick && beat === 0) this.voice('sine', 150, t, 0.2, 0.9 * m.kick, this.music, { to: 42 });
@@ -140,9 +156,10 @@ export class SynthAudio {
       else if (hash(m.seed + 3, k) < 0.34 * m.lead + 0.08) note = scale[Math.floor(hash(m.seed + 4, k) * scale.length)];
       if (note !== null) this.voice(m.leadWave, m.root * 4 * 2 ** (note / 12), t, spb * (m.major ? 2.5 : m.arp === 1 ? 1.1 : 1.4), (m.major ? 0.11 : 0.06) * Math.min(1, m.lead + 0.3), this.music, { cutoff: m.bright * 2, cutoffTo: 500, q: 6, detune: m.detune || 0 });
     }
-    if (m.pad && i % 32 === 0) {
+    if ((m.pad || this.highPad > 0) && i % 32 === 0) {
       const chord = [[0, 4, 7], [5, 9, 12], [7, 11, 14], [0, 4, 9]][bar % 8 >> 1];
-      for (const n of chord) this.voice('triangle', m.root * 2 * 2 ** (n / 12), t, spb * 34, 0.09, this.music, { attack: spb * 6 });
+      const gain = m.pad ? 0.09 : 0.055 * this.highPad;                 // the Come-up's pad sits under the zone's music
+      for (const n of chord) this.voice('triangle', m.root * 2 * 2 ** (n / 12), t, spb * 34, gain, this.music, { attack: spb * 6 });
     }
   }
 
@@ -176,6 +193,8 @@ export class SynthAudio {
       case 'push': T('sine', 90, 0.16, 0.35, 0, { to: 45 }); break;
       case 'throw': T('sine', 400, 0.35, 0.12, 0, { to: 1200 }); break;
       case 'zip': this.hiss(now, 0.14, 0.12, 2500, o); T('sawtooth', 300, 0.14, 0.04, 0, { to: 900 }); break;
+      case 'dissolve': [1568, 1319, 1047, 784, 659].forEach((f, i) => T('triangle', f, 0.16, 0.07, i * 0.06)); this.hiss(now, 0.5, 0.05, 7000, o); break;   // a hallucination fades
+      case 'burst': this.hiss(now, 0.3, 0.3, 1500, o); [523, 659, 784, 988, 1175, 1568].forEach((f, i) => T('square', f, 0.12, 0.08, 0.05 + i * 0.04)); break;   // a rainbow explosion
       default: break;
     }
   }

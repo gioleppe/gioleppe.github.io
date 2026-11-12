@@ -6,6 +6,8 @@ import { statsOf, nameOf, xpForLevel } from '../core/mons.js';
 import { canUse } from '../core/OverworldEngine.js';
 import { currentGoal, routeHint } from '../core/goals.js';
 import { questLog, questMarker } from '../core/quests.js';
+import { highOnly } from '../core/intox.js';
+import { highWorld } from './highWorld.js';
 
 const TABS = [
   { id: 'WRISTBAND_ARM', label: 'Astrals' }, { id: 'STASH_TIN', label: 'Stash Tin' }, { id: 'TRIP_JOURNAL', label: 'Journal' }, { id: 'MAP', label: 'Map' },
@@ -316,9 +318,15 @@ export const menuView = {
       // a ballpoint sketch until you have bagged one, then the real thing
       if (img) g.drawImage(img, (s.dex.caught[sp.id] ? 0 : 4) * 64, 0, 64, 64, px + 18, Y - 6, 64, 64);
       let tx = px; for (const t of sp.types) tx += typeTag(g, t, tx, Y + 56);
+      if (highOnly(d)[sp.id]) drawEye(g, tx + 2, Y + 57);                // only seen when high
       if (s.dex.caught[sp.id]) wrap(sp.journalNotes, NW).slice(0, 5).forEach((ln, i) => drawText(g, ln, px, Y + 69 + i * 10, { color: '#1E3A8A' }));
       else wrap('(bag one to take notes)', NW).forEach((ln, i) => drawText(g, ln, px, Y + 69 + i * 10, { color: C.grey }));
-    } else drawText(g, 'not seen yet', px + 10, Y + 30, { color: C.grey });
+    } else {
+      drawText(g, 'not seen yet', px + 10, Y + 30, { color: C.grey });
+      // an Astral that only comes out when you are high: where it hides, once you have been there
+      const at = sp && (highOnly(d)[sp.id] || []).find((a) => s.visited[a.zone]);
+      if (at) { drawEye(g, px + 10, Y + 47); wrap(`Something else lives at ${d.zones[at.zone].name}. Get higher to see it.`, NW).slice(0, 5).forEach((ln, i) => drawText(g, ln, px, Y + 58 + i * 10, { color: '#7A4FE0' })); }
+    }
     if (active && (input.pressed('b') || input.pressed('left') || r.chosen >= 0)) back();
   },
 
@@ -393,6 +401,7 @@ export const menuView = {
       g.fillStyle = known(z) ? (hub ? '#FF8A8A' : '#FFF4B0') : '#B8B4C0'; g.fillRect(q.x - r + 1, q.y - r + 1, r * 2 - 1, 1);
       if (tentZones.includes(z)) { g.fillStyle = '#14101E'; g.fillRect(q.x + r, q.y - r - 4, 6, 5); g.fillStyle = C.terracotta; g.fillRect(q.x + r + 1, q.y - r - 3, 4, 3); g.fillRect(q.x + r + 2, q.y - r - 4, 2, 1); }
       const quest = known(z) && ((d.zones[z].npcs || []).some((n) => questMarker(d, s, z, n.id)) || Object.values(d.zones).some((iz) => iz.interior && iz.parent === z && s.visited[iz.zoneId] && (iz.npcs || []).some((n) => questMarker(d, s, iz.zoneId, n.id))));
+      if (known(z) && highWorld.hidden(d, z, s.dex.seen).length) drawEye(g, q.x + r + 1, q.y + r - 1);
       if (quest) { g.fillStyle = '#14101E'; g.fillRect(q.x - r - 5, q.y - r - 5, 4, 7); g.fillStyle = C.yellow; g.fillRect(q.x - r - 4, q.y - r - 4, 2, 3); g.fillRect(q.x - r - 4, q.y - r, 2, 1); }
     }
     if (goal?.zone && places[goal.zone]) { const q = P(goal.zone); g.fillStyle = '#14101E'; g.fillRect(q.x - 1, q.y - 12, 1, 9); g.fillStyle = '#E0303C'; g.fillRect(q.x, q.y - 12, 5, 3); g.fillStyle = '#FF8A8A'; g.fillRect(q.x, q.y - 12, 5, 1); }
@@ -431,8 +440,9 @@ export const menuView = {
       if (Math.floor(this.t * 3) % 3) { g.fillStyle = '#FFFFFF'; g.fillRect(q.x - r, q.y - r, r * 2 + 1, 1); g.fillRect(q.x - r, q.y + r, r * 2 + 1, 1); g.fillRect(q.x - r, q.y - r, 1, r * 2 + 1); g.fillRect(q.x + r, q.y - r, 1, r * 2 + 1); }
       const tentHere = s.tents.findIndex((t) => t.zone === cz);
       const label = known(cz) ? d.zones[cz].name : '???';
+      const hides = known(cz) && highWorld.hidden(d, cz, s.dex.seen).length;
       const extra = taxi && tentHere >= 0 && cz !== at ? 'A: tuk-tuk' : tentHere >= 0 ? 'Chai Tent' : '';
-      if (cz !== at) { drawText(g, label, X, lineY, { color: C.ink }); if (extra) drawText(g, extra, X + CW, lineY, { color: '#B02A2A', align: 'right' }); }
+      if (cz !== at) { drawText(g, label, X, lineY, { color: C.ink }); if (hides) drawEye(g, X + textWidth(label) + 4, lineY + 1); if (extra) drawText(g, extra, X + CW, lineY, { color: '#B02A2A', align: 'right' }); }
       if (active && taxi && tentHere >= 0 && cz !== at && input.pressed('a')) { game.send({ type: 'USE_FIELD_TECHNIQUE', techniqueId: 'share_taxi_tuktuk', tentIndex: tentHere }); return; }
     }
     if (active && input.pressed('b')) back();
@@ -452,5 +462,12 @@ export const menuView = {
   },
 
 };
+
+/** a small eye: an Astral that only comes out when you are high (on the map, and in the Journal) */
+function drawEye(g, x, y) {
+  g.fillStyle = '#14101E'; g.fillRect(x + 1, y, 5, 1); g.fillRect(x, y + 1, 7, 3); g.fillRect(x + 1, y + 4, 5, 1);
+  g.fillStyle = '#F4F0FF'; g.fillRect(x + 1, y + 1, 5, 3);
+  g.fillStyle = '#C86BFF'; g.fillRect(x + 3, y + 1, 1, 3); g.fillRect(x + 2, y + 2, 3, 1);
+}
 
 export function install(game) { game.register('menu', menuView); }

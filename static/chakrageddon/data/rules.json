@@ -293,6 +293,10 @@
     "BURST": {
       "name": "Burst",
       "desc": "Its first move after coming out hits twice as hard. Then it pops."
+    },
+    "MIRROR": {
+      "name": "Mirror",
+      "desc": "Copies the first move used on it, for the rest of the battle."
     }
   },
   "boredom": {

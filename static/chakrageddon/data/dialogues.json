@@ -422,7 +422,7 @@
       "label": "c36"
     },
     {
-      "ifCaught": 39,
+      "ifCaught": 41,
       "goto": "j36"
     },
     {
@@ -1373,6 +1373,10 @@
   ],
   "shack_diary": [
     {
+      "ifIntox": 0.9,
+      "goto": "ego"
+    },
+    {
       "if": "read_banyan_diary",
       "goto": "again"
     },
@@ -1403,6 +1407,28 @@
     },
     {
       "t": "On the last page, a drawing of a turning pattern and the words: 'Sadhu Cave. East wall. Do not stare. It stares back.'"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "ego"
+    },
+    {
+      "t": "A page you have never seen before, right in the middle of the diary. The ink is still moving.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "'Day 4. J. went north with the sadhus to find the room behind the pattern. Said: wait for me at the sunrise set, I will be back before the last track.'",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "'Day 5. Waited. Day 6. Waited. Day 30. The sunrise set is very beautiful. I will keep coming.'",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "You blink, and the page is gone. The diary goes straight from Day 3 to Day 9000.",
+      "style": "PSYCHEDELIC"
     }
   ],
   "guest_host": [
@@ -2582,6 +2608,250 @@
     },
     {
       "t": "You back away. It waves again, slower. It has come a long way. It can wait."
+    }
+  ],
+  "inner_door": [
+    {
+      "t": "The turning pattern has stopped turning. It is holding itself open, like a door somebody is waiting behind.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "ifCond": {
+        "any": [
+          {
+            "caughtSpecies": "mandalord"
+          },
+          {
+            "flag": "mandalord_rest"
+          }
+        ]
+      },
+      "goto": "plain"
+    },
+    {
+      "t": "Step through?",
+      "choice": [
+        "Step through",
+        "Reach out to it",
+        "Not yet"
+      ],
+      "goto": [
+        "in",
+        "reach",
+        "no"
+      ],
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "label": "plain"
+    },
+    {
+      "t": "Step through?",
+      "choice": [
+        "Step through",
+        "Not yet"
+      ],
+      "goto": [
+        "in",
+        "no"
+      ],
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "label": "in"
+    },
+    {
+      "warp": {
+        "zone": "inner_room",
+        "x": 4,
+        "y": 5,
+        "dir": "UP"
+      }
+    },
+    {
+      "t": "Inside, it is very quiet. Even your thoughts take their shoes off.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "reach"
+    },
+    {
+      "run": "mandalord"
+    },
+    {
+      "label": "no"
+    },
+    {
+      "t": "It waits. It has time.",
+      "style": "PSYCHEDELIC"
+    }
+  ],
+  "inner_teacher": [
+    {
+      "if": "met_teacher",
+      "goto": "again"
+    },
+    {
+      "s": "Old Woman",
+      "t": "Oh. Someone came through. Sit, sit. The floor is the only furniture, and it is very comfortable.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "s": "Old Woman",
+      "t": "I taught the one who sits in the cave out there. Baba Smoke, he calls himself now. He was a skinny boy with a lot of questions and no shoes.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "s": "Old Woman",
+      "t": "He thinks the teaching is the smoke. The teaching is the room. You cannot carry the room out with you, so take what is on the floor instead.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "s": "Old Woman",
+      "t": "When you come down, the room folds up. Do not be sad about it. It folds up inside you as well.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "set": "met_teacher"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "again"
+    },
+    {
+      "s": "Old Woman",
+      "t": "Still here? Good. Nobody is ever in a hurry in here. That is the only rule.",
+      "style": "PSYCHEDELIC"
+    }
+  ],
+  "mirror_beach": [
+    {
+      "s": "You",
+      "t": "Oh. Hi. So that is what I look like from out here.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "s": "You",
+      "t": "Shall we find out which one of us is real?",
+      "style": "PSYCHEDELIC",
+      "choice": [
+        "Fight yourself",
+        "Walk away"
+      ],
+      "goto": [
+        "fight",
+        "no"
+      ]
+    },
+    {
+      "label": "fight"
+    },
+    {
+      "mirror": true
+    },
+    {
+      "s": "You",
+      "t": "Same moves. Same everything. See you around. I always do.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "clear": "mirror_beach"
+    },
+    {
+      "t": "Your reflection shimmers and is gone. Your Astrals look exactly as they did before. Did that happen?",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "no"
+    },
+    {
+      "s": "You",
+      "t": "Fair. I would avoid me too.",
+      "style": "PSYCHEDELIC"
+    }
+  ],
+  "mirror_trail": [
+    {
+      "s": "You",
+      "t": "Oh. Hi. So that is what I look like from out here.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "s": "You",
+      "t": "Shall we find out which one of us is real?",
+      "style": "PSYCHEDELIC",
+      "choice": [
+        "Fight yourself",
+        "Walk away"
+      ],
+      "goto": [
+        "fight",
+        "no"
+      ]
+    },
+    {
+      "label": "fight"
+    },
+    {
+      "mirror": true
+    },
+    {
+      "s": "You",
+      "t": "Same moves. Same everything. See you around. I always do.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "clear": "mirror_trail"
+    },
+    {
+      "t": "Your reflection shimmers and is gone. Your Astrals look exactly as they did before. Did that happen?",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "no"
+    },
+    {
+      "s": "You",
+      "t": "Fair. I would avoid me too.",
+      "style": "PSYCHEDELIC"
+    }
+  ],
+  "memory_vendor": [
+    {
+      "t": "A stall that was not here a minute ago. The sign says: MEMORIES, 50 RUPEES. USED.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "s": "Vendor",
+      "t": "Memories! Gently used! This one is a sunrise. This one is somebody laughing at a joke you made.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "s": "Vendor",
+      "t": "Wait. You look familiar. Have we met? Have I been you?",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "fx": "rainbow_burst",
+      "at": "memory_vendor"
+    },
+    {
+      "set": "memory_gone"
+    },
+    {
+      "t": "He bursts into a rainbow. Bits of other people's memories rain down on the market. None of them are yours.",
+      "style": "PSYCHEDELIC"
     }
   ]
 }

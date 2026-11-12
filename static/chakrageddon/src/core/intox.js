@@ -14,3 +14,26 @@ export function bandOf(rules, v = 0) {
   return b;
 }
 export const bandIndex = (rules, v) => bands(rules).indexOf(bandOf(rules, v));
+
+/** the top band, where the world itself changes (rules: the band with id EGO_GONE, or the last one) */
+export function egoMin(rules) { const b = bands(rules); return (b.find((x) => x.id === 'EGO_GONE') || b[b.length - 1]).min; }
+export const egoGone = (rules, v) => bands(rules).length > 1 && v >= egoMin(rules);
+
+/** Astrals that only show themselves to people who are high: species whose every wild entry has a minIntox.
+ *  { speciesId: [{ zone, minIntox, night }] } */
+const highCache = new WeakMap();
+export function highOnly(data) {
+  if (highCache.has(data.zones)) return highCache.get(data.zones);
+  const out = {}, any = {};
+  for (const z of Object.values(data.zones)) {
+    const enc = z.encounters;
+    if (!enc) continue;
+    for (const e of [...(enc.table || []), ...(enc.water || []), ...(enc.nightTable || [])]) {
+      any[e.speciesId] = (any[e.speciesId] || 0) + 1;
+      if (e.minIntox > 0) (out[e.speciesId] ||= []).push({ zone: z.zoneId, minIntox: e.minIntox, night: !!e.night });
+    }
+  }
+  for (const id of Object.keys(out)) if (out[id].length !== any[id]) delete out[id];
+  highCache.set(data.zones, out);
+  return out;
+}

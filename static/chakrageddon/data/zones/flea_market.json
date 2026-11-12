@@ -202,6 +202,18 @@
       "sprite": "guru",
       "dir": "LEFT",
       "script": "market_collector"
+    },
+    {
+      "id": "memory_vendor",
+      "x": 7,
+      "y": 10,
+      "sprite": "player",
+      "mirror": true,
+      "ghost": true,
+      "dir": "DOWN",
+      "minIntox": 0.9,
+      "hideIf": "memory_gone",
+      "script": "memory_vendor"
     }
   ],
   "pickups": [
@@ -294,5 +306,16 @@
         "weight": 20
       }
     ]
-  }
+  },
+  "hallucinations": [
+    {
+      "kind": "stall",
+      "x": 7,
+      "y": 9,
+      "whileNpc": "memory_vendor"
+    }
+  ],
+  "resetOnEnter": [
+    "memory_gone"
+  ]
 }

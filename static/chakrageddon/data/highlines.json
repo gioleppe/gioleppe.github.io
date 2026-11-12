@@ -1,0 +1,277 @@
+{
+  "_comment": "What people say first when you talk to them while high (lines: peak from Peaking, ego at Ego gone; trainers once beaten), and hints about Astrals that only come out when you are higher (hints: until you have seen the species). Each once per visit to the zone. People whose script already has its own high branch (ifIntox) are skipped.",
+  "lines": {
+    "banyan": {
+      "s": "Prof. Banyan",
+      "peak": "You are peaking. I can tell because you keep looking at your hands like they owe you money.",
+      "ego": "Ego gone, hm? I remember mine. It left in 1994 and still sends a postcard now and then."
+    },
+    "beach_vendor": {
+      "s": "Vendor",
+      "peak": "Water, balm, baggies. And a discount for you, because your face is doing something beautiful.",
+      "ego": "My friend, I am a vendor. You are a vendor. We are all selling water to the sea."
+    },
+    "crab_raver": {
+      "s": "Crab Raver",
+      "peak": "You hear them now, right? Left claw on the kick, right claw on the snare. They never miss."
+    },
+    "trail_yogi": {
+      "s": "Yogi",
+      "peak": "The fire is breathing. Do not worry. It has been doing that all along. You are only now polite enough to notice."
+    },
+    "trail_juggler": {
+      "s": "Juggler Dev",
+      "peak": "Count the balls. Go on. Seven? I only own three. Do not tell the other four."
+    },
+    "trail_spinner": {
+      "s": "Fire-Spinner Lola",
+      "peak": "The fire leaves letters in the air when I spin. Tonight it keeps writing your name. Spelled wrong."
+    },
+    "chad_g": {
+      "s": "Astra-Zero",
+      "peak": "Bro. Bro. Are hands supposed to have this many fingers? I counted eleven. Bro."
+    },
+    "chad_j": {
+      "s": "Astra-Zero",
+      "peak": "Bro. Bro. Are hands supposed to have this many fingers? I counted eleven. Bro."
+    },
+    "chad_b": {
+      "s": "Astra-Zero",
+      "peak": "Bro. Bro. Are hands supposed to have this many fingers? I counted eleven. Bro."
+    },
+    "diabolo": {
+      "s": "DJ Diabolo",
+      "peak": "You hear it too, right? The track under the track. I have been trying to play that one for eleven years."
+    },
+    "pit_vendor": {
+      "s": "Vendor",
+      "peak": "Everything is the same price. The price is just louder."
+    },
+    "pit_spinner": {
+      "s": "Fire Spinner",
+      "peak": "My poi are comets now. I am a small solar system. Small solar system to small solar system: do you have a coconut?"
+    },
+    "pit_local": {
+      "s": "Local",
+      "peak": "Every type hits two others hard... no. Every type is a colour. Stimulant is yellow. Downer is a long Sunday."
+    },
+    "svetlana": {
+      "s": "Guru Svetlana",
+      "peak": "Your aura is very loud today. Please turn it down, I am charging other people for silence.",
+      "ego": "Ah. Now you see me as I really am. Please stop, it is very rude."
+    },
+    "yurt_tourist": {
+      "s": "Tourist",
+      "peak": "I think I finally got my money's worth. I cannot feel my face, which I believe was the package."
+    },
+    "yurt_acolyte": {
+      "s": "Acolyte Mira",
+      "peak": "Breathe in. Breathe out. Breathe sideways. Yes, like that. Nobody else can do that."
+    },
+    "market_vendor": {
+      "s": "Vendor",
+      "peak": "For you, special price. For the other you, standing behind you, normal price."
+    },
+    "market_lassi": {
+      "s": "Lassi Wallah",
+      "peak": "Lassi is a cloud you can hold. Drink it slowly. Clouds have feelings."
+    },
+    "market_collector": {
+      "s": "Collector",
+      "peak": "Oh, look at you. A proper Peaking. May I write you down? Hold still. Stop breathing. Thank you.",
+      "ego": "Ego gone! The rarest mood. I would put you in the notebook, but there is nobody there to put."
+    },
+    "market_tuktuk": {
+      "s": "Driver",
+      "peak": "Tuk-tuk is a spaceship, boss. Very cheap spaceship. Still only for press."
+    },
+    "market_wook": {
+      "s": "Wook",
+      "peak": "Brother. The subwoofer is breathing. We are all subwoofers. Some of us are just heavier."
+    },
+    "road_guard": {
+      "s": "Guard Pinto",
+      "peak": "Stop. Who goes there? Oh. It is you. Or it is me. Either way, carry on."
+    },
+    "keta": {
+      "s": "Captain Keta",
+      "peak": "Steady as she goes, sailor. The ditch is rolling a bit tonight.",
+      "ego": "Permission to come aboard. Of what, I could not say."
+    },
+    "ditch_wook": {
+      "s": "Wook",
+      "peak": "The sea goes to the lake, the lake goes to the forest, the forest goes to my head. Float on."
+    },
+    "raju": {
+      "s": "Chef Raju",
+      "peak": "Look at the omelette. Really look. It is looking back. That is how you know it is ready.",
+      "ego": "Ah. Ego gone. The five o'clock special: one egg, no you."
+    },
+    "stall_local": {
+      "s": "Local",
+      "peak": "Raju's kitchen is all Organic and Downer. Or the kitchen is all of us. Pass the chilli."
+    },
+    "stall_wook": {
+      "s": "Wook Bodhi",
+      "peak": "I have been waiting for this omelette since a previous life. Worth it."
+    },
+    "sea_sadhu": {
+      "s": "Sadhu",
+      "peak": "The sea is saying something. Mostly \"shhh\". Very good advice."
+    },
+    "lake_yogi": {
+      "s": "Yogi Padma",
+      "peak": "Float. Float more. You are doing it. That is not water, by the way."
+    },
+    "lake_local": {
+      "s": "Local",
+      "peak": "The lake is glowing round the edges. That happens. Only to some people. Only on some nights."
+    },
+    "darkpsy": {
+      "s": "Baron Von Darkpsy",
+      "peak": "Now you see the trees. Now you hear the real tempo. It was always 190. Everything else is lying.",
+      "ego": "No requests. Not even from you. Especially not from the you that is not there."
+    },
+    "forest_wook": {
+      "s": "Wook",
+      "peak": "My Downers are asleep. I am asleep. You are asleep. Nice to meet you all."
+    },
+    "thicket_wook": {
+      "s": "Wook Moss",
+      "peak": "The bamboo is whispering. It says Mantequilla owes it money."
+    },
+    "corridor_cop": {
+      "s": "",
+      "peak": "The torch beams have a face tonight. It winks at you, and rubs two fingers together, very gently."
+    },
+    "chloe": {
+      "s": "Influencer Chloe",
+      "peak": "Wait, do not move, the light on you is insane. Can I post you? I will crop out your soul, it is a bit much.",
+      "ego": "You do not have an ego? Babe. Do you know what I would pay for that?"
+    },
+    "cliff_sergeant": {
+      "s": "Sergeant Baksheesh",
+      "peak": "Viewing fee is fifty rupees. For you, a hundred. You are seeing much more of it."
+    },
+    "sunset_watcher": {
+      "s": "Sunset Watcher",
+      "peak": "You see it too? The colours behind the colours. That is the part nobody can fence off."
+    },
+    "cliff_tourist": {
+      "s": "Tourist",
+      "peak": "The man in the uniform has a permit to charge for the sunset. I have a permit to cry at it. Mine is free."
+    },
+    "baba": {
+      "s": "Baba Smoke",
+      "peak": "Ah. Now you see the smoke the way the smoke sees you.",
+      "ego": "Good. Nobody home. Sit. That is the whole teaching. The rest is smoke."
+    },
+    "cave_disciple": {
+      "s": "Disciple Tara",
+      "peak": "Baba says the walls are listening. Tonight I believe him. Whisper."
+    },
+    "promoter": {
+      "s": "The Promoter",
+      "peak": "Peaking backstage? Bad for business. Good for merch. Smile, you are on the poster now.",
+      "ego": "Nobody in there to sell to. Huh. So this is how the artists feel."
+    },
+    "backstage_bar": {
+      "s": "Barman",
+      "peak": "Artist prices for you tonight. You look like an artist. You look like several."
+    },
+    "backstage_roadie": {
+      "s": "Roadie",
+      "peak": "I carry the speakers all night. Tonight they are carrying me. Feels fair."
+    },
+    "elite_kick": {
+      "s": "Kick Kalyani",
+      "peak": "BOOM. That was me. BOOM. That was your heart. We are in sync now, no take-backs!",
+      "ego": "No ego? More room for kick drum. I approve."
+    },
+    "elite_bass": {
+      "s": "Bassline Boris",
+      "peak": "Feel that in your teeth? That is not the bass. That is you, turning into the bass."
+    },
+    "elite_hat": {
+      "s": "Hi-Hat Hana",
+      "peak": "Tss. Tss. Tss. Every tick is a tiny door. You keep walking through them. Rude, but brave."
+    },
+    "elite_lead": {
+      "s": "Lead Lakshmi",
+      "peak": "The melody is easier to hear from where you are now. Hum it back to me. No. Close."
+    },
+    "council": {
+      "s": "Shaman Council",
+      "peak": "Hmmmmmm. The barefoot one is peaking. Note it in the minutes. Nobody give them a microphone.",
+      "ego": "Hmmmmmm. Ego gone at the council table. Some of our members have waited years for that."
+    },
+    "temple_water": {
+      "s": "Water Auntie",
+      "peak": "Peaking on the temple steps, very nice. Drink. No, all of it. Then thank me.",
+      "ego": "Nobody home? Fine. I am pouring the water in anyway."
+    },
+    "temple_local": {
+      "s": "Roadie",
+      "peak": "Kick, bass, hat, lead. Heavy, wobbly, fast, clever. And you, tonight: shiny."
+    },
+    "guest_host": {
+      "s": "Host",
+      "peak": "Rs 100 a nap. For you, Rs 100 a nap, and the room will stop spinning eventually."
+    },
+    "booth_selector": {
+      "s": "Selector Nandini",
+      "peak": "Every record in these crates is talking to you, right? Only listen to the B-sides."
+    },
+    "villa_assistant": {
+      "s": "Assistant Pippa",
+      "peak": "Chloe wants the sunset to be \"more sunset\". I think I can see how now. I am scared."
+    }
+  },
+  "hints": {
+    "beach_hippie": {
+      "s": "Hippie",
+      "species": "ganjapod",
+      "t": "Banyan's leafy one? There are wild ones in the incense on this beach. They only come out for people who are peaking."
+    },
+    "trail_yogi": {
+      "s": "Yogi",
+      "species": "jawling",
+      "t": "Something with too many teeth lives in the incense on this trail. It only shows itself to people who are well and truly up."
+    },
+    "pit_local": {
+      "s": "Local",
+      "species": "blottertot",
+      "t": "There is a little Astral made of blotter paper in the incense here. You only see it once you have licked enough of your own."
+    },
+    "yurt_tourist": {
+      "s": "Tourist",
+      "species": "fractoad",
+      "t": "The guru says a frog made of patterns lives in the incense round the yurt. I have never seen it. I am told I am not high enough. I paid extra."
+    },
+    "lake_local": {
+      "s": "Local",
+      "species": "hashlump",
+      "t": "And something lumpy sits in the incense on the shore. Only for people who are peaking, they say."
+    },
+    "lake_sign": {
+      "s": "",
+      "species": "lucidra",
+      "t": "Scratched under the sign: \"saw a jellyfish made of light over the water. 3 AM. had no ego at the time. 10/10.\""
+    },
+    "forest_wook": {
+      "s": "Wook",
+      "species": "gurnagama",
+      "t": "A grinning thing lives in the forest's incense. It only comes out for people who are peaking. Bring water. It bites."
+    },
+    "cave_sign": {
+      "s": "",
+      "species": "hoffmanite",
+      "t": "Scratched lower down: \"The crystal frog sits slightly to the left of itself. Only when you are nobody.\""
+    },
+    "sea_sadhu": {
+      "s": "Sadhu",
+      "species": "mirrorling",
+      "t": "When there is nobody left inside you, something in the water starts copying what you do. I have seen it twice. Once was me."
+    }
+  }
+}

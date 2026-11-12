@@ -120,6 +120,18 @@
       "sprite": "raver",
       "dir": "DOWN",
       "script": "crab_raver"
+    },
+    {
+      "id": "mirror_beach",
+      "x": 12,
+      "y": 4,
+      "sprite": "player",
+      "mirror": true,
+      "ghost": true,
+      "dir": "DOWN",
+      "showIf": "mirror_beach",
+      "minIntox": 0.9,
+      "script": "mirror_beach"
     }
   ],
   "pickups": [
@@ -162,5 +174,27 @@
     ]
   },
   "cordonFlag": "got_starter",
-  "cordonText": "A length of festival tape. Prof. Banyan calls over: \"Not without an Astral, my friend!\""
+  "cordonText": "A length of festival tape. Prof. Banyan calls over: \"Not without an Astral, my friend!\"",
+  "hallucinations": [
+    {
+      "kind": "person",
+      "id": "young_banyan",
+      "x": 6,
+      "y": 10,
+      "sprite": "banyan_young",
+      "dir": "DOWN",
+      "seat": "log",
+      "say": [
+        "Young Banyan",
+        "Day 3. Two weeks is plenty."
+      ]
+    }
+  ],
+  "onEnter": [
+    {
+      "flag": "mirror_beach",
+      "chance": 0.35,
+      "minIntox": 0.9
+    }
+  ]
 }

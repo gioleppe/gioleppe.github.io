@@ -1,6 +1,6 @@
 // Glue between the overworld/script engines and the creature, battle, item and shop systems.
 import { enterZone, canUse } from './OverworldEngine.js';
-import { startWildBattle, startTrainerBattle, battleAction, learnMove } from './BattleEngine.js';
+import { startWildBattle, startTrainerBattle, startMirrorBattle, battleAction, learnMove } from './BattleEngine.js';
 import { createMon, addToCollection, healMon, nameOf } from './mons.js';
 import { applyItem } from './items.js';
 import { setMode } from './ScriptEngine.js';
@@ -8,6 +8,7 @@ import { setMode } from './ScriptEngine.js';
 export const hooks = {
   startWildBattle,
   startTrainerBattle,
+  startMirrorBattle,
   giveMon(ctx, speciesId, level) { return addToCollection(ctx, createMon(ctx, speciesId, level)); },
   /** Chai tent: full heal, sober up, remember this tent for whiteouts and fast travel. */
   healParty(ctx) {
