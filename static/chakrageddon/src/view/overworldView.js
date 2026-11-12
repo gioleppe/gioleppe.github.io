@@ -227,6 +227,7 @@ export const overworldView = {
         const dx = x * TS - cx, dy = y * TS - cy;
         this.tile(game, g, zone.ground, dx, dy);
         if (sp === 'water' && wave) sp = 'water_b';
+        if (sp === 'cordon' && zone.cordonFlag && s.flags[zone.cordonFlag]) sp = zone.ground2 || zone.ground;   // taken down once it opens
         // fences and cable runs: a north-south run gets its own upright piece, not a ladder of east-west segments
         if (VERTICAL[sp]) { const f = (fx, fy) => classOf(fx, fy) === sp; if ((f(x, y - 1) || f(x, y + 1)) && !f(x - 1, y) && !f(x + 1, y)) sp = VERTICAL[sp]; }
         const top = WALL_TOPS[sp];
