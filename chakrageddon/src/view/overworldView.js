@@ -139,6 +139,10 @@ export const overworldView = {
     const s = game.engine.state, input = game.input;
     // how long you have stood still with nothing going on (see the idle dance in draw)
     this.idleT = s.mode === 'OVERWORLD' && !this.anim && !s.dialogue && !game.busy() && !input.dir() ? (this.idleT || 0) + dt : 0;
+    // and if you stand there long enough, you get bored and lick the blotter (then the count starts again)
+    this.boredT = this.idleT > 0 ? (this.boredT || 0) + dt : 0;
+    const bored = game.data.rules.boredom?.seconds;
+    if (bored && this.boredT >= bored) { this.boredT = 0; game.send({ type: 'BORED_LICK' }); }
     if (s.mode !== 'OVERWORLD' || this.anim || game.busy()) return;
     if (input.pressed('a') || input.anyTap()) return game.send({ type: 'INTERACT_TILE' });
     if (input.pressed('start')) return game.send({ type: 'TOGGLE_MENU' });
