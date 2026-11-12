@@ -115,6 +115,13 @@ export function nightLevel(clock) {
  *  redrawn, off the edge, on a wall or on someone), move them to the nearest open tile. */
 export function settle(ctx) {
   const s = ctx.state, zone = zoneOf(ctx), p = s.player;
+  // a trainer who walked up to you stays on the line they watch; a spot off that line comes from an older map
+  for (const [zid, pos] of Object.entries(s.npcPos || {})) for (const [id, [x, y]] of Object.entries(pos)) {
+    const n = (ctx.data.zones[zid]?.npcs || []).find((m) => m.id === id);
+    if (!n || n.wander) continue;
+    const [dx, dy] = DIRS[n.dir || 'DOWN'], d = dx ? (x - n.x) * dx : (y - n.y) * dy;
+    if (!(d >= 0 && d <= (n.sight ?? 4) && x === n.x + dx * d && y === n.y + dy * d)) delete pos[id];
+  }
   const ok = (x, y) => walkable(ctx, x, y, zone) && !entityAt(ctx, x, y, zone) && !(zone.warps || []).some((w) => w.x === x && w.y === y);
   if (ok(p.x, p.y)) return false;
   const H = zone.rows.length, W = zone.rows[0].length;

@@ -166,12 +166,16 @@ export const overworldView = {
     if (name === 'lamp' && !still) { g.globalAlpha = 0.18 + 0.08 * Math.sin(t * 9 + tx * 3); g.fillStyle = '#FFE066'; g.beginPath(); g.arc(bx, by - pr.h + 5, 8, 0, 7); g.fill(); g.globalAlpha = 1; }
   },
   /** a dancer bouncing to the zone's BPM on a dancefloor tile */
+  /** a dancer on a dancefloor tile: one of the festival's people (assets dancers.png), changing pose on the beat
+   *  (both hands up, left up, both up, right up) with a hop; each one off-beat from its neighbours */
   dancer(game, g, dx, dy, x, y) {
-    const bpm = game.data.zones[game.engine.state.zoneId]?.baseBpm || 140, ph = ((this.t * bpm) / 60 + (x + y) * 0.25) % 1, up = ph < 0.5 ? 1 : 0;
-    const col = ['#FF4FA8', '#5FF4FF', '#4FE88A', '#FFE066', '#C86BFF'][(x * 3 + y) % 5], skin = ['#F2C29A', '#C98A5A', '#8D5A3A'][(x + y * 2) % 3];
-    g.fillStyle = 'rgba(11,3,20,0.3)'; g.fillRect(dx + 5, dy + 13, 6, 2);
-    g.fillStyle = col; g.fillRect(dx + 6, dy + 6 - up, 4, 6); g.fillRect(dx + (ph < 0.25 || ph > 0.75 ? 4 : 10), dy + 3 - up, 2, 4);
-    g.fillStyle = skin; g.fillRect(dx + 6, dy + 2 - up, 4, 4);
+    const img = game.images.dancers, meta = game.atlas.dancers || { looks: 1, poses: 1 };
+    const still = game.settings.reducedMotion, bpm = game.data.zones[game.engine.state.zoneId]?.baseBpm || 140;
+    const beats = (this.t * bpm) / 60 + ((x * 3 + y * 5) % 4) / 4;
+    const look = (x * 7 + y * 13) % meta.looks, pose = still ? 0 : [0, 1, 0, 2][Math.floor(beats) % 4] % meta.poses;
+    const hop = !still && beats % 1 < 0.3 ? 1 : 0;
+    g.fillStyle = 'rgba(11,3,20,0.3)'; g.fillRect(dx + 4, dy + 13, 8, 2);
+    if (img) g.drawImage(img, pose * 16, look * 24, 16, 24, dx, dy - 10 - hop, 16, 24);
   },
   /** small loops for people with something in their hands */
   trick(g, sprite, x, y, t) {
@@ -237,7 +241,6 @@ export const overworldView = {
         const top = WALL_TOPS[sp];
         if (top && isWall(classOf(x, y + 1), sp)) wallTop(g, top, dx, dy, [classOf(x, y - 1), classOf(x + 1, y), classOf(x, y + 1), classOf(x - 1, y)].map((c) => !isWall(c, sp)));
         else if (sp !== zone.ground) this.tile(game, g, sp, dx, dy);
-        if (sp === 'dancefloor' && (x * 7 + y * 3) % 5 === 0 && !game.settings.reducedMotion) this.dancer(game, g, dx, dy, x, y);
         if (sp === 'bonfire' && !game.settings.reducedMotion) for (let i = 0; i < 3; i++) {   // sparks rising off the fire
           const k = (this.t * 0.9 + i / 3 + x * 0.17) % 1;
           g.globalAlpha = 1 - k; g.fillStyle = i % 2 ? '#FFD23F' : '#FF6A2A';
@@ -270,9 +273,13 @@ export const overworldView = {
     // row-sorted pass: props, characters, pickups (lower rows overlap upper ones)
     const ents = [];
     const px0 = Math.max(0, x0 - 2), px1 = Math.min(zone.rows[0].length - 1, x1 + 2), py1 = Math.min(zone.rows.length - 1, y1 + 3);
+    const taken = new Set([`${s.player.x},${s.player.y}`, ...(this.anim ? [`${this.anim.from[0]},${this.anim.from[1]}`] : [])]);
+    for (const n of zone.npcs || []) if (npcVisible(ctx, n)) { const p = npcPos(ctx, n, zone); taken.add(`${p.x},${p.y}`); }
     for (let y = y0; y <= py1; y++) for (let x = px0; x <= px1; x++) {
       const def = legend[charAt(ctx, x, y, zone)];
       if (def?.prop) ents.push({ y: y - 0.01, prop: def.prop, x });
+      // dancers: on every crowd tile, every few dancefloor tiles; none where you or someone else is standing
+      if (def && (def.crowd || (resolve(def.sprite) === 'dancefloor' && (x * 7 + y * 3) % 5 === 0)) && !taken.has(`${x},${y}`)) ents.push({ y: y - 0.02, dancer: true, x, ty: y });
     }
     for (const n of zone.npcs || []) if (npcVisible(ctx, n)) {
       const p = npcPos(ctx, n, zone), a = this.npcAnim?.[n.id];
@@ -285,6 +292,7 @@ export const overworldView = {
     ents.sort((a, b) => a.y - b.y);
     const shadow = (x, y) => { g.fillStyle = 'rgba(20,10,40,0.27)'; g.fillRect(x + 3, y + 21, 10, 3); g.fillRect(x + 4, y + 20, 8, 5); };
     for (const e of ents) {
+      if (e.dancer) { this.dancer(game, g, e.x * TS - cx, e.ty * TS - cy, e.x, e.ty); continue; }
       if (e.prop) {
         const pr = game.atlas.props[e.prop], img = game.images[`prop:${e.prop}`], ty = Math.round(e.y + 0.01);
         if (pr && img) {
@@ -328,15 +336,33 @@ export const overworldView = {
           // standing people shift their weight now and then; a few have a loop of their own
           const still = game.settings.reducedMotion, h = hashOf(n.id), fidget = !still && !e.walking && ((this.t + (h % 97) / 10) % 4.5) < 0.25;
           const nod = !still && n.sprite === 'dj' ? Math.floor(this.t * (game.data.zones[s.zoneId].baseBpm || 140) / 60) % 2 : 0;
-          shadow(dx, dy - 10); this.char(game, g, n.sprite, this.npcDir[n.id] || n.dir || 'DOWN', e.walking ? Math.floor(this.t * 8) % 2 : fidget ? 1 : 0, dx, dy - 10 + nod);
+          const beats = this.t * (game.data.zones[s.zoneId].baseBpm || 140) / 60, dancing = n.dance && !still && !e.walking && !(this.alert && this.alert.x === e.nx && this.alert.y === e.ny);
+          const hop = dancing && beats % 1 < 0.3 ? 1 : 0;
+          shadow(dx, dy - 10);
+          this.char(game, g, n.sprite, dancing ? 'DOWN' : this.npcDir[n.id] || n.dir || 'DOWN', dancing ? Math.floor(beats / 2) % 2 : e.walking ? Math.floor(this.t * 8) % 2 : fidget ? 1 : 0, dx, dy - 10 + nod - hop);
           if (!still) this.trick(g, n.sprite, dx, dy - 10, this.t + (h % 13));
         }
         // a quest to pick up (!) or a step to hand in (?)
         const mark = questMarker(game.data, s, zone.zoneId, n.id);
-        if (mark) drawMarker(g, mark, dx + 5, dy - 23 - (mark === '?' ? 1 : 0) + Math.round(Math.abs(Math.sin(this.t * 3.5)) * -2));
+        if (mark) drawMarker(g, mark, dx + 5, dy - 23 - (mark === '?' ? 1 : 0) + (game.settings.reducedMotion ? 0 : Math.round(Math.abs(Math.sin(this.t * 3.5)) * -2)));
       } else this.tile(game, g, 'stash', e.pickup.x * TS - cx, e.pickup.y * TS - cy);
     }
     if (this.alert) drawText(g, '!', this.alert.x * TS - cx + 6, this.alert.y * TS - cy - 20, { color: C.red, shadow: C.white });
+
+    // strobes on the stage: on each beat one of them throws a cone of white light onto the floor, the corners taking
+    // turns; with reduced motion or grounded mode they just glow, steady and dim
+    const strobes = ((this.strobes ||= {})[s.zoneId] ||= zone.rows.flatMap((r, y) => [...r].flatMap((ch, x) => (legend[ch]?.prop === 'strobe' ? [[x, y]] : []))));
+    if (strobes.length) {
+      const calm = game.settings.reducedMotion || game.settings.grounded, beats = this.t * (zone.baseBpm || 140) / 60, n = calm ? 0 : Math.floor(beats), on = beats % 1 < 0.22;
+      strobes.forEach(([x, y], i) => {
+        const hx = x * TS + 8 - cx, hy = y * TS - 10 - cy, lit = calm || (on && n % strobes.length === i);
+        if (!lit) return;
+        const tx = (x < zone.rows[0].length / 2 ? 1 : -1) * (60 + ((n * 37 + i * 53) % 90)), ty = 90 + ((n * 23) % 40);
+        g.globalAlpha = calm ? 0.07 : 0.28; g.fillStyle = calm ? '#C8A8FF' : '#F4F8FF';
+        g.beginPath(); g.moveTo(hx - 3, hy); g.lineTo(hx + 3, hy); g.lineTo(hx + tx + 26, hy + ty); g.lineTo(hx + tx - 26, hy + ty); g.fill();
+        g.globalAlpha = 1;
+      });
+    }
 
     // light: night tint, dark zones lit only around the player
     const lit = zone.dark && !game.canFlash();
