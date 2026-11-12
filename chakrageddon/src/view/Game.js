@@ -1,6 +1,7 @@
 // View-side game object: owns the engine, routes input to commands and events to the screens.
 import { GameEngine } from '../core/GameEngine.js';
 import { canUse } from '../core/OverworldEngine.js';
+import { bandIndex } from '../core/intox.js';
 import { W, H } from './CanvasRenderer.js';
 import { drawText, panel, list, wrap, textWidth, C } from './ui.js';
 import { overworldView } from './overworldView.js';
@@ -109,6 +110,9 @@ export class Game {
     const st = this.settings, target = this.screen === 'play' ? this.fxLevel() : 0;
     this.fxSmooth = (this.fxSmooth ?? 0) + (target - (this.fxSmooth ?? 0)) * Math.min(1, dt * 2.5);
     if (Math.abs(this.fxSmooth - (this.fxAudio ?? 0)) > 0.03) { this.fxAudio = this.fxSmooth; this.audio?.setTrack({ lowPass: 20000 - this.fxSmooth * 16500 }); }
+    // from the Come-up a warm pad plays under the music
+    const pad = this.screen === 'play' && this.engine && bandIndex(this.data.rules, this.engine.state.intox) >= 1 ? 1 : 0;
+    if (pad !== this.padOn) { this.padOn = pad; this.audio?.setTrack({ highPad: pad }); }
     let cue = 0, cueT = 0;
     if (this.fxCue) {
       this.fxCue.t += dt / (CUE_SECONDS[this.fxCue.name] || 0.5);

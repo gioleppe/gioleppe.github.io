@@ -18,7 +18,7 @@ const msg = (ctx, text) => ctx.emit({ type: 'MESSAGE', text });
 export function active(ctx, side) { const b = B(ctx); return side === 'p' ? ctx.state.party[b.pi] : b.enemy[b.ei]; }
 function label(ctx, side) {
   const n = nameOf(ctx.data, active(ctx, side));
-  return side === 'p' ? n : B(ctx).kind === 'wild' ? `Wild ${n}` : `Foe ${n}`;
+  return side === 'p' ? n : B(ctx).kind === 'wild' ? `Wild ${n}` : B(ctx).kind === 'mirror' ? `Mirror ${n}` : `Foe ${n}`;
 }
 const newSide = () => ({ stages: {}, loop: 0, trap: 0, trapHeal: 0, last: null, turnsOut: 0, maxHp: 1 });
 function refreshSide(ctx, side) { B(ctx).side[side].maxHp = statsOf(ctx.data, active(ctx, side)).maxHp; }
@@ -34,13 +34,14 @@ export function usableMoves(ctx, mon) { return mon.moves.filter((id) => mon.hyd 
 
 // ---------------------------------------------------------------- start
 
-export function startBattle(ctx, { kind, enemy, trainerId, scripted }) {
+export function startBattle(ctx, { kind, enemy, trainerId, scripted, restore }) {
   const s = ctx.state, pi = s.party.findIndex((m) => m.hp > 0);
   if (pi < 0) return false;
   const zone = zoneOf(ctx);
   s.battle = {
     kind, trainerId: trainerId || null, enemy, ei: 0, pi, phase: 'PHASE_INTRO', turn: 0, intox: 0, invert: 0, startIntox: s.intox,
     side: { p: newSide(), e: newSide() }, seen: [s.party[pi].uid], pending: [], runTries: 0, scripted: !!scripted, result: null,
+    ...(restore ? { restore } : {}),
   };
   const b = s.battle;
   refreshSide(ctx, 'p'); refreshSide(ctx, 'e');
@@ -48,11 +49,13 @@ export function startBattle(ctx, { kind, enemy, trainerId, scripted }) {
   const wP = ctx.data.dex[s.party[pi].speciesId].intoxicationWeight, wE = ctx.data.dex[enemy[0].speciesId].intoxicationWeight;
   b.intox = clamp01(s.intox + ((wP + wE) / 2) * 0.5);
   const trainer = trainerId ? ctx.data.trainers[trainerId] : null;
-  ctx.emit({ type: 'BATTLE_START', kind, trainerName: trainer?.name || null, trainerSprite: trainer?.sprite || null, boss: !!trainer?.boss, player: snapshot(ctx.data, s.party[pi]), enemy: snapshot(ctx.data, enemy[0]), enemyCount: enemy.length, paletteId: zone.paletteId });
+  const mirror = kind === 'mirror';
+  ctx.emit({ type: 'BATTLE_START', kind, trainerName: mirror ? 'You' : trainer?.name || null, trainerSprite: mirror ? s.outfit || 'player' : trainer?.sprite || null, boss: !!trainer?.boss, player: snapshot(ctx.data, s.party[pi]), enemy: snapshot(ctx.data, enemy[0]), enemyCount: enemy.length, paletteId: zone.paletteId });
   ctx.emit({ type: 'INTOXICATION_CHANGED', oldLevel: s.intox, newLevel: b.intox });
   ctx.emit({ type: 'AUDIO_CUE', trackBpm: (zone.baseBpm || 140) + (trainer?.boss ? 12 : 6), lowPassFilterHz: 20000 - b.intox * 12000, mood: trainer?.boss ? 'BOSS' : 'BATTLE' });
   s.dex.seen[enemy[0].speciesId] = 1;
   if (kind === 'wild') msg(ctx, `A wild ${nameOf(ctx.data, enemy[0])} drifts out of the haze!`);
+  else if (mirror) { msg(ctx, 'Your reflection wants an astral clash!'); msg(ctx, `Your reflection manifests ${nameOf(ctx.data, enemy[0])}!`); }
   else { msg(ctx, `${trainer.name} wants an astral clash!`); msg(ctx, `${trainer.name} manifests ${nameOf(ctx.data, enemy[0])}!`); }
   msg(ctx, `Go, ${nameOf(ctx.data, s.party[pi])}!`);
   b.phase = 'PHASE_AWAIT_COMMAND';
@@ -60,6 +63,14 @@ export function startBattle(ctx, { kind, enemy, trainerId, scripted }) {
 }
 export function startWildBattle(ctx, speciesId, level, opts = {}) {
   return startBattle(ctx, { kind: 'wild', enemy: [createMon(ctx, speciesId, level)], scripted: opts.scripted });
+}
+/** your reflection, at Ego gone: the same Astrals at the same levels. No Vibes, no prize, no whiteout, and afterwards
+ *  everyone's stamina, hydration and condition go back to what they were before. */
+export function startMirrorBattle(ctx) {
+  const s = ctx.state;
+  const restore = s.party.map((m) => ({ uid: m.uid, hp: m.hp, hyd: m.hyd, status: m.status || null }));
+  const enemy = s.party.map((m) => createMon(ctx, m.speciesId, m.level, [...m.moves]));
+  return startBattle(ctx, { kind: 'mirror', enemy, scripted: true, restore });
 }
 export function startTrainerBattle(ctx, trainerId) {
   const t = ctx.data.trainers[trainerId];
@@ -242,6 +253,17 @@ function executeMove(ctx, side, moveId) {
       default: throw new Error(`unknown effect ${e.effectType}`);
     }
   }
+  mirrorCopy(ctx, foeSide, move);
+}
+
+/** MIRROR (Mirrorling): the first move used on it, it copies into its last slot for the rest of the battle */
+function mirrorCopy(ctx, side, move) {
+  const b = B(ctx), mon = active(ctx, side), sd = b.side[side];
+  if (sd.mirrored || mon.hp <= 0 || abilityOf(ctx, mon) !== 'MIRROR' || move.id === 'dry_heave' || mon.moves.includes(move.id)) return;
+  sd.mirrored = true;
+  (b.mirrorMoves ||= {})[mon.uid] ||= [...mon.moves];                  // given back when the battle ends
+  mon.moves = mon.moves.length < 4 ? [...mon.moves, move.id] : [...mon.moves.slice(0, 3), move.id];
+  msg(ctx, `${label(ctx, side)} watches closely, and copies ${move.name}!`);
 }
 
 // ---------------------------------------------------------------- turn
@@ -310,7 +332,7 @@ function switchIn(ctx, side, idx) {
   refreshSide(ctx, side);
   b.side[other(side)].trap = 0;
   ctx.emit({ type: 'SWITCH_IN', side, mon: snapshot(ctx.data, active(ctx, side)) });
-  msg(ctx, side === 'p' ? `Go, ${nameOf(ctx.data, active(ctx, 'p'))}!` : `${ctx.data.trainers[b.trainerId].name} manifests ${nameOf(ctx.data, active(ctx, 'e'))}!`);
+  msg(ctx, side === 'p' ? `Go, ${nameOf(ctx.data, active(ctx, 'p'))}!` : `${b.kind === 'mirror' ? 'Your reflection' : ctx.data.trainers[b.trainerId].name} manifests ${nameOf(ctx.data, active(ctx, 'e'))}!`);
 }
 
 function resolveTurn(ctx, pAct) {
@@ -392,14 +414,14 @@ function faintCheck(ctx) {
     ctx.emit({ type: 'FAINT', side: 'e' }); ctx.emit({ type: 'AUDIO_CUE', sfxId: 'faint' });
     msg(ctx, `${label(ctx, 'e')} fades out.`);
     e.status = null;
-    awardXp(ctx, e);
+    if (b.kind !== 'mirror') awardXp(ctx, e);                       // nothing to learn from yourself
     enemyOut = !b.enemy.some((m) => m.hp > 0);
   }
   if (p.hp <= 0) {
     ctx.emit({ type: 'FAINT', side: 'p' }); ctx.emit({ type: 'AUDIO_CUE', sfxId: 'faint' });
     msg(ctx, `${nameOf(ctx.data, p)} fades out.`);
     p.status = null;
-    if (!s.party.some((m) => m.hp > 0)) return whiteout(ctx);
+    if (!s.party.some((m) => m.hp > 0)) return b.kind === 'mirror' ? (b.phase = 'PHASE_VICTORY', msg(ctx, 'Your reflection wins. It does not seem to mind.'), finish(ctx, 'LOST')) : whiteout(ctx);
   }
   if (enemyOut) return victory(ctx);
   if (e.hp <= 0) {
@@ -471,7 +493,8 @@ function victory(ctx) {
     s.rupees += t.reward || 0;
     msg(ctx, `You out-vibed ${t.name}!`);
     if (t.reward) { msg(ctx, `You got Rs ${t.reward}.`); ctx.emit({ type: 'RUPEES_CHANGED', rupees: s.rupees }); }
-  } else wildDrop(ctx);
+  } else if (b.kind === 'mirror') msg(ctx, 'You out-vibed yourself. Nobody else saw.');
+  else wildDrop(ctx);
   finish(ctx, 'WON');
 }
 
@@ -515,7 +538,10 @@ export function learnMove(ctx, slot) {
 
 function finalize(ctx) {
   const b = B(ctx), s = ctx.state, R = ctx.data.rules.battle, result = b.result;
-  if (result === 'WON' || result === 'CAUGHT') {
+  // the mirror fight never happened, as far as your Astrals are concerned
+  if (b.restore) for (const r of b.restore) { const m = s.party.find((x) => x.uid === r.uid); if (m) { m.hp = r.hp; m.hyd = r.hyd; m.status = r.status; } }
+  if (b.mirrorMoves) for (const [uid, moves] of Object.entries(b.mirrorMoves)) { const m = [...s.party, ...s.box].find((x) => String(x.uid) === uid); if (m) m.moves = moves; }
+  if ((result === 'WON' || result === 'CAUGHT') && b.kind !== 'mirror') {
     for (const m of s.party) {
       const target = m.hp > 0 ? evolutionTarget(ctx.data, m) : null;
       if (target) { const old = nameOf(ctx.data, m); evolve(ctx, m, target); msg(ctx, `What? ${old} is changing... it became ${ctx.data.dex[target].name}!`); }

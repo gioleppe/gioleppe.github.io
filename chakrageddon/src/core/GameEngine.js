@@ -4,7 +4,7 @@ import { makeRng } from './prng.js';
 import * as OW from './OverworldEngine.js';
 import { advance, startScript, setMode } from './ScriptEngine.js';
 import { hooks, handleExtra } from './hooks.js';
-import { bands, bandIndex } from './intox.js';
+import { bands, bandIndex, egoGone } from './intox.js';
 import { currentGoal } from './goals.js';
 import { questLog } from './quests.js';
 
@@ -25,7 +25,7 @@ export function newState(data, seed = 1) {
     intox: 0, clock: 16 * 60, clockSteps: 0, steps: 0, repel: 0, nextUid: 1,
     lastTent: { zone: start.zone, x: start.x, y: start.y },
     script: null, scriptMode: null, dialogue: null, battle: null, shop: null, menu: null, scene: null,
-    playerName: null, npcPos: {}, outfit: null,
+    playerName: null, npcPos: {}, outfit: null, said: {},
   };
 }
 
@@ -99,6 +99,8 @@ export class GameEngine {
       default:
         handleExtra(ctx, cmd);
     }
+    // coming down inside something that only exists at Ego gone (the Inner Room, the stairs of light, the open road)
+    if (s.mode === 'OVERWORLD' && !s.dialogue && !s.script) OW.egoCheck(ctx);
     // tell the player when they move into another intoxication band, and what it means
     const bandAfter = bandIndex(this.data.rules, s.intox);
     if (bandAfter !== bandBefore) {
@@ -106,6 +108,11 @@ export class GameEngine {
       events.push({ type: 'INTOX_BAND', from: bandBefore, to: bandAfter, bandId: b.id });
       const text = bandAfter > bandBefore ? b.up : bands(this.data.rules)[bandAfter].down;
       if (text) events.push({ type: 'MESSAGE', text, kind: 'intox' });   // several in a row: the view shows only the latest
+      // the first time your ego goes, Banyan feels it from the shack
+      if (egoGone(this.data.rules, s.intox) && !s.flags.banyan_felt && s.flags.started) {
+        s.flags.banyan_felt = 1;
+        events.push({ type: 'MESSAGE', text: 'A text from Banyan: "I felt that from the shack. Drink some water. Then drink some more water."' });
+      }
       // the first time you get high at all, say once what it means and how to come down
       if (bandAfter > 0 && !s.flags.tip_high) {
         s.flags.tip_high = 1;

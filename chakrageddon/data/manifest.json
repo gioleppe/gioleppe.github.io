@@ -30,7 +30,8 @@
     "dj_booth",
     "sunset_villa",
     "green_room",
-    "vicchio_circle"
+    "vicchio_circle",
+    "inner_room"
   ],
   "goals": [
     {
@@ -402,12 +403,12 @@
           }
         },
         {
-          "text": "Bag every Astral in the Journal (39) and show Banyan.",
+          "text": "Bag every Astral in the Journal (41) and show Banyan.",
           "done": {
             "flag": "journal_36"
           },
           "ready": {
-            "caught": 39
+            "caught": 41
           },
           "npc": {
             "zone": "driftwood_beach",

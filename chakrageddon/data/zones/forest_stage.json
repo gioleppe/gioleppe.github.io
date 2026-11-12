@@ -226,5 +226,10 @@
         "minIntox": 0.6
       }
     ]
-  }
+  },
+  "hallucinations": [
+    {
+      "kind": "trees_dance"
+    }
+  ]
 }

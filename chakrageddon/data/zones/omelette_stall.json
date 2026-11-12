@@ -262,5 +262,14 @@
         "weight": 30
       }
     ]
-  }
+  },
+  "hallucinations": [
+    {
+      "kind": "echo",
+      "npc": "raju",
+      "dx": 0.75,
+      "dy": -0.3,
+      "lag": 0.5
+    }
+  ]
 }

@@ -1,7 +1,7 @@
 // Grid movement, collision, warps, field techniques, trainer line-of-sight and wild encounter rolls.
 // Pure functions over ctx = { data, state, rng, emit }.
 import { check } from './quests.js';
-import { bandOf } from './intox.js';
+import { bandOf, bandIndex, egoGone } from './intox.js';
 import { runScript, startScript } from './ScriptEngine.js';
 
 export const DIRS = { UP: [0, -1], DOWN: [0, 1], LEFT: [-1, 0], RIGHT: [1, 0] };
@@ -48,6 +48,7 @@ export function entityAt(ctx, x, y, zone = zoneOf(ctx)) {
   for (const p of zone.pickups || []) {
     if (p.x !== x || p.y !== y || ctx.state.picked[p.id]) continue;
     if (p.hidden && !canUse(ctx, 'blacklight_uv_pulse')) continue;   // hidden stashes need the UV pulse
+    if (p.minIntox !== undefined && ctx.state.intox < p.minIntox) continue;   // only there when you are high enough
     return { kind: 'pickup', pickup: p };
   }
   return null;
@@ -65,7 +66,10 @@ const TECH_FOR = { [T.WATER]: 'pink_flamingo_float', [T.FAIRY]: 'machete_hack', 
 
 function cordonOpen(ctx, zone) { return !!(zone.cordonFlag && ctx.state.flags[zone.cordonFlag]); }
 
-function walkable(ctx, x, y, zone) {
+/** a tile with egoFloor (the cow that walks off, the stairs of light) can be walked on only at Ego gone */
+function egoFloorAt(ctx, x, y, zone) { const ch = charAt(ctx, x, y, zone); return !!(ch !== null && ctx.data.legend[ch]?.egoFloor); }
+export function walkable(ctx, x, y, zone) {
+  if (egoFloorAt(ctx, x, y, zone) && egoGone(ctx.data.rules, ctx.state.intox)) return true;
   const id = logicAt(ctx, x, y, zone);
   if (id === T.FLOOR || id === T.ENCOUNTER) return true;
   if (id === T.CORDON) return cordonOpen(ctx, zone);
@@ -141,6 +145,12 @@ export function settle(ctx) {
 export function enterZone(ctx, zoneId, x, y, dir) {
   if (ctx.state.npcPos) delete ctx.state.npcPos[zoneId];          // wanderers start from home on each visit
   for (const f of ctx.data.zones[zoneId].resetOnEnter || []) delete ctx.state.flags[f];   // e.g. a legendary that slipped away comes back
+  // things that only happen sometimes, decided as you walk in: { flag, chance, minIntox } (your reflection, at Ego gone)
+  for (const r of ctx.data.zones[zoneId].onEnter || []) {
+    delete ctx.state.flags[r.flag];
+    if (!(ctx.state.intox < (r.minIntox ?? 0)) && ctx.rng.chance(r.chance ?? 1)) ctx.state.flags[r.flag] = 1;
+  }
+  ctx.state.said = {};                                               // high lines and hints: once per visit
   const s = ctx.state, from = s.zoneId;
   s.zoneId = zoneId; s.player.x = x; s.player.y = y; if (dir) s.player.dir = dir;
   delete s.pushed[zoneId];
@@ -183,7 +193,7 @@ export function step(ctx, dir) {
     if (ctx.rng.chance(Math.min(0.9, enc.encounterRate * (band.encounter ?? 1)))) {
       const base = (id === T.WATER && enc.water) || (isNight(s) && enc.nightTable) || enc.table;
       // some Astrals only show themselves to people who are high enough (minIntox)
-      const table = base.filter((e) => !(e.minIntox > s.intox));
+      const table = base.filter((e) => !(e.minIntox > s.intox) && !(e.night && !isNight(s)));
       // higher bands tilt the odds towards species with a high intoxication weight
       const tilt = band.tilt || 0;
       const weightOf = (e) => (tilt ? Math.max(e.weight * 0.2, e.weight * (1 + tilt * ((ctx.data.dex[e.speciesId].intoxicationWeight ?? 0.4) - 0.4) * 2)) : e.weight);
@@ -214,6 +224,46 @@ function wander(ctx, zone) {
   }
 }
 function bump(ctx) { ctx.emit({ type: 'BUMP', dir: ctx.state.player.dir }); }
+
+/**
+ * Coming down at the wrong moment. A zone that exists only at Ego gone (egoOnly: { zone, x, y, dir, text }) sends you
+ * back where you came in; standing on a tile that is only floor at Ego gone, you land on the zone's egoFall spot
+ * ({ zone, x, y, dir, text }, the stairs of light over the sea) or, without one, on the nearest open tile.
+ */
+export function egoCheck(ctx) {
+  const s = ctx.state, zone = zoneOf(ctx);
+  if (!zone || egoGone(ctx.data.rules, s.intox)) return false;
+  const back = zone.egoOnly || (egoFloorAt(ctx, s.player.x, s.player.y, zone) && !walkable(ctx, s.player.x, s.player.y, zone) && (zone.egoFall || 'settle'));
+  if (!back) return false;
+  if (back === 'settle') { settle(ctx); ctx.emit({ type: 'PLAYER_PLACED', x: s.player.x, y: s.player.y }); return true; }
+  enterZone(ctx, back.zone, back.x, back.y, back.dir);
+  if (back.text) ctx.emit({ type: 'MESSAGE', text: back.text });
+  return true;
+}
+
+/**
+ * What a person says first when you talk to them, before their usual script: a line for when you are high (data
+ * highlines.lines: { s, peak, ego }) or a hint about an Astral that only comes out when you are higher (highlines.hints:
+ * { s, t, species }, until you have seen it). Each once per visit; trainers only once they are beaten.
+ */
+function opener(ctx, npc) {
+  const s = ctx.state, H = ctx.data.highlines || {}, said = (s.said ||= {});
+  if (npc.trainer && !s.defeated[npc.trainer]) return [];
+  const script = npc.script && ctx.data.dialogues[npc.script];
+  const own = Array.isArray(script) && script.some((st) => st.ifIntox !== undefined);   // already has its own high lines
+  const line = H.lines?.[npc.id], hint = H.hints?.[npc.id];
+  const peak = bandIndex(ctx.data.rules, s.intox) >= 2;                                 // Peaking and up
+  if (line && !own && peak && !said[npc.id]) {
+    said[npc.id] = 1;
+    const text = egoGone(ctx.data.rules, s.intox) && line.ego ? line.ego : line.peak;
+    if (text) return [{ s: line.s, t: text, style: 'PSYCHEDELIC' }];
+  }
+  if (hint && !said[`hint:${npc.id}`] && !s.dex.seen[hint.species]) {
+    const need = Math.min(...Object.values(ctx.data.zones).flatMap((z) => [...(z.encounters?.table || []), ...(z.encounters?.water || [])]).filter((e) => e.speciesId === hint.species).map((e) => e.minIntox ?? 0));
+    if (s.intox < need) { said[`hint:${npc.id}`] = 1; return [{ s: hint.s, t: hint.t }]; }
+  }
+  return [];
+}
 
 function sightRange(ctx, npc) {
   let r = npc.sight ?? 4;
@@ -310,11 +360,12 @@ export function interact(ctx) {
     ctx.emit({ type: 'NPC_FACE', npcId: npc.id, dir: { UP: 'DOWN', DOWN: 'UP', LEFT: 'RIGHT', RIGHT: 'LEFT' }[s.player.dir] });
     if (npc.trainer && !s.defeated[npc.trainer]) return startTrainerFlow(ctx, npc);
     if (npc.trainer && rematchReady(ctx, ctx.data.trainers[npc.trainer])) return startRematch(ctx, ctx.data.trainers[npc.trainer]);
+    const first = opener(ctx, npc);
     if (npc.trainer && !npc.script) {
       const t = ctx.data.trainers[npc.trainer];
-      return startScript(ctx, [{ s: t.name, t: t.after || '...', style: t.textStyle }]);
+      return startScript(ctx, [...first, { s: t.name, t: t.after || '...', style: t.textStyle }]);
     }
-    if (npc.script) return startScript(ctx, ctx.data.dialogues[npc.script] || [{ t: `(missing script ${npc.script})` }]);
+    if (npc.script) return startScript(ctx, [...first, ...(ctx.data.dialogues[npc.script] || [{ t: `(missing script ${npc.script})` }])]);
     return;
   }
   if (ent?.kind === 'pickup') {

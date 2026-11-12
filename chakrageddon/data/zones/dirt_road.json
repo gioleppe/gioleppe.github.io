@@ -159,5 +159,13 @@
         "weight": 15
       }
     ]
-  }
+  },
+  "hallucinations": [
+    {
+      "kind": "cow_walk",
+      "x": 11,
+      "y": 8,
+      "toward": -1
+    }
+  ]
 }

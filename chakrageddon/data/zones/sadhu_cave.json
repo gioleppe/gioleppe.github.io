@@ -47,6 +47,14 @@
   ],
   "npcs": [
     {
+      "id": "inner_door",
+      "x": 15,
+      "y": 10,
+      "tile": "glyph",
+      "script": "inner_door",
+      "minIntox": 0.9
+    },
+    {
       "id": "baba",
       "x": 8,
       "y": 1,

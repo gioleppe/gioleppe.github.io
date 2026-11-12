@@ -126,6 +126,18 @@
       "sprite": "yogi",
       "dir": "LEFT",
       "script": "trail_yogi"
+    },
+    {
+      "id": "mirror_trail",
+      "x": 14,
+      "y": 5,
+      "sprite": "player",
+      "mirror": true,
+      "ghost": true,
+      "dir": "DOWN",
+      "showIf": "mirror_trail",
+      "minIntox": 0.9,
+      "script": "mirror_trail"
     }
   ],
   "pickups": [
@@ -218,5 +230,27 @@
         "weight": 20
       }
     ]
-  }
+  },
+  "hallucinations": [
+    {
+      "kind": "person",
+      "id": "lifeguard",
+      "x": 6,
+      "y": 8,
+      "sprite": "lifeguard",
+      "dir": "DOWN",
+      "chair": "lifeguard_chair",
+      "say": [
+        "Lifeguard",
+        "All clear! Nobody drowns on my watch. I am not on watch."
+      ]
+    }
+  ],
+  "onEnter": [
+    {
+      "flag": "mirror_trail",
+      "chance": 0.35,
+      "minIntox": 0.9
+    }
+  ]
 }

@@ -1,5 +1,5 @@
 {
-  "_comment": "Zone maps are rows of characters. id = logic tile from the spec legend (0 floor, 1 solid, 2 encounter, 3 water, 4 cordon, 5 fairy lights, 6 pushable, 7 padlock, 8 roots, 9 chai tent). sprite '@x' reads zone.x. prop = tall sprite anchored bottom-centre on the tile. 'D' draws a whole 3x2 shack; put 'rrr' above 'HDH' for its solid footprint. 'E' is a walkable shack doorway (put a warp on it). 'X' wall, 'Q' roof and 'G' door build a house front; interiors use 'K' walls and 'a' as the exit mat. Routes (1.0.40): 0 bonfire, 1 log, 2+3 a sacred cow lying across two tiles, 4 roadside shrine, 5 plank bridge (walk east-west), 6 plank bridge (walk north-south), 7 cables on concrete, 8 dry-ice fogger, 9 coconuts, : dune, ; surfboard. '=' fences draw as vertical posts in a north-south run. Poi Pit (1.0.45): & a packed dancefloor (encounters; a dancer on every tile), < stage banner, > a strobe on the stage, | the stage's front lip, _ steps up onto it.",
+  "_comment": "Zone maps are rows of characters. id = logic tile from the spec legend (0 floor, 1 solid, 2 encounter, 3 water, 4 cordon, 5 fairy lights, 6 pushable, 7 padlock, 8 roots, 9 chai tent). sprite '@x' reads zone.x. prop = tall sprite anchored bottom-centre on the tile. 'D' draws a whole 3x2 shack; put 'rrr' above 'HDH' for its solid footprint. 'E' is a walkable shack doorway (put a warp on it). 'X' wall, 'Q' roof and 'G' door build a house front; interiors use 'K' walls and 'a' as the exit mat. Routes (1.0.40): 0 bonfire, 1 log, 2+3 a sacred cow lying across two tiles, 4 roadside shrine, 5 plank bridge (walk east-west), 6 plank bridge (walk north-south), 7 cables on concrete, 8 dry-ice fogger, 9 coconuts, : dune, ; surfboard. '=' fences draw as vertical posts in a north-south run. Poi Pit (1.0.45): & a packed dancefloor (encounters; a dancer on every tile), < stage banner, > a strobe on the stage, | the stage's front lip, _ steps up onto it. Ego gone (1.0.46): egoFloor tiles can be walked on at Ego gone only (the sacred cow walks off; under = what shows instead), and ł/Ł are stairs of light over shallow and deep water.",
   "legend": {
     ".": {
       "id": 0,
@@ -262,11 +262,15 @@
     },
     "2": {
       "id": 1,
-      "sprite": "cow_l"
+      "sprite": "cow_l",
+      "egoFloor": true,
+      "under": "@ground2"
     },
     "3": {
       "id": 1,
-      "sprite": "cow_r"
+      "sprite": "cow_r",
+      "egoFloor": true,
+      "under": "@ground2"
     },
     "4": {
       "id": 1,
@@ -322,6 +326,18 @@
     "_": {
       "id": 0,
       "sprite": "steps"
+    },
+    "ł": {
+      "id": 3,
+      "sprite": "water",
+      "egoFloor": true,
+      "light": true
+    },
+    "Ł": {
+      "id": 1,
+      "sprite": "deep",
+      "egoFloor": true,
+      "light": true
     }
   }
 }

@@ -11,6 +11,8 @@
 //   { set / clear: flag } { give: item, n } { take: item, n } { giveMon: species, level } { pay: n, else: label }
 //   { heal } { shop: id } { battle: trainerId } { wild: species, level } { wristband: id }
 //   { warp: { zone, x, y, dir } } { run: scriptId } { credits } { end }
+//   { fx: name, at: npcId }        a visual effect at someone (the memory vendor's rainbow burst); the view draws it
+//   { mirror: true }               a battle against a copy of your own party, for nothing (your reflection)
 //   { scene: id, show?: speciesId, phase?: n }  full-screen backdrop behind the dialogue (the opening dream); { scene: null } ends it
 //                                    phase: a scene with several beats (the Vicchio landing) moves on to beat n
 //                                    { scene: 'boss', who, card? }: a boss's cutscene; card: only the short title card
@@ -113,6 +115,8 @@ export function runScript(ctx) {
     if (st.credits) { s.flags.finished = 1; ctx.emit({ type: 'CREDITS' }); continue; }
     if (st.battle) { h.startTrainerBattle(ctx, st.battle); return; }   // resumes through resumeAfterBattle
     if (st.wild) { h.startWildBattle(ctx, st.wild, st.level || 5, { scripted: true }); return; }
+    if (st.mirror) { h.startMirrorBattle(ctx); return; }
+    if (st.fx) { ctx.emit({ type: 'FX', fx: st.fx, npcId: st.at || null }); continue; }
     throw new Error(`unknown script step: ${JSON.stringify(st)}`);
   }
   throw new Error('script ran away (possible goto loop)');

@@ -179,6 +179,13 @@
         "minLevel": 22,
         "maxLevel": 24,
         "weight": 15
+      },
+      {
+        "speciesId": "mirrorling",
+        "minLevel": 27,
+        "maxLevel": 30,
+        "weight": 12,
+        "minIntox": 0.9
       }
     ]
   }
