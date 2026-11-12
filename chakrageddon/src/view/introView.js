@@ -1,7 +1,8 @@
 // Boot sequence, played when the page opens: the GIOLEPPESOFT logo, then a short intro in the spirit of the old
 // handheld openings (a night beach, the festival, a face-off, a legend), then the title drops in and the game
-// moves on to the title screen. Any button or tap skips it. Nothing flashes (the content notice comes after);
-// with reduced motion the scenes hold still and only fade.
+// moves on to the title screen. Browsers keep the sound off until the first tap or key, so while it is off that
+// first input turns the sound on and the intro carries on; after that any button or tap skips it.
+// Nothing flashes (the content notice comes after); with reduced motion the scenes hold still and only fade.
 import { W, H } from './CanvasRenderer.js';
 import { drawText, textWidth } from './font.js';
 import { C } from './ui.js';
@@ -34,16 +35,23 @@ const EYE = [
 ];
 
 export const introView = {
-  screen: true, t: 0, next: 'title',
+  screen: true, t: 0, next: 'title', muted: false,
 
   /** play it now, then carry on to whatever screen was due (the content notice on a first launch, or the title) */
-  start(game) { this.t = 0; this.next = game.screen === 'intro' ? 'title' : game.screen; game.screen = 'intro'; },
+  start(game) { this.t = 0; this.next = game.screen === 'intro' ? 'title' : game.screen; game.screen = 'intro'; this.muted = !soundOn(game); },
   finish(game) { game.screen = this.next || 'title'; },
 
   update(game, dt) {
     this.t += dt;
     const input = game.input;
-    if (input.pressed('a') || input.pressed('b') || input.pressed('start') || input.pressed('item') || input.anyTap()) return this.finish(game);
+    const any = input.pressed('a') || input.pressed('b') || input.pressed('start') || input.pressed('item') || input.anyTap();
+    if (any) {
+      // the gesture itself has already asked the browser for sound (InputAdapter's onGesture), so while the sound
+      // was off this input is spent turning it on and the intro keeps playing, with music; the next one skips
+      if (this.muted) { this.muted = false; return; }
+      return this.finish(game);
+    }
+    if (this.muted && soundOn(game)) this.muted = false;     // the sound came on some other way
     if (this.t >= INTRO_SECONDS) this.finish(game);
   },
 
@@ -65,9 +73,17 @@ export const introView = {
     // every cut is a fade through black (no white flashes before the content notice)
     const f = Math.max(0, Math.min(1, sc.t / FADE, (sc.dur - sc.t) / FADE));
     if (f < 1 && !(sc.id === 'title' && sc.t > FADE)) { g.globalAlpha = 1 - f; g.fillStyle = C.void; g.fillRect(0, 0, W, H); g.globalAlpha = 1; }
-    if (sc.id !== 'logo') drawText(g, 'A: skip', W - 4, H - 10, { color: '#8C7A9A', align: 'right' });
+    if (this.muted) drawText(g, 'Tap or press a key for sound', W - 4, H - 10, { color: C.yellow, align: 'right', shadow: C.void });
+    else drawText(g, 'A: skip', W - 4, H - 10, { color: '#8C7A9A', align: 'right' });
   },
 };
+
+/** is the sound playing, or is there none to wait for (no Web Audio, or the volume is off)? */
+function soundOn(game) {
+  const a = game.audio;
+  if (!a || !(game.settings?.volume > 0)) return true;
+  return a.ctx?.state === 'running';
+}
 
 const mon = (game, id) => game.images[`mon:${id}`];
 /** a 64 px creature frame (0 front, 1 breath, 2 back, 5 blink, 6 idle touch), scaled s, bottom-centre at x, y */
