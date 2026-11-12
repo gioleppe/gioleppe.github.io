@@ -25,7 +25,7 @@ export function newState(data, seed = 1) {
     intox: 0, clock: 16 * 60, clockSteps: 0, steps: 0, repel: 0, nextUid: 1,
     lastTent: { zone: start.zone, x: start.x, y: start.y },
     script: null, scriptMode: null, dialogue: null, battle: null, shop: null, menu: null, scene: null,
-    playerName: null, npcPos: {}, outfit: null, said: {},
+    playerName: null, npcPos: {}, outfit: null, said: {}, visitor: null,
   };
 }
 
@@ -101,6 +101,11 @@ export class GameEngine {
     }
     // coming down inside something that only exists at Ego gone (the Inner Room, the stairs of light, the open road)
     if (s.mode === 'OVERWORLD' && !s.dialogue && !s.script) OW.egoCheck(ctx);
+    // the festival timetable: after the third wristband, the next time you arrive somewhere, Banyan comes to find you
+    const TT = this.data.rules.timetable;
+    if (TT && !s.flags.timetable && s.wristbands.length >= (TT.unlockBands ?? 3) && events.some((x) => x.type === 'ZONE_CHANGED') && s.mode === 'OVERWORLD' && !s.dialogue && !s.script && !s.battle && this.data.dialogues.banyan_timetable) {
+      startScript(ctx, this.data.dialogues.banyan_timetable);
+    }
     // tell the player when they move into another intoxication band, and what it means
     const bandAfter = bandIndex(this.data.rules, s.intox);
     if (bandAfter !== bandBefore) {

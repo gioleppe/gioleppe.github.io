@@ -65,7 +65,10 @@
       "y": 4,
       "sprite": "banyan",
       "dir": "DOWN",
-      "script": "banyan"
+      "script": "banyan",
+      "hideWhen": {
+        "set": "sunrise"
+      }
     },
     {
       "id": "beach_sign",
@@ -132,6 +135,17 @@
       "showIf": "mirror_beach",
       "minIntox": 0.9,
       "script": "mirror_beach"
+    },
+    {
+      "id": "banyan_sunrise",
+      "x": 12,
+      "y": 11,
+      "sprite": "banyan",
+      "dir": "DOWN",
+      "showWhen": {
+        "set": "sunrise"
+      },
+      "script": "banyan_sunrise"
     }
   ],
   "pickups": [
@@ -170,6 +184,13 @@
         "maxLevel": 4,
         "weight": 10,
         "minIntox": 0.6
+      },
+      {
+        "speciesId": "neighbula",
+        "minLevel": 20,
+        "maxLevel": 24,
+        "weight": 30,
+        "set": "sunrise"
       }
     ]
   },

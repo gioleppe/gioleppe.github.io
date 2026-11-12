@@ -4,6 +4,7 @@ import { drawText, textWidth, wrap, panel, C } from './ui.js';
 import { charAt, npcVisible, npcPos, isNight, nightLevel } from '../core/OverworldEngine.js';
 import { bandOf, bandIndex, egoGone } from '../core/intox.js';
 import { highWorld, TRAIL_SPRITES } from './highWorld.js';
+import { liveSet } from '../core/timetable.js';
 import { routeHint } from '../core/goals.js';
 import { hashOf } from './anim.js';
 import { questMarker } from '../core/quests.js';
@@ -125,6 +126,9 @@ export const overworldView = {
   update(game, dt) {
     this.t += dt;
     highWorld.update(this, game, dt);
+    // a set starting where you are (or you arriving during one): say what is on
+    const st0 = game.engine.state, live = st0.mode === 'OVERWORLD' ? liveSet(game.data, st0) : null, key = live ? `${st0.zoneId}:${live.id}` : '';
+    if (key !== this.liveKey) { if (key && this.liveKey !== undefined) game.say(`Live now: ${live.name}`); this.liveKey = key; }
     // when the day turns (half way through dusk or dawn), a sun or a moon sweeps across the top of the screen
     const night = isNight(game.engine.state);
     if (this.dayFor !== game.engine) { this.dayFor = game.engine; this.wasNight = night; this.sky = null; }
@@ -174,13 +178,13 @@ export const overworldView = {
   /** a dancer bouncing to the zone's BPM on a dancefloor tile */
   /** a dancer on a dancefloor tile: one of the festival's people (assets dancers.png), changing pose on the beat
    *  (both hands up, left up, both up, right up) with a hop; each one off-beat from its neighbours */
-  dancer(game, g, dx, dy, x, y) {
+  dancer(game, g, dx, dy, x, y, fixed = null) {
     const img = game.images.dancers, meta = game.atlas.dancers || { looks: 1, poses: 1 };
     const still = game.settings.reducedMotion, bpm = game.data.zones[game.engine.state.zoneId]?.baseBpm || 140;
     const beats = (this.t * bpm) / 60 + ((x * 3 + y * 5) % 4) / 4;
     const turned = highWorld.crowdPose(this, game, y);          // the crowd stops and stares at you (Ego gone, the Poi Pit)
-    const look = (x * 7 + y * 13) % meta.looks, pose = turned ?? (still ? 0 : [0, 1, 0, 2][Math.floor(beats) % 4] % meta.poses);
-    const hop = turned === null && !still && beats % 1 < 0.3 ? 1 : 0;
+    const look = (x * 7 + y * 13) % meta.looks, pose = turned ?? fixed ?? (still ? 0 : [0, 1, 0, 2][Math.floor(beats) % 4] % meta.poses);
+    const hop = turned === null && fixed === null && !still && beats % 1 < 0.3 ? 1 : 0;
     g.fillStyle = 'rgba(11,3,20,0.3)'; g.fillRect(dx + 4, dy + 13, 8, 2);
     if (img) g.drawImage(img, pose * 16, look * 24, 16, 24, dx, dy - 10 - hop, 16, 24);
   },
@@ -288,13 +292,18 @@ export const overworldView = {
     const px0 = Math.max(0, x0 - 2), px1 = Math.min(zone.rows[0].length - 1, x1 + 2), py1 = Math.min(zone.rows.length - 1, y1 + 3);
     const taken = new Set([`${s.player.x},${s.player.y}`, ...(this.anim ? [`${this.anim.from[0]},${this.anim.from[1]}`] : [])]);
     for (const n of zone.npcs || []) if (npcVisible(ctx, n)) { const p = npcPos(ctx, n, zone); taken.add(`${p.x},${p.y}`); }
+    const set = liveSet(game.data, s);
     for (let y = y0; y <= py1; y++) for (let x = px0; x <= px1; x++) {
       const def = legend[charAt(ctx, x, y, zone)];
       if (def?.prop) ents.push({ y: y - 0.01, prop: def.prop, x });
       // dancers: on every crowd tile, every few dancefloor tiles; none where you or someone else is standing
       if (def && (def.crowd || (resolve(def.sprite) === 'dancefloor' && (x * 7 + y * 3) % 5 === 0)) && !taken.has(`${x},${y}`)) ents.push({ y: y - 0.02, dancer: true, x, ty: y });
+      // a set is on: the dancefloor fills up, and a crowd gathers in its spot (the festival timetable)
+      else if (set && def && (def.id === 0 || def.id === 2) && !taken.has(`${x},${y}`) && ((set.fill && resolve(def.sprite) === 'dancefloor') || (set.crowd && x >= set.crowd[0] && x <= set.crowd[2] && y >= set.crowd[1] && y <= set.crowd[3] && (x * 5 + y * 3) % 3 !== 1))) {
+        ents.push({ y: y - 0.02, dancer: true, x, ty: y, pose: set.pose === 'back' ? game.atlas.dancers?.back : set.pose === 'still' ? game.atlas.dancers?.still : null });
+      }
     }
-    for (const n of zone.npcs || []) if (npcVisible(ctx, n)) {
+    for (const n of zone.npcs || []) if (npcVisible(ctx, n) && !(s.visitor && n.sprite === s.visitor)) {   // the visitor came over: not in two places
       const p = npcPos(ctx, n, zone), a = this.npcAnim?.[n.id];
       const fx = a ? a.from[0] + (a.to[0] - a.from[0]) * a.t : p.x, fy = a ? a.from[1] + (a.to[1] - a.from[1]) * a.t : p.y;
       ents.push({ y: fy, npc: n, nx: fx, ny: fy, walking: !!a });
@@ -302,11 +311,13 @@ export const overworldView = {
     const flash = game.canFlash();
     for (const p of zone.pickups || []) if (!s.picked[p.id] && (!p.hidden || flash) && !(p.minIntox > s.intox)) ents.push({ y: p.y, pickup: p });
     ents.push({ y: py / TS, player: true });
+    // someone who came to find you (Banyan with the timetable) stands beside you while they talk
+    if (s.visitor) { const vx = s.player.x + (s.player.x > 1 ? -1 : 1); ents.push({ y: s.player.y, draw: () => { g.fillStyle = 'rgba(20,10,40,0.27)'; g.fillRect(vx * TS - cx + 4, s.player.y * TS - cy + 11, 8, 4); this.char(game, g, s.visitor, vx < s.player.x ? 'RIGHT' : 'LEFT', 0, vx * TS - cx, s.player.y * TS - cy - 10); } }); }
     ents.sort((a, b) => a.y - b.y);
     const shadow = (x, y) => { g.fillStyle = 'rgba(20,10,40,0.27)'; g.fillRect(x + 3, y + 21, 10, 3); g.fillRect(x + 4, y + 20, 8, 5); };
     for (const e of ents) {
       if (e.draw) { e.draw(); continue; }
-      if (e.dancer) { this.dancer(game, g, e.x * TS - cx, e.ty * TS - cy, e.x, e.ty); continue; }
+      if (e.dancer) { this.dancer(game, g, e.x * TS - cx, e.ty * TS - cy, e.x, e.ty, e.pose ?? null); continue; }
       if (e.prop) {
         const pr = game.atlas.props[e.prop], img = game.images[`prop:${e.prop}`], ty = Math.round(e.y + 0.01);
         if (pr && img) {

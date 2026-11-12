@@ -214,6 +214,49 @@
       "minIntox": 0.9,
       "hideIf": "memory_gone",
       "script": "memory_vendor"
+    },
+    {
+      "id": "night_vendor",
+      "x": 13,
+      "y": 9,
+      "sprite": "dealer",
+      "dir": "DOWN",
+      "showWhen": {
+        "set": "night_market"
+      },
+      "script": "night_vendor"
+    },
+    {
+      "id": "insomniac",
+      "x": 13,
+      "y": 11,
+      "sprite": "wook",
+      "dir": "RIGHT",
+      "sight": 3,
+      "trainer": "insomniac",
+      "showWhen": {
+        "all": [
+          {
+            "flag": "timetable"
+          },
+          {
+            "any": [
+              {
+                "hour": [
+                  22,
+                  24
+                ]
+              },
+              {
+                "hour": [
+                  0,
+                  5
+                ]
+              }
+            ]
+          }
+        ]
+      }
     }
   ],
   "pickups": [
@@ -278,6 +321,13 @@
         "minLevel": 11,
         "maxLevel": 14,
         "weight": 15
+      },
+      {
+        "speciesId": "bribe_asaurus",
+        "minLevel": 20,
+        "maxLevel": 24,
+        "weight": 30,
+        "set": "night_market"
       }
     ],
     "nightTable": [

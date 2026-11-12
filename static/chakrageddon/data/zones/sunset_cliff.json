@@ -163,6 +163,17 @@
       "sprite": "local",
       "dir": "RIGHT",
       "script": "sunset_watcher"
+    },
+    {
+      "id": "stream_cam",
+      "x": 12,
+      "y": 10,
+      "sprite": "influencer",
+      "dir": "DOWN",
+      "showWhen": {
+        "set": "sunset"
+      },
+      "script": "stream_cam"
     }
   ],
   "pickups": [
@@ -234,6 +245,13 @@
         "minLevel": 23,
         "maxLevel": 25,
         "weight": 10
+      },
+      {
+        "speciesId": "sirenowl",
+        "minLevel": 20,
+        "maxLevel": 24,
+        "weight": 30,
+        "set": "sunset"
       }
     ]
   },

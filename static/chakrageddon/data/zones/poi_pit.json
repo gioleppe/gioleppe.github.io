@@ -133,6 +133,17 @@
       "sprite": "firespinner",
       "dir": "LEFT",
       "script": "pit_spinner"
+    },
+    {
+      "id": "pit_mc",
+      "x": 14,
+      "y": 14,
+      "sprite": "raver",
+      "dir": "UP",
+      "showWhen": {
+        "set": "headline"
+      },
+      "script": "pit_mc"
     }
   ],
   "pickups": [
@@ -198,6 +209,13 @@
         "maxLevel": 8,
         "weight": 10,
         "minIntox": 0.6
+      },
+      {
+        "speciesId": "ravelord",
+        "minLevel": 20,
+        "maxLevel": 24,
+        "weight": 30,
+        "set": "headline"
       }
     ],
     "nightTable": [

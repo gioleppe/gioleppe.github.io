@@ -552,6 +552,31 @@
     {
       "s": "Chai Mama",
       "t": "There. Your party is rested and watered. Do not tell me what you saw."
+    },
+    {
+      "ifNot": "timetable",
+      "goto": "up"
+    },
+    {
+      "s": "Chai Mama",
+      "t": "You look like you are waiting for something. Sleep here until the next set?",
+      "choice": [
+        "Sleep until the next set",
+        "Get up"
+      ],
+      "goto": [
+        "sleep",
+        "up"
+      ]
+    },
+    {
+      "label": "sleep"
+    },
+    {
+      "restUntilSet": true
+    },
+    {
+      "label": "up"
     }
   ],
   "beach_vendor": [
@@ -2852,6 +2877,130 @@
     {
       "t": "He bursts into a rainbow. Bits of other people's memories rain down on the market. None of them are yours.",
       "style": "PSYCHEDELIC"
+    }
+  ],
+  "banyan_timetable": [
+    {
+      "visitor": "banyan"
+    },
+    {
+      "t": "Somebody is jogging towards you, waving a crumpled piece of paper over his head. It is Banyan, out of breath and very pleased with himself."
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Three wristbands! Then you are ready for the real festival. The one that happens at night, and at dawn, and at five in the morning."
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Here. The timetable. Every set worth seeing, where and when. Sets bring crowds, and crowds bring Astrals you will not see at any other time."
+    },
+    {
+      "give": "festival_timetable",
+      "n": 1
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Check it any time: Sets, in your Fanny Pack. And if you are early for something, any Chai Tent will let you sleep until it starts."
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "The sunrise set on my beach is at six. I go every morning. I am waiting for someone. Do not ask."
+    },
+    {
+      "set": "timetable"
+    },
+    {
+      "visitor": null
+    }
+  ],
+  "banyan_sunrise": [
+    {
+      "s": "Prof. Banyan",
+      "t": "Shh. Look at it. Thirty years, and it is still the best set of the day."
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Somebody once told me to wait for them at the sunrise set. So here I am. It is a nice place to wait."
+    },
+    {
+      "run": "banyan"
+    }
+  ],
+  "gong_player": [
+    {
+      "s": "Gong Player",
+      "t": "Bonnnnnng. Feel that in your sternum? That is your ego, packing a small bag."
+    },
+    {
+      "s": "Gong Player",
+      "t": "Dance however you want. Nobody is looking. Well. Svetlana is looking. She is always looking."
+    }
+  ],
+  "night_vendor": [
+    {
+      "s": "Night Vendor",
+      "t": "Psst. Night prices, night stock. Things the day vendors are too scared to sell.",
+      "choice": [
+        "Have a look",
+        "Not now"
+      ],
+      "goto": [
+        "shop",
+        "no"
+      ]
+    },
+    {
+      "label": "shop"
+    },
+    {
+      "shop": "night_market"
+    },
+    {
+      "label": "no"
+    },
+    {
+      "s": "Night Vendor",
+      "t": "I am here until eight. Then I was never here."
+    }
+  ],
+  "stream_cam": [
+    {
+      "s": "Camera Girl",
+      "t": "Shh, we are live! Forty thousand people are watching this sunset. Through Chloe. Who is watching her phone."
+    },
+    {
+      "s": "Camera Girl",
+      "t": "Could you step out of shot? You are blocking the sea. And the brand partner."
+    }
+  ],
+  "pit_mc": [
+    {
+      "s": "MC",
+      "t": "IS THE PIT READY? I SAID, IS THE PIT READY? Diabolo is on the decks until one, and he is taking challengers!"
+    },
+    {
+      "s": "MC",
+      "t": "Only during the set, mind. After one he goes back to being a man who will not look at you."
+    }
+  ],
+  "uv_painter": [
+    {
+      "s": "UV Painter",
+      "t": "Hold still. There. Now you glow under the blacklight. Do not ask what is in the paint."
+    },
+    {
+      "s": "UV Painter",
+      "t": "Darkpsy hour is when the forest shows its real face. Most of it is teeth. Lovely teeth."
+    }
+  ],
+  "queue_raver": [
+    {
+      "s": "Raver in the Queue",
+      "t": "Is this the queue for omelettes or the queue for the queue? I have been in it since 5 AM. It is still 5 AM."
+    },
+    {
+      "s": "Raver in the Queue",
+      "t": "Raju says one egg per person. I have had four. I think I am four people."
     }
   ]
 }

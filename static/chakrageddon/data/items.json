@@ -1,38 +1,356 @@
 [
-  {"id":"ziploc_baggie","name":"Ziploc Baggie","category":"BAGGING","price":60,"effect":{"catch":1},"desc":"Stabilises a wild Astral. Works best when it is worn out."},
-  {"id":"rizla_paper","name":"Rizla Paper","category":"BAGGING","price":180,"effect":{"catch":1.6},"desc":"Wraps tighter than a baggie. Better odds."},
-  {"id":"amber_vial","name":"Amber Vial","category":"BAGGING","price":420,"effect":{"catch":2.4},"desc":"Lab-grade containment. Rarely fails."},
-  {"id":"coconut_water","name":"Coconut Water","category":"RECOVERY","price":40,"effect":{"heal":25},"desc":"Warm, half finished. Restores 25 Serotonin."},
-  {"id":"watermelon_slice","name":"Watermelon Slice","category":"RECOVERY","price":120,"effect":{"heal":60},"desc":"Restores 60 Serotonin."},
-  {"id":"masala_chai","name":"Masala Chai","category":"RECOVERY","price":300,"effect":{"heal":9999},"desc":"Restores all Serotonin."},
-  {"id":"water_bottle","name":"Water Bottle","category":"RECOVERY","price":50,"effect":{"hydrate":40,"intox":-0.25},"desc":"Restores 40 Hydration. A sip for you too brings you down a band or so."},
-  {"id":"electrolyte_sachet","name":"Electrolyte Sachet","category":"RECOVERY","price":150,"effect":{"hydrate":9999,"cure":"COTTONMOUTH"},"desc":"Restores all Hydration and cures Cottonmouth."},
-  {"id":"tiger_balm","name":"Tiger Balm","category":"RECOVERY","price":90,"effect":{"cure":"ANY"},"desc":"Cures any status condition. Smells like a decision."},
-  {"id":"weighted_blanket","name":"Weighted Blanket","category":"RECOVERY","price":600,"effect":{"revive":0.5},"desc":"Brings a fainted Astral back with half its Serotonin."},
-  {"id":"incense_stick","name":"Incense Stick","category":"GEAR","price":150,"effect":{"repel":120},"desc":"Keeps wild Astrals away for 120 steps."},
-  {"id":"wraparound_shades","name":"Wraparound Shades","category":"GEAR","price":800,"effect":{"passive":"sight"},"desc":"While you carry these, people notice you from one tile less."},
-  {"id":"earplugs","name":"Earplugs","category":"GEAR","price":400,"effect":{"passive":"earplugs"},"desc":"While you carry these, your Astrals shake off Thought Loops sooner."},
-  {"id":"warm_kingfisher","name":"Warm Kingfisher","category":"CATALYST","price":700,"effect":{"evolve":true},"desc":"A catalyst. Some Astrals change when they drink it."},
-  {"id":"mystery_powder","name":"Mystery Powder","category":"CATALYST","price":900,"effect":{"evolve":true,"intox":0.2},"desc":"A catalyst. Nobody will say what is in it."},
-  {"id":"banana_lassi","name":"Banana Lassi","category":"CATALYST","price":700,"effect":{"evolve":true},"desc":"A catalyst. Thick, sweet, transformative."},
-  {"id":"glowing_blotter","name":"Glowing Blotter","category":"KEY","price":0,"effect":{"dose":0.3},"desc":"Lick a corner to go up a band: stranger Astrals and bigger lessons, harder hits and clumsier hands. It never runs out, which is the problem."},
-  {"id":"passport","name":"Passport","category":"KEY","price":0,"effect":{},"desc":"Yours. Slightly chewed."},
-  {"id":"memo_guesthouse","name":"Undercover Memo 1","category":"KEY","price":0,"effect":{},"desc":"TEAM UNDERCOVER, INTERNAL. Phase 1: buy every guesthouse bed in Anjuna. Phase 2: charge for sleep. Phase 3: charge for dreams."},
-  {"id":"memo_villa","name":"Undercover Memo 2","category":"KEY","price":0,"effect":{},"desc":"Phase 2 update: influencers have fenced off the sunset. Looking west now costs Rs 2000. Dopamine bottling Backstage is on schedule."},
-  {"id":"memo_greenroom","name":"Undercover Memo 3","category":"KEY","price":0,"effect":{},"desc":"Phase 3: when the bottles are full, the Promoter cuts the power to every free party in Goa. Only the Mainstage stays loud. Shred after reading."},
-  {"id":"lost_sandals","name":"Lost Sandals","category":"KEY","price":0,"effect":{},"desc":"Leather sandals, one strap held on with a hair tie. Somebody at the Sunrise Guesthouse misses these."},
-  {"id":"friendship_band","name":"Friendship Band","category":"HELD","price":700,"effect":{"held":true},"desc":"To hold. Heals a sixteenth of its Serotonin at the end of every turn."},
-  {"id":"neon_glowstick","name":"Neon Glowstick","category":"HELD","price":900,"effect":{"held":true},"desc":"To hold. Its moves hit 10% harder."},
-  {"id":"lucky_rupee","name":"Lucky Rupee","category":"HELD","price":600,"effect":{"held":true},"desc":"To hold. A coin with a hole in it. More critical hits."},
-  {"id":"steel_flask","name":"Steel Flask","category":"HELD","price":650,"effect":{"held":true},"desc":"To hold. Its moves cost one less Hydration."},
-  {"id":"tie_dye_shirt","name":"Tie-Dye Shirt","category":"OUTFIT","price":400,"effect":{"outfit":"player_tiedye"},"desc":"Cosmetic. Pink, swirly, faintly damp. Wear it from the Stash Tin."},
-  {"id":"cotton_kurta","name":"Cotton Kurta","category":"OUTFIT","price":500,"effect":{"outfit":"player_kurta"},"desc":"Cosmetic. Long, white and breezy. Wear it from the Stash Tin."},
-  {"id":"sequin_vest","name":"Sequin Vest","category":"OUTFIT","price":800,"effect":{"outfit":"player_sequins"},"desc":"Cosmetic. Catches every laser in the valley. Wear it from the Stash Tin."},
-  {"id":"glow_jacket","name":"Glow Jacket","category":"OUTFIT","price":900,"effect":{"outfit":"player_glow"},"desc":"Cosmetic. Black with neon green trim. Wear it from the Stash Tin."},
-  {"id":"festival_poncho","name":"Festival Poncho","category":"OUTFIT","price":0,"effect":{"outfit":"player_poncho"},"desc":"Cosmetic. A poncho and a straw hat, a thank-you from the guesthouse. Wear it from the Stash Tin."},
-  {"id":"crab_suit","name":"Crab Suit","category":"OUTFIT","price":0,"effect":{"outfit":"player_crab"},"desc":"Cosmetic. A lilo and two oven gloves, from the Crab Raver. Wear it from the Stash Tin."},
-  {"id":"record_crate","name":"Record Crate","category":"KEY","price":0,"effect":{},"desc":"A crate of vinyl with a sticker: PROPERTY OF THE BOOTH. The roadie in the DJ Booth is looking for these."},
-  {"id":"vicchio_antenna","name":"Vicchio Antenna","category":"KEY","price":0,"effect":{},"desc":"Mantequilla's nonno's antenna, bent into the shape of Tuscany. It crackles near Glowing Caps, and sometimes it talks."},
-  {"id":"glowing_cap","name":"Glowing Cap","category":"KEY","price":0,"effect":{},"desc":"A mushroom that glows softly green, but only for people on the right frequency. Mantequilla needs three."},
-  {"id":"sombrero","name":"Sombrero","category":"OUTFIT","price":0,"effect":{"outfit":"player_sombrero"},"desc":"Cosmetic. Mantequilla's sombrero. If anyone asks, you are from Vicchio. Wear it from the Stash Tin."}
+  {
+    "id": "ziploc_baggie",
+    "name": "Ziploc Baggie",
+    "category": "BAGGING",
+    "price": 60,
+    "effect": {
+      "catch": 1
+    },
+    "desc": "Stabilises a wild Astral. Works best when it is worn out."
+  },
+  {
+    "id": "rizla_paper",
+    "name": "Rizla Paper",
+    "category": "BAGGING",
+    "price": 180,
+    "effect": {
+      "catch": 1.6
+    },
+    "desc": "Wraps tighter than a baggie. Better odds."
+  },
+  {
+    "id": "amber_vial",
+    "name": "Amber Vial",
+    "category": "BAGGING",
+    "price": 420,
+    "effect": {
+      "catch": 2.4
+    },
+    "desc": "Lab-grade containment. Rarely fails."
+  },
+  {
+    "id": "coconut_water",
+    "name": "Coconut Water",
+    "category": "RECOVERY",
+    "price": 40,
+    "effect": {
+      "heal": 25
+    },
+    "desc": "Warm, half finished. Restores 25 Serotonin."
+  },
+  {
+    "id": "watermelon_slice",
+    "name": "Watermelon Slice",
+    "category": "RECOVERY",
+    "price": 120,
+    "effect": {
+      "heal": 60
+    },
+    "desc": "Restores 60 Serotonin."
+  },
+  {
+    "id": "masala_chai",
+    "name": "Masala Chai",
+    "category": "RECOVERY",
+    "price": 300,
+    "effect": {
+      "heal": 9999
+    },
+    "desc": "Restores all Serotonin."
+  },
+  {
+    "id": "water_bottle",
+    "name": "Water Bottle",
+    "category": "RECOVERY",
+    "price": 50,
+    "effect": {
+      "hydrate": 40,
+      "intox": -0.25
+    },
+    "desc": "Restores 40 Hydration. A sip for you too brings you down a band or so."
+  },
+  {
+    "id": "electrolyte_sachet",
+    "name": "Electrolyte Sachet",
+    "category": "RECOVERY",
+    "price": 150,
+    "effect": {
+      "hydrate": 9999,
+      "cure": "COTTONMOUTH"
+    },
+    "desc": "Restores all Hydration and cures Cottonmouth."
+  },
+  {
+    "id": "tiger_balm",
+    "name": "Tiger Balm",
+    "category": "RECOVERY",
+    "price": 90,
+    "effect": {
+      "cure": "ANY"
+    },
+    "desc": "Cures any status condition. Smells like a decision."
+  },
+  {
+    "id": "weighted_blanket",
+    "name": "Weighted Blanket",
+    "category": "RECOVERY",
+    "price": 600,
+    "effect": {
+      "revive": 0.5
+    },
+    "desc": "Brings a fainted Astral back with half its Serotonin."
+  },
+  {
+    "id": "incense_stick",
+    "name": "Incense Stick",
+    "category": "GEAR",
+    "price": 150,
+    "effect": {
+      "repel": 120
+    },
+    "desc": "Keeps wild Astrals away for 120 steps."
+  },
+  {
+    "id": "wraparound_shades",
+    "name": "Wraparound Shades",
+    "category": "GEAR",
+    "price": 800,
+    "effect": {
+      "passive": "sight"
+    },
+    "desc": "While you carry these, people notice you from one tile less."
+  },
+  {
+    "id": "earplugs",
+    "name": "Earplugs",
+    "category": "GEAR",
+    "price": 400,
+    "effect": {
+      "passive": "earplugs"
+    },
+    "desc": "While you carry these, your Astrals shake off Thought Loops sooner."
+  },
+  {
+    "id": "warm_kingfisher",
+    "name": "Warm Kingfisher",
+    "category": "CATALYST",
+    "price": 700,
+    "effect": {
+      "evolve": true
+    },
+    "desc": "A catalyst. Some Astrals change when they drink it."
+  },
+  {
+    "id": "mystery_powder",
+    "name": "Mystery Powder",
+    "category": "CATALYST",
+    "price": 900,
+    "effect": {
+      "evolve": true,
+      "intox": 0.2
+    },
+    "desc": "A catalyst. Nobody will say what is in it."
+  },
+  {
+    "id": "banana_lassi",
+    "name": "Banana Lassi",
+    "category": "CATALYST",
+    "price": 700,
+    "effect": {
+      "evolve": true
+    },
+    "desc": "A catalyst. Thick, sweet, transformative."
+  },
+  {
+    "id": "glowing_blotter",
+    "name": "Glowing Blotter",
+    "category": "KEY",
+    "price": 0,
+    "effect": {
+      "dose": 0.3
+    },
+    "desc": "Lick a corner to go up a band: stranger Astrals and bigger lessons, harder hits and clumsier hands. It never runs out, which is the problem."
+  },
+  {
+    "id": "passport",
+    "name": "Passport",
+    "category": "KEY",
+    "price": 0,
+    "effect": {},
+    "desc": "Yours. Slightly chewed."
+  },
+  {
+    "id": "memo_guesthouse",
+    "name": "Undercover Memo 1",
+    "category": "KEY",
+    "price": 0,
+    "effect": {},
+    "desc": "TEAM UNDERCOVER, INTERNAL. Phase 1: buy every guesthouse bed in Anjuna. Phase 2: charge for sleep. Phase 3: charge for dreams."
+  },
+  {
+    "id": "memo_villa",
+    "name": "Undercover Memo 2",
+    "category": "KEY",
+    "price": 0,
+    "effect": {},
+    "desc": "Phase 2 update: influencers have fenced off the sunset. Looking west now costs Rs 2000. Dopamine bottling Backstage is on schedule."
+  },
+  {
+    "id": "memo_greenroom",
+    "name": "Undercover Memo 3",
+    "category": "KEY",
+    "price": 0,
+    "effect": {},
+    "desc": "Phase 3: when the bottles are full, the Promoter cuts the power to every free party in Goa. Only the Mainstage stays loud. Shred after reading."
+  },
+  {
+    "id": "lost_sandals",
+    "name": "Lost Sandals",
+    "category": "KEY",
+    "price": 0,
+    "effect": {},
+    "desc": "Leather sandals, one strap held on with a hair tie. Somebody at the Sunrise Guesthouse misses these."
+  },
+  {
+    "id": "friendship_band",
+    "name": "Friendship Band",
+    "category": "HELD",
+    "price": 700,
+    "effect": {
+      "held": true
+    },
+    "desc": "To hold. Heals a sixteenth of its Serotonin at the end of every turn."
+  },
+  {
+    "id": "neon_glowstick",
+    "name": "Neon Glowstick",
+    "category": "HELD",
+    "price": 900,
+    "effect": {
+      "held": true
+    },
+    "desc": "To hold. Its moves hit 10% harder."
+  },
+  {
+    "id": "lucky_rupee",
+    "name": "Lucky Rupee",
+    "category": "HELD",
+    "price": 600,
+    "effect": {
+      "held": true
+    },
+    "desc": "To hold. A coin with a hole in it. More critical hits."
+  },
+  {
+    "id": "steel_flask",
+    "name": "Steel Flask",
+    "category": "HELD",
+    "price": 650,
+    "effect": {
+      "held": true
+    },
+    "desc": "To hold. Its moves cost one less Hydration."
+  },
+  {
+    "id": "tie_dye_shirt",
+    "name": "Tie-Dye Shirt",
+    "category": "OUTFIT",
+    "price": 400,
+    "effect": {
+      "outfit": "player_tiedye"
+    },
+    "desc": "Cosmetic. Pink, swirly, faintly damp. Wear it from the Stash Tin."
+  },
+  {
+    "id": "cotton_kurta",
+    "name": "Cotton Kurta",
+    "category": "OUTFIT",
+    "price": 500,
+    "effect": {
+      "outfit": "player_kurta"
+    },
+    "desc": "Cosmetic. Long, white and breezy. Wear it from the Stash Tin."
+  },
+  {
+    "id": "sequin_vest",
+    "name": "Sequin Vest",
+    "category": "OUTFIT",
+    "price": 800,
+    "effect": {
+      "outfit": "player_sequins"
+    },
+    "desc": "Cosmetic. Catches every laser in the valley. Wear it from the Stash Tin."
+  },
+  {
+    "id": "glow_jacket",
+    "name": "Glow Jacket",
+    "category": "OUTFIT",
+    "price": 900,
+    "effect": {
+      "outfit": "player_glow"
+    },
+    "desc": "Cosmetic. Black with neon green trim. Wear it from the Stash Tin."
+  },
+  {
+    "id": "festival_poncho",
+    "name": "Festival Poncho",
+    "category": "OUTFIT",
+    "price": 0,
+    "effect": {
+      "outfit": "player_poncho"
+    },
+    "desc": "Cosmetic. A poncho and a straw hat, a thank-you from the guesthouse. Wear it from the Stash Tin."
+  },
+  {
+    "id": "crab_suit",
+    "name": "Crab Suit",
+    "category": "OUTFIT",
+    "price": 0,
+    "effect": {
+      "outfit": "player_crab"
+    },
+    "desc": "Cosmetic. A lilo and two oven gloves, from the Crab Raver. Wear it from the Stash Tin."
+  },
+  {
+    "id": "record_crate",
+    "name": "Record Crate",
+    "category": "KEY",
+    "price": 0,
+    "effect": {},
+    "desc": "A crate of vinyl with a sticker: PROPERTY OF THE BOOTH. The roadie in the DJ Booth is looking for these."
+  },
+  {
+    "id": "vicchio_antenna",
+    "name": "Vicchio Antenna",
+    "category": "KEY",
+    "price": 0,
+    "effect": {},
+    "desc": "Mantequilla's nonno's antenna, bent into the shape of Tuscany. It crackles near Glowing Caps, and sometimes it talks."
+  },
+  {
+    "id": "glowing_cap",
+    "name": "Glowing Cap",
+    "category": "KEY",
+    "price": 0,
+    "effect": {},
+    "desc": "A mushroom that glows softly green, but only for people on the right frequency. Mantequilla needs three."
+  },
+  {
+    "id": "sombrero",
+    "name": "Sombrero",
+    "category": "OUTFIT",
+    "price": 0,
+    "effect": {
+      "outfit": "player_sombrero"
+    },
+    "desc": "Cosmetic. Mantequilla's sombrero. If anyone asks, you are from Vicchio. Wear it from the Stash Tin."
+  },
+  {
+    "id": "festival_timetable",
+    "name": "Festival Timetable",
+    "category": "KEY",
+    "price": 0,
+    "desc": "Banyan's photocopy of the festival timetable, folded into eighths. See the Sets page in your Fanny Pack."
+  }
 ]

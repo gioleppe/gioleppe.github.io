@@ -191,6 +191,18 @@
         "weighted_blanket",
         "mystery_powder"
       ]
+    },
+    "night_market": {
+      "name": "Night Market",
+      "items": [
+        "amber_vial",
+        "mystery_powder",
+        "warm_kingfisher",
+        "banana_lassi",
+        "neon_glowstick",
+        "electrolyte_sachet",
+        "glow_jacket"
+      ]
     }
   },
   "intox": {
@@ -304,5 +316,122 @@
     "seconds": 25,
     "dose": 0.12,
     "ceiling": 0.9
+  },
+  "timetable": {
+    "_comment": "The festival timetable (IMPROVEMENTS point 2, src/core/timetable.js). Banyan brings it after unlockBands wristbands. Minutes on the festival clock; to may wrap past midnight.",
+    "unlockBands": 3,
+    "sets": [
+      {
+        "id": "sunrise",
+        "zone": "driftwood_beach",
+        "from": 360,
+        "to": 480,
+        "name": "Sunrise set",
+        "what": "A slow, beautiful set as the sun comes up over the water. Banyan never misses it.",
+        "mood": "CHAI_TENT_WARMTH",
+        "bpm": 100,
+        "crowd": [
+          13,
+          10,
+          22,
+          11
+        ]
+      },
+      {
+        "id": "soundbath",
+        "zone": "tantric_yurt",
+        "from": 480,
+        "to": 600,
+        "name": "Ecstatic dance",
+        "what": "Svetlana's morning session: gongs, bare feet and a lot of breathing. Calm Astrals drift in.",
+        "mood": "CHAI_TENT_WARMTH",
+        "bpm": 84,
+        "crowd": [
+          6,
+          3,
+          13,
+          4
+        ]
+      },
+      {
+        "id": "night_market",
+        "zone": "flea_market",
+        "from": 1020,
+        "to": 1200,
+        "name": "Night market",
+        "what": "The market stays open into the dark. A night vendor sells things nobody sells by day.",
+        "mood": "UV_BLACKLIGHT",
+        "bpm": 124,
+        "crowd": [
+          13,
+          12,
+          21,
+          13
+        ],
+        "pose": "still"
+      },
+      {
+        "id": "sunset",
+        "zone": "sunset_cliff",
+        "from": 1080,
+        "to": 1200,
+        "name": "Sponsored sunset",
+        "what": "Chloe livestreams the sunset to her followers. Everybody faces the sea, and the phones.",
+        "mood": "CHAI_TENT_WARMTH",
+        "bpm": 110,
+        "crowd": [
+          4,
+          10,
+          18,
+          11
+        ],
+        "pose": "still"
+      },
+      {
+        "id": "headline",
+        "zone": "poi_pit",
+        "from": 1320,
+        "to": 60,
+        "name": "Diabolo headline set",
+        "what": "The Pit is packed and the strobes go wild. The only time Diabolo takes on a rematch.",
+        "mood": "UV_BLACKLIGHT",
+        "bpm": 152,
+        "fill": true,
+        "crowd": [
+          2,
+          14,
+          25,
+          15
+        ]
+      },
+      {
+        "id": "darkpsy",
+        "zone": "forest_stage",
+        "from": 120,
+        "to": 300,
+        "name": "Darkpsy hour",
+        "what": "Fog, UV and 200 BPM. The forest's night things come out to dance.",
+        "mood": "BAD_TRIP",
+        "bpm": 200,
+        "fill": true
+      },
+      {
+        "id": "rush",
+        "zone": "omelette_stall",
+        "from": 300,
+        "to": 420,
+        "name": "The 5 AM rush",
+        "what": "Every wrecked raver on the island queues for one of Raju's omelettes. It is always 5 AM.",
+        "mood": "UV_BLACKLIGHT",
+        "bpm": 150,
+        "crowd": [
+          5,
+          5,
+          9,
+          5
+        ],
+        "pose": "back"
+      }
+    ]
   }
 }
