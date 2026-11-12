@@ -34,6 +34,7 @@ export class GameEngine {
     this.data = data;
     this.state = opts.state || newState(data, opts.seed ?? 1);
     this.rng = makeRng(this.state);
+    this.options = { ...(opts.options || {}) };   // rules the player picks (e.g. shift: the Shift battle style); not saved
   }
 
   serialize() { return JSON.stringify(this.state); }
@@ -49,13 +50,13 @@ export class GameEngine {
   /** Tooling and test hook: run fn(ctx) against the live state and return the events it emitted. */
   run(fn) {
     const events = [];
-    fn({ data: this.data, state: this.state, rng: this.rng, emit: (e) => events.push(e), hooks });
+    fn({ data: this.data, state: this.state, rng: this.rng, options: this.options, emit: (e) => events.push(e), hooks });
     return events;
   }
 
   dispatch(cmd) {
     const events = [];
-    const ctx = { data: this.data, state: this.state, rng: this.rng, emit: (e) => events.push(e), hooks };
+    const ctx = { data: this.data, state: this.state, rng: this.rng, options: this.options, emit: (e) => events.push(e), hooks };
     const s = this.state;
     const bandBefore = bandIndex(this.data.rules, s.intox), goalBefore = currentGoal(this.data, s)?.id;
     const questsBefore = Object.fromEntries(questLog(this.data, s).map((q) => [q.id, q.state]));

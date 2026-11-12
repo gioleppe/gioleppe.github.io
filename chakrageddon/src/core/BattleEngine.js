@@ -1,6 +1,8 @@
 // Deterministic turn resolver. Phases (spec 11.3):
 // PHASE_INTRO -> PHASE_AWAIT_COMMAND -> PHASE_TURN_RESOLUTION -> PHASE_END_OF_TURN -> PHASE_FAINT_CHECK
 //   -> PHASE_AWAIT_COMMAND | PHASE_AWAIT_SWITCH | PHASE_VICTORY | PHASE_WHITEOUT (+ PHASE_LEARN_MOVE prompts)
+//   PHASE_SHIFT_OFFER: a trainer's Astral fainted; before the next comes out you may swap yours for free
+//   (only with ctx.options.shift, the "Shift" battle style; SWITCH or STAY answers it)
 import { bandOf } from './intox.js';
 import { statsOf, snapshot, nameOf, gainXp, evolutionTarget, evolve, createMon, addToCollection, healMon } from './mons.js';
 import { selectAction } from './AIController.js';
@@ -254,6 +256,18 @@ export function battleAction(ctx, cmd) {
     b.phase = 'PHASE_AWAIT_COMMAND';
     return;
   }
+  if (b.phase === 'PHASE_SHIFT_OFFER') {
+    // a free swap before the trainer's next Astral comes out, or STAY to keep yours in
+    if (cmd.action === 'SWITCH') {
+      const idx = Number(cmd.payloadId);
+      if (!s.party[idx] || idx === b.pi || s.party[idx].hp <= 0) return;
+      switchIn(ctx, 'p', idx);
+    } else if (cmd.action !== 'STAY') return;
+    const next = b.nextEi; b.nextEi = null;
+    switchIn(ctx, 'e', next);
+    b.phase = 'PHASE_AWAIT_COMMAND';
+    return;
+  }
   if (b.phase !== 'PHASE_AWAIT_COMMAND') return;
   const mon = active(ctx, 'p'), sd = b.side.p;
   let act;
@@ -388,7 +402,17 @@ function faintCheck(ctx) {
     if (!s.party.some((m) => m.hp > 0)) return whiteout(ctx);
   }
   if (enemyOut) return victory(ctx);
-  if (e.hp <= 0) switchIn(ctx, 'e', b.enemy.findIndex((m) => m.hp > 0));
+  if (e.hp <= 0) {
+    const next = b.enemy.findIndex((m) => m.hp > 0);
+    // Shift style: say who is coming and let the player swap first (only when theirs is still standing and has company)
+    if (ctx.options?.shift && b.kind === 'trainer' && p.hp > 0 && s.party.some((m, i) => i !== b.pi && m.hp > 0)) {
+      b.nextEi = next; b.phase = 'PHASE_SHIFT_OFFER';
+      ctx.emit({ type: 'SHIFT_OFFER', next: snapshot(ctx.data, b.enemy[next]) });
+      msg(ctx, `${ctx.data.trainers[b.trainerId].name} is about to manifest ${nameOf(ctx.data, b.enemy[next])}.`);
+      return;
+    }
+    switchIn(ctx, 'e', next);
+  }
   b.phase = p.hp <= 0 ? 'PHASE_AWAIT_SWITCH' : 'PHASE_AWAIT_COMMAND';
 }
 

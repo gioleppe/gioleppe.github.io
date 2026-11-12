@@ -22,7 +22,7 @@ const KNOCK = 0.4, SHRUG = 0.5, CHART_FLIP = 0.9;
 
 export const battleView = {
   on: false, queue: [], cur: null, disp: { p: null, e: null }, t: 0, intro: 0, outro: 0,
-  menu: 'main', cursor: { main: 0, moves: 0, bag: 0, party: 0, learn: 0 }, pendingItem: null, learn: null,
+  menu: 'main', cursor: { main: 0, moves: 0, bag: 0, party: 0, learn: 0, shift: 0 }, pendingItem: null, learn: null,
   fx: { p: POSE(), e: POSE() }, shake: 0, flash: 0, capture: null, info: null, loop: { p: false, e: false },
 
   effects: [], portrait: 0, move: null, pending: null, chartFlip: 0,
@@ -409,6 +409,19 @@ export const battleView = {
     if (b.phase === 'PHASE_AWAIT_SWITCH') this.menu = 'party';
     const forced = b.phase === 'PHASE_AWAIT_SWITCH';
 
+    // Shift style: the trainer's next Astral is coming; swap yours for free, or keep going
+    if (b.phase === 'PHASE_SHIFT_OFFER' && this.menu !== 'party') {
+      const next = b.enemy[b.nextEi], who = d.trainers[b.trainerId]?.name || 'They';
+      const lines = wrap(`${who} is about to manifest ${nameOf(d, next)}. Swap ${nameOf(d, mon)}?`, 136);
+      lines.slice(0, 3).forEach((ln, i) => drawText(g, ln, 12, BOX_Y + 6 + i * 11, { color: C.ink }));
+      panel(g, 150, BOX_Y - 2, W - 153, BOX_H + 2, { bg: '#FFF4E4', accent: C.magenta });
+      const r = list(game, g, [{ label: 'Swap Astral' }, { label: 'Keep going' }], 154, BOX_Y + 4, W - 160, cur.shift || 0, { rowH: 18 });
+      cur.shift = r.cursor;
+      if (r.chosen === 0) { this.menu = 'party'; cur.party = s.party.findIndex((m, i) => i !== b.pi && m.hp > 0); }
+      else if (r.chosen === 1 || input.pressed('b')) { cur.shift = 0; send({ type: 'BATTLE_ACTION', action: 'STAY' }); }
+      return;
+    }
+
     if (this.menu === 'main') {
       drawText(g, `What will`, 12, BOX_Y + 8, { color: C.ink });
       drawText(g, `${nameOf(d, mon)} do?`, 12, BOX_Y + 20, { color: C.ink });
@@ -460,6 +473,7 @@ export const battleView = {
       const r = list(game, g, items, 5, BOX_Y + 3, W - 10, cur.party, { cols: 2, rowH: 14 });   // 155 px columns: longest name + Lv + HP
       cur.party = r.cursor;
       if (forced && !this.pendingItem) drawText(g, 'Choose who goes next', W - 10, BOX_Y - 12, { color: C.yellow, align: 'right', shadow: C.ink });
+      if (b.phase === 'PHASE_SHIFT_OFFER') drawText(g, 'Swap in who?', W - 10, BOX_Y - 12, { color: C.yellow, align: 'right', shadow: C.ink });
       if (r.chosen >= 0) {
         if (this.pendingItem) send({ type: 'BATTLE_ACTION', action: 'BAG', payloadId: this.pendingItem, target: r.chosen });
         else send({ type: 'BATTLE_ACTION', action: 'SWITCH', payloadId: r.chosen });
