@@ -1,6 +1,7 @@
 {
   "startRupees": 300,
   "intoxStepDecay": 0.002,
+  "stepsPerMinute": 7,
   "partyMax": 6,
   "stat": {
     "hpBase": 10,

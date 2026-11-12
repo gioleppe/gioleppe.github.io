@@ -4,6 +4,7 @@ import { W, H } from './CanvasRenderer.js';
 import { drawText, wrap, textWidth, panel, list, bar, typeTag, moveName, C, TYPE_COLORS } from './ui.js';
 import { statsOf, nameOf } from '../core/mons.js';
 import { moveCost } from '../core/BattleEngine.js';
+import { isNight } from '../core/OverworldEngine.js';
 import { drawBackdrop, backdropOf, SPOT } from './battleFx.js';
 import { lookOf, durationOf, drawMoveFx, MARK_SECONDS, WINDUP } from './moveFx.js';
 import { tinted } from './anim.js';
@@ -311,7 +312,7 @@ export const battleView = {
   background(game, g) {
     const pal = this.info?.paletteId, b = game.engine.state.battle;
     const intox = game.fxLevel();
-    const night = pal === 'UV_BLACKLIGHT' || pal === 'BAD_TRIP' || (game.engine.state.clock >= 19 * 60 || game.engine.state.clock < 6 * 60);
+    const night = pal === 'UV_BLACKLIGHT' || pal === 'BAD_TRIP' || isNight(game.engine.state);
     g.fillStyle = '#2A1A2E'; g.fillRect(0, 0, W, H);
     drawBackdrop(g, backdropOf(game.data.zones[game.engine.state.zoneId]), BOX_Y, this.t, night, game.settings.reducedMotion);
     // kaleidoscope rays, stronger with intoxication

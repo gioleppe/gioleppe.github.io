@@ -22,7 +22,7 @@ export function newState(data, seed = 1) {
     flags: {}, wristbands: [], defeated: {}, picked: {},
     cleared: {}, pushed: {}, visited: { [start.zone]: 1 }, tents: [],
     dex: { seen: {}, caught: {} },
-    intox: 0, clock: 16 * 60, steps: 0, repel: 0, nextUid: 1,
+    intox: 0, clock: 16 * 60, clockSteps: 0, steps: 0, repel: 0, nextUid: 1,
     lastTent: { zone: start.zone, x: start.x, y: start.y },
     script: null, scriptMode: null, dialogue: null, battle: null, shop: null, menu: null, scene: null,
     playerName: null, npcPos: {}, outfit: null,
