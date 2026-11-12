@@ -8,7 +8,7 @@ import { dialogueView } from './dialogueView.js';
 import { CUES, CUE_SECONDS } from './WebGLPostProcess.js';
 
 const SAVE_KEY = 'chakrageddon.save.v1', SETTINGS_KEY = 'chakrageddon.settings.v1';
-export const VERSION = '1.0.40';
+export const VERSION = '1.0.42';
 
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },

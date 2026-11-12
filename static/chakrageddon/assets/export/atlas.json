@@ -82,57 +82,68 @@
   "palm": {
    "file": "prop_palm.png",
    "w": 32,
-   "h": 48
+   "h": 48,
+   "frames": 3
   },
   "tree": {
    "file": "prop_tree.png",
    "w": 32,
-   "h": 44
+   "h": 44,
+   "frames": 3
   },
   "bamboo": {
    "file": "prop_bamboo.png",
    "w": 16,
-   "h": 36
+   "h": 36,
+   "frames": 3
   },
   "shack": {
    "file": "prop_shack.png",
    "w": 48,
-   "h": 46
+   "h": 46,
+   "frames": 1
   },
   "chai": {
    "file": "prop_chai.png",
    "w": 32,
-   "h": 38
+   "h": 38,
+   "frames": 1
   },
   "speaker": {
    "file": "prop_speaker.png",
    "w": 16,
-   "h": 32
+   "h": 32,
+   "frames": 1
   },
   "totem": {
    "file": "prop_totem.png",
    "w": 16,
-   "h": 32
+   "h": 32,
+   "frames": 1
   },
   "lamp": {
    "file": "prop_lamp.png",
    "w": 16,
-   "h": 32
+   "h": 32,
+   "frames": 1
   },
   "mushroom": {
    "file": "prop_mushroom.png",
    "w": 16,
-   "h": 26
+   "h": 26,
+   "frames": 1
   },
   "surfboard": {
    "file": "prop_surfboard.png",
    "w": 16,
-   "h": 30
+   "h": 30,
+   "frames": 1
   },
   "flag": {
    "file": "prop_flag.png",
    "w": 16,
-   "h": 32
+   "h": 32,
+   "frames": 3
   }
  },
  "chars": {
@@ -165,6 +176,14 @@
   "promoter": "char_promoter.png",
   "shaman": "char_shaman.png",
   "tourist": "char_tourist.png",
+  "kalyani": "char_kalyani.png",
+  "boris": "char_boris.png",
+  "hana": "char_hana.png",
+  "lakshmi": "char_lakshmi.png",
+  "council_elder": "char_council_elder.png",
+  "council_eye": "char_council_eye.png",
+  "council_beads": "char_council_beads.png",
+  "sergeant": "char_sergeant.png",
   "mantequilla": "char_mantequilla.png",
   "player_sombrero": "char_player_sombrero.png",
   "wook": "char_wook.png"
@@ -243,6 +262,14 @@
   "promoter": "portrait_promoter.png",
   "shaman": "portrait_shaman.png",
   "tourist": "portrait_tourist.png",
+  "kalyani": "portrait_kalyani.png",
+  "boris": "portrait_boris.png",
+  "hana": "portrait_hana.png",
+  "lakshmi": "portrait_lakshmi.png",
+  "council_elder": "portrait_council_elder.png",
+  "council_eye": "portrait_council_eye.png",
+  "council_beads": "portrait_council_beads.png",
+  "sergeant": "portrait_sergeant.png",
   "mantequilla": "portrait_mantequilla.png",
   "player_sombrero": "portrait_player_sombrero.png",
   "wook": "portrait_wook.png"

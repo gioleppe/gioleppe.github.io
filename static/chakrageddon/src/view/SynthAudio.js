@@ -11,6 +11,11 @@ const MOODS = {
   BAD_TRIP:         { root: 49.0, kick: 1, bass: 1, hat: 0.6, lead: 0.5, pad: 0, bright: 500, seed: 41, detune: 18 },
   BATTLE:           { root: 61.7, kick: 1, bass: 1, hat: 1, lead: 1, pad: 0, bright: 1500, seed: 7 },
   BOSS:             { root: 51.9, kick: 1, bass: 1, hat: 1, lead: 1, pad: 0, bright: 1900, seed: 13, detune: 8 },
+  // the Four-on-the-Floor: one track built up door by door (kick, then bass, then hi-hat, then the lead)
+  FOUR_1:           { root: 55.0, kick: 1, bass: 0, hat: 0, lead: 0, pad: 0, bright: 900, seed: 31 },
+  FOUR_2:           { root: 55.0, kick: 1, bass: 1, hat: 0, lead: 0, pad: 0, bright: 1100, seed: 31 },
+  FOUR_3:           { root: 55.0, kick: 1, bass: 1, hat: 1, lead: 0, pad: 0, bright: 1300, seed: 31 },
+  FOUR_4:           { root: 55.0, kick: 1, bass: 1, hat: 1, lead: 1, pad: 0, bright: 1600, seed: 31 },
 };
 const MAJOR = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21];
 // bus levels: effects were ~10 dB under the music and got lost in battles, so they sit ~5 dB higher than before

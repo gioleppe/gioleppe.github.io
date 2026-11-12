@@ -6,7 +6,6 @@ import { bandOf, bandIndex } from '../core/intox.js';
 import { routeHint } from '../core/goals.js';
 import { hashOf } from './anim.js';
 import { questMarker } from '../core/quests.js';
-const SWAY_BAND = 4;   // rows per band when a prop sways (see prop)
 
 const BAND_COLORS = ['#00FF66', '#FFD23F', '#FF4FA8', '#C86BFF'];
 // quest markers as little pixel icons: K outline, Y fill, W highlight
@@ -49,6 +48,7 @@ function wallTop(g, c, dx, dy, open) {
   if (right) g.fillRect(dx + TS - 3, dy + (up ? 2 : 0), 1, TS - (up ? 2 : 0));
 }
 const DIR_OF = { up: 'UP', down: 'DOWN', left: 'LEFT', right: 'RIGHT' };
+export const IDLE_DANCE = 4;   // seconds standing still before you start dancing
 
 /** outdoor light for the clock: a night tint that deepens through dusk and lifts through dawn, and a warm glow
  *  at the turn (orange at dusk, pink at dawn) */
@@ -137,6 +137,8 @@ export const overworldView = {
     if (!trails) this.trail = [];
     else if (this.anim && this.camPos) { (this.trail ||= []).push({ ...this.camPos, dir: st.player.dir, t: this.t }); if (this.trail.length > 8) this.trail.shift(); }
     const s = game.engine.state, input = game.input;
+    // how long you have stood still with nothing going on (see the idle dance in draw)
+    this.idleT = s.mode === 'OVERWORLD' && !this.anim && !s.dialogue && !game.busy() && !input.dir() ? (this.idleT || 0) + dt : 0;
     if (s.mode !== 'OVERWORLD' || this.anim || game.busy()) return;
     if (input.pressed('a') || input.anyTap()) return game.send({ type: 'INTERACT_TILE' });
     if (input.pressed('start')) return game.send({ type: 'TOGGLE_MENU' });
@@ -149,15 +151,14 @@ export const overworldView = {
   prop(game, g, name, img, pr, bx, by, tx, ty) {
     const still = game.settings.reducedMotion, t = this.t;
     const bpm = game.data.zones[game.engine.state.zoneId]?.baseBpm || 140, beat = Math.max(0, 1 - (((t * bpm) / 60) % 1) * 4);
-    const sway = still ? 0 : name === 'palm' || name === 'tree' ? Math.sin(t * 1.3 + tx * 0.9 + ty * 0.4) * 0.05 : name === 'bamboo' ? Math.sin(t * 1.7 + tx) * 0.08 : name === 'flag' ? Math.sin(t * 6 + tx) * 0.14 : 0;
-    // Whole pixels only: a skew or a fractional scale resamples every row differently and shows as stripes.
-    // A sway shifts 4-pixel bands of the sprite, more towards the top; a speaker hops 1 pixel on the beat.
+    // Palms, trees and bamboo lean in the wind and flags flutter by swapping hand-drawn frames (frame 0 at rest, then
+    // the poses): the sprite is always drawn whole and unscaled, so nothing is resampled and nothing stripes.
+    // Each one keeps its own rhythm, from where it stands; a speaker hops 1 pixel on the beat.
+    const frames = pr.frames || 1, rate = { palm: 0.9, tree: 0.6, bamboo: 1.1, flag: 4 }[name] || 0;
+    const step = still || frames < 2 || !rate ? 0 : Math.floor(t * rate + ((tx * 7 + ty * 13) % 10) / 10 * 4) % 4;
+    const frame = frames >= 3 ? [0, 1, 0, 2][step] : frames === 2 ? step % 2 : 0;
     const x0 = Math.round(bx - pr.w / 2), y0 = Math.round(by - pr.h) - (!still && name === 'speaker' && beat > 0.5 ? 1 : 0);
-    if (!sway) g.drawImage(img, 0, 0, pr.w, pr.h, x0, y0, pr.w, pr.h);
-    else for (let y = 0; y < pr.h; y += SWAY_BAND) {
-      const h = Math.min(SWAY_BAND, pr.h - y), shift = Math.round(sway * (pr.h - y - h / 2));
-      g.drawImage(img, 0, y, pr.w, h, x0 + shift, y0 + y, pr.w, h);
-    }
+    g.drawImage(img, frame * pr.w, 0, pr.w, pr.h, x0, y0, pr.w, pr.h);
     if (name === 'lamp' && !still) { g.globalAlpha = 0.18 + 0.08 * Math.sin(t * 9 + tx * 3); g.fillStyle = '#FFE066'; g.beginPath(); g.arc(bx, by - pr.h + 5, 8, 0, 7); g.fill(); g.globalAlpha = 1; }
   },
   /** a dancer bouncing to the zone's BPM on a dancefloor tile */
@@ -301,7 +302,10 @@ export const overworldView = {
           this.char(game, g, s.outfit || 'player', tr.dir, k % 2, tr.x - cx, tr.y - cy - 10);
           g.globalAlpha = 1;
         }
-        this.char(game, g, s.outfit || 'player', s.player.dir, this.anim ? this.walkFlip : 0, px - cx, py - cy - 10 - (onWater ? 4 : 0));
+        // left standing a while, you turn round and dance to the zone's beat (a step on every other beat, a hop on each)
+        const dancing = !game.settings.reducedMotion && !onWater && (this.idleT || 0) > IDLE_DANCE;
+        const beats = this.t * (zone.baseBpm || 140) / 60, hop = dancing && beats % 1 < 0.3 ? 1 : 0;
+        this.char(game, g, s.outfit || 'player', dancing ? 'DOWN' : s.player.dir, dancing ? Math.floor(beats / 2) % 2 : this.anim ? this.walkFlip : 0, px - cx, py - cy - 10 - (onWater ? 4 : 0) - hop);
       } else if (e.npc) {
         const n = e.npc, dx = Math.round(e.nx * TS - cx), dy = Math.round(e.ny * TS - cy);
         if (n.tile) {

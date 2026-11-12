@@ -1133,6 +1133,10 @@
       "goto": "again"
     },
     {
+      "scene": "boss",
+      "who": "council"
+    },
+    {
       "s": "Shaman Council",
       "t": "So. The barefoot one. Eight wristbands, four doors, and one very well dressed ego, all behind you."
     },
@@ -1182,6 +1186,9 @@
     },
     {
       "label": "end"
+    },
+    {
+      "scene": null
     },
     {
       "set": "finished"

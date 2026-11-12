@@ -243,7 +243,14 @@ export function checkTrainerSight(ctx, zone) {
 export function startTrainerFlow(ctx, npc, mode = 'DIALOGUE') {
   const t = ctx.data.trainers[npc.trainer];
   const steps = [];
+  // a boss's cutscene: in full the first time, the short title card after that (a retry after a whiteout)
+  if (t.cutscene) {
+    const seen = ctx.state.flags[`cutscene_${t.cutscene}`];
+    steps.push({ scene: 'boss', who: t.cutscene, ...(seen ? { card: true } : {}) });
+    if (!seen) steps.push({ set: `cutscene_${t.cutscene}` });
+  }
   for (const line of t.intro || []) steps.push({ s: t.name, t: line, style: t.textStyle });
+  if (t.cutscene) steps.push({ scene: null });
   steps.push({ battle: t.id });
   for (const line of t.defeat || []) steps.push({ s: t.name, t: line, style: t.textStyle });
   if (t.wristband) steps.push({ wristband: t.wristband });
@@ -266,7 +273,9 @@ function startRematch(ctx, t) {
   const steps = [
     { s: t.name, t: re.offer || 'You again. Want to see how much I have grown?', style: st, choice: ['Bring it', 'Not now'], goto: ['go', 'no'] },
     { label: 'go' },
+    ...(t.cutscene ? [{ scene: 'boss', who: t.cutscene, card: true }] : []),     // a rematch: the short title card
     ...(re.intro || []).map((line) => ({ s: re.name, t: line, style: st })),
+    ...(t.cutscene ? [{ scene: null }] : []),
     { battle: re.id },
     ...(re.defeat || []).map((line) => ({ s: re.name, t: line, style: st })),
     { end: true },
