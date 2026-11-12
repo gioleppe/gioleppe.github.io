@@ -11,8 +11,8 @@
     "tttttttttttttttttttt",
     "t....yyyyyyyyyy....t",
     "t....yaaaaaaaay....t",
-    "t....yaaaaaaaay....t",
-    "t....yaaaaaaaay....t",
+    "t....ya°aaa°aay....t",
+    "t....yaa°a°aaay....t",
     "t....yyyyaayyyy....t",
     "t..M.....,,.....M..t",
     "t........,,........t",
@@ -121,6 +121,14 @@
         "set": "soundbath"
       },
       "script": "gong_player"
+    },
+    {
+      "id": "yurt_acolyte2",
+      "x": 7,
+      "y": 2,
+      "sprite": "yogi",
+      "dir": "RIGHT",
+      "script": "yurt_acolyte2"
     }
   ],
   "pickups": [
@@ -213,5 +221,33 @@
         "weight": 20
       }
     ]
-  }
+  },
+  "fx": [
+    {
+      "kind": "smoke",
+      "at": [
+        [
+          6,
+          2
+        ],
+        [
+          13,
+          2
+        ]
+      ]
+    },
+    {
+      "kind": "candles",
+      "at": [
+        [
+          6,
+          4
+        ],
+        [
+          13,
+          4
+        ]
+      ]
+    }
+  ]
 }

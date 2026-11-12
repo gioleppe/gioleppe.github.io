@@ -3002,5 +3002,17 @@
       "s": "Raver in the Queue",
       "t": "Raju says one egg per person. I have had four. I think I am four people."
     }
+  ],
+  "pit_poi": [
+    {
+      "s": "Poi Spinner",
+      "t": "Careful, the edge of the stage is ours. Two balls of fire, one hundred and forty-five beats a minute, zero insurance."
+    }
+  ],
+  "yurt_acolyte2": [
+    {
+      "s": "Acolyte",
+      "t": "Sit on a cushion, any cushion. Not that one. That one is the Guru's. They are all the Guru's."
+    }
   ]
 }

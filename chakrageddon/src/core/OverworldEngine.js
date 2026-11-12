@@ -307,6 +307,8 @@ export function startTrainerFlow(ctx, npc, mode = 'DIALOGUE') {
   // a boss's cutscene: in full the first time, the short title card after that (a retry after a whiteout)
   if (t.cutscene) {
     const seen = ctx.state.flags[`cutscene_${t.cutscene}`];
+    // the first time, the arrival: the music drops, the crowd turns, the camera goes to them (the view holds the rest)
+    if (!seen && t.boss) ctx.emit({ type: 'BOSS_ARRIVAL', npcId: npc.id, x: npc.x, y: npc.y });
     steps.push({ scene: 'boss', who: t.cutscene, ...(seen ? { card: true } : {}) });
     if (!seen) steps.push({ set: `cutscene_${t.cutscene}` });
   }
@@ -314,7 +316,7 @@ export function startTrainerFlow(ctx, npc, mode = 'DIALOGUE') {
   if (t.cutscene) steps.push({ scene: null });
   steps.push({ battle: t.id });
   for (const line of t.defeat || []) steps.push({ s: t.name, t: line, style: t.textStyle });
-  if (t.wristband) steps.push({ wristband: t.wristband });
+  if (t.wristband) steps.push({ scene: 'wristband', who: t.wristband, by: t.sprite }, { wristband: t.wristband }, { scene: null });   // a short ceremony
   if (t.gives) steps.push({ give: t.gives, n: 1 });
   if (t.setFlag) steps.push({ set: t.setFlag });
   if (t.then) steps.push({ run: t.then });

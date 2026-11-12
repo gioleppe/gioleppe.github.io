@@ -5,7 +5,10 @@ import { drawText, wrap, textWidth, panel, list, bar, typeTag, moveName, C, TYPE
 import { statsOf, nameOf } from '../core/mons.js';
 import { moveCost } from '../core/BattleEngine.js';
 import { isNight } from '../core/OverworldEngine.js';
-import { drawBackdrop, backdropOf, SPOT } from './battleFx.js';
+import { drawBackdrop, backdropOf, drawStage, SPOT } from './battleFx.js';
+// what flashes up when a boss has their moment at half health
+const MOMENT_WORDS = { drop: 'DROP!', chant: 'OMMMM', horns: 'HONK HONK', special: 'SPECIAL!', tempo: '200 BPM', live: 'GOING LIVE', smoke: 'BREATHE', security: 'SECURITY!', kick: 'BOOM', bass: 'WOMMM', hat: 'TSS TSS', lead: 'LA LA LA' };
+const MOMENT_SFX = { chant: 'gong', horns: 'horn', drop: 'drop', tempo: 'drop', kick: 'drop', security: 'alert' };
 import { lookOf, durationOf, drawMoveFx, MARK_SECONDS, WINDUP } from './moveFx.js';
 import { tinted } from './anim.js';
 import { termRuns } from './glossary.js';
@@ -39,7 +42,10 @@ export const battleView = {
       this.effects = []; this.portrait = (e.kind === 'trainer' || e.kind === 'mirror') && e.trainerSprite ? 2.2 : 0;   // the trainer shows up before their Astral
       this.fx = { p: POSE(), e: POSE() }; this.move = null; this.pending = null; this.chartFlip = 0;
       this.loop = { p: false, e: false };
+      this.moment = null; this.momentShown = false;
       game.audio?.sfx('encounter');
+      const tr = game.engine.state.battle?.trainerId && game.data.trainers[game.engine.state.battle.trainerId];
+      if (tr?.stage === 'yurt') game.audio?.sfx('gong');                       // Svetlana's battles start with a gong
       return;
     }
     if (this.on) this.queue.push(e);
@@ -76,6 +82,11 @@ export const battleView = {
       case 'STATUS_APPLIED': this.mark('status', { side: e.targetId, status: e.status }); if (e.status === 'THOUGHT_LOOP') this.loop[e.targetId] = true; else d[e.targetId].status = e.status; game.audio?.sfx('status'); this.next(game); break;
       case 'STATUS_CLEARED': if (e.status === 'THOUGHT_LOOP') this.loop[e.targetId] = false; else d[e.targetId].status = null; this.next(game); break;
       case 'CRITICAL': this.flash = 0.25; this.next(game); break;
+      case 'BOSS_MOMENT':                                                       // the boss's moment at half health
+        this.moment = { t: 0, word: MOMENT_WORDS[e.fx] || '!!', fx: e.fx }; this.momentShown = true;
+        this.flash = 0.45; this.shake = Math.max(this.shake, 0.3); game.audio?.sfx(MOMENT_SFX[e.fx] || 'alert');
+        this.cur = { type: 'wait', t: 0.7 };
+        break;
       case 'FAINT': this.fx[e.side].faint = 0.001; this.cur = { type: 'wait', t: 0.5 }; break;
       case 'CAPTURE_THROW': this.capture = { t: 0, shakes: e.shakes, success: e.success }; this.cur = { type: 'capture' }; game.audio?.sfx('throw'); break;
       case 'LEVEL_UP': if (d.p && d.p.uid === e.uid) d.p = { ...d.p, ...e.mon }; this.next(game); break;
@@ -131,6 +142,7 @@ export const battleView = {
   mark(name, o) { this.effects.push({ kind: 'mark', mark: name, t: 0, dur: MARK_SECONDS[name], ...o }); },
 
   update(game, dt) {
+    if (this.moment && (this.moment.t += dt) > 1.6) this.moment = null;
     if (!this.on) return;
     const input = game.input;
     // battle speed from Options, and hold B to fast-forward
@@ -315,6 +327,12 @@ export const battleView = {
     const night = pal === 'UV_BLACKLIGHT' || pal === 'BAD_TRIP' || isNight(game.engine.state);
     g.fillStyle = '#2A1A2E'; g.fillRect(0, 0, W, H);
     drawBackdrop(g, backdropOf(game.data.zones[game.engine.state.zoneId]), BOX_Y, this.t, night, game.settings.reducedMotion);
+    // a boss fights on their own stage: the decks and strobes behind Diabolo, Svetlana's candles, Chloe's live count...
+    const tr = b?.trainerId && game.data.trainers[b.trainerId];
+    if (tr?.stage) {
+      const max = b.enemy.reduce((a, m) => a + statsOf(game.data, m).maxHp, 0), now = b.enemy.reduce((a, m) => a + Math.max(0, m.hp), 0);
+      drawStage(g, tr.stage, BOX_Y, this.t, game.settings.reducedMotion || game.settings.grounded, max ? now / max : 1, this.momentShown, (game.data.zones[game.engine.state.zoneId].baseBpm || 140) + 12);
+    }
     // kaleidoscope rays, stronger with intoxication
     const cols = ['#FF4FA8', '#9A4FE0', '#3FD8E8', '#4FE88A', '#FFE066'];
     const n = 16, rot = game.settings.reducedMotion ? 0 : this.t * (0.08 + intox * 0.5);
@@ -343,6 +361,13 @@ export const battleView = {
     if (this.portrait <= 0.5) this.sprite(game, g, 'e', 200, 20);
     this.sprite(game, g, 'p', 52, 70);
     this.drawPortrait(game, g);
+    // the boss's moment: one word, big, over the field
+    if (this.moment) {
+      const k = this.moment.t, a = Math.max(0, Math.min(1, k * 6, (1.6 - k) * 3)), rise = fxo.still ? 0 : Math.round(Math.max(0, 0.25 - k) * 24);
+      g.save(); g.globalAlpha = a; g.scale(2, 2);
+      drawText(g, this.moment.word, W / 4, 10 + rise, { color: C.yellow, align: 'center', shadow: C.magenta });
+      g.restore();
+    }
     for (const f of this.effects) drawMoveFx(g, f, fxo);
     if (this.capture) this.drawCapture(g);
     g.restore();

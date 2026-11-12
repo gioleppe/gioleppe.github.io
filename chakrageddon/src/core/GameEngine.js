@@ -26,6 +26,7 @@ export function newState(data, seed = 1) {
     lastTent: { zone: start.zone, x: start.x, y: start.y },
     script: null, scriptMode: null, dialogue: null, battle: null, shop: null, menu: null, scene: null,
     playerName: null, npcPos: {}, outfit: null, said: {}, visitor: null,
+    elapsed: 0, peakIntox: 0,                                       // for the end card: festival minutes lived, highest high
   };
 }
 
@@ -60,7 +61,7 @@ export class GameEngine {
     const events = [];
     const ctx = { data: this.data, state: this.state, rng: this.rng, options: this.options, emit: (e) => events.push(e), hooks };
     const s = this.state;
-    const bandBefore = bandIndex(this.data.rules, s.intox), goalBefore = currentGoal(this.data, s)?.id;
+    const bandBefore = bandIndex(this.data.rules, s.intox), goalBefore = currentGoal(this.data, s)?.id, clockBefore = s.clock;
     const questsBefore = Object.fromEntries(questLog(this.data, s).map((q) => [q.id, q.state]));
     switch (cmd.type) {
       case 'BEGIN':
@@ -99,6 +100,9 @@ export class GameEngine {
       default:
         handleExtra(ctx, cmd);
     }
+    // the end card's numbers: how long you have been at the festival, and how high you got
+    s.elapsed = (s.elapsed || 0) + (((s.clock - clockBefore) % 1440) + 1440) % 1440;
+    if (s.intox > (s.peakIntox || 0)) s.peakIntox = s.intox;
     // coming down inside something that only exists at Ego gone (the Inner Room, the stairs of light, the open road)
     if (s.mode === 'OVERWORLD' && !s.dialogue && !s.script) OW.egoCheck(ctx);
     // the festival timetable: after the third wristband, the next time you arrive somewhere, Banyan comes to find you

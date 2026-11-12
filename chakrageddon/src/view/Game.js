@@ -182,7 +182,7 @@ export class Game {
       for (const v of this.views) v.onEvent?.(this, e);
       if (e.type === 'AUDIO_CUE') {
         if (e.sfxId) this.audio?.sfx(e.sfxId);
-        if (e.trackBpm) this.audio?.setTrack({ bpm: e.trackBpm, lowPass: e.lowPassFilterHz, mood: e.mood || this.data.zones[this.engine.state.zoneId].paletteId, zone: this.engine.state.zoneId });
+        if (e.trackBpm) this.audio?.setTrack({ bpm: e.trackBpm, lowPass: e.lowPassFilterHz, mood: e.mood || this.data.zones[this.engine.state.zoneId].paletteId, zone: e.theme || this.engine.state.zoneId });
       }
       if (e.type === 'ZONE_CHANGED') this.autosaveSoon = true;
       if (e.type === 'MESSAGE' && !this.extra.battle?.on) this.say(e.text, e.kind);

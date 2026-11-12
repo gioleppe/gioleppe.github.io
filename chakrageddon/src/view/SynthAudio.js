@@ -123,6 +123,15 @@ export class SynthAudio {
     s.connect(f); f.connect(g); g.connect(out); s.start(t); s.stop(t + dur + 0.02);
   }
 
+  /** the music drops low for a moment (a boss's arrival), then comes back */
+  duck(seconds = 1.5) {
+    const c = this.ctx;
+    if (!c || c.state !== 'running') return;
+    const now = c.currentTime, full = MUSIC_LEVEL * (this.prof?.level || 1);
+    this.music.gain.cancelScheduledValues(now); this.music.gain.setValueAtTime(this.music.gain.value, now);
+    this.music.gain.linearRampToValueAtTime(full * 0.12, now + 0.15); this.music.gain.setValueAtTime(full * 0.12, now + seconds); this.music.gain.linearRampToValueAtTime(full, now + seconds + 0.4);
+  }
+
   /** The music stops dead for one bar, from the start of the next one, then drops back in with a crash (the Poi Pit's
    *  crowd turning to stare at you). Returns when that happens, in seconds from now, and for how long. */
   breakdown() {
@@ -193,6 +202,10 @@ export class SynthAudio {
       case 'push': T('sine', 90, 0.16, 0.35, 0, { to: 45 }); break;
       case 'throw': T('sine', 400, 0.35, 0.12, 0, { to: 1200 }); break;
       case 'zip': this.hiss(now, 0.14, 0.12, 2500, o); T('sawtooth', 300, 0.14, 0.04, 0, { to: 900 }); break;
+      case 'gong': T('sine', 110, 2.6, 0.35, 0, { attack: 0.01 }); T('sine', 166, 2.2, 0.16, 0.01, { detune: 7 }); T('triangle', 262, 1.4, 0.06, 0.02); break;   // Svetlana
+      case 'horn': [[440, 0], [349, 0.18], [440, 0.42], [349, 0.6]].forEach(([f, at]) => T('square', f, 0.15, 0.08, at, { cutoff: 1800 })); break;            // scooter horns
+      case 'drop': T('sine', 220, 0.7, 0.4, 0, { to: 38 }); this.hiss(now, 0.6, 0.2, 800, o); break;                                                  // the drop
+      case 'cheer': for (let i = 0; i < 6; i++) this.hiss(now + i * 0.12, 0.9, 0.09, 1500 + i * 400, o); T('sine', 1800, 0.25, 0.05, 0.3, { to: 2400 }); T('sine', 2000, 0.25, 0.05, 0.7, { to: 2600 }); break;   // the crowd
       case 'dissolve': [1568, 1319, 1047, 784, 659].forEach((f, i) => T('triangle', f, 0.16, 0.07, i * 0.06)); this.hiss(now, 0.5, 0.05, 7000, o); break;   // a hallucination fades
       case 'burst': this.hiss(now, 0.3, 0.3, 1500, o); [523, 659, 784, 988, 1175, 1568].forEach((f, i) => T('square', f, 0.12, 0.08, 0.05 + i * 0.04)); break;   // a rainbow explosion
       default: break;
