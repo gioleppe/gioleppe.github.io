@@ -64,19 +64,22 @@
   "wheat": 59,
   "crop": 60,
   "ufo": 61,
-  "fence_v": 62,
-  "bonfire": 63,
-  "log": 64,
-  "cow_l": 65,
-  "cow_r": 66,
-  "shrine": 67,
-  "bridge": 68,
-  "bridge_v": 69,
-  "cable": 70,
-  "cable_v": 71,
-  "fogger": 72,
-  "coconuts": 73,
-  "dune": 74
+  "banner": 62,
+  "stagelip": 63,
+  "steps": 64,
+  "fence_v": 65,
+  "bonfire": 66,
+  "log": 67,
+  "cow_l": 68,
+  "cow_r": 69,
+  "shrine": 70,
+  "bridge": 71,
+  "bridge_v": 72,
+  "cable": 73,
+  "cable_v": 74,
+  "fogger": 75,
+  "coconuts": 76,
+  "dune": 77
  },
  "props": {
   "palm": {
@@ -131,6 +134,12 @@
    "file": "prop_mushroom.png",
    "w": 16,
    "h": 26,
+   "frames": 1
+  },
+  "strobe": {
+   "file": "prop_strobe.png",
+   "w": 16,
+   "h": 30,
    "frames": 1
   },
   "surfboard": {
@@ -231,6 +240,13 @@
  },
  "icons": {
   "app": "icon.png"
+ },
+ "sheets": {
+  "dancers": "dancers.png"
+ },
+ "dancers": {
+  "looks": 6,
+  "poses": 3
  },
  "portraits": {
   "player": "portrait_player.png",
