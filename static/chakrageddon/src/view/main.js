@@ -62,4 +62,16 @@ async function boot() {
 boot().catch((e) => { console.error(e); splash('Could not start: ' + e.message); });
 
 // offline support: on https, or on localhost with ?sw for testing (otherwise dev edits would be served stale)
-if ('serviceWorker' in navigator && (location.protocol === 'https:' || new URLSearchParams(location.search).has('sw'))) navigator.serviceWorker.register('sw.js').catch(() => {});
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || new URLSearchParams(location.search).has('sw'))) {
+  // The cache answers first, so the first open after an update runs the old build while the new one installs.
+  // When the new one takes over and nothing has started yet (the intro, the notice or the title), reload into it
+  // straight away instead of waiting for the next launch. Mid-game, it waits for the next launch as before.
+  const hadOne = !!navigator.serviceWorker.controller;
+  let reloading = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    const screen = window.__game?.screen ?? 'intro';
+    if (!hadOne || reloading || !['intro', 'notice', 'title'].includes(screen)) return;
+    reloading = true; location.reload();
+  });
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
