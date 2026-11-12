@@ -192,7 +192,8 @@
     ],
     "after": "The road north to the Tantric Yurt is choked with fairy lights. Not for you, now.",
     "rematch": "boss_diabolo_rematch",
-    "rematchBands": 3
+    "rematchBands": 3,
+    "cutscene": "diabolo"
   },
   {
     "id": "yurt_yogi",
@@ -303,7 +304,8 @@
     ],
     "after": "I told security at the market to let you through. Captain Keta is north. He is somewhere near his body, usually.",
     "rematch": "boss_svetlana_rematch",
-    "rematchBands": 4
+    "rematchBands": 4,
+    "cutscene": "svetlana"
   },
   {
     "id": "market_dealer",
@@ -488,7 +490,8 @@
     ],
     "after": "There is a subwoofer blocking the east side of the market. Give it a shove. Tell it the Captain sent you.",
     "rematch": "boss_keta_rematch",
-    "rematchBands": 5
+    "rematchBands": 5,
+    "cutscene": "keta"
   },
   {
     "id": "stall_wook",
@@ -675,7 +678,8 @@
     "gives": "electrolyte_sachet",
     "after": "The sea north of the Scooter Ditch leads to the lake and the forest. So does the thicket behind my stall. Mind the bass up there.",
     "rematch": "boss_raju_rematch",
-    "rematchBands": 6
+    "rematchBands": 6,
+    "cutscene": "raju"
   },
   {
     "id": "lake_hippie",
@@ -821,7 +825,8 @@
     ],
     "after": "Leave me. I must find a darker key.",
     "rematch": "boss_darkpsy_rematch",
-    "rematchBands": 7
+    "rematchBands": 7,
+    "cutscene": "darkpsy"
   },
   {
     "id": "thicket_wook",
@@ -983,7 +988,7 @@
   {
     "id": "cliff_sergeant",
     "name": "Sergeant Baksheesh",
-    "sprite": "guard",
+    "sprite": "sergeant",
     "boss": true,
     "setFlag": "beat_sergeant",
     "reward": 1800,
@@ -1013,7 +1018,8 @@
       "Impossible. I had a permit. I wrote it myself.",
       "Take the bottles. Give it all back, see if I care. Team Undercover is finished. I am going to open a guest house."
     ],
-    "after": "..."
+    "after": "...",
+    "cutscene": "baksheesh"
   },
   {
     "id": "boss_chloe",
@@ -1058,7 +1064,8 @@
     ],
     "after": "Baba Smoke lives in the cave north of the shallows. He refused to collab. Twice.",
     "rematch": "boss_chloe_rematch",
-    "rematchBands": 8
+    "rematchBands": 8,
+    "cutscene": "chloe"
   },
   {
     "id": "cave_yogi",
@@ -1162,7 +1169,8 @@
     ],
     "after": "(The smoke spells BACKSTAGE, with an arrow.)",
     "rematch": "boss_baba_rematch",
-    "rematchBands": 8
+    "rematchBands": 8,
+    "cutscene": "baba"
   },
   {
     "id": "backstage_guard1",
@@ -1268,12 +1276,13 @@
     ],
     "after": "Go on. Before I think of a clause.",
     "rematch": "boss_promoter_rematch",
-    "rematchFlag": "finished"
+    "rematchFlag": "finished",
+    "cutscene": "promoter"
   },
   {
     "id": "elite_kick",
     "name": "Kick Kalyani",
-    "sprite": "dj",
+    "sprite": "kalyani",
     "boss": true,
     "setFlag": "beat_elite_kick",
     "reward": 4000,
@@ -1306,12 +1315,13 @@
     "defeat": [
       "You kept time. Go on. The bassline is next."
     ],
-    "after": "..."
+    "after": "...",
+    "cutscene": "kalyani"
   },
   {
     "id": "elite_bass",
     "name": "Bassline Boris",
-    "sprite": "captain",
+    "sprite": "boris",
     "textStyle": "DOWNER",
     "boss": true,
     "setFlag": "beat_elite_bass",
@@ -1345,12 +1355,13 @@
     "defeat": [
       "You found your sea legs. The hi-hat will try to rush you."
     ],
-    "after": "..."
+    "after": "...",
+    "cutscene": "boris"
   },
   {
     "id": "elite_hat",
     "name": "Hi-Hat Hana",
-    "sprite": "raver",
+    "sprite": "hana",
     "textStyle": "STIMULANT",
     "boss": true,
     "setFlag": "beat_elite_hat",
@@ -1384,12 +1395,13 @@
     "defeat": [
       "Okay. Okay okay okay. You are faster. The lead is last. She gets in your head."
     ],
-    "after": "..."
+    "after": "...",
+    "cutscene": "hana"
   },
   {
     "id": "elite_lead",
     "name": "Lead Lakshmi",
-    "sprite": "guru",
+    "sprite": "lakshmi",
     "textStyle": "PSYCHEDELIC",
     "boss": true,
     "setFlag": "beat_elite_lead",
@@ -1427,7 +1439,8 @@
     "defeat": [
       "A clean resolve. The Council is beyond. But there is somebody in the doorway. He has been there a while."
     ],
-    "after": "..."
+    "after": "...",
+    "cutscene": "lakshmi"
   },
   {
     "id": "chad3_g",
@@ -1473,7 +1486,8 @@
       "I did not achieve ego death at the airport. I bought a book about it. I did not finish the book.",
       "Go on in. Get your passport. I think... I think I am going to go and find some water."
     ],
-    "after": "..."
+    "after": "...",
+    "cutscene": "chad"
   },
   {
     "id": "chad3_j",
@@ -1519,7 +1533,8 @@
       "I did not achieve ego death at the airport. I bought a book about it. I did not finish the book.",
       "Go on in. Get your passport. I think... I think I am going to go and find some water."
     ],
-    "after": "..."
+    "after": "...",
+    "cutscene": "chad"
   },
   {
     "id": "chad3_b",
@@ -1565,7 +1580,8 @@
       "I did not achieve ego death at the airport. I bought a book about it. I did not finish the book.",
       "Go on in. Get your passport. I think... I think I am going to go and find some water."
     ],
-    "after": "..."
+    "after": "...",
+    "cutscene": "chad"
   },
   {
     "id": "guest_grunt",

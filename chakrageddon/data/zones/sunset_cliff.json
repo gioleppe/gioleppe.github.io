@@ -96,7 +96,7 @@
       "id": "cliff_sergeant",
       "x": 18,
       "y": 6,
-      "sprite": "guard",
+      "sprite": "sergeant",
       "dir": "LEFT",
       "trainer": "cliff_sergeant",
       "sight": 6,

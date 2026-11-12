@@ -5,8 +5,10 @@
 // 'mantequilla', 'vicchio_landing': the Aliens of Vicchio (vicchioScenes.js); the landing follows the script's phase.
 import { W, H } from './CanvasRenderer.js';
 import { drawForage, drawLanding } from './vicchioScenes.js';
+import { drawBoss, BOSSES } from './bossScenes.js';
 
-export const SCENES = ['dream', 'crab_rave', 'mantequilla', 'vicchio_landing'];
+// 'boss': a boss's cutscene (bossScenes.js), who = which one; card = the short title card of a rematch
+export const SCENES = ['dream', 'crab_rave', 'mantequilla', 'vicchio_landing', 'boss'];
 const CRABS = ['crabcake', 'lobsterlad', 'ketacrab', 'wonkrab'];
 
 export const sceneView = {
@@ -16,7 +18,12 @@ export const sceneView = {
   update(game, dt) {
     const sc = game.engine?.state.scene;
     if (!sc) { this.id = null; return; }
-    if (sc.id !== this.id) { this.id = sc.id; this.t = 0; }
+    const key = sc.id === 'boss' ? `boss:${sc.who}:${sc.card ? 1 : 0}` : sc.id;
+    if (key !== this.id) {
+      this.id = key; this.t = 0;
+      const mood = sc.id === 'boss' && BOSSES[sc.who]?.mood;
+      if (mood) game.audio?.setTrack({ mood });
+    }
     if ((sc.show || null) !== this.show) { this.show = sc.show || null; this.showT = 0; }
     if ((sc.phase || 0) !== this.phase) { this.phase = sc.phase || 0; this.phaseT = 0; }
     this.t += dt; this.showT += dt; this.phaseT += dt;
@@ -25,6 +32,7 @@ export const sceneView = {
   draw(game, g) {
     const sc = game.engine?.state.scene;
     if (sc?.id === 'crab_rave') return this.crabRave(game, g);
+    if (sc?.id === 'boss') return drawBoss(game, g, sc.who, this.t, !!sc.card);
     if (sc?.id === 'mantequilla') return drawForage(game, g, this.t);
     if (sc?.id === 'vicchio_landing') return drawLanding(game, g, this.t, this.phase, this.phaseT);
     if (!sc || sc.id !== 'dream') return;

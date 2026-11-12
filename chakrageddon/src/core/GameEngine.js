@@ -100,6 +100,11 @@ export class GameEngine {
         events.push({ type: 'MESSAGE', text: 'Tip: how high you are shows in the corner. Higher means more Vibes and rarer Astrals, but clumsier hands, harder hits and costlier whiteouts. Water, chai or a nap bring you down.' });
       }
     }
+    // the first time you hold something that heals or hydrates, say once how to use it straight from the map
+    if (!s.flags.tip_quick && s.mode === 'OVERWORLD' && !s.dialogue && Object.keys(s.bag).some((id) => s.bag[id] > 0 && this.data.items[id]?.category === 'RECOVERY')) {
+      s.flags.tip_quick = 1;
+      events.push({ type: 'MESSAGE', text: 'Tip: Quick Items. Press Q (or ITEMS on the touch pad) to give snacks and water to any Astral without opening the Fanny Pack. Everything that heals or hydrates shows up there by itself.' });
+    }
     // side quests that start or finish
     for (const q of questLog(this.data, s)) {
       if (q.state === questsBefore[q.id]) continue;
