@@ -8,7 +8,7 @@ import { dialogueView } from './dialogueView.js';
 import { CUES, CUE_SECONDS } from './WebGLPostProcess.js';
 
 const SAVE_KEY = 'chakrageddon.save.v1', SETTINGS_KEY = 'chakrageddon.settings.v1';
-export const VERSION = '1.0.42';
+export const VERSION = '1.0.43';
 
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
@@ -84,12 +84,17 @@ export class Game {
   }
 
   /** a notice at the top of the screen; several in a row wait their turn (a repeat of the one showing is dropped) */
-  say(text) {
+  say(text, kind) {
     this.remember(text);
-    const show = (t) => ({ text: t, t: 1.6 + t.length * 0.035 });
-    if (!this.toast) { this.toast = show(text); return; }
+    const show = (t, k) => ({ text: t, t: 1.6 + t.length * 0.035, kind: k });
+    // how high you are: several changes in a row (licking the blotter again and again) show only the latest
+    if (kind === 'intox') {
+      this.toasts = (this.toasts || []).filter((t) => (t.kind || null) !== 'intox');
+      if (this.toast?.kind === 'intox') { this.toast = show(text, kind); return; }
+    }
+    if (!this.toast) { this.toast = show(text, kind); return; }
     if (this.toast.text === text) { this.toast.t = Math.max(this.toast.t, 1.2); return; }
-    this.toasts = (this.toasts || []).filter((t) => t !== text).concat(text).slice(-3);
+    this.toasts = (this.toasts || []).filter((t) => (t.text ?? t) !== text).concat(kind ? { text, kind } : text).slice(-3);
   }
   remember(text, speaker) {
     const line = speaker ? `${speaker}: ${text}` : text;
@@ -164,7 +169,7 @@ export class Game {
         if (e.trackBpm) this.audio?.setTrack({ bpm: e.trackBpm, lowPass: e.lowPassFilterHz, mood: e.mood || this.data.zones[this.engine.state.zoneId].paletteId, zone: this.engine.state.zoneId });
       }
       if (e.type === 'ZONE_CHANGED') this.autosaveSoon = true;
-      if (e.type === 'MESSAGE' && !this.extra.battle?.on) this.say(e.text);
+      if (e.type === 'MESSAGE' && !this.extra.battle?.on) this.say(e.text, e.kind);
       else if (e.type === 'MESSAGE') this.remember(e.text);
       if (e.type === 'DIALOGUE_LINE') this.remember(e.text, e.speaker);
     }
@@ -176,7 +181,10 @@ export class Game {
   update(dt) {
     if (this.engine) this.engine.options.shift = this.settings.battleStyle !== 'set';   // Options: Battle style (Shift by default)
     this.t += dt;
-    if (this.toast && (this.toast.t -= dt) <= 0) { const next = this.toasts?.shift(); this.toast = next ? { text: next, t: 1.6 + next.length * 0.035 } : null; }
+    if (this.toast && (this.toast.t -= dt) <= 0) {
+      const next = this.toasts?.shift(), n = typeof next === 'string' ? { text: next } : next;
+      this.toast = n ? { text: n.text, t: 1.6 + n.text.length * 0.035, kind: n.kind } : null;
+    }
     if (this.screen === 'title') return;
     if (this.screen !== 'play') { this.extra[this.screen]?.update(this, dt); return; }
     const mode = this.engine.state.mode;

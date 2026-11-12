@@ -93,7 +93,7 @@ export class GameEngine {
       const b = bands(this.data.rules)[bandAfter];
       events.push({ type: 'INTOX_BAND', from: bandBefore, to: bandAfter, bandId: b.id });
       const text = bandAfter > bandBefore ? b.up : bands(this.data.rules)[bandAfter].down;
-      if (text) events.push({ type: 'MESSAGE', text });
+      if (text) events.push({ type: 'MESSAGE', text, kind: 'intox' });   // several in a row: the view shows only the latest
       // the first time you get high at all, say once what it means and how to come down
       if (bandAfter > 0 && !s.flags.tip_high) {
         s.flags.tip_high = 1;
