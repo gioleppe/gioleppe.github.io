@@ -193,7 +193,9 @@
     "after": "The road north to the Tantric Yurt is choked with fairy lights. Not for you, now.",
     "rematch": "boss_diabolo_rematch",
     "rematchBands": 3,
-    "cutscene": "diabolo"
+    "cutscene": "diabolo",
+    "rematchSet": "headline",
+    "setWait": "Rematch? Not now. Come to my set. Twenty-two hundred, the Pit. Do not be late, I start without anyone."
   },
   {
     "id": "yurt_yogi",
@@ -1982,5 +1984,59 @@
       "Listen. Under the speaker stacks, at the back. Something has been humming since you beat me the first time. I think it wants a word."
     ],
     "after": "Go on. Before I think of a clause."
+  },
+  {
+    "id": "night_owl",
+    "name": "Night Owl Suki",
+    "sprite": "raver",
+    "textStyle": "STIMULANT",
+    "party": [
+      {
+        "species": "glowkid",
+        "level": 24
+      },
+      {
+        "species": "sirenowl",
+        "level": 25
+      }
+    ],
+    "reward": 900,
+    "intro": [
+      "Oh, a day person, out after dark. How brave. How sweaty.",
+      "The trail belongs to us after ten. Astral clash for the right of way?"
+    ],
+    "defeat": [
+      "Fine. Fine! The night is big enough for both of us. Barely."
+    ],
+    "after": "I sleep from noon to six. Do not come by before then."
+  },
+  {
+    "id": "insomniac",
+    "name": "Insomniac Theo",
+    "sprite": "wook",
+    "textStyle": "DOWNER",
+    "party": [
+      {
+        "species": "duvetghast",
+        "level": 25
+      },
+      {
+        "species": "snoozel",
+        "level": 26
+      },
+      {
+        "species": "neighbula",
+        "level": 26
+      }
+    ],
+    "reward": 1000,
+    "intro": [
+      "I have not slept since the festival started. My Astrals sleep for me. They are very good at it.",
+      "You look wide awake. Let us fix that."
+    ],
+    "defeat": [
+      "Wow. I am more awake than ever. That is not what I wanted."
+    ],
+    "after": "Counting sheep does not work here. They all want to rave."
   }
 ]

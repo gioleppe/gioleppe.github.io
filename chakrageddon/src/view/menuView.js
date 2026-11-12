@@ -8,9 +8,10 @@ import { currentGoal, routeHint } from '../core/goals.js';
 import { questLog, questMarker } from '../core/quests.js';
 import { highOnly } from '../core/intox.js';
 import { highWorld } from './highWorld.js';
+import { sets as allSets, liveSet, minutesUntil, clockText } from '../core/timetable.js';
 
 const TABS = [
-  { id: 'WRISTBAND_ARM', label: 'Astrals' }, { id: 'STASH_TIN', label: 'Stash Tin' }, { id: 'TRIP_JOURNAL', label: 'Journal' }, { id: 'MAP', label: 'Map' },
+  { id: 'WRISTBAND_ARM', label: 'Astrals' }, { id: 'STASH_TIN', label: 'Stash Tin' }, { id: 'TRIP_JOURNAL', label: 'Journal' }, { id: 'MAP', label: 'Map' }, { id: 'SETS', label: 'Sets' },
   { id: 'QUESTS', label: 'Quests' }, { id: 'BANDS', label: 'Wristbands' }, { id: 'SAVE', label: 'Save' }, { id: 'OPTIONS', label: 'Options' }, { id: 'LOG', label: 'Log' },
 ];
 const CAT_ORDER = ['BAGGING', 'RECOVERY', 'CATALYST', 'HELD', 'GEAR', 'OUTFIT', 'KEY'];
@@ -18,7 +19,6 @@ const CAT_NAME = { BAGGING: 'Bagging tools', RECOVERY: 'Recovery', CATALYST: 'Ca
 // nickname suggestions: typing on a phone is a pain, so pick one (the list depends on the creature)
 const NICKS = ['Dave', 'Moonchild', 'Biscuit', 'Disco', 'Noodle', 'Ziggy', 'Pickle', 'Tofu', 'Bongo', 'Wobbles', 'Mango', 'Sparkle', 'Gus', 'Lentil', 'Fizz', 'Bubbles', 'Chai', 'Kevin', 'Pixie', 'Big Steve'];
 const nicknamesFor = (m) => Array.from({ length: 5 }, (_, k) => NICKS[(m.uid * 7 + k * 3) % NICKS.length]);
-const TAB_H = 15;
 const BAND_COLORS = ['#C9A45A', '#C8F4FF', '#7FD6FF', '#FFD23F', '#4FE88A', '#FF4FA8', '#A8AEB6', '#F4FFF0'];
 
 // ---- region map terrain: each character of the grid is an 8x8 cell with its own small pattern;
@@ -78,7 +78,8 @@ export const menuView = {
     if (this.open < 1) return;
 
     // left: tabs
-    const tabs = TABS;   // the tuk-tuk now lives in the Map tab
+    const tabs = TABS.filter((t) => t.id !== 'SETS' || s.flags.timetable);   // Sets: once Banyan has brought the timetable
+    const TAB_H = tabs.length > 9 ? 13 : 15;
     this.tab = Math.max(0, Math.min(this.tab, tabs.length - 1));
     panel(g, 6, 12, 84, H - 18, { bg: '#F9DCC4', accent: C.magenta });
     const tr = list(game, g, tabs.map((t) => ({ label: t.label })), 9, 16, 78, this.tab, { rowH: TAB_H, passive: this.focus !== 'tabs', hi: '#FF4FA855' });
@@ -110,6 +111,7 @@ export const menuView = {
     else if (id === 'LOG') this.log(game, g, X, Y, CW, active, back);
     else if (id === 'BANDS') this.bands(game, g, X, Y, CW, active, back);
     else if (id === 'QUESTS') this.quests(game, g, X, Y, CW, active, back);
+    else if (id === 'SETS') this.sets(game, g, X, Y, CW, active, back);
     else {
       const text = { SAVE: 'Write your progress to this device. The game also saves by itself when you change zone and after battles.', OPTIONS: 'Grounded mode, motion, text speed, volume, save export.', CLOSE: 'Zip it up and get back out there.' }[id];
       wrap(text, CW).forEach((ln, i) => drawText(g, ln, X, Y + i * 11, { color: C.chai }));
@@ -402,6 +404,7 @@ export const menuView = {
       if (tentZones.includes(z)) { g.fillStyle = '#14101E'; g.fillRect(q.x + r, q.y - r - 4, 6, 5); g.fillStyle = C.terracotta; g.fillRect(q.x + r + 1, q.y - r - 3, 4, 3); g.fillRect(q.x + r + 2, q.y - r - 4, 2, 1); }
       const quest = known(z) && ((d.zones[z].npcs || []).some((n) => questMarker(d, s, z, n.id)) || Object.values(d.zones).some((iz) => iz.interior && iz.parent === z && s.visited[iz.zoneId] && (iz.npcs || []).some((n) => questMarker(d, s, iz.zoneId, n.id))));
       if (known(z) && highWorld.hidden(d, z, s.dex.seen).length) drawEye(g, q.x + r + 1, q.y + r - 1);
+      if (liveSet(d, s, z)) { g.fillStyle = '#14101E'; g.fillRect(q.x - r - 6, q.y + r - 4, 5, 6); g.fillStyle = '#FF4FA8'; g.fillRect(q.x - r - 5, q.y + r - 3, 3, 4); g.fillStyle = '#FFFFFF'; g.fillRect(q.x - r - 4, q.y + r - 3, 1, 1); }   // a set is on
       if (quest) { g.fillStyle = '#14101E'; g.fillRect(q.x - r - 5, q.y - r - 5, 4, 7); g.fillStyle = C.yellow; g.fillRect(q.x - r - 4, q.y - r - 4, 2, 3); g.fillRect(q.x - r - 4, q.y - r, 2, 1); }
     }
     if (goal?.zone && places[goal.zone]) { const q = P(goal.zone); g.fillStyle = '#14101E'; g.fillRect(q.x - 1, q.y - 12, 1, 9); g.fillStyle = '#E0303C'; g.fillRect(q.x, q.y - 12, 5, 3); g.fillStyle = '#FF8A8A'; g.fillRect(q.x, q.y - 12, 5, 1); }
@@ -446,6 +449,26 @@ export const menuView = {
       if (active && taxi && tentHere >= 0 && cz !== at && input.pressed('a')) { game.send({ type: 'USE_FIELD_TECHNIQUE', techniqueId: 'share_taxi_tuktuk', tentIndex: tentHere }); return; }
     }
     if (active && input.pressed('b')) back();
+  },
+
+  // ---- Sets: the festival timetable Banyan brought you. What plays where and when, what is on now, what is next.
+  sets(game, g, X, Y, CW, active, back) {
+    const s = game.engine.state, d = game.data, cur = this.cur, list0 = [...allSets(d)].sort((a, b) => a.from - b.from);
+    drawText(g, `Festival clock ${clockText(s.clock)}`, X, Y, { color: C.purple });
+    const rows = list0.map((x) => {
+      const live = liveSet(d, s, x.zone)?.id === x.id, wait = minutesUntil(d, s, x);
+      return { label: `${clockText(x.from)} ${x.name}`, color: live ? '#B02A2A' : C.ink, tag: live ? 'LIVE' : wait < 120 ? `in ${wait < 60 ? wait + 'm' : Math.floor(wait / 60) + 'h'}` : '' };
+    });
+    const r = list(game, g, rows, X - 4, Y + 12, CW + 4, cur.sets || 0, { rowH: 11, maxRows: 7, passive: !active, color: C.ink, hi: '#FFE06699' });
+    cur.sets = r.cursor;
+    rows.forEach((row, i) => { if (row.tag) drawText(g, row.tag, X + CW - 2, Y + 14 + i * 11, { color: row.tag === 'LIVE' ? '#B02A2A' : C.chai, align: 'right' }); });
+    const x = list0[cur.sets];
+    if (x) {
+      const by = Y + 14 + 7 * 11 + 4;
+      drawText(g, `${d.zones[x.zone].name}, until ${clockText(x.to)}`, X, by, { color: C.purple });
+      wrap(x.what, CW).slice(0, 3).forEach((ln, i) => drawText(g, ln, X, by + 11 + i * 10, { color: C.ink }));
+    }
+    if (active && (game.input.pressed('b') || game.input.pressed('left'))) back();
   },
 
   bands(game, g, X, Y, CW, active, back) {

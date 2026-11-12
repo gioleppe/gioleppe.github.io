@@ -13,6 +13,8 @@
 //   { warp: { zone, x, y, dir } } { run: scriptId } { credits } { end }
 //   { fx: name, at: npcId }        a visual effect at someone (the memory vendor's rainbow burst); the view draws it
 //   { mirror: true }               a battle against a copy of your own party, for nothing (your reflection)
+//   { visitor: sprite | null }     someone stands next to you on the map while the script runs (Banyan with the timetable)
+//   { restUntilSet: true }         rest until the next set on the festival timetable starts
 //   { scene: id, show?: speciesId, phase?: n }  full-screen backdrop behind the dialogue (the opening dream); { scene: null } ends it
 //                                    phase: a scene with several beats (the Vicchio landing) moves on to beat n
 //                                    { scene: 'boss', who, card? }: a boss's cutscene; card: only the short title card
@@ -21,6 +23,7 @@
 // The interpreter runs until it has something to show, then waits for ADVANCE_DIALOGUE.
 
 import { check } from './quests.js';
+import { restUntilSet, clockText } from './timetable.js';
 
 export function startScript(ctx, steps, mode = 'DIALOGUE') {
   ctx.state.script = { steps, pc: 0 };
@@ -117,6 +120,12 @@ export function runScript(ctx) {
     if (st.wild) { h.startWildBattle(ctx, st.wild, st.level || 5, { scripted: true }); return; }
     if (st.mirror) { h.startMirrorBattle(ctx); return; }
     if (st.fx) { ctx.emit({ type: 'FX', fx: st.fx, npcId: st.at || null }); continue; }
+    if (st.visitor !== undefined) { s.visitor = st.visitor; continue; }
+    if (st.restUntilSet) {
+      const next = restUntilSet(ctx);
+      ctx.emit({ type: 'CLOCK_SET', clock: s.clock });
+      return say(ctx, '', next ? `You doze off on a cushion. You wake at ${clockText(next.from)}, just as the ${next.name} starts at ${ctx.data.zones[next.zone].name}.` : 'You doze off for a while.');
+    }
     throw new Error(`unknown script step: ${JSON.stringify(st)}`);
   }
   throw new Error('script ran away (possible goto loop)');
@@ -124,7 +133,7 @@ export function runScript(ctx) {
 
 function finish(ctx) {
   const s = ctx.state;
-  s.script = null; s.dialogue = null; s.scriptMode = null; s.scene = null;
+  s.script = null; s.dialogue = null; s.scriptMode = null; s.scene = null; s.visitor = null;
   setMode(ctx, 'OVERWORLD');
 }
 

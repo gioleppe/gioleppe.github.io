@@ -4,7 +4,9 @@
 //   offer: false means the quest starts by itself (a flag, an event), so its giver shows no "!" beforehand
 //   cond:  { flag } | { has: itemId, n? } | { defeated: trainerId } | { caught: n } | { caughtSpecies: id } | { partyType: type }
 //          | { bands: n } | { hour: [from, to] } (on the festival clock, to exclusive) | { intox: level }
-//          | { not: cond } | { any: [cond] } | { all: [cond] }     (partyType needs data: check(s, c, data))
+//          | { set: id } (a set on the festival timetable is playing)
+//          | { not: cond } | { any: [cond] } | { all: [cond] }     (partyType and set need data: check(s, c, data))
+import { setOn } from './timetable.js';
 export function check(s, c, data) {
   if (!c) return true;
   if (c.not) return !check(s, c.not, data);
@@ -19,6 +21,7 @@ export function check(s, c, data) {
   if (c.bands !== undefined) return s.wristbands.length >= c.bands;
   if (c.hour) { const h = Math.floor(s.clock / 60) % 24; return h >= c.hour[0] && h < c.hour[1]; }
   if (c.intox !== undefined) return s.intox >= c.intox;
+  if (c.set) return !!data && setOn(data, s, c.set);
   return false;
 }
 

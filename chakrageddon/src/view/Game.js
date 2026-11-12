@@ -2,6 +2,7 @@
 import { GameEngine } from '../core/GameEngine.js';
 import { canUse } from '../core/OverworldEngine.js';
 import { bandIndex } from '../core/intox.js';
+import { liveSet } from '../core/timetable.js';
 import { W, H } from './CanvasRenderer.js';
 import { drawText, panel, list, wrap, textWidth, C } from './ui.js';
 import { overworldView } from './overworldView.js';
@@ -113,6 +114,17 @@ export class Game {
     // from the Come-up a warm pad plays under the music
     const pad = this.screen === 'play' && this.engine && bandIndex(this.data.rules, this.engine.state.intox) >= 1 ? 1 : 0;
     if (pad !== this.padOn) { this.padOn = pad; this.audio?.setTrack({ highPad: pad }); }
+    // a set on the festival timetable brings its own music (back to the zone's when it ends or you leave)
+    const st0 = this.engine?.state;
+    if (this.screen === 'play' && st0?.mode === 'OVERWORLD') {
+      const live = liveSet(this.data, st0), key = `${st0.zoneId}:${live ? live.id : ''}`;
+      if (key !== this.setKey) {
+        const was = this.setKey; this.setKey = key;
+        const z = this.data.zones[st0.zoneId];
+        if (live) this.audio?.setTrack({ mood: live.mood, bpm: live.bpm, zone: `${z.zoneId}:${live.id}` });
+        else if (was && !was.endsWith(':') && was.startsWith(`${z.zoneId}:`)) this.audio?.setTrack({ mood: z.paletteId, bpm: z.baseBpm, zone: z.zoneId });
+      }
+    } else if (st0?.mode === 'ASTRAL_BATTLE') this.setKey = null;
     let cue = 0, cueT = 0;
     if (this.fxCue) {
       this.fxCue.t += dt / (CUE_SECONDS[this.fxCue.name] || 0.5);

@@ -3,6 +3,7 @@
 import { check } from './quests.js';
 import { bandOf, bandIndex, egoGone } from './intox.js';
 import { runScript, startScript } from './ScriptEngine.js';
+import { liveSet, setOn } from './timetable.js';
 
 export const DIRS = { UP: [0, -1], DOWN: [0, 1], LEFT: [-1, 0], RIGHT: [1, 0] };
 const key = (x, y) => `${x},${y}`;
@@ -193,7 +194,10 @@ export function step(ctx, dir) {
     if (ctx.rng.chance(Math.min(0.9, enc.encounterRate * (band.encounter ?? 1)))) {
       const base = (id === T.WATER && enc.water) || (isNight(s) && enc.nightTable) || enc.table;
       // some Astrals only show themselves to people who are high enough (minIntox)
-      const table = base.filter((e) => !(e.minIntox > s.intox) && !(e.night && !isNight(s)));
+      // ...some only at night, and some only while their set is playing (set: id, the festival timetable)
+      const live = liveSet(ctx.data, s, zone.zoneId)?.id;
+      const extra = live && base !== enc.table ? (enc.table || []).filter((e) => e.set === live) : [];   // a set's Astral comes out at night too
+      const table = [...base, ...extra].filter((e) => !(e.minIntox > s.intox) && !(e.night && !isNight(s)) && !(e.set && e.set !== live));
       // higher bands tilt the odds towards species with a high intoxication weight
       const tilt = band.tilt || 0;
       const weightOf = (e) => (tilt ? Math.max(e.weight * 0.2, e.weight * (1 + tilt * ((ctx.data.dex[e.speciesId].intoxicationWeight ?? 0.4) - 0.4) * 2)) : e.weight);
@@ -323,7 +327,12 @@ export function rematchReady(ctx, t) {
   if (!re || s.defeated[re.id] || !s.defeated[t.id]) return false;
   if (t.rematchBands !== undefined && s.wristbands.length < t.rematchBands) return false;
   if (t.rematchFlag && !s.flags[t.rematchFlag]) return false;
+  if (t.rematchSet && !setOn(ctx.data, s, t.rematchSet)) return false;   // Diabolo only takes you on again during his set
   return true;
+}
+/** ready for a rematch except that their set is not playing: they tell you when to come back */
+function rematchWaits(ctx, t) {
+  return !!t?.rematchSet && !!ctx.state.flags.timetable && rematchReady(ctx, { ...t, rematchSet: null });
 }
 function startRematch(ctx, t) {
   const re = ctx.data.trainers[t.rematch], st = t.textStyle;
@@ -360,6 +369,7 @@ export function interact(ctx) {
     ctx.emit({ type: 'NPC_FACE', npcId: npc.id, dir: { UP: 'DOWN', DOWN: 'UP', LEFT: 'RIGHT', RIGHT: 'LEFT' }[s.player.dir] });
     if (npc.trainer && !s.defeated[npc.trainer]) return startTrainerFlow(ctx, npc);
     if (npc.trainer && rematchReady(ctx, ctx.data.trainers[npc.trainer])) return startRematch(ctx, ctx.data.trainers[npc.trainer]);
+    if (npc.trainer && rematchWaits(ctx, ctx.data.trainers[npc.trainer])) { const t = ctx.data.trainers[npc.trainer]; return startScript(ctx, [{ s: t.name, t: t.setWait, style: t.textStyle }]); }
     const first = opener(ctx, npc);
     if (npc.trainer && !npc.script) {
       const t = ctx.data.trainers[npc.trainer];

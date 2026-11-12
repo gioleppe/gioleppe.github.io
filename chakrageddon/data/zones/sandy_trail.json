@@ -138,6 +138,38 @@
       "showIf": "mirror_trail",
       "minIntox": 0.9,
       "script": "mirror_trail"
+    },
+    {
+      "id": "night_owl",
+      "x": 20,
+      "y": 13,
+      "sprite": "raver",
+      "dir": "LEFT",
+      "sight": 4,
+      "trainer": "night_owl",
+      "showWhen": {
+        "all": [
+          {
+            "flag": "timetable"
+          },
+          {
+            "any": [
+              {
+                "hour": [
+                  22,
+                  24
+                ]
+              },
+              {
+                "hour": [
+                  0,
+                  5
+                ]
+              }
+            ]
+          }
+        ]
+      }
     }
   ],
   "pickups": [

@@ -139,6 +139,17 @@
       "hideWhen": {
         "flag": "vicchio_cap2"
       }
+    },
+    {
+      "id": "uv_painter",
+      "x": 13,
+      "y": 10,
+      "sprite": "hippie",
+      "dir": "LEFT",
+      "showWhen": {
+        "set": "darkpsy"
+      },
+      "script": "uv_painter"
     }
   ],
   "pickups": [
@@ -224,6 +235,13 @@
         "maxLevel": 26,
         "weight": 10,
         "minIntox": 0.6
+      },
+      {
+        "speciesId": "nitroxide",
+        "minLevel": 20,
+        "maxLevel": 24,
+        "weight": 30,
+        "set": "darkpsy"
       }
     ]
   },

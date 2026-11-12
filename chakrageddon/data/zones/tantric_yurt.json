@@ -110,6 +110,17 @@
         17,
         8
       ]
+    },
+    {
+      "id": "gong_player",
+      "x": 6,
+      "y": 6,
+      "sprite": "yogi",
+      "dir": "DOWN",
+      "showWhen": {
+        "set": "soundbath"
+      },
+      "script": "gong_player"
     }
   ],
   "pickups": [
@@ -167,6 +178,13 @@
         "maxLevel": 12,
         "weight": 10,
         "minIntox": 0.6
+      },
+      {
+        "speciesId": "chillem",
+        "minLevel": 20,
+        "maxLevel": 24,
+        "weight": 30,
+        "set": "soundbath"
       }
     ],
     "nightTable": [

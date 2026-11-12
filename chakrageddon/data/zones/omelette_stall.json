@@ -178,6 +178,17 @@
       "hideWhen": {
         "flag": "vicchio_cap1"
       }
+    },
+    {
+      "id": "queue_raver",
+      "x": 9,
+      "y": 6,
+      "sprite": "raver",
+      "dir": "UP",
+      "showWhen": {
+        "set": "rush"
+      },
+      "script": "queue_raver"
     }
   ],
   "pickups": [
@@ -234,6 +245,13 @@
         "minLevel": 15,
         "maxLevel": 18,
         "weight": 10
+      },
+      {
+        "speciesId": "omeletron",
+        "minLevel": 20,
+        "maxLevel": 24,
+        "weight": 30,
+        "set": "rush"
       }
     ],
     "nightTable": [
