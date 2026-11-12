@@ -52,7 +52,7 @@ export function startBattle(ctx, { kind, enemy, trainerId, scripted, restore }) 
   const mirror = kind === 'mirror';
   ctx.emit({ type: 'BATTLE_START', kind, trainerName: mirror ? 'You' : trainer?.name || null, trainerSprite: mirror ? s.outfit || 'player' : trainer?.sprite || null, boss: !!trainer?.boss, player: snapshot(ctx.data, s.party[pi]), enemy: snapshot(ctx.data, enemy[0]), enemyCount: enemy.length, paletteId: zone.paletteId });
   ctx.emit({ type: 'INTOXICATION_CHANGED', oldLevel: s.intox, newLevel: b.intox });
-  ctx.emit({ type: 'AUDIO_CUE', trackBpm: (zone.baseBpm || 140) + (trainer?.boss ? 12 : 6), lowPassFilterHz: 20000 - b.intox * 12000, mood: trainer?.boss ? 'BOSS' : 'BATTLE' });
+  ctx.emit({ type: 'AUDIO_CUE', trackBpm: (zone.baseBpm || 140) + (trainer?.boss ? 12 : 6), lowPassFilterHz: 20000 - b.intox * 12000, mood: trainer?.boss ? 'BOSS' : 'BATTLE', ...(trainer?.boss ? { theme: `boss:${trainer.cutscene || trainer.id.replace(/_rematch$/, '')}` } : {}) });   // every boss has a theme of their own
   s.dex.seen[enemy[0].speciesId] = 1;
   if (kind === 'wild') msg(ctx, `A wild ${nameOf(ctx.data, enemy[0])} drifts out of the haze!`);
   else if (mirror) { msg(ctx, 'Your reflection wants an astral clash!'); msg(ctx, `Your reflection manifests ${nameOf(ctx.data, enemy[0])}!`); }
@@ -368,6 +368,29 @@ function resolveTurn(ctx, pAct) {
   endOfTurn(ctx);
   b.phase = 'PHASE_FAINT_CHECK';
   faintCheck(ctx);
+  if (ctx.state.battle === b && !b.result) bossMoment(ctx);
+}
+
+/**
+ * A boss's moment (trainer "moment"): the first time their team is down to half its Serotonin, they say a line and
+ * change something. { line, effects: [{ type: STAT, target, stat, stages } | { type: INVERT, turns } | { type: INTOX,
+ * delta } | { type: HEAL, ratio }], bpm?: the music speeds up to this, fx?: what the view shows }
+ */
+function bossMoment(ctx) {
+  const b = B(ctx), t = b.trainerId && ctx.data.trainers[b.trainerId], m = t?.moment;
+  if (!m || b.moment) return;
+  const max = b.enemy.reduce((a, mon) => a + statsOf(ctx.data, mon).maxHp, 0), now = b.enemy.reduce((a, mon) => a + Math.max(0, mon.hp), 0);
+  if (!(now > 0 && now <= max / 2)) return;
+  b.moment = true;
+  ctx.emit({ type: 'BOSS_MOMENT', trainerId: t.id, name: t.name, line: m.line, fx: m.fx || null });
+  msg(ctx, `${t.name}: "${m.line}"`);
+  for (const e of m.effects || []) {
+    if (e.type === 'STAT' && active(ctx, e.target || 'e').hp > 0) stage(ctx, e.target || 'e', e.stat, e.stages);
+    else if (e.type === 'INVERT') { b.invert = e.turns + 1; ctx.emit({ type: 'FIELD_EFFECT', effect: 'INVERT_TYPE_CHART', turns: e.turns }); msg(ctx, 'Strengths and weaknesses turn inside out!'); }
+    else if (e.type === 'INTOX') setIntox(ctx, b.intox + e.delta);
+    else if (e.type === 'HEAL' && mend(ctx, 'e', b.side.e.maxHp * e.ratio)) msg(ctx, `${label(ctx, 'e')} feels restored.`);
+  }
+  if (m.bpm) ctx.emit({ type: 'AUDIO_CUE', trackBpm: m.bpm, mood: 'BOSS', theme: `boss:${t.cutscene || t.id.replace(/_rematch$/, '')}` });
 }
 
 /** After an item, tell the view the active creature's fresh numbers. */
@@ -550,7 +573,7 @@ function finalize(ctx) {
   const old = s.intox;
   s.intox = clamp01(s.intox + R.intoxPerBattle + (b.intox - s.intox) * (R.intoxPull ?? 0.25));   // a fixed drift, plus a pull towards how high the fight ran
   ctx.emit({ type: 'INTOXICATION_CHANGED', oldLevel: old, newLevel: s.intox });
-  ctx.emit({ type: 'BATTLE_END', result });
+  ctx.emit({ type: 'BATTLE_END', result, boss: !!(b.trainerId && ctx.data.trainers[b.trainerId]?.boss) });
   s.battle = null;
   const zone = zoneOf(ctx);
   ctx.emit({ type: 'AUDIO_CUE', trackBpm: zone.baseBpm, lowPassFilterHz: 20000 - s.intox * 8000, mood: zone.paletteId });

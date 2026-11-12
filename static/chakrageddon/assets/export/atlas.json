@@ -64,22 +64,25 @@
   "wheat": 59,
   "crop": 60,
   "ufo": 61,
-  "banner": 62,
-  "stagelip": 63,
-  "steps": 64,
-  "fence_v": 65,
-  "bonfire": 66,
-  "log": 67,
-  "cow_l": 68,
-  "cow_r": 69,
-  "shrine": 70,
-  "bridge": 71,
-  "bridge_v": 72,
-  "cable": 73,
-  "cable_v": 74,
-  "fogger": 75,
-  "coconuts": 76,
-  "dune": 77
+  "cushion": 62,
+  "rope": 63,
+  "cashtable": 64,
+  "banner": 65,
+  "stagelip": 66,
+  "steps": 67,
+  "fence_v": 68,
+  "bonfire": 69,
+  "log": 70,
+  "cow_l": 71,
+  "cow_r": 72,
+  "shrine": 73,
+  "bridge": 74,
+  "bridge_v": 75,
+  "cable": 76,
+  "cable_v": 77,
+  "fogger": 78,
+  "coconuts": 79,
+  "dune": 80
  },
  "props": {
   "palm": {
@@ -138,6 +141,24 @@
   },
   "strobe": {
    "file": "prop_strobe.png",
+   "w": 16,
+   "h": 30,
+   "frames": 1
+  },
+  "captain_chair": {
+   "file": "prop_captain_chair.png",
+   "w": 16,
+   "h": 24,
+   "frames": 1
+  },
+  "menuboard": {
+   "file": "prop_menuboard.png",
+   "w": 16,
+   "h": 30,
+   "frames": 1
+  },
+  "ringlight": {
+   "file": "prop_ringlight.png",
    "w": 16,
    "h": 30,
    "frames": 1

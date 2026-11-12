@@ -5,6 +5,8 @@ import { charAt, npcVisible, npcPos, isNight, nightLevel } from '../core/Overwor
 import { bandOf, bandIndex, egoGone } from '../core/intox.js';
 import { highWorld, TRAIL_SPRITES } from './highWorld.js';
 import { liveSet } from '../core/timetable.js';
+import { stageFx, shakeOf } from './stageFx.js';
+const ARRIVAL = 1.8;   // seconds the camera spends on a boss before their cutscene
 import { routeHint } from '../core/goals.js';
 import { hashOf } from './anim.js';
 import { questMarker } from '../core/quests.js';
@@ -115,7 +117,13 @@ export const overworldView = {
   onEvent(game, e) {
     if (e.type === 'ENTITY_MOVED' && e.entityId === 'player') { this.anim = { from: e.from, to: e.to, t: 0 }; this.walkFlip ^= 1; }
     else if (e.type === 'BUMP') { this.bumpT = 0.18; game.audio?.sfx('bump'); }
-    else if (e.type === 'PLAYER_PLACED') this.anim = null;                      // set down somewhere else (coming down off the stairs of light)
+    else if (e.type === 'PLAYER_PLACED') this.anim = null;
+    else if (e.type === 'BOSS_ARRIVAL') {
+      // the music drops, the crowd turns to look, the camera slides over to the boss; then their cutscene
+      this.arrival = { t: 0, x: e.x, y: e.y };
+      game.audio?.duck?.(ARRIVAL);
+      highWorld.crowd = { start: this.t, end: this.t + ARRIVAL };
+    } else if (e.type === 'BATTLE_END' && e.boss && e.result === 'WON') { this.cheer = 3; game.audio?.sfx('cheer'); }                      // set down somewhere else (coming down off the stairs of light)
     else if (e.type === 'FX' && e.fx === 'rainbow_burst') highWorld.burst(game, e);
     else if (e.type === 'ZONE_CHANGED') { highWorld.reset(); this.anim = null; this.fade = 1; this.banner = e.name; this.bannerT = 3.2; this.npcDir = {}; this.npcAnim = {}; this.hint = routeHint(game.data, game.engine.state)?.text || null; }
     else if (e.type === 'EYE_CONTACT') { this.alert = { x: e.x, y: e.y, t: 0.8 }; }
@@ -126,6 +134,8 @@ export const overworldView = {
   update(game, dt) {
     this.t += dt;
     highWorld.update(this, game, dt);
+    if (this.arrival && (this.arrival.t += dt) >= ARRIVAL) this.arrival = null;
+    if (this.cheer > 0) this.cheer -= dt;
     // a set starting where you are (or you arriving during one): say what is on
     const st0 = game.engine.state, live = st0.mode === 'OVERWORLD' ? liveSet(game.data, st0) : null, key = live ? `${st0.zoneId}:${live.id}` : '';
     if (key !== this.liveKey) { if (key && this.liveKey !== undefined) game.say(`Live now: ${live.name}`); this.liveKey = key; }
@@ -183,6 +193,14 @@ export const overworldView = {
     const still = game.settings.reducedMotion, bpm = game.data.zones[game.engine.state.zoneId]?.baseBpm || 140;
     const beats = (this.t * bpm) / 60 + ((x * 3 + y * 5) % 4) / 4;
     const turned = highWorld.crowdPose(this, game, y);          // the crowd stops and stares at you (Ego gone, the Poi Pit)
+    if (this.cheer > 0 && !still) {                              // a boss has fallen: arms up, jumping
+      const jump = Math.round(Math.abs(Math.sin((this.t * 9) + x + y)) * 3);
+      g.fillStyle = 'rgba(11,3,20,0.3)'; g.fillRect(dx + 4, dy + 13, 8, 2);
+      if (img) g.drawImage(img, 0, ((x * 7 + y * 13) % meta.looks) * 24, 16, 24, dx, dy - 10 - jump, 16, 24);
+      return;
+    }
+    const p = game.engine.state.player;
+    if (game.data.zones[game.engine.state.zoneId].parting && Math.abs(x - p.x) <= 1 && Math.abs(y - p.y) <= 1 && !(x === p.x && y === p.y)) dx += x < p.x ? -5 : x > p.x ? 5 : 0;   // they make way for you
     const look = (x * 7 + y * 13) % meta.looks, pose = turned ?? fixed ?? (still ? 0 : [0, 1, 0, 2][Math.floor(beats) % 4] % meta.poses);
     const hop = turned === null && fixed === null && !still && beats % 1 < 0.3 ? 1 : 0;
     g.fillStyle = 'rgba(11,3,20,0.3)'; g.fillRect(dx + 4, dy + 13, 8, 2);
@@ -195,8 +213,9 @@ export const overworldView = {
     if (sprite === 'firespinner') for (let i = 0; i < 2; i++) { const a = t * 8 + i * Math.PI; g.fillStyle = i ? '#FFD23F' : '#FF6A2A'; g.fillRect(Math.round(x + 7 + Math.cos(a) * 9), Math.round(y + 12 + Math.sin(a) * 5), 2, 2); }
   },
 
-  /** a trainer who spotted you is still walking over: hold their dialogue until they arrive */
-  walking() { return Object.values(this.npcAnim || {}).some((a) => a.walkUp); },
+  /** a trainer who spotted you is still walking over, or a boss's arrival is playing: hold their dialogue till then */
+  walking() { return Object.values(this.npcAnim || {}).some((a) => a.walkUp) || this.arriving(); },
+  arriving() { return !!this.arrival; },
 
   camera(game) {
     const s = game.engine.state, zone = game.data.zones[s.zoneId];
@@ -206,8 +225,13 @@ export const overworldView = {
       px = (a.from[0] + (a.to[0] - a.from[0]) * a.t) * TS; py = (a.from[1] + (a.to[1] - a.from[1]) * a.t) * TS;
     }
     const zw = zone.rows[0].length * TS, zh = zone.rows.length * TS;
-    const cx = zw <= W ? -Math.floor((W - zw) / 2) : Math.max(0, Math.min(zw - W, Math.round(px + 8 - W / 2)));
-    const cy = zh <= H ? -Math.floor((H - zh) / 2) : Math.max(0, Math.min(zh - H, Math.round(py + 8 - H / 2)));
+    let fx = px, fy = py;
+    if (this.arrival) {
+      const k = Math.min(1, this.arrival.t / 0.7), e = k * k * (3 - 2 * k);
+      fx = px + (this.arrival.x * TS - px) * e; fy = py + (this.arrival.y * TS - py) * e;
+    }
+    const cx = zw <= W ? -Math.floor((W - zw) / 2) : Math.max(0, Math.min(zw - W, Math.round(fx + 8 - W / 2)));
+    const cy = zh <= H ? -Math.floor((H - zh) / 2) : Math.max(0, Math.min(zh - H, Math.round(fy + 8 - H / 2)));
     return { cx, cy, px: Math.round(px), py: Math.round(py) };
   },
 
@@ -232,7 +256,7 @@ export const overworldView = {
     const legend = game.data.legend;
     const x0 = Math.max(0, Math.floor(cx / TS)), y0 = Math.max(0, Math.floor(cy / TS));
     const x1 = Math.min(zone.rows[0].length - 1, Math.floor((cx + W) / TS)), y1 = Math.min(zone.rows.length - 1, Math.floor((cy + H) / TS));
-    const wave = Math.floor(this.t * 2) % 2;
+    const wave = game.settings.reducedMotion ? 0 : Math.floor(this.t * 2) % 2;   // water ripples (held still with reduced motion)
     const gi = game.atlas.tiles[zone.ground], cols = game.atlas.tileCols;
     const resolve = (sp) => (sp[0] === '@' ? zone[sp.slice(1)] || (sp === '@ground2' ? zone.ground : sp === '@wall' ? 'cliff' : sp === '@encounter' ? 'incense' : 'sand') : sp);
     const classOf = (x, y) => {
@@ -286,7 +310,8 @@ export const overworldView = {
       }
     }
     highWorld.ground(this, game, g, cx, cy, x0, y0, x1, y1);
-    this.treesDance = highWorld.treesDance(game);
+    this.treesDance = highWorld.treesDance(game) || !!zone.treesPulse;   // the Forest Stage's trees pulse at 190 BPM
+    stageFx(this, game, g, cx, cy, 'ground');
     // row-sorted pass: props, characters, pickups (lower rows overlap upper ones)
     const ents = highWorld.ents(this, game, g, cx, cy);
     const px0 = Math.max(0, x0 - 2), px1 = Math.min(zone.rows[0].length - 1, x1 + 2), py1 = Math.min(zone.rows.length - 1, y1 + 3);
@@ -298,6 +323,11 @@ export const overworldView = {
       if (def?.prop) ents.push({ y: y - 0.01, prop: def.prop, x });
       // dancers: on every crowd tile, every few dancefloor tiles; none where you or someone else is standing
       if (def && (def.crowd || (resolve(def.sprite) === 'dancefloor' && (x * 7 + y * 3) % 5 === 0)) && !taken.has(`${x},${y}`)) ents.push({ y: y - 0.02, dancer: true, x, ty: y });
+      // people who are always there (zone.crowd: the omelette queue, Chloe's fans)
+      else if (def && (def.id === 0 || def.id === 2) && !taken.has(`${x},${y}`) && (zone.crowd || []).some((c) => x >= c.rect[0] && x <= c.rect[2] && y >= c.rect[1] && y <= c.rect[3] && (x * 5 + y * 3) % (c.every || 2) === 0)) {
+        const c = zone.crowd.find((q) => x >= q.rect[0] && x <= q.rect[2] && y >= q.rect[1] && y <= q.rect[3]);
+        ents.push({ y: y - 0.02, dancer: true, x, ty: y, pose: c.pose === 'back' ? game.atlas.dancers?.back : c.pose === 'still' ? game.atlas.dancers?.still : null });
+      }
       // a set is on: the dancefloor fills up, and a crowd gathers in its spot (the festival timetable)
       else if (set && def && (def.id === 0 || def.id === 2) && !taken.has(`${x},${y}`) && ((set.fill && resolve(def.sprite) === 'dancefloor') || (set.crowd && x >= set.crowd[0] && x <= set.crowd[2] && y >= set.crowd[1] && y <= set.crowd[3] && (x * 5 + y * 3) % 3 !== 1))) {
         ents.push({ y: y - 0.02, dancer: true, x, ty: y, pose: set.pose === 'back' ? game.atlas.dancers?.back : set.pose === 'still' ? game.atlas.dancers?.still : null });
@@ -347,7 +377,7 @@ export const overworldView = {
       } else if (e.npc) {
         const n = e.npc, dx = Math.round(e.nx * TS - cx), dy = Math.round(e.ny * TS - cy);
         if (n.tile) {
-          this.tile(game, g, n.tile, dx, dy);
+          this.tile(game, g, n.tile, dx + shakeOf(this, game, n.id), dy);
           // a Glowing Cap (or the saucer) gives off motes of green light, so it can be spotted from across the zone
           if ((n.tile === 'glowcap' || n.tile === 'ufo') && !game.settings.reducedMotion) {
             for (let i = 0; i < 4; i++) {
@@ -388,6 +418,7 @@ export const overworldView = {
       } else this.tile(game, g, 'stash', e.pickup.x * TS - cx, e.pickup.y * TS - cy);
     }
     highWorld.overlay(this, game, g, cx, cy);
+    stageFx(this, game, g, cx, cy, 'air');
     if (this.alert) drawText(g, '!', this.alert.x * TS - cx + 6, this.alert.y * TS - cy - 20, { color: C.red, shadow: C.white });
 
     // strobes on the stage: on each beat one of them throws a cone of white light onto the floor, the corners taking

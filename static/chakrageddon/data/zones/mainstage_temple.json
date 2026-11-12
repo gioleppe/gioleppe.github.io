@@ -192,5 +192,48 @@
   "encounters": {
     "encounterRate": 0,
     "table": []
-  }
+  },
+  "fx": [
+    {
+      "kind": "pulse",
+      "rect": [
+        1,
+        16,
+        18,
+        17
+      ],
+      "color": "#E0303C"
+    },
+    {
+      "kind": "rumble",
+      "row": 12
+    },
+    {
+      "kind": "ticks",
+      "rect": [
+        1,
+        10,
+        18,
+        11
+      ]
+    },
+    {
+      "kind": "notes",
+      "rect": [
+        1,
+        7,
+        18,
+        8
+      ]
+    },
+    {
+      "kind": "grand",
+      "rect": [
+        1,
+        1,
+        18,
+        2
+      ]
+    }
+  ]
 }

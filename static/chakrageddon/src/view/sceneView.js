@@ -6,9 +6,47 @@
 import { W, H } from './CanvasRenderer.js';
 import { drawForage, drawLanding } from './vicchioScenes.js';
 import { drawBoss, BOSSES } from './bossScenes.js';
+import { overworldView } from './overworldView.js';
+
+// the colours of the eight wristbands, in the order rules.wristbands lists them (as in the Fanny Pack)
+const BAND_COLORS = ['#C9A45A', '#C8F4FF', '#7FD6FF', '#FFD23F', '#4FE88A', '#FF4FA8', '#A8AEB6', '#F4FFF0'];
+/** the wristband ceremony: the band turning slowly in a burst of light, confetti, the boss who hands it over */
+function drawCeremony(game, g, who, by, t, still) {
+  const ids = Object.keys(game.data.rules.wristbands || {}), col = BAND_COLORS[Math.max(0, ids.indexOf(who))] || '#FFD23F';
+  g.fillStyle = '#14081E'; g.fillRect(0, 0, W, H);
+  const rot = still ? 0 : t * 0.4;
+  g.save(); g.globalAlpha = 0.35;
+  for (let i = 0; i < 18; i++) {
+    const a0 = (i / 18) * Math.PI * 2 + rot, a1 = a0 + Math.PI / 18;
+    g.fillStyle = i % 2 ? col : '#9A4FE0';
+    g.beginPath(); g.moveTo(W / 2 + 40, 58); g.lineTo(W / 2 + 40 + Math.cos(a0) * 320, 58 + Math.sin(a0) * 320); g.lineTo(W / 2 + 40 + Math.cos(a1) * 320, 58 + Math.sin(a1) * 320); g.fill();
+  }
+  g.restore();
+  // the band: a thick ring seen at an angle, turning (its far side darker), with a woven stripe
+  const cx = W / 2 + 40, cy = 58, rx = 34, ry = 12 + (still ? 4 : Math.sin(t * 1.2) * 4), grow = Math.min(1, still ? 1 : t * 2.5);
+  g.save(); g.translate(cx, cy); g.scale(grow, grow);
+  g.lineWidth = 9; g.strokeStyle = '#14101E'; g.beginPath(); g.ellipse(0, 0, rx + 1, ry + 1, 0, 0, 7); g.stroke();
+  g.lineWidth = 7; g.strokeStyle = col; g.beginPath(); g.ellipse(0, 0, rx, ry, 0, Math.PI, Math.PI * 2); g.globalAlpha = 0.7; g.stroke(); g.globalAlpha = 1;
+  g.beginPath(); g.ellipse(0, 0, rx, ry, 0, 0, Math.PI); g.stroke();
+  g.lineWidth = 1; g.strokeStyle = 'rgba(0,0,0,0.3)'; g.beginPath(); g.ellipse(0, 0, rx, ry, 0, 0, Math.PI); g.stroke();
+  g.fillStyle = '#FFFFFF'; g.fillRect(-rx + 4, -1, 3, 2);
+  g.restore();
+  // confetti
+  const cols = ['#FF4FA8', '#3FD8E8', '#FFE066', '#4FE88A', '#C86BFF'];
+  for (let i = 0; i < 40; i++) {
+    const k = still ? (i * 0.37) % 1 : (t * 0.35 + i * 0.137) % 1, x = (i * 53) % W + (still ? 0 : Math.sin(t * 2 + i) * 6);
+    g.fillStyle = cols[i % cols.length]; g.fillRect(Math.round(x), Math.round(-6 + k * 120), 2, i % 3 ? 2 : 3);
+  }
+  // the boss who hands it over, sliding in from the left
+  const img = by && game.images[`portrait:${by}`];
+  if (img) {
+    const k = still ? 1 : Math.min(1, t * 2.2), x = Math.round(-90 + 100 * k);
+    g.save(); g.imageSmoothingEnabled = false; g.drawImage(img, 0, 0, 48, 48, x, 8, 96, 96); g.restore();
+  }
+}
 
 // 'boss': a boss's cutscene (bossScenes.js), who = which one; card = the short title card of a rematch
-export const SCENES = ['dream', 'crab_rave', 'mantequilla', 'vicchio_landing', 'boss'];
+export const SCENES = ['dream', 'crab_rave', 'mantequilla', 'vicchio_landing', 'boss', 'wristband'];
 const CRABS = ['crabcake', 'lobsterlad', 'ketacrab', 'wonkrab'];
 
 export const sceneView = {
@@ -18,7 +56,8 @@ export const sceneView = {
   update(game, dt) {
     const sc = game.engine?.state.scene;
     if (!sc) { this.id = null; return; }
-    const key = sc.id === 'boss' ? `boss:${sc.who}:${sc.card ? 1 : 0}` : sc.id;
+    if (overworldView.arriving()) return;                         // a boss's arrival plays first, then their cutscene
+    const key = sc.id === 'boss' ? `boss:${sc.who}:${sc.card ? 1 : 0}` : sc.id === 'wristband' ? `wristband:${sc.who}` : sc.id;
     if (key !== this.id) {
       this.id = key; this.t = 0;
       const mood = sc.id === 'boss' && BOSSES[sc.who]?.mood;
@@ -31,6 +70,8 @@ export const sceneView = {
 
   draw(game, g) {
     const sc = game.engine?.state.scene;
+    if (sc && overworldView.arriving()) return;
+    if (sc?.id === 'wristband') return drawCeremony(game, g, sc.who, sc.by, this.t, game.settings.reducedMotion);
     if (sc?.id === 'crab_rave') return this.crabRave(game, g);
     if (sc?.id === 'boss') return drawBoss(game, g, sc.who, this.t, !!sc.card);
     if (sc?.id === 'mantequilla') return drawForage(game, g, this.t);

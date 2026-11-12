@@ -144,6 +144,22 @@
         "set": "headline"
       },
       "script": "pit_mc"
+    },
+    {
+      "id": "pit_poi_l",
+      "x": 3,
+      "y": 7,
+      "sprite": "firespinner",
+      "dir": "DOWN",
+      "script": "pit_poi"
+    },
+    {
+      "id": "pit_poi_r",
+      "x": 24,
+      "y": 7,
+      "sprite": "firespinner",
+      "dir": "DOWN",
+      "script": "pit_poi"
     }
   ],
   "pickups": [
@@ -249,5 +265,52 @@
     {
       "kind": "crowd_turn"
     }
-  ]
+  ],
+  "fx": [
+    {
+      "kind": "led",
+      "rect": [
+        3,
+        3,
+        9,
+        3
+      ]
+    },
+    {
+      "kind": "led",
+      "rect": [
+        12,
+        3,
+        24,
+        3
+      ]
+    },
+    {
+      "kind": "lasers",
+      "at": [
+        [
+          1,
+          4
+        ],
+        [
+          26,
+          4
+        ]
+      ]
+    },
+    {
+      "kind": "smoke",
+      "at": [
+        [
+          1,
+          8
+        ],
+        [
+          26,
+          8
+        ]
+      ]
+    }
+  ],
+  "parting": true
 }

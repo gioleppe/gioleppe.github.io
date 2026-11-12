@@ -7,7 +7,7 @@ const LINES = [
   ['You got your passport back.', C.cream], ['You never did find your shoes.', C.cream], '', '',
   ['CAST', C.magenta], 'Prof. Banyan  -  in Goa since 1994, for two weeks', 'Astra-Zero  -  Chad, from the charter flight', 'Chai Mama  -  tired, kind, crochet',
   'DJ Diabolo', 'Guru Svetlana', 'Captain Keta', 'Chef Raju', 'Baron Von Darkpsy', 'Influencer Chloe', 'Baba Smoke', 'The Promoter', 'The Four-on-the-Floor', 'The VIP Shaman Council', '', '',
-  ['ASTRALS', C.magenta], 'Thirty-six of them. Check your Journal.', '', '',
+  ['ASTRALS', C.magenta], 'Forty-one of them. Check your Journal.', '', '',
   ['A SATIRE', C.magenta], 'Nothing here is advice.', 'Drink water. Wear sunscreen.', 'Look after the person next to you.', 'Harm reduction tents are real, and they are heroes.', '', '',
   ['MADE WITH', C.magenta], 'A headless deterministic core, plain JSON,', 'a canvas, one shader, and a synth with no samples.', 'Every sprite drawn by script in Aseprite.', '', '', '',
   ['Thank you for playing.', C.yellow], '', ['The festival goes on.', C.cream],
@@ -23,7 +23,10 @@ export const creditsView = {
     const fast = game.input.held.a || game.input.held.b;
     this.y += dt * (fast ? 90 : 16);
     const end = LINES.length * 13 + H;
-    if (this.y > end + 30 || (this.y > end - 60 && (game.input.pressed('a') || game.input.anyTap()))) { game.screen = 'play'; game.startZoneAudio(); }
+    if (this.y > end + 30 || (this.y > end - 60 && (game.input.pressed('a') || game.input.anyTap()))) {
+      // then your festival on one card, to keep (endCardView.js)
+      if (game.extra.endcard) { game.input.endFrame?.(); game.extra.endcard.t = 0; game.screen = 'endcard'; } else { game.screen = 'play'; game.startZoneAudio(); }
+    }
   },
   draw(game, g) {
     g.fillStyle = C.void; g.fillRect(0, 0, W, H);

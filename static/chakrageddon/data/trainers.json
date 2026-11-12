@@ -195,7 +195,21 @@
     "rematchBands": 3,
     "cutscene": "diabolo",
     "rematchSet": "headline",
-    "setWait": "Rematch? Not now. Come to my set. Twenty-two hundred, the Pit. Do not be late, I start without anyone."
+    "setWait": "Rematch? Not now. Come to my set. Twenty-two hundred, the Pit. Do not be late, I start without anyone.",
+    "stage": "pit",
+    "moment": {
+      "line": "Wait wait wait. You think THAT was the drop? THIS is the drop!",
+      "bpm": 176,
+      "fx": "drop",
+      "effects": [
+        {
+          "type": "STAT",
+          "target": "e",
+          "stat": "bpmSpeed",
+          "stages": 1
+        }
+      ]
+    }
   },
   {
     "id": "yurt_yogi",
@@ -307,7 +321,18 @@
     "after": "I told security at the market to let you through. Captain Keta is north. He is somewhere near his body, usually.",
     "rematch": "boss_svetlana_rematch",
     "rematchBands": 4,
-    "cutscene": "svetlana"
+    "cutscene": "svetlana",
+    "stage": "yurt",
+    "moment": {
+      "line": "Om. Om. Ommmm. Now your strengths are your weaknesses, darling. That will be extra.",
+      "fx": "chant",
+      "effects": [
+        {
+          "type": "INVERT",
+          "turns": 3
+        }
+      ]
+    }
   },
   {
     "id": "market_dealer",
@@ -493,7 +518,18 @@
     "after": "There is a subwoofer blocking the east side of the market. Give it a shove. Tell it the Captain sent you.",
     "rematch": "boss_keta_rematch",
     "rematchBands": 5,
-    "cutscene": "keta"
+    "cutscene": "keta",
+    "stage": "ditch",
+    "moment": {
+      "line": "All hands! Sound the horns! They are scooter horns. It is the thought that counts.",
+      "fx": "horns",
+      "effects": [
+        {
+          "type": "INTOX",
+          "delta": 0.15
+        }
+      ]
+    }
   },
   {
     "id": "stall_wook",
@@ -681,7 +717,18 @@
     "after": "The sea north of the Scooter Ditch leads to the lake and the forest. So does the thicket behind my stall. Mind the bass up there.",
     "rematch": "boss_raju_rematch",
     "rematchBands": 6,
-    "cutscene": "raju"
+    "cutscene": "raju",
+    "stage": "stall",
+    "moment": {
+      "line": "Special of the day! A second helping for my little one.",
+      "fx": "special",
+      "effects": [
+        {
+          "type": "HEAL",
+          "ratio": 0.3
+        }
+      ]
+    }
   },
   {
     "id": "lake_hippie",
@@ -828,7 +875,21 @@
     "after": "Leave me. I must find a darker key.",
     "rematch": "boss_darkpsy_rematch",
     "rematchBands": 7,
-    "cutscene": "darkpsy"
+    "cutscene": "darkpsy",
+    "stage": "forest",
+    "moment": {
+      "line": "One-ninety was the warm-up. Welcome to two hundred.",
+      "bpm": 200,
+      "fx": "tempo",
+      "effects": [
+        {
+          "type": "STAT",
+          "target": "e",
+          "stat": "bpmSpeed",
+          "stages": 2
+        }
+      ]
+    }
   },
   {
     "id": "thicket_wook",
@@ -1067,7 +1128,26 @@
     "after": "Baba Smoke lives in the cave north of the shallows. He refused to collab. Twice.",
     "rematch": "boss_chloe_rematch",
     "rematchBands": 8,
-    "cutscene": "chloe"
+    "cutscene": "chloe",
+    "stage": "cliff",
+    "moment": {
+      "line": "Chat is going WILD. Okay, okay. This one is for the followers!",
+      "fx": "live",
+      "effects": [
+        {
+          "type": "STAT",
+          "target": "e",
+          "stat": "spFractal",
+          "stages": 1
+        },
+        {
+          "type": "STAT",
+          "target": "e",
+          "stat": "vibeAttack",
+          "stages": 1
+        }
+      ]
+    }
   },
   {
     "id": "cave_yogi",
@@ -1172,7 +1252,18 @@
     "after": "(The smoke spells BACKSTAGE, with an arrow.)",
     "rematch": "boss_baba_rematch",
     "rematchBands": 8,
-    "cutscene": "baba"
+    "cutscene": "baba",
+    "stage": "cave",
+    "moment": {
+      "line": "Breathe in. Deeper. Now you are the smoke.",
+      "fx": "smoke",
+      "effects": [
+        {
+          "type": "INTOX",
+          "delta": 0.2
+        }
+      ]
+    }
   },
   {
     "id": "backstage_guard1",
@@ -1279,7 +1370,20 @@
     "after": "Go on. Before I think of a clause.",
     "rematch": "boss_promoter_rematch",
     "rematchFlag": "finished",
-    "cutscene": "promoter"
+    "cutscene": "promoter",
+    "stage": "backstage",
+    "moment": {
+      "line": "Security! Nobody touches the talent.",
+      "fx": "security",
+      "effects": [
+        {
+          "type": "STAT",
+          "target": "e",
+          "stat": "egoDefense",
+          "stages": 2
+        }
+      ]
+    }
   },
   {
     "id": "elite_kick",
@@ -1318,7 +1422,21 @@
       "You kept time. Go on. The bassline is next."
     ],
     "after": "...",
-    "cutscene": "kalyani"
+    "cutscene": "kalyani",
+    "stage": "temple_kick",
+    "moment": {
+      "line": "BOOM! And now the kick comes in for real!",
+      "bpm": 168,
+      "fx": "kick",
+      "effects": [
+        {
+          "type": "STAT",
+          "target": "e",
+          "stat": "vibeAttack",
+          "stages": 2
+        }
+      ]
+    }
   },
   {
     "id": "elite_bass",
@@ -1358,7 +1476,26 @@
       "You found your sea legs. The hi-hat will try to rush you."
     ],
     "after": "...",
-    "cutscene": "boris"
+    "cutscene": "boris",
+    "stage": "temple_bass",
+    "moment": {
+      "line": "Feel the floor? That is my bass. It does not stop.",
+      "fx": "bass",
+      "effects": [
+        {
+          "type": "STAT",
+          "target": "e",
+          "stat": "egoDefense",
+          "stages": 1
+        },
+        {
+          "type": "STAT",
+          "target": "e",
+          "stat": "spGrounded",
+          "stages": 1
+        }
+      ]
+    }
   },
   {
     "id": "elite_hat",
@@ -1398,7 +1535,20 @@
       "Okay. Okay okay okay. You are faster. The lead is last. She gets in your head."
     ],
     "after": "...",
-    "cutscene": "hana"
+    "cutscene": "hana",
+    "stage": "temple_hat",
+    "moment": {
+      "line": "Double time! Tss-tss-tss-tss!",
+      "fx": "hat",
+      "effects": [
+        {
+          "type": "STAT",
+          "target": "e",
+          "stat": "bpmSpeed",
+          "stages": 2
+        }
+      ]
+    }
   },
   {
     "id": "elite_lead",
@@ -1442,7 +1592,20 @@
       "A clean resolve. The Council is beyond. But there is somebody in the doorway. He has been there a while."
     ],
     "after": "...",
-    "cutscene": "lakshmi"
+    "cutscene": "lakshmi",
+    "stage": "temple_lead",
+    "moment": {
+      "line": "And now, the melody you have been waiting for.",
+      "fx": "lead",
+      "effects": [
+        {
+          "type": "STAT",
+          "target": "e",
+          "stat": "spFractal",
+          "stages": 2
+        }
+      ]
+    }
   },
   {
     "id": "chad3_g",
@@ -1738,7 +1901,21 @@
     "defeat": [
       "Fine. You really are that good. Come back when you want to feel something."
     ],
-    "after": "The road north to the Tantric Yurt is choked with fairy lights. Not for you, now."
+    "after": "The road north to the Tantric Yurt is choked with fairy lights. Not for you, now.",
+    "stage": "pit",
+    "moment": {
+      "line": "Wait wait wait. You think THAT was the drop? THIS is the drop!",
+      "bpm": 176,
+      "fx": "drop",
+      "effects": [
+        {
+          "type": "STAT",
+          "target": "e",
+          "stat": "bpmSpeed",
+          "stages": 1
+        }
+      ]
+    }
   },
   {
     "id": "boss_svetlana_rematch",
@@ -1768,7 +1945,18 @@
     "defeat": [
       "Fine. You really are that good. Come back when you want to feel something."
     ],
-    "after": "I told security at the market to let you through. Captain Keta is north. He is somewhere near his body, usually."
+    "after": "I told security at the market to let you through. Captain Keta is north. He is somewhere near his body, usually.",
+    "stage": "yurt",
+    "moment": {
+      "line": "Om. Om. Ommmm. Now your strengths are your weaknesses, darling. That will be extra.",
+      "fx": "chant",
+      "effects": [
+        {
+          "type": "INVERT",
+          "turns": 3
+        }
+      ]
+    }
   },
   {
     "id": "boss_keta_rematch",
@@ -1802,7 +1990,18 @@
     "defeat": [
       "Fine. You really are that good. Come back when you want to feel something."
     ],
-    "after": "There is a subwoofer blocking the east side of the market. Give it a shove. Tell it the Captain sent you."
+    "after": "There is a subwoofer blocking the east side of the market. Give it a shove. Tell it the Captain sent you.",
+    "stage": "ditch",
+    "moment": {
+      "line": "All hands! Sound the horns! They are scooter horns. It is the thought that counts.",
+      "fx": "horns",
+      "effects": [
+        {
+          "type": "INTOX",
+          "delta": 0.15
+        }
+      ]
+    }
   },
   {
     "id": "boss_raju_rematch",
@@ -1835,7 +2034,18 @@
     "defeat": [
       "Fine. You really are that good. Come back when you want to feel something."
     ],
-    "after": "The sea north of the Scooter Ditch leads to the lake and the forest. So does the thicket behind my stall. Mind the bass up there."
+    "after": "The sea north of the Scooter Ditch leads to the lake and the forest. So does the thicket behind my stall. Mind the bass up there.",
+    "stage": "stall",
+    "moment": {
+      "line": "Special of the day! A second helping for my little one.",
+      "fx": "special",
+      "effects": [
+        {
+          "type": "HEAL",
+          "ratio": 0.3
+        }
+      ]
+    }
   },
   {
     "id": "boss_darkpsy_rematch",
@@ -1869,7 +2079,21 @@
     "defeat": [
       "Fine. You really are that good. Come back when you want to feel something."
     ],
-    "after": "Leave me. I must find a darker key."
+    "after": "Leave me. I must find a darker key.",
+    "stage": "forest",
+    "moment": {
+      "line": "One-ninety was the warm-up. Welcome to two hundred.",
+      "bpm": 200,
+      "fx": "tempo",
+      "effects": [
+        {
+          "type": "STAT",
+          "target": "e",
+          "stat": "bpmSpeed",
+          "stages": 2
+        }
+      ]
+    }
   },
   {
     "id": "boss_chloe_rematch",
@@ -1903,7 +2127,26 @@
     "defeat": [
       "Fine. You really are that good. Come back when you want to feel something."
     ],
-    "after": "Baba Smoke lives in the cave north of the shallows. He refused to collab. Twice."
+    "after": "Baba Smoke lives in the cave north of the shallows. He refused to collab. Twice.",
+    "stage": "cliff",
+    "moment": {
+      "line": "Chat is going WILD. Okay, okay. This one is for the followers!",
+      "fx": "live",
+      "effects": [
+        {
+          "type": "STAT",
+          "target": "e",
+          "stat": "spFractal",
+          "stages": 1
+        },
+        {
+          "type": "STAT",
+          "target": "e",
+          "stat": "vibeAttack",
+          "stages": 1
+        }
+      ]
+    }
   },
   {
     "id": "boss_baba_rematch",
@@ -1941,7 +2184,18 @@
     "defeat": [
       "Fine. You really are that good. Come back when you want to feel something."
     ],
-    "after": "(The smoke spells BACKSTAGE, with an arrow.)"
+    "after": "(The smoke spells BACKSTAGE, with an arrow.)",
+    "stage": "cave",
+    "moment": {
+      "line": "Breathe in. Deeper. Now you are the smoke.",
+      "fx": "smoke",
+      "effects": [
+        {
+          "type": "INTOX",
+          "delta": 0.2
+        }
+      ]
+    }
   },
   {
     "id": "boss_promoter_rematch",
@@ -1983,7 +2237,20 @@
       "Fine. You really are that good.",
       "Listen. Under the speaker stacks, at the back. Something has been humming since you beat me the first time. I think it wants a word."
     ],
-    "after": "Go on. Before I think of a clause."
+    "after": "Go on. Before I think of a clause.",
+    "stage": "backstage",
+    "moment": {
+      "line": "Security! Nobody touches the talent.",
+      "fx": "security",
+      "effects": [
+        {
+          "type": "STAT",
+          "target": "e",
+          "stat": "egoDefense",
+          "stages": 2
+        }
+      ]
+    }
   },
   {
     "id": "night_owl",

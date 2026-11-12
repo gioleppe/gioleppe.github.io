@@ -249,5 +249,41 @@
     {
       "kind": "trees_dance"
     }
-  ]
+  ],
+  "fx": [
+    {
+      "kind": "uv"
+    },
+    {
+      "kind": "fog",
+      "rect": [
+        5,
+        5,
+        14,
+        8
+      ]
+    },
+    {
+      "kind": "glow",
+      "at": [
+        [
+          15,
+          13
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          15,
+          4
+        ]
+      ],
+      "color": "#4FE88A"
+    },
+    {
+      "kind": "flash"
+    }
+  ],
+  "treesPulse": true
 }
