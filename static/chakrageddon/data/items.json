@@ -31,5 +31,8 @@
   {"id":"glow_jacket","name":"Glow Jacket","category":"OUTFIT","price":900,"effect":{"outfit":"player_glow"},"desc":"Cosmetic. Black with neon green trim. Wear it from the Stash Tin."},
   {"id":"festival_poncho","name":"Festival Poncho","category":"OUTFIT","price":0,"effect":{"outfit":"player_poncho"},"desc":"Cosmetic. A poncho and a straw hat, a thank-you from the guesthouse. Wear it from the Stash Tin."},
   {"id":"crab_suit","name":"Crab Suit","category":"OUTFIT","price":0,"effect":{"outfit":"player_crab"},"desc":"Cosmetic. A lilo and two oven gloves, from the Crab Raver. Wear it from the Stash Tin."},
-  {"id":"record_crate","name":"Record Crate","category":"KEY","price":0,"effect":{},"desc":"A crate of vinyl with a sticker: PROPERTY OF THE BOOTH. The roadie in the DJ Booth is looking for these."}
+  {"id":"record_crate","name":"Record Crate","category":"KEY","price":0,"effect":{},"desc":"A crate of vinyl with a sticker: PROPERTY OF THE BOOTH. The roadie in the DJ Booth is looking for these."},
+  {"id":"vicchio_antenna","name":"Vicchio Antenna","category":"KEY","price":0,"effect":{},"desc":"Mantequilla's nonno's antenna, bent into the shape of Tuscany. It crackles near Glowing Caps, and sometimes it talks."},
+  {"id":"glowing_cap","name":"Glowing Cap","category":"KEY","price":0,"effect":{},"desc":"A mushroom that glows softly green, but only for people on the right frequency. Mantequilla needs three."},
+  {"id":"sombrero","name":"Sombrero","category":"OUTFIT","price":0,"effect":{"outfit":"player_sombrero"},"desc":"Cosmetic. Mantequilla's sombrero. If anyone asks, you are from Vicchio. Wear it from the Stash Tin."}
 ]

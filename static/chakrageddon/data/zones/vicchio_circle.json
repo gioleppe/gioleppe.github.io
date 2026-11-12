@@ -1,0 +1,98 @@
+{
+  "zoneId": "vicchio_circle",
+  "name": "Vicchio Crop Circle",
+  "unlockedBy": "vicchio_open",
+  "paletteId": "UV_BLACKLIGHT",
+  "baseBpm": 128,
+  "ground": "crop",
+  "ground2": "path",
+  "wall": "cliff",
+  "encounter": "darkbush",
+  "rows": [
+    "tttttttttttttttttttt",
+    "t******************t",
+    "t******.......*****t",
+    "t****...*****...***t",
+    "t***..***...***..**t",
+    "t**..**...*...**..*t",
+    "t*..**..**.**..**..t",
+    ",...........**.**..t",
+    "t*..**..**.**..**..t",
+    "t**..**...*...**..*t",
+    "t***..***...***..**t",
+    "t****...*****...***t",
+    "t******.......*****t",
+    "tttttttttttttttttttt"
+  ],
+  "warps": [
+    {
+      "x": 0,
+      "y": 7,
+      "to": "bamboo_thicket",
+      "tx": 14,
+      "ty": 11,
+      "dir": "LEFT"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "crop_sign",
+      "x": 2,
+      "y": 6,
+      "tile": "sign",
+      "script": "sign_crop"
+    },
+    {
+      "id": "vicchio_saucer",
+      "x": 10,
+      "y": 7,
+      "tile": "ufo",
+      "script": "vicchiomorph",
+      "showWhen": {
+        "all": [
+          {
+            "any": [
+              {
+                "hour": [
+                  19,
+                  24
+                ]
+              },
+              {
+                "hour": [
+                  0,
+                  6
+                ]
+              }
+            ]
+          },
+          {
+            "intox": 0.6
+          }
+        ]
+      },
+      "hideWhen": {
+        "any": [
+          {
+            "caughtSpecies": "vicchiomorph"
+          },
+          {
+            "flag": "vicchio_rest"
+          }
+        ]
+      }
+    }
+  ],
+  "pickups": [
+    {
+      "id": "crop_coconut",
+      "x": 14,
+      "y": 7,
+      "item": "coconut_water",
+      "n": 2
+    }
+  ],
+  "resetOnEnter": [
+    "vicchio_rest"
+  ]
+}

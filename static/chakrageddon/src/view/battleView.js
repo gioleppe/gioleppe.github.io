@@ -474,8 +474,9 @@ export const battleView = {
       });
       const r = list(game, g, items, 5, BOX_Y + 3, W - 10, cur.party, { cols: 2, rowH: 14 });   // 155 px columns: longest name + Lv + HP
       cur.party = r.cursor;
-      if (forced && !this.pendingItem) drawText(g, 'Choose who goes next', W - 10, BOX_Y - 12, { color: C.yellow, align: 'right', shadow: C.ink });
-      if (b.phase === 'PHASE_SHIFT_OFFER') drawText(g, 'Swap in who?', W - 10, BOX_Y - 12, { color: C.yellow, align: 'right', shadow: C.ink });
+      // on the left, over your Astral's back: the right side holds your Serotonin panel
+      if (forced && !this.pendingItem) drawText(g, 'Choose who goes next', 10, BOX_Y - 12, { color: C.yellow, shadow: C.ink });
+      if (b.phase === 'PHASE_SHIFT_OFFER') drawText(g, 'Swap in who?', 10, BOX_Y - 12, { color: C.yellow, shadow: C.ink });
       if (r.chosen >= 0) {
         if (this.pendingItem) send({ type: 'BATTLE_ACTION', action: 'BAG', payloadId: this.pendingItem, target: r.chosen });
         else send({ type: 'BATTLE_ACTION', action: 'SWITCH', payloadId: r.chosen });

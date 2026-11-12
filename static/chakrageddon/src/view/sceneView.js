@@ -2,13 +2,15 @@
 // 'dream': the opening. You are lying on the beach; Banyan's face hangs over you against the sun,
 // your eyelids open slowly, and an Astral can drift in beside him.
 // 'crab_rave': the payoff of The Crab Rave. The four crabs dance on the night beach under lasers.
+// 'mantequilla', 'vicchio_landing': the Aliens of Vicchio (vicchioScenes.js); the landing follows the script's phase.
 import { W, H } from './CanvasRenderer.js';
+import { drawForage, drawLanding } from './vicchioScenes.js';
 
-export const SCENES = ['dream', 'crab_rave'];
+export const SCENES = ['dream', 'crab_rave', 'mantequilla', 'vicchio_landing'];
 const CRABS = ['crabcake', 'lobsterlad', 'ketacrab', 'wonkrab'];
 
 export const sceneView = {
-  t: 0, id: null, showT: 0, show: null,
+  t: 0, id: null, showT: 0, show: null, phase: 0, phaseT: 0,
 
   reset() { this.id = null; this.t = 0; },
   update(game, dt) {
@@ -16,12 +18,15 @@ export const sceneView = {
     if (!sc) { this.id = null; return; }
     if (sc.id !== this.id) { this.id = sc.id; this.t = 0; }
     if ((sc.show || null) !== this.show) { this.show = sc.show || null; this.showT = 0; }
-    this.t += dt; this.showT += dt;
+    if ((sc.phase || 0) !== this.phase) { this.phase = sc.phase || 0; this.phaseT = 0; }
+    this.t += dt; this.showT += dt; this.phaseT += dt;
   },
 
   draw(game, g) {
     const sc = game.engine?.state.scene;
     if (sc?.id === 'crab_rave') return this.crabRave(game, g);
+    if (sc?.id === 'mantequilla') return drawForage(game, g, this.t);
+    if (sc?.id === 'vicchio_landing') return drawLanding(game, g, this.t, this.phase, this.phaseT);
     if (!sc || sc.id !== 'dream') return;
     const still = game.settings.reducedMotion, t = still ? 2 : this.t;
     // sky: deep violet at the edges, warm in the middle where the sun is

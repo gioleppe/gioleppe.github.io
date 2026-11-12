@@ -42,6 +42,7 @@ export const LOOKS = {
   // the bosses' best moves
   strobe: { motion: 'contact', impact: 0.2, dur: 0.6 },
   eyebeam: { motion: 'ranged', impact: 0.14, dur: 0.55 },
+  abduct: { motion: 'gesture', impact: 0.4, dur: 1.0, shake: 0.2 },
   gravity: { motion: 'ranged', impact: 0.35, dur: 0.75, flip: true, shake: 0.3 },
   spores: { motion: 'gesture', impact: 0.3, dur: 0.9 },
   siren: { motion: 'ranged', impact: 0.3, dur: 0.7 },
@@ -128,6 +129,7 @@ function windup(g, e, t, dur, o) {
   const dir = e.from === 'p' ? 1 : -1;
   if (f.look === 'eyebeam') return eye(g, a, k);
   const b = SPOT[e.to];
+  if (f.look === 'abduct') { saucer(g, b.x, lerp(-12, b.y - 46, k), o.still ? 0 : t, k); return; }   // a saucer glides in over the target
   if (f.look === 'sunset') {   // the sky warms and the sun comes down towards the target
     veil(g, '#FF8A3D', (o.calm ? 0.06 : 0.18) * k);
     const sy = lerp(-14, b.y - 44, k);
@@ -381,6 +383,18 @@ const STRIKES = {
     if (c.calm) for (let i = 0; i < 3; i++) ring(g, b.x, b.y, 10 + i * 8, RAINBOW[i], 0.6 * (1 - k));
     impact(g, b.x, b.y, h); burst(g, c, b.x, b.y, h);
   },
+  abduct(g, c) {
+    // the saucer hangs over the target, a green beam comes down, and the target floats up in it, then drops
+    const { b, t, tr, h, k } = c, sy = b.y - 46;
+    veil(g, '#0A1A12', (c.calm ? 0.06 : 0.22) * (1 - h));
+    const open = clamp(tr * 1.6), w = 10 + open * 16;
+    g.globalAlpha = 0.45 * (1 - h); g.fillStyle = '#9AFFC8';
+    g.beginPath(); g.moveTo(b.x - 8, sy + 4); g.lineTo(b.x + 8, sy + 4); g.lineTo(b.x + w, b.y + 26); g.lineTo(b.x - w, b.y + 26); g.fill(); g.globalAlpha = 1;
+    for (let i = 0; i < c.n; i++) { const p = ((c.still ? 0.5 : t * 1.4) + i / c.n) % 1; sparkle(g, b.x - w * 0.6 + ((i * 37) % 10) / 10 * w * 1.2, lerp(b.y + 24, sy + 6, p), 1, i % 2 ? '#C8FFE0' : '#FFFFFF', 1 - h); }
+    saucer(g, b.x, sy, c.still ? 0 : t, 1 - clamp((h - 0.6) / 0.4));
+    if (h > 0) for (let i = 0; i < 3; i++) ring(g, b.x, b.y, 6 + h * 26 - i * 6, ['#4FE88A', '#C8FFE0', '#5FF4FF'][i], 1 - h);
+    if (k > 0.98) burst(g, c, b.x, b.y, h);
+  },
   eyebeam(g, c) {
     const { a, b, t, tr, h } = c, from = { x: a.x, y: a.y - 30 };
     eye(g, a, 1 - clamp((h - 0.6) / 0.4));
@@ -471,6 +485,13 @@ function beamLine(g, from, to, tr, h, cols, t, w, calm) {
   line(g, from.x, from.y, x, y, col, w, 1 - h);
   line(g, from.x, from.y, x, y, '#FFFFFF', 1, 1 - h);
   if (tr >= 1) blob(g, to.x, to.y, 4 + w, 4 + w, col, 0.8 * (1 - h));
+}
+/** a small flying saucer with chasing lights */
+function saucer(g, x, y, t, alpha = 1) {
+  if (alpha <= 0) return;
+  blob(g, x, y - 3, 7, 5, '#C8F4FF', alpha);
+  blob(g, x, y, 18, 5, '#8E939C', alpha); blob(g, x, y - 1, 16, 3, '#B8C0CC', alpha);
+  for (let i = 0; i < 5; i++) dot(g, x - 12 + i * 6, y + 2, 2, (Math.floor(t * 10) + i) % 2 ? '#4FE88A' : '#FFE066', alpha);
 }
 function bubble(g, x, y, col) {
   x = R(x); y = R(y);

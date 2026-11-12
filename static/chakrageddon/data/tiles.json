@@ -247,6 +247,10 @@
     "%": {
       "id": 1,
       "sprite": "records"
+    },
+    "*": {
+      "id": 1,
+      "sprite": "wheat"
     }
   }
 }

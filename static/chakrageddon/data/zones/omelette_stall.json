@@ -158,6 +158,26 @@
       "sprite": "local",
       "dir": "UP",
       "script": "stall_local"
+    },
+    {
+      "id": "vicchio_cap1",
+      "x": 20,
+      "y": 2,
+      "tile": "glowcap",
+      "script": "vicchio_cap1",
+      "showWhen": {
+        "all": [
+          {
+            "flag": "vicchio_plan"
+          },
+          {
+            "intox": 0.6
+          }
+        ]
+      },
+      "hideWhen": {
+        "flag": "vicchio_cap1"
+      }
     }
   ],
   "pickups": [
