@@ -876,5 +876,27 @@
         "hub"
       ]
     }
+  },
+  "glossary": {
+    "blotter": "key",
+    "passport": "key",
+    "Wristbands of Enlightenment": "key",
+    "Wristband": "key",
+    "Hydration": "rule",
+    "Serotonin": "rule",
+    "Vibes": "rule",
+    "Trip Journal": "rule",
+    "Fanny Pack": "rule",
+    "Stash Tin": "rule",
+    "Microdose": "rule",
+    "Come-up": "rule",
+    "Peaking": "rule",
+    "Ego gone": "rule",
+    "high": "rule",
+    "whiteout": "rule",
+    "Chai Tent": "place",
+    "Chai Mama tent": "place",
+    "VIP Shaman Council": "place",
+    "baggie": "item"
   }
 }

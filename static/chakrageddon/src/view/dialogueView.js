@@ -1,6 +1,7 @@
 // Dialogue box with typewriter text, pages and choices. Also used for whiteout and tent messages.
 import { W, H } from './CanvasRenderer.js';
 import { drawText, wrap, textWidth, panel, list, typeTag, bar, C } from './ui.js';
+import { termRuns } from './glossary.js';
 
 const BOX_H = 50, LINES = 3, STYLE_SPEED = { STIMULANT: 110, DOWNER: 28, PSYCHEDELIC: 55, NORMAL: 60 };
 // A choice box ignores confirm for this long after it opens, so mashing through the text
@@ -62,7 +63,8 @@ export const dialogueView = {
       if (d.style === 'PSYCHEDELIC') color = ['#8F00FF', '#C2185B', '#00796B', '#B34700'][(Math.floor(this.t * 3) + i) % 4];
       if (d.style === 'DOWNER') color = '#5A5F8A';
       const jitter = d.style === 'STIMULANT' ? Math.round(Math.sin(this.t * 40 + i * 2)) : 0;
-      drawText(g, part, 12 + jitter, y + 9 + i * 12, { color, scramble: intox > 0.9 ? 0.12 : 0, t: this.t });
+      const runs = d.style === 'PSYCHEDELIC' ? null : termRuns(line, game.data);   // key terms in colour (not over the rainbow)
+      drawText(g, part, 12 + jitter, y + 9 + i * 12, { color, scramble: intox > 0.9 ? 0.12 : 0, t: this.t, runs });
     });
     const total = lines.join('').length, done = this.shown >= total, lastPage = this.page === this.pages.length - 1;
     if (done && !(lastPage && d.choices) && Math.floor(this.t * 3) % 2) drawText(g, 'v', W - 16, y + BOX_H - 12, { color: C.magenta });

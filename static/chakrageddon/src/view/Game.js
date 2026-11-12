@@ -8,7 +8,7 @@ import { dialogueView } from './dialogueView.js';
 import { CUES, CUE_SECONDS } from './WebGLPostProcess.js';
 
 const SAVE_KEY = 'chakrageddon.save.v1', SETTINGS_KEY = 'chakrageddon.settings.v1';
-export const VERSION = '1.0.34';
+export const VERSION = '1.0.35';
 
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
@@ -83,7 +83,14 @@ export class Game {
     this.audio?.setTrack({ bpm: zone.baseBpm, mood: zone.paletteId, zone: zone.zoneId });
   }
 
-  say(text) { this.toast = { text, t: 1.6 + text.length * 0.035 }; this.remember(text); }
+  /** a notice at the top of the screen; several in a row wait their turn (a repeat of the one showing is dropped) */
+  say(text) {
+    this.remember(text);
+    const show = (t) => ({ text: t, t: 1.6 + t.length * 0.035 });
+    if (!this.toast) { this.toast = show(text); return; }
+    if (this.toast.text === text) { this.toast.t = Math.max(this.toast.t, 1.2); return; }
+    this.toasts = (this.toasts || []).filter((t) => t !== text).concat(text).slice(-3);
+  }
   remember(text, speaker) {
     const line = speaker ? `${speaker}: ${text}` : text;
     if (this.log[this.log.length - 1] === line) return;
@@ -169,7 +176,7 @@ export class Game {
   update(dt) {
     if (this.engine) this.engine.options.shift = this.settings.battleStyle !== 'set';   // Options: Battle style (Shift by default)
     this.t += dt;
-    if (this.toast && (this.toast.t -= dt) <= 0) this.toast = null;
+    if (this.toast && (this.toast.t -= dt) <= 0) { const next = this.toasts?.shift(); this.toast = next ? { text: next, t: 1.6 + next.length * 0.035 } : null; }
     if (this.screen === 'title') return;
     if (this.screen !== 'play') { this.extra[this.screen]?.update(this, dt); return; }
     const mode = this.engine.state.mode;

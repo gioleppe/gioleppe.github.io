@@ -35,7 +35,8 @@ export function textWidth(text) {
   return Math.max(0, w - 1);
 }
 
-/** opts: { color, shadow, align: 'left'|'center'|'right', scramble: 0..1, t } */
+/** opts: { color, shadow, align: 'left'|'center'|'right', scramble: 0..1, t, runs: [{ from, to, color }] }
+ *  runs colour parts of the text (key terms, see glossary.js); the shadow stays one colour */
 export function drawText(g, text, x, y, opts = {}) {
   text = String(text);
   const color = opts.color || '#FFFFFF';
@@ -45,13 +46,19 @@ export function drawText(g, text, x, y, opts = {}) {
   if (textProbe.log && text.trim()) textProbe.log.push({ text, x, y, w: textWidth(text), h: 8 });
   const passes = opts.shadow ? [[opts.shadow, 1, 1], [color, 0, 0]] : [[color, 0, 0]];
   for (const [col, ox, oy] of passes) {
-    const a = atlas(col);
-    let cx = x;
+    const a = atlas(col), main = col === color && ox === 0;
+    let cx = x, run = 0;
     for (let i = 0; i < text.length; i++) {
+      let a2 = a;
+      if (main && opts.runs?.length) {
+        while (run < opts.runs.length && opts.runs[run].to <= i) run++;
+        const r = opts.runs[run];
+        if (r && i >= r.from) a2 = atlas(r.color);
+      }
       let ch = text[i];
       if (opts.scramble && ch !== ' ' && ((i * 7919 + Math.floor((opts.t || 0) * 6)) % 100) < opts.scramble * 100) ch = String.fromCharCode(33 + ((i * 31 + Math.floor((opts.t || 0) * 9)) % 90));
       const idx = ch.charCodeAt(0) - 32, gl = GLYPHS[idx] || GLYPHS[31];
-      if (gl.w && idx > 0) g.drawImage(a, (GLYPHS[idx] ? idx : 31) * 6, 0, gl.w, 8, cx + ox, y + oy, gl.w, 8);
+      if (gl.w && idx > 0) g.drawImage(a2, (GLYPHS[idx] ? idx : 31) * 6, 0, gl.w, 8, cx + ox, y + oy, gl.w, 8);
       cx += gl.w + 1;
     }
   }
