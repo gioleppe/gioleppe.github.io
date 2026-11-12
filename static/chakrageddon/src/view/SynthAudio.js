@@ -46,10 +46,15 @@ const hash = (a, b) => { let h = (a * 374761393 + b * 668265263) >>> 0; h = ((h 
 export class SynthAudio {
   constructor() { this.ctx = null; this.vol = 0.7; this.bpm = 140; this.mood = null; this.zone = ''; this.prof = null; this.step = 0; this.next = 0; this.pending = { bpm: 140, mood: 'TITLE' }; this.lastSfx = {}; }
 
+  /** Call from inside a user gesture. Creates the audio graph the first time, and resumes it whenever it is not
+   *  running (a phone may start it suspended, or suspend it in the background). Returns true once sound is running. */
   unlock() {
-    if (this.ctx) { this.ctx.resume(); return; }
+    if (this.ctx) {
+      if (this.ctx.state !== 'running') { this.ctx.resume?.().catch?.(() => {}); this.nudge(); }
+      return this.ctx.state === 'running';
+    }
     const AC = window.AudioContext || window.webkitAudioContext;
-    if (!AC) return;
+    if (!AC) return true;                                 // no Web Audio: nothing to wait for
     const c = this.ctx = new AC();
     this.master = c.createGain(); this.master.gain.value = this.vol * 0.6;
     this.filter = c.createBiquadFilter(); this.filter.type = 'lowpass'; this.filter.frequency.value = 12000;   // a gentle top end; intoxication closes it further
@@ -62,6 +67,13 @@ export class SynthAudio {
     this.noise = buf;
     setInterval(() => this.tick(), 25);
     if (this.pending) this.setTrack(this.pending);
+    this.nudge();
+    if (c.state !== 'running') c.resume?.().catch?.(() => {});
+    return c.state === 'running';
+  }
+  /** iOS only lets a context make sound after something has played inside a gesture: a one-sample silence */
+  nudge() {
+    try { const s = this.ctx.createBufferSource(); s.buffer = this.ctx.createBuffer(1, 1, 22050); s.connect(this.ctx.destination); s.start(0); } catch { /* not needed elsewhere */ }
   }
   suspend() { this.ctx?.suspend(); }
   resume() { if (this.ctx && this.vol > 0) this.ctx.resume(); }
