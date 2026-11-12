@@ -11,7 +11,8 @@
 //   { set / clear: flag } { give: item, n } { take: item, n } { giveMon: species, level } { pay: n, else: label }
 //   { heal } { shop: id } { battle: trainerId } { wild: species, level } { wristband: id }
 //   { warp: { zone, x, y, dir } } { run: scriptId } { credits } { end }
-//   { scene: id, show?: speciesId }  full-screen backdrop behind the dialogue (the opening dream); { scene: null } ends it
+//   { scene: id, show?: speciesId, phase?: n }  full-screen backdrop behind the dialogue (the opening dream); { scene: null } ends it
+//                                    phase: a scene with several beats (the Vicchio landing) moves on to beat n
 //   a choice with nameChoice: true also sets the player's name to the chosen answer
 // Text may contain {player}, replaced by the player's name.
 // The interpreter runs until it has something to show, then waits for ADVANCE_DIALOGUE.
@@ -69,7 +70,7 @@ export function runScript(ctx) {
     if (st.ifParty !== undefined) { if (s.party.length >= st.ifParty) jump(sc, st.goto); continue; }
     if (st.set) { s.flags[st.set] = 1; continue; }
     if (st.clear) { delete s.flags[st.clear]; continue; }
-    if (st.scene !== undefined) { s.scene = st.scene ? { id: st.scene, ...(st.show ? { show: st.show } : {}) } : null; continue; }
+    if (st.scene !== undefined) { s.scene = st.scene ? { id: st.scene, ...(st.show ? { show: st.show } : {}), ...(st.phase ? { phase: st.phase } : {}) } : null; continue; }
     if (st.choice) { sc.choiceGoto = st.goto; sc.nameChoice = st.nameChoice ? st.choice : null; return say(ctx, st.s, st.t, st.style, st.choice, st); }
     if (st.t !== undefined) return say(ctx, st.s, st.t, st.style);
     if (st.give) {

@@ -288,8 +288,18 @@ export const overworldView = {
         this.char(game, g, s.outfit || 'player', s.player.dir, this.anim ? this.walkFlip : 0, px - cx, py - cy - 10 - (onWater ? 4 : 0));
       } else if (e.npc) {
         const n = e.npc, dx = Math.round(e.nx * TS - cx), dy = Math.round(e.ny * TS - cy);
-        if (n.tile) this.tile(game, g, n.tile, dx, dy);
-        else {
+        if (n.tile) {
+          this.tile(game, g, n.tile, dx, dy);
+          // a Glowing Cap (or the saucer) gives off motes of green light, so it can be spotted from across the zone
+          if ((n.tile === 'glowcap' || n.tile === 'ufo') && !game.settings.reducedMotion) {
+            for (let i = 0; i < 4; i++) {
+              const k = (this.t * 0.7 + i / 4) % 1;
+              g.globalAlpha = 1 - k; g.fillStyle = i % 2 ? '#C8FFE0' : '#4FE88A';
+              g.fillRect(dx + 3 + ((i * 5) % 11), Math.round(dy + 10 - k * 18), 1, 1);
+            }
+            g.globalAlpha = 1;
+          }
+        } else {
           // standing people shift their weight now and then; a few have a loop of their own
           const still = game.settings.reducedMotion, h = hashOf(n.id), fidget = !still && !e.walking && ((this.t + (h % 97) / 10) % 4.5) < 0.25;
           const nod = !still && n.sprite === 'dj' ? Math.floor(this.t * (game.data.zones[s.zoneId].baseBpm || 140) / 60) % 2 : 0;

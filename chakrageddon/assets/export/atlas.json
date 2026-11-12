@@ -59,7 +59,11 @@
   "notice": 54,
   "tapestry": 55,
   "sunorb": 56,
-  "records": 57
+  "records": 57,
+  "glowcap": 58,
+  "wheat": 59,
+  "crop": 60,
+  "ufo": 61
  },
  "props": {
   "palm": {
@@ -143,6 +147,8 @@
   "promoter": "char_promoter.png",
   "shaman": "char_shaman.png",
   "tourist": "char_tourist.png",
+  "mantequilla": "char_mantequilla.png",
+  "player_sombrero": "char_player_sombrero.png",
   "wook": "char_wook.png"
  },
  "creatures": {
@@ -183,7 +189,8 @@
   "selfiend": "mon_selfiend.png",
   "sunraga": "mon_sunraga.png",
   "bassilisk": "mon_bassilisk.png",
-  "mandalord": "mon_mandalord.png"
+  "mandalord": "mon_mandalord.png",
+  "vicchiomorph": "mon_vicchiomorph.png"
  },
  "icons": {
   "app": "icon.png"
@@ -218,6 +225,8 @@
   "promoter": "portrait_promoter.png",
   "shaman": "portrait_shaman.png",
   "tourist": "portrait_tourist.png",
+  "mantequilla": "portrait_mantequilla.png",
+  "player_sombrero": "portrait_player_sombrero.png",
   "wook": "portrait_wook.png"
  }
 }

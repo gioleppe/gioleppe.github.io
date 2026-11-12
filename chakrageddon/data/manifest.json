@@ -29,7 +29,8 @@
     "guesthouse",
     "dj_booth",
     "sunset_villa",
-    "green_room"
+    "green_room",
+    "vicchio_circle"
   ],
   "goals": [
     {
@@ -207,6 +208,11 @@
       2,
       7,
       "Temple"
+    ],
+    "vicchio_circle": [
+      3,
+      3,
+      "Vicchio"
     ]
   },
   "quests": [
@@ -396,12 +402,12 @@
           }
         },
         {
-          "text": "Bag every Astral in the Journal (38) and show Banyan.",
+          "text": "Bag every Astral in the Journal (39) and show Banyan.",
           "done": {
             "flag": "journal_36"
           },
           "ready": {
-            "caught": 38
+            "caught": 39
           },
           "npc": {
             "zone": "driftwood_beach",
@@ -781,6 +787,82 @@
           }
         }
       ]
+    },
+    {
+      "id": "vicchio_aliens",
+      "name": "The Aliens of Vicchio",
+      "giver": {
+        "zone": "bamboo_thicket",
+        "npc": "mantequilla"
+      },
+      "start": {
+        "flag": "met_mantequilla"
+      },
+      "steps": [
+        {
+          "text": "Mantequilla only talks aliens with people on the right frequency. Go back to him in the Bamboo Thicket while Peaking.",
+          "done": {
+            "flag": "vicchio_plan"
+          },
+          "npc": {
+            "zone": "bamboo_thicket",
+            "id": "mantequilla"
+          },
+          "ready": {
+            "intox": 0.6
+          }
+        },
+        {
+          "text": "Find the first Glowing Cap while Peaking. Mantequilla saw eggs and smoke: the north-east corner of the Omelette Stall.",
+          "done": {
+            "flag": "vicchio_cap1"
+          }
+        },
+        {
+          "text": "Find the second Glowing Cap while Peaking: the dark Forest Stage, in the south-east corner past the big mushroom.",
+          "done": {
+            "flag": "vicchio_cap2"
+          }
+        },
+        {
+          "text": "Find the third Glowing Cap while Peaking: the east shore of Sweetwater Lake.",
+          "done": {
+            "flag": "vicchio_cap3"
+          }
+        },
+        {
+          "text": "Bring the three caps to Mantequilla in the Bamboo Thicket after dark (7 PM to 6 AM).",
+          "done": {
+            "flag": "vicchio_open"
+          },
+          "npc": {
+            "zone": "bamboo_thicket",
+            "id": "mantequilla"
+          },
+          "ready": {
+            "any": [
+              {
+                "hour": [
+                  19,
+                  24
+                ]
+              },
+              {
+                "hour": [
+                  0,
+                  6
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "text": "Bag the Vicchiomorph in the Vicchio Crop Circle, east through the bamboo. It lands only at night, for people who are Peaking.",
+          "done": {
+            "caughtSpecies": "vicchiomorph"
+          }
+        }
+      ]
     }
   ],
   "worldmap": {
@@ -874,6 +956,10 @@
         21,
         13,
         "hub"
+      ],
+      "vicchio_circle": [
+        21,
+        6
       ]
     }
   },
@@ -897,6 +983,7 @@
     "Chai Tent": "place",
     "Chai Mama tent": "place",
     "VIP Shaman Council": "place",
-    "baggie": "item"
+    "baggie": "item",
+    "Vicchio": "place"
   }
 }

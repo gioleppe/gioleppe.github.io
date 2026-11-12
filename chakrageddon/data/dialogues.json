@@ -418,7 +418,7 @@
       "label": "c36"
     },
     {
-      "ifCaught": 38,
+      "ifCaught": 39,
       "goto": "j36"
     },
     {
@@ -2031,6 +2031,542 @@
     {
       "s": "Crab Raver",
       "t": "Still hearing it? The second bass? Good. Once you hear it, you never stop."
+    }
+  ],
+  "mantequilla": [
+    {
+      "if": "vicchio_open",
+      "goto": "after"
+    },
+    {
+      "if": "met_mantequilla",
+      "goto": "again"
+    },
+    {
+      "set": "met_mantequilla"
+    },
+    {
+      "scene": "mantequilla"
+    },
+    {
+      "t": "Somebody is crouched in the bamboo, picking mushrooms into a basket and humming. There is a guitarron on his back, bigger than he is."
+    },
+    {
+      "s": "Mantequilla",
+      "t": "Shh. Shhh. Don't move, amigo. You'll thcare the mutthroomth."
+    },
+    {
+      "s": "Mantequilla",
+      "t": "Thethe ones are good. Thethe ones are... lithening. Thethe ones are lithening TO ME.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "s": "Mantequilla",
+      "t": "Ah. Thorry. Mantequilla. Mantequilla el Mexicano. From Vicchio, in Tuthcany. Yeth, I know. It ith a long thtory and the mutthroomth are tired of it."
+    },
+    {
+      "s": "Mantequilla",
+      "t": "I drove all the way down here, bimbo. Thix thouthand kilometreth in a Fiat Panda. My nonno thwore it: every year, the alienth of Vicchio follow the rave."
+    },
+    {
+      "s": "Mantequilla",
+      "t": "They thpeak in mycelium. They thing in thquare waveth. The thky ith a thieve and they drip through the holeth, one drop, two drop, a drop that ith a door...",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "s": "Mantequilla",
+      "t": "...anyway."
+    },
+    {
+      "ifIntox": 0.6,
+      "goto": "plan_scene"
+    },
+    {
+      "s": "Mantequilla",
+      "t": "You are not on the right frequency. I can thee it in your eyeth. Too thober. Like a tourithtt in the Duomo."
+    },
+    {
+      "s": "Mantequilla",
+      "t": "Come back when you are Peaking, amigo. Then we talk about the Vicchio onth."
+    },
+    {
+      "scene": null
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "again"
+    },
+    {
+      "ifCond": {
+        "all": [
+          {
+            "has": "glowing_cap",
+            "n": 3
+          },
+          {
+            "flag": "vicchio_plan"
+          }
+        ]
+      },
+      "goto": "caps"
+    },
+    {
+      "if": "vicchio_plan",
+      "goto": "remind"
+    },
+    {
+      "ifIntox": 0.6,
+      "goto": "plan"
+    },
+    {
+      "s": "Mantequilla",
+      "t": "Thtill too thober, amigo. Peaking. P, E, A, K... the retht of the letterth ecthape me."
+    },
+    {
+      "s": "Mantequilla",
+      "t": "The mutthroomth agree with me. They alwayth agree with me. It ith why I like them.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "plan_scene"
+    },
+    {
+      "scene": null
+    },
+    {
+      "label": "plan"
+    },
+    {
+      "s": "Mantequilla",
+      "t": "Oh! Oh, look at you. Your pupilth are like two thatellite dithheth. NOW we can talk."
+    },
+    {
+      "s": "Mantequilla",
+      "t": "The alienth of Vicchio do not land for anybody. They anthwer a thignal: three Glowing Capth, in a circle, under the thtarth."
+    },
+    {
+      "s": "Mantequilla",
+      "t": "The capth only grow for people who are high. Thober people walk right over them. Like tourithtth over a fretheo."
+    },
+    {
+      "s": "Mantequilla",
+      "t": "Take thith. My nonno'th antenna. It crackleth when a cap ith near, and I can talk to you through it. Do not athk how. I do not know how."
+    },
+    {
+      "give": "vicchio_antenna",
+      "n": 1
+    },
+    {
+      "set": "vicchio_plan"
+    },
+    {
+      "s": "Mantequilla",
+      "t": "One at a time, amigo. The capth are shy. When you find one, the antenna will tell you the next."
+    },
+    {
+      "s": "Mantequilla",
+      "t": "The first cap... I thee it. Eggth. Thmoke. A man flipping thomething at dawn, very theriouth about it."
+    },
+    {
+      "s": "Mantequilla",
+      "t": "The Omelette Thtall, amigo. The north-eatht corner, where nobody queueth."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "remind"
+    },
+    {
+      "if": "vicchio_cap2",
+      "goto": "remind3"
+    },
+    {
+      "if": "vicchio_cap1",
+      "goto": "remind2"
+    },
+    {
+      "s": "Mantequilla",
+      "t": "The capth, amigo. The capth! Let me lithen to the bamboo...",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "s": "Mantequilla",
+      "t": "The first cap... I thee it. Eggth. Thmoke. A man flipping thomething at dawn, very theriouth about it."
+    },
+    {
+      "s": "Mantequilla",
+      "t": "The Omelette Thtall, amigo. The north-eatht corner, where nobody queueth."
+    },
+    {
+      "s": "Mantequilla",
+      "t": "And be Peaking when you get there, or you will thee nothing but eggth."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "remind2"
+    },
+    {
+      "s": "Mantequilla",
+      "t": "One cap! It hummth in your pocket. I can hear it from here. The next one...",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "s": "Mantequilla",
+      "t": "The thecond one... ith dark there. Very dark. Big thpeakerth breathing in the jungle."
+    },
+    {
+      "s": "Mantequilla",
+      "t": "The Forest Stage. The thouth-eatht corner, patht the big mutthroom. Bring a light, or be one."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "remind3"
+    },
+    {
+      "s": "Mantequilla",
+      "t": "Two capth! Two! The thecond one thmellth of thubwoofer. Now the latht...",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "s": "Mantequilla",
+      "t": "The latht one... water. Thtill water. A lake that ith thweet, like my nonna'th vin thanto."
+    },
+    {
+      "s": "Mantequilla",
+      "t": "Sweetwater Lake, on the eatht shore, where the lake pointth at the thky."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "caps"
+    },
+    {
+      "ifCond": {
+        "any": [
+          {
+            "hour": [
+              19,
+              24
+            ]
+          },
+          {
+            "hour": [
+              0,
+              6
+            ]
+          }
+        ]
+      },
+      "goto": "landing"
+    },
+    {
+      "s": "Mantequilla",
+      "t": "Three capth! But look at thith thky. Thun everywhere. The alienth of Vicchio do not like the thun, it maketh them thweaty."
+    },
+    {
+      "s": "Mantequilla",
+      "t": "Come back after dark, amigo. Theven o'clock, when the moon comth out to dance."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "landing"
+    },
+    {
+      "s": "Mantequilla",
+      "t": "Three capth. Night. You, high ath a kite. It ith time, amigo."
+    },
+    {
+      "scene": "vicchio_landing"
+    },
+    {
+      "t": "Mantequilla lays the caps in a triangle on the ground. One after the other, they brighten."
+    },
+    {
+      "s": "Mantequilla",
+      "t": "Now... the thignal."
+    },
+    {
+      "scene": "vicchio_landing",
+      "phase": 1
+    },
+    {
+      "t": "He swings the guitarron round and plays three notes. Low. Lower. Lowest. The bamboo leans in to listen."
+    },
+    {
+      "s": "Mantequilla",
+      "t": "VICCHIO! Thiamo qui! We are HERE!"
+    },
+    {
+      "scene": "vicchio_landing",
+      "phase": 2
+    },
+    {
+      "t": "Something hums above the bamboo. A light comes down, green and very patient.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "s": "Mantequilla",
+      "t": "Nonno... Nonno, you were right. Nonno, you were RIGHT!"
+    },
+    {
+      "scene": "vicchio_landing",
+      "phase": 3
+    },
+    {
+      "t": "The light settles somewhere past the bamboo, to the east. The canes part like a curtain. There is a path there that was not there before."
+    },
+    {
+      "take": "glowing_cap",
+      "n": 3
+    },
+    {
+      "set": "vicchio_open"
+    },
+    {
+      "s": "Mantequilla",
+      "t": "Go, amigo. Through the bamboo. They came for uth both, but I am thcared, and you are the one with the baggieth."
+    },
+    {
+      "s": "Mantequilla",
+      "t": "Oh, and take thith. My thombrero. If they athk, you are from Vicchio."
+    },
+    {
+      "give": "sombrero",
+      "n": 1
+    },
+    {
+      "scene": null
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "after"
+    },
+    {
+      "ifCond": {
+        "caughtSpecies": "vicchiomorph"
+      },
+      "goto": "done"
+    },
+    {
+      "s": "Mantequilla",
+      "t": "They are there, in the crop circle, eatht through the bamboo. Only at night, and only for the Peaking."
+    },
+    {
+      "s": "Mantequilla",
+      "t": "Bring me a photo. No. Do not bring me a photo. They hate photoh. It thtealth their thoul. Or ourth. One of the thoulth.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "done"
+    },
+    {
+      "s": "Mantequilla",
+      "t": "You bagged one? A Vicchiomorph, in your little journal?"
+    },
+    {
+      "s": "Mantequilla",
+      "t": "Nonno would have cried. I am crying. It ith partly the mutthroomth."
+    },
+    {
+      "s": "Mantequilla",
+      "t": "When you thee Tuthcany on a map, amigo, wave. Thomething will wave back.",
+      "style": "PSYCHEDELIC"
+    }
+  ],
+  "vicchio_cap1": [
+    {
+      "t": "A cluster of mushrooms, glowing softly green. Nobody else seems to notice them.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "give": "glowing_cap",
+      "n": 1
+    },
+    {
+      "set": "vicchio_cap1"
+    },
+    {
+      "t": "The Vicchio Antenna crackles."
+    },
+    {
+      "s": "Mantequilla (antenna)",
+      "t": "*krzzt* ...amigo? You found it! I can feel it from here. It tickleth my teeth."
+    },
+    {
+      "s": "Mantequilla (antenna)",
+      "t": "The thecond one... ith dark there. Very dark. Big thpeakerth breathing in the jungle."
+    },
+    {
+      "s": "Mantequilla (antenna)",
+      "t": "The Forest Stage. The thouth-eatht corner, patht the big mutthroom. Bring a light, or be one."
+    }
+  ],
+  "vicchio_cap2": [
+    {
+      "t": "A cluster of mushrooms, glowing softly green. Nobody else seems to notice them.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "give": "glowing_cap",
+      "n": 1
+    },
+    {
+      "set": "vicchio_cap2"
+    },
+    {
+      "t": "The Vicchio Antenna crackles."
+    },
+    {
+      "s": "Mantequilla (antenna)",
+      "t": "*krzzt* Two! Two capth! My antenna ith dancing. Lithen, the latht one..."
+    },
+    {
+      "s": "Mantequilla (antenna)",
+      "t": "The latht one... water. Thtill water. A lake that ith thweet, like my nonna'th vin thanto."
+    },
+    {
+      "s": "Mantequilla (antenna)",
+      "t": "Sweetwater Lake, on the eatht shore, where the lake pointth at the thky."
+    }
+  ],
+  "vicchio_cap3": [
+    {
+      "t": "A cluster of mushrooms, glowing softly green. Nobody else seems to notice them.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "give": "glowing_cap",
+      "n": 1
+    },
+    {
+      "set": "vicchio_cap3"
+    },
+    {
+      "t": "The Vicchio Antenna crackles."
+    },
+    {
+      "s": "Mantequilla (antenna)",
+      "t": "*krzzt* THREE! Amigo, that ith all of them! Bring them to me in the bamboo."
+    },
+    {
+      "s": "Mantequilla (antenna)",
+      "t": "At night, eh? After theven. The alienth do not like the thun."
+    }
+  ],
+  "sign_crop": [
+    {
+      "t": "Wheat, flattened in perfect circles. Nobody grows wheat in Goa."
+    },
+    {
+      "ifCond": {
+        "any": [
+          {
+            "hour": [
+              19,
+              24
+            ]
+          },
+          {
+            "hour": [
+              0,
+              6
+            ]
+          }
+        ]
+      },
+      "goto": "night"
+    },
+    {
+      "t": "In daylight it is just a field. A very tidy field."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "night"
+    },
+    {
+      "t": "Something hums in the middle of the circle. You can feel it in your fillings.",
+      "style": "PSYCHEDELIC"
+    }
+  ],
+  "vicchiomorph": [
+    {
+      "t": "A pocket-sized saucer hovers over the middle of the circle. Something lanky sits in it, and waves at you with one long arm.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "Its eyes are very big and very black, and there are stars in them.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "Wave back?",
+      "choice": [
+        "Wave back",
+        "Back away"
+      ],
+      "goto": [
+        "go",
+        "no"
+      ]
+    },
+    {
+      "label": "go"
+    },
+    {
+      "set": "met_vicchiomorph"
+    },
+    {
+      "set": "vicchio_rest"
+    },
+    {
+      "wild": "vicchiomorph",
+      "level": 28
+    },
+    {
+      "ifCond": {
+        "caughtSpecies": "vicchiomorph"
+      },
+      "goto": "caught"
+    },
+    {
+      "t": "The saucer zips up into the stars. It will be back tomorrow night. It likes it here."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "caught"
+    },
+    {
+      "t": "The saucer drifts off, empty. Somewhere in Tuscany, a nonno smiles in his sleep."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "no"
+    },
+    {
+      "t": "You back away. It waves again, slower. It has come a long way. It can wait."
     }
   ]
 }

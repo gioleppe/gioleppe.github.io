@@ -18,8 +18,8 @@
     "wwwwwwwwwwwwwwww",
     "wwwwwwwwwwwwwwww",
     "I...I..,,..~~~.I",
-    "I.~~I..,,.II...I",
-    "I......,,......I",
+    "I.~~I..,,.IIM..I",
+    "I......,,......,",
     "IIIIIIIffIIIIIII",
     "I....I.,,.I....I",
     "I.II...,,...II.I",
@@ -57,6 +57,14 @@
       "tx": 11,
       "ty": 2,
       "dir": "DOWN"
+    },
+    {
+      "x": 15,
+      "y": 11,
+      "to": "vicchio_circle",
+      "tx": 1,
+      "ty": 7,
+      "dir": "RIGHT"
     }
   ],
   "npcs": [
@@ -77,6 +85,28 @@
       "dir": "LEFT",
       "trainer": "thicket_spinner",
       "sight": 5
+    },
+    {
+      "id": "mantequilla",
+      "x": 15,
+      "y": 11,
+      "sprite": "mantequilla",
+      "dir": "LEFT",
+      "script": "mantequilla",
+      "hideWhen": {
+        "flag": "vicchio_open"
+      }
+    },
+    {
+      "id": "mantequilla_after",
+      "x": 13,
+      "y": 10,
+      "sprite": "mantequilla",
+      "dir": "RIGHT",
+      "script": "mantequilla",
+      "showWhen": {
+        "flag": "vicchio_open"
+      }
     }
   ],
   "pickups": [
