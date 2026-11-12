@@ -10,7 +10,7 @@ const renderer = new CanvasRenderer(document.getElementById('game'));
 if (!new URLSearchParams(location.search).has('nogl')) { const post = new WebGLPostProcess(renderer.canvas); if (post.ok) renderer.post = post; }
 const g = renderer.g;
 let audio = null;
-const input = new InputAdapter(renderer, { onFirstGesture: () => audio?.unlock() });
+const input = new InputAdapter(renderer, { onGesture: () => audio?.unlock() });
 renderer.resize();
 
 function splash(text) {
@@ -55,7 +55,7 @@ async function boot() {
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
-  document.addEventListener('visibilitychange', () => { last = performance.now(); if (document.hidden) audio?.suspend(); else audio?.resume(); });
+  document.addEventListener('visibilitychange', () => { last = performance.now(); if (document.hidden) audio?.suspend(); else { audio?.resume(); input.relock?.(); } });
 }
 
 boot().catch((e) => { console.error(e); splash('Could not start: ' + e.message); });

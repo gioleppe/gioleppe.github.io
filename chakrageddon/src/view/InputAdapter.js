@@ -7,15 +7,19 @@ const KEYS = {
 export const DEFAULT_KEYS = KEYS;
 
 export class InputAdapter {
-  constructor(renderer, { onFirstGesture } = {}) {
+  constructor(renderer, { onGesture } = {}) {
     this.renderer = renderer;
     this.held = {};        // button -> true while down
     this.edges = {};       // button -> pressed this frame
     this.taps = [];        // canvas taps this frame, in game coordinates
     this.keys = { ...KEYS };
     this.lastDir = null;
+    // Browsers only let sound start inside a user gesture, and on phones a touch's pointerdown does not count
+    // (pointerup and touchend do). So every gesture asks; onGesture returns true once sound is running.
     let unlocked = false;
-    const gesture = () => { if (!unlocked) { unlocked = true; onFirstGesture?.(); } };
+    const gesture = () => { if (!unlocked) unlocked = !!onGesture?.(); };
+    for (const type of ['pointerup', 'touchend', 'click']) addEventListener(type, gesture, { capture: true, passive: true });
+    this.relock = () => { unlocked = false; };   // the page was hidden: the phone may have suspended the sound
 
     addEventListener('keydown', (e) => {
       if (this.capture) { e.preventDefault(); const fn = this.capture; this.capture = null; fn(e.code); return; }
