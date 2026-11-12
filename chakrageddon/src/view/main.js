@@ -27,13 +27,14 @@ async function boot() {
   if (audioMod) audio = new audioMod.SynthAudio();
   const game = new Game({ assets, input, renderer, audio });
   audio?.setVolume(game.settings.volume);
-  for (const mod of ['./sceneView.js', './battleView.js', './menuView.js', './shopView.js', './settingsView.js', './creditsView.js', './noticeView.js', './quickView.js']) {
+  for (const mod of ['./sceneView.js', './battleView.js', './menuView.js', './shopView.js', './settingsView.js', './creditsView.js', './noticeView.js', './quickView.js', './introView.js']) {
     const m = await optional(mod);
     if (m) m.install(game);
   }
   window.__game = game;   // handy for debugging and automated checks
   const q = new URLSearchParams(location.search);
   if (q.get('scenario')) game.loadScenario(q.get('scenario'), q.get('v'));   // dev: ?scenario=before_boss_5
+  else if (!q.has('nointro')) game.extra.intro?.start(game);                   // the logo and the intro (?nointro skips them)
   input.applyKeys(game.settings.keys);
   // a lost WebGL context (common when a phone backgrounds the tab): save, then start clean
   renderer.canvas.addEventListener('webglcontextlost', () => { game.save(false); setTimeout(() => location.reload(), 300); });
