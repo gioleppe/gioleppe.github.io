@@ -99,6 +99,18 @@ function useTechnique(ctx, id, x, y, dir, zone) {
 
 export function isNight(state) { const h = Math.floor(state.clock / 60) % 24; return h >= 19 || h < 6; }
 
+// Dusk and dawn are two-hour ramps centred on the turn (19:00 and 06:00), so the light changes gradually and
+// isNight flips halfway through, when it is half dark.
+export const DUSK = [18 * 60, 20 * 60], DAWN = [5 * 60, 7 * 60];
+const smooth = (k) => { const x = Math.max(0, Math.min(1, k)); return x * x * (3 - 2 * x); };
+/** how dark it is outdoors, 0 (day) to 1 (night), for a clock in minutes */
+export function nightLevel(clock) {
+  const m = ((clock % 1440) + 1440) % 1440;
+  if (m >= DUSK[0] && m < DUSK[1]) return smooth((m - DUSK[0]) / (DUSK[1] - DUSK[0]));
+  if (m >= DAWN[0] && m < DAWN[1]) return 1 - smooth((m - DAWN[0]) / (DAWN[1] - DAWN[0]));
+  return m >= DUSK[1] || m < DAWN[0] ? 1 : 0;
+}
+
 export function enterZone(ctx, zoneId, x, y, dir) {
   if (ctx.state.npcPos) delete ctx.state.npcPos[zoneId];          // wanderers start from home on each visit
   for (const f of ctx.data.zones[zoneId].resetOnEnter || []) delete ctx.state.flags[f];   // e.g. a legendary that slipped away comes back
@@ -122,7 +134,10 @@ export function step(ctx, dir) {
     return bump(ctx);
   }
   s.player.x = nx; s.player.y = ny;
-  s.steps++; s.clock = (s.clock + 1) % 1440;
+  s.steps++;
+  // the festival clock: one minute every few steps, so an hour is about a minute of walking
+  s.clockSteps = (s.clockSteps || 0) + 1;
+  if (s.clockSteps >= (ctx.data.rules.stepsPerMinute || 1)) { s.clockSteps = 0; s.clock = (s.clock + 1) % 1440; }
   s.intox = Math.max(0, s.intox - (ctx.data.rules.intoxStepDecay ?? 0.002));
   if (s.repel > 0) s.repel--;
   const id = logicAt(ctx, nx, ny, zone);

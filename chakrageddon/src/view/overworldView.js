@@ -1,7 +1,7 @@
 // Overworld: tiles, characters, camera, smooth steps. Reads engine state, never decides rules.
 import { W, H } from './CanvasRenderer.js';
 import { drawText, textWidth, wrap, panel, C } from './ui.js';
-import { charAt, npcVisible, npcPos, isNight } from '../core/OverworldEngine.js';
+import { charAt, npcVisible, npcPos, isNight, nightLevel } from '../core/OverworldEngine.js';
 import { bandOf, bandIndex } from '../core/intox.js';
 import { routeHint } from '../core/goals.js';
 import { hashOf } from './anim.js';
@@ -25,7 +25,86 @@ function drawMarker(g, mark, x, y) {
 }
 
 const TS = 16, STEP = 0.15;
+
+// Interior walls: a wall tile shows its front (the panelled face) only where open floor lies right below it,
+// as the back wall of a room. Side and bottom walls are seen from above: the top of the wall, with a lit rim
+// on each edge that faces the room. (They used to repeat the face, so side walls read as stacked panels.)
+const WALL_TOPS = {
+  inwall: { fill: '#7A5230', grain: '#6A4426', rim: '#D8B48A', line: '#4A2C14' },
+};
+const isWall = (cls, sp) => cls === sp || cls === 'out';
+/** the top of a wall at dx, dy; open[i] (up, right, down, left) says that side faces the room and gets a rim */
+function wallTop(g, c, dx, dy, open) {
+  g.fillStyle = c.fill; g.fillRect(dx, dy, TS, TS);
+  g.fillStyle = c.grain; g.fillRect(dx, dy + 5, TS, 1); g.fillRect(dx, dy + 11, TS, 1);
+  const [up, right, , left] = open;
+  g.fillStyle = c.rim;
+  if (up) g.fillRect(dx, dy, TS, 2);
+  if (left) g.fillRect(dx, dy, 2, TS);
+  if (right) g.fillRect(dx + TS - 2, dy, 2, TS);
+  g.fillStyle = c.line;
+  if (up) g.fillRect(dx + (left ? 2 : 0), dy + 2, TS - (left ? 2 : 0) - (right ? 2 : 0), 1);
+  if (left) g.fillRect(dx + 2, dy + (up ? 2 : 0), 1, TS - (up ? 2 : 0));
+  if (right) g.fillRect(dx + TS - 3, dy + (up ? 2 : 0), 1, TS - (up ? 2 : 0));
+}
 const DIR_OF = { up: 'UP', down: 'DOWN', left: 'LEFT', right: 'RIGHT' };
+
+/** outdoor light for the clock: a night tint that deepens through dusk and lifts through dawn, and a warm glow
+ *  at the turn (orange at dusk, pink at dawn) */
+function daylight(g, clock) {
+  const k = nightLevel(clock);
+  if (k > 0) { g.fillStyle = `rgba(20,6,60,${+(0.42 * k).toFixed(3)})`; g.fillRect(0, 0, W, H); }
+  const warm = 4 * k * (1 - k);
+  if (warm > 0.02) {
+    const dusk = ((clock % 1440) + 1440) % 1440 >= 12 * 60;
+    g.fillStyle = dusk ? `rgba(255,110,50,${+(0.16 * warm).toFixed(3)})` : `rgba(255,160,140,${+(0.12 * warm).toFixed(3)})`;
+    g.fillRect(0, 0, W, H);
+  }
+}
+
+export const SKY_T = 2.6;
+const BAND_Y = 6, BAND_H = 50;
+/** a band across the top of the screen (night sky with stars, or blue sky) with the moon or the sun sweeping
+ *  through it at double size, and a word on what just happened */
+function drawSky(g, sky, still) {
+  const k = sky.t / SKY_T, a = Math.max(0, Math.min(1, sky.t / 0.3, (SKY_T - sky.t) / 0.3));
+  const moon = sky.icon === 'moon';
+  const x = Math.round(still ? W / 2 : -24 + k * (W + 48)), y = BAND_Y + 20 - (still ? 0 : Math.round(Math.sin(k * Math.PI) * 2));
+  g.save(); g.globalAlpha = a;
+  g.fillStyle = moon ? 'rgba(11,3,20,0.82)' : 'rgba(63,150,176,0.82)'; g.fillRect(0, BAND_Y, W, BAND_H);
+  g.fillStyle = moon ? '#6A4A9A' : '#BDE8F0'; g.fillRect(0, BAND_Y, W, 1); g.fillRect(0, BAND_Y + BAND_H - 1, W, 1);
+  if (moon) for (let i = 0; i < 26; i++) {           // stars all along the band, twinkling
+    const sx = (i * 53 + 7) % W, sy = BAND_Y + 3 + ((i * 29) % (BAND_H - 6)), on = still || (Math.floor(sky.t * 6) + i) % 4;
+    if (!on || (Math.abs(sx - W / 2) < 44 && sy > BAND_Y + BAND_H - 15)) continue;   // none on the caption
+    g.fillStyle = i % 3 ? '#C8C0E8' : '#FFF4C8'; g.fillRect(sx, sy, 1, 1);
+    if (i % 5 === 0) { g.fillRect(sx - 1, sy, 3, 1); g.fillRect(sx, sy - 1, 1, 3); }
+  }
+  g.translate(x, y); g.scale(2, 2);                  // the icon in big, whole pixels
+  if (moon) {
+    // a crescent: a disc minus an offset disc
+    for (let py = -7; py <= 7; py++) for (let px = -7; px <= 7; px++) {
+      if (px * px + py * py > 46) continue;
+      if ((px - 3) ** 2 + (py + 2) ** 2 <= 30) continue;
+      g.fillStyle = px * px + py * py > 30 ? '#C8C0E8' : '#F4F0E8'; g.fillRect(px, py, 1, 1);
+    }
+  } else {
+    // a sun with eight rays that turn in whole steps
+    const turn = still ? 0 : Math.floor(sky.t * 6) % 2;
+    g.fillStyle = '#FFE066';
+    for (let i = 0; i < 8; i++) {
+      const ang = (i / 8) * Math.PI * 2 + turn * (Math.PI / 8);
+      for (let r = 7; r <= 8; r++) g.fillRect(Math.round(Math.cos(ang) * r), Math.round(Math.sin(ang) * r), 1, 1);
+    }
+    for (let py = -6; py <= 6; py++) for (let px = -6; px <= 6; px++) {
+      const d = px * px + py * py;
+      if (d > 38) continue;
+      g.fillStyle = d > 24 ? '#FFB347' : d < 6 ? '#FFF6C8' : '#FFE066'; g.fillRect(px, py, 1, 1);
+    }
+  }
+  g.restore(); g.save(); g.globalAlpha = a;
+  drawText(g, moon ? 'Night falls' : 'The sun comes up', W / 2, BAND_Y + BAND_H - 11, { color: moon ? '#F4F0E8' : '#FFF6C8', align: 'center', shadow: moon ? '#3A1A5A' : '#1E5A70' });
+  g.restore();
+}
 
 export const overworldView = {
   anim: null, bumpT: 0, fade: 0, banner: null, bannerT: 0, alert: null, npcDir: {}, t: 0, walkFlip: 0,
@@ -41,6 +120,11 @@ export const overworldView = {
 
   update(game, dt) {
     this.t += dt;
+    // when the day turns (half way through dusk or dawn), a sun or a moon sweeps across the top of the screen
+    const night = isNight(game.engine.state);
+    if (this.dayFor !== game.engine) { this.dayFor = game.engine; this.wasNight = night; this.sky = null; }
+    else if (night !== this.wasNight) { this.wasNight = night; this.sky = { icon: night ? 'moon' : 'sun', t: 0 }; }
+    if (this.sky && (this.sky.t += dt) > SKY_T) this.sky = null;
     if (this.fade > 0) this.fade = Math.max(0, this.fade - dt * 3);
     if (this.bannerT > 0) this.bannerT -= dt;
     if (this.alert) { this.alert.t -= dt; if (this.alert.t <= 0) this.alert = null; }
@@ -141,7 +225,9 @@ export const overworldView = {
         const dx = x * TS - cx, dy = y * TS - cy;
         this.tile(game, g, zone.ground, dx, dy);
         if (sp === 'water' && wave) sp = 'water_b';
-        if (sp !== zone.ground) this.tile(game, g, sp, dx, dy);
+        const top = WALL_TOPS[sp];
+        if (top && isWall(classOf(x, y + 1), sp)) wallTop(g, top, dx, dy, [classOf(x, y - 1), classOf(x + 1, y), classOf(x, y + 1), classOf(x - 1, y)].map((c) => !isWall(c, sp)));
+        else if (sp !== zone.ground) this.tile(game, g, sp, dx, dy);
         if (sp === 'dancefloor' && (x * 7 + y * 3) % 5 === 0 && !game.settings.reducedMotion) this.dancer(game, g, dx, dy, x, y);
         // soft edges: the base ground rounds off paths, shorelines get a foam line
         const cls = sp === 'water_b' || sp === 'deep' ? 'water' : sp;
@@ -223,8 +309,9 @@ export const overworldView = {
       const grd = g.createRadialGradient(px - cx + 8, py - cy + 4, 14, px - cx + 8, py - cy + 4, 46);
       grd.addColorStop(0, 'rgba(5,2,12,0)'); grd.addColorStop(1, 'rgba(5,2,12,0.97)');
       g.fillStyle = grd; g.fillRect(0, 0, W, H);
-    } else if (zone.indoor !== true && isNight(s)) { g.fillStyle = 'rgba(20,6,60,0.42)'; g.fillRect(0, 0, W, H); }
-    else if (zone.dark) { g.fillStyle = 'rgba(40,10,90,0.25)'; g.fillRect(0, 0, W, H); }
+    } else if (zone.dark) { g.fillStyle = 'rgba(40,10,90,0.25)'; g.fillRect(0, 0, W, H); }
+    else if (zone.indoor !== true) daylight(g, s.clock + (s.clockSteps || 0) / (game.data.rules.stepsPerMinute || 1));
+    if (this.sky) drawSky(g, this.sky, game.settings.reducedMotion);
 
     if (this.bannerT > 0 && this.banner) {
       const a = Math.min(1, this.bannerT * 2);
