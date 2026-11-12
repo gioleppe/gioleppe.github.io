@@ -84,6 +84,18 @@ export class GameEngine {
           else { s.menu = null; setMode(ctx, 'OVERWORLD'); }
         }
         break;
+      case 'BORED_LICK': {
+        // left standing around with nothing to do, your hand finds the blotter by itself (rules.boredom)
+        const R = this.data.rules.boredom || {};
+        if (s.mode === 'OVERWORLD' && !s.dialogue && !s.battle && (s.bag.glowing_blotter || 0) > 0 && s.intox < (R.ceiling ?? 0.9)) {
+          const before = s.intox;
+          s.intox = Math.min(1, s.intox + (R.dose ?? 0.12));
+          events.push({ type: 'INTOXICATION_CHANGED', oldLevel: before, newLevel: s.intox });
+          events.push({ type: 'MESSAGE', text: s.flags.tip_bored ? 'Bored, you lick a corner of the blotter.' : 'Bored, you lick a corner of the blotter. Stand around with nothing to do and your hand finds it by itself. Keep moving.' });
+          s.flags.tip_bored = 1;
+        }
+        break;
+      }
       default:
         handleExtra(ctx, cmd);
     }
@@ -100,8 +112,9 @@ export class GameEngine {
         events.push({ type: 'MESSAGE', text: 'Tip: how high you are shows in the corner. Higher means more Vibes and rarer Astrals, but clumsier hands, harder hits and costlier whiteouts. Water, chai or a nap bring you down.' });
       }
     }
-    // the first time you hold something that heals or hydrates, say once how to use it straight from the map
-    if (!s.flags.tip_quick && s.mode === 'OVERWORLD' && !s.dialogue && Object.keys(s.bag).some((id) => s.bag[id] > 0 && this.data.items[id]?.category === 'RECOVERY')) {
+    // Quick Items, explained once: on the Sandy Trail, after your first battle (right after it, if it was there)
+    if (events.some((x) => x.type === 'BATTLE_END')) s.flags.fought = 1;
+    if (!s.flags.tip_quick && s.flags.fought && s.zoneId === 'sandy_trail' && s.mode === 'OVERWORLD' && !s.dialogue && !s.battle) {
       s.flags.tip_quick = 1;
       events.push({ type: 'MESSAGE', text: 'Tip: Quick Items. Press Q (or ITEMS on the touch pad) to give snacks and water to any Astral without opening the Fanny Pack. Everything that heals or hydrates shows up there by itself.' });
     }

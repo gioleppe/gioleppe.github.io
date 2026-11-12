@@ -35,7 +35,16 @@
     "xpDivisor": 5,
     "intoxPerBattle": 0.015,
     "intoxPull": 0.15,
-    "wildDrop": { "chance": 0.08, "items": { "water_bottle": 5, "coconut_water": 5, "watermelon_slice": 2, "electrolyte_sachet": 2, "tiger_balm": 1 } },
+    "wildDrop": {
+      "chance": 0.08,
+      "items": {
+        "water_bottle": 5,
+        "coconut_water": 5,
+        "watermelon_slice": 2,
+        "electrolyte_sachet": 2,
+        "tiger_balm": 1
+      }
+    },
     "burstMult": 2
   },
   "capture": {
@@ -285,5 +294,11 @@
       "name": "Burst",
       "desc": "Its first move after coming out hits twice as hard. Then it pops."
     }
+  },
+  "boredom": {
+    "_comment": "Standing still on the map this long with the blotter in your bag, you lick it out of boredom: dose added, unless you are already at the ceiling.",
+    "seconds": 25,
+    "dose": 0.12,
+    "ceiling": 0.9
   }
 }
