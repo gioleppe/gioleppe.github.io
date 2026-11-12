@@ -471,8 +471,21 @@ function victory(ctx) {
     s.rupees += t.reward || 0;
     msg(ctx, `You out-vibed ${t.name}!`);
     if (t.reward) { msg(ctx, `You got Rs ${t.reward}.`); ctx.emit({ type: 'RUPEES_CHANGED', rupees: s.rupees }); }
-  }
+  } else wildDrop(ctx);
   finish(ctx, 'WON');
+}
+
+/** a beaten wild Astral now and then leaves something behind (rules.battle.wildDrop: chance, item weights) */
+function wildDrop(ctx) {
+  const D = ctx.data.rules.battle.wildDrop, s = ctx.state;
+  if (!D || !ctx.rng.chance(D.chance)) return;
+  const table = Object.entries(D.items).filter(([id]) => ctx.data.items[id]);
+  let roll = ctx.rng.next() * table.reduce((a, [, w]) => a + w, 0), id = table[0][0];
+  for (const [k, w] of table) { roll -= w; if (roll <= 0) { id = k; break; } }
+  s.bag[id] = (s.bag[id] || 0) + 1;
+  msg(ctx, `The wild ${nameOf(ctx.data, B(ctx).enemy[0])} left something behind: a ${ctx.data.items[id].name}!`);
+  ctx.emit({ type: 'ITEM_FOUND', itemId: id, n: 1 });
+  ctx.emit({ type: 'AUDIO_CUE', sfxId: 'item' });
 }
 
 /** Ends the battle, first asking about any moves that need a slot. */

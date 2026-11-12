@@ -92,6 +92,11 @@ export class GameEngine {
       events.push({ type: 'INTOX_BAND', from: bandBefore, to: bandAfter, bandId: b.id });
       const text = bandAfter > bandBefore ? b.up : bands(this.data.rules)[bandAfter].down;
       if (text) events.push({ type: 'MESSAGE', text });
+      // the first time you get high at all, say once what it means and how to come down
+      if (bandAfter > 0 && !s.flags.tip_high) {
+        s.flags.tip_high = 1;
+        events.push({ type: 'MESSAGE', text: 'Tip: how high you are shows in the corner. Higher means more Vibes and rarer Astrals, but clumsier hands, harder hits and costlier whiteouts. Water, chai or a nap bring you down.' });
+      }
     }
     // side quests that start or finish
     for (const q of questLog(this.data, s)) {

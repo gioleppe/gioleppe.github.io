@@ -27,11 +27,13 @@ button { font: inherit; color: inherit; border: 0; padding: 0; touch-action: non
 .round { position: absolute; width: 72px; height: 72px; border-radius: 50%; font-size: 22px; border: 2px solid #ffffff33; }
 .round.a { right: 0; top: 0; background: #FF007F; color: #0B0314; }
 .round.b { left: 0; bottom: 0; background: #00B8C8; color: #0B0314; }
-.round.on, #btn-start.on { filter: brightness(1.5); transform: scale(.94); }
-#btn-start {
-  position: absolute; left: 50%; bottom: 8%; width: 88px; height: 44px; margin-left: -44px; border-radius: 22px;
+.round.on, #btn-start.on, #btn-item.on { filter: brightness(1.5); transform: scale(.94); }
+#btn-start, #btn-item {
+  position: absolute; left: 50%; bottom: 8%; width: 88px; height: 44px; margin-left: -96px; border-radius: 22px;
   background: #2A1248; border: 2px solid #8F00FF88; font-size: 12px; letter-spacing: 1px;
 }
+
+#btn-item { margin-left: 8px; border-color: #00FF6688; }   /* ITEMS: quick items, beside MENU */
 
 /* landscape phones: picture centred, controls overlaid at the sides */
 @media (orientation: landscape) {
@@ -41,5 +43,6 @@ button { font: inherit; color: inherit; border: 0; padding: 0; touch-action: non
   /* --pad-lift (set by the renderer) keeps them above the text box, where dialogue and the battle menu are */
   #dpad { left: max(12px, env(safe-area-inset-left)); top: auto; bottom: var(--pad-lift, 16px); margin-top: 0; width: 132px; height: 132px; }
   #ab { right: max(12px, env(safe-area-inset-right)); top: auto; bottom: var(--pad-lift, 16px); margin-top: 0; }
-  #btn-start { left: auto; right: max(12px, env(safe-area-inset-right)); bottom: auto; top: 12px; margin-left: 0; }
+  #btn-start, #btn-item { left: auto; right: max(12px, env(safe-area-inset-right)); bottom: auto; top: 12px; margin-left: 0; }
+  #btn-item { top: 64px; }
 }

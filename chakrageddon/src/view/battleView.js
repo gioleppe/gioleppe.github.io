@@ -7,6 +7,7 @@ import { moveCost } from '../core/BattleEngine.js';
 import { drawBackdrop, backdropOf, SPOT } from './battleFx.js';
 import { lookOf, durationOf, drawMoveFx, MARK_SECONDS, WINDUP } from './moveFx.js';
 import { tinted } from './anim.js';
+import { termRuns } from './glossary.js';
 
 const EVOLVE_SECONDS = 2.6;
 
@@ -353,7 +354,7 @@ export const battleView = {
     const c = this.cur;
     if (c && c.type === 'msg') {
       let left = Math.floor(c.shown);
-      c.lines.slice(0, 3).forEach((line, i) => { drawText(g, line.slice(0, Math.max(0, left)), 12, BOX_Y + 7 + i * 12, { color: C.ink, scramble: game.fxLevel() > 0.9 ? 0.1 : 0, t: this.t }); left -= line.length; });
+      c.lines.slice(0, 3).forEach((line, i) => { drawText(g, line.slice(0, Math.max(0, left)), 12, BOX_Y + 7 + i * 12, { color: C.ink, scramble: game.fxLevel() > 0.9 ? 0.1 : 0, t: this.t, runs: termRuns(line, game.data) }); left -= line.length; });
     } else if (!c && b && this.intro <= 0) this.menus(game, g, b);
 
     if (this.intro > 0) {   // iris-style bars in
