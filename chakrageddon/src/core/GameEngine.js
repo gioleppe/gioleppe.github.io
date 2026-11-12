@@ -44,7 +44,9 @@ export class GameEngine {
     // saves from earlier builds: fill in any field that did not exist yet
     const base = newState(data, 1);
     for (const k of Object.keys(base)) if (!(k in state)) state[k] = base[k];
-    return new GameEngine(data, { state });
+    const e = new GameEngine(data, { state });
+    if (state.mode === 'OVERWORLD' && data.zones[state.zoneId]) e.run((ctx) => OW.settle(ctx));   // the map may have been redrawn since
+    return e;
   }
 
   /** Tooling and test hook: run fn(ctx) against the live state and return the events it emitted. */

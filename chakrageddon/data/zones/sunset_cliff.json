@@ -28,16 +28,16 @@
       "x": 10,
       "y": 0,
       "to": "dry_ice_corridor",
-      "tx": 7,
-      "ty": 12,
+      "tx": 11,
+      "ty": 16,
       "dir": "UP"
     },
     {
       "x": 11,
       "y": 0,
       "to": "dry_ice_corridor",
-      "tx": 8,
-      "ty": 12,
+      "tx": 12,
+      "ty": 16,
       "dir": "UP"
     },
     {
@@ -86,7 +86,7 @@
     {
       "id": "cliff_influencer",
       "x": 5,
-      "y": 4,
+      "y": 3,
       "sprite": "influencer",
       "dir": "RIGHT",
       "trainer": "cliff_influencer",

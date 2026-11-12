@@ -10,7 +10,7 @@
   "rows": [
     "tttttttttt,,tttttttttttt",
     "t.........,,...........t",
-    "tttttttttIffIttttttttttt",
+    "bbbbbbbbbIffIbbbbbbbbbbb",
     "t....kkeeeeeeeekk......t",
     "t....keeeeeeeeeek..v...t",
     "t..L..dddddddddd..L....t",
@@ -22,8 +22,8 @@
     "t...,,,,,,,,,,,,,,,,...t",
     "t.........,,...........t",
     "t..~~~~...,,....~~~~.b.t",
-    "t..~~~~...,,....~~~~.h.t",
-    "t.........,,.........h.t",
+    "t..~~~~...,,....~~~~...t",
+    "t.........,,...........t",
     "tttttttttt,,tttttttttttt"
   ],
   "warps": [
@@ -31,7 +31,7 @@
       "x": 10,
       "y": 16,
       "to": "sandy_trail",
-      "tx": 7,
+      "tx": 15,
       "ty": 1,
       "dir": "DOWN"
     },
@@ -39,7 +39,7 @@
       "x": 11,
       "y": 16,
       "to": "sandy_trail",
-      "tx": 8,
+      "tx": 16,
       "ty": 1,
       "dir": "DOWN"
     },
@@ -145,8 +145,8 @@
     },
     {
       "id": "pit_corner",
-      "x": 22,
-      "y": 15,
+      "x": 21,
+      "y": 12,
       "item": "watermelon_slice",
       "n": 2,
       "hidden": true

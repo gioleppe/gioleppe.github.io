@@ -111,6 +111,26 @@ export function nightLevel(clock) {
   return m >= DUSK[1] || m < DAWN[0] ? 1 : 0;
 }
 
+/** If the player stands somewhere they could not have walked to (a save or a tent spot from before a map was
+ *  redrawn, off the edge, on a wall or on someone), move them to the nearest open tile. */
+export function settle(ctx) {
+  const s = ctx.state, zone = zoneOf(ctx), p = s.player;
+  const ok = (x, y) => walkable(ctx, x, y, zone) && !entityAt(ctx, x, y, zone) && !(zone.warps || []).some((w) => w.x === x && w.y === y);
+  if (ok(p.x, p.y)) return false;
+  const H = zone.rows.length, W = zone.rows[0].length;
+  const sx = Math.max(0, Math.min(W - 1, p.x)), sy = Math.max(0, Math.min(H - 1, p.y));
+  const seen = new Set([`${sx},${sy}`]), queue = [[sx, sy]];
+  while (queue.length) {
+    const [x, y] = queue.shift();
+    if (ok(x, y)) { p.x = x; p.y = y; return true; }
+    for (const [dx, dy] of [[0, 1], [0, -1], [1, 0], [-1, 0]]) {
+      const nx = x + dx, ny = y + dy, k = `${nx},${ny}`;
+      if (nx >= 0 && ny >= 0 && nx < W && ny < H && !seen.has(k)) { seen.add(k); queue.push([nx, ny]); }
+    }
+  }
+  return false;
+}
+
 export function enterZone(ctx, zoneId, x, y, dir) {
   if (ctx.state.npcPos) delete ctx.state.npcPos[zoneId];          // wanderers start from home on each visit
   for (const f of ctx.data.zones[zoneId].resetOnEnter || []) delete ctx.state.flags[f];   // e.g. a legendary that slipped away comes back
@@ -119,6 +139,7 @@ export function enterZone(ctx, zoneId, x, y, dir) {
   delete s.pushed[zoneId];
   s.visited[zoneId] = 1;
   const zone = ctx.data.zones[zoneId];
+  settle(ctx);
   ctx.emit({ type: 'ZONE_CHANGED', from, to: zoneId, name: zone.name });
   ctx.emit({ type: 'AUDIO_CUE', trackBpm: zone.baseBpm, lowPassFilterHz: 20000 });
 }

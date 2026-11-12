@@ -28,16 +28,16 @@
       "x": 11,
       "y": 0,
       "to": "sandy_trail",
-      "tx": 7,
-      "ty": 16,
+      "tx": 12,
+      "ty": 18,
       "dir": "UP"
     },
     {
       "x": 12,
       "y": 0,
       "to": "sandy_trail",
-      "tx": 8,
-      "ty": 16,
+      "tx": 13,
+      "ty": 18,
       "dir": "UP"
     },
     {
@@ -107,7 +107,7 @@
     {
       "id": "glow_stranger",
       "x": 21,
-      "y": 7,
+      "y": 6,
       "sprite": "yogi",
       "dir": "LEFT",
       "script": "glow_stranger",

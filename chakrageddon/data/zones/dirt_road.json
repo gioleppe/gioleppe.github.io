@@ -9,42 +9,46 @@
   "encounter": "darkbush",
   "dark": true,
   "rows": [
-    "ttttttt,,ttttttt",
-    "t~~~...,,....~~t",
-    "t~~~...,,....~~t",
-    "t....tt,,tt....t",
-    "t.....s,,s.....t",
-    "tttt..,,,,,..ttt",
-    "t.....,..,,....t",
-    "t.L..ss..s,,ss.t",
-    "t~~~....ss.,...t",
-    "t~~~.tt....,..xt",
-    "t.....,,,,,,.ttt",
-    "t.....,..ss....t",
-    "t.ttt.,,.s..~~~t",
-    "t.x...s,,...~~~t",
-    "t......,,......t",
-    "ttttttt,,ttttttt"
+    "ttttttttttt,,ttttttttttt",
+    "t~~~.......,,.......~~~t",
+    "t~~~..s....,,..s......~t",
+    "t.....ss...,,...ss..b..t",
+    "ttt.......s,,s.......ttt",
+    "t~~...ss...,,.L.ss....~t",
+    "t~~~......s,,s......~~~t",
+    "t~~~~......,,......~~~~t",
+    "t~~~.ssusss23ssussss.~~t",
+    "t~~~..s..s.,,.s..s...~~t",
+    "t~~........,,........~~t",
+    "tb..tt.....,,....4.q...t",
+    "t.......tt.,,.......m..t",
+    "t~~~.......,,..........t",
+    "t~~~~...ww.,,ww..tt....t",
+    "t~~~.......,,......~~~.t",
+    "t..........,,......~~~.t",
+    "t..tt......,,..........t",
+    "t..........,,..........t",
+    "ttttttttttt,,ttttttttttt"
   ],
   "warps": [
     {
-      "x": 7,
-      "y": 15,
+      "x": 11,
+      "y": 19,
       "to": "flea_market",
       "tx": 11,
       "ty": 2,
       "dir": "DOWN"
     },
     {
-      "x": 8,
-      "y": 15,
+      "x": 12,
+      "y": 19,
       "to": "flea_market",
       "tx": 12,
       "ty": 2,
       "dir": "DOWN"
     },
     {
-      "x": 7,
+      "x": 11,
       "y": 0,
       "to": "scooter_ditch",
       "tx": 10,
@@ -52,7 +56,7 @@
       "dir": "UP"
     },
     {
-      "x": 8,
+      "x": 12,
       "y": 0,
       "to": "scooter_ditch",
       "tx": 11,
@@ -63,26 +67,26 @@
   "npcs": [
     {
       "id": "road_guard",
-      "x": 1,
-      "y": 6,
+      "x": 5,
+      "y": 7,
       "sprite": "guard",
-      "dir": "RIGHT",
+      "dir": "LEFT",
       "trainer": "road_guard",
       "sight": 5
     },
     {
       "id": "road_dealer",
-      "x": 13,
-      "y": 9,
+      "x": 19,
+      "y": 7,
       "sprite": "dealer",
-      "dir": "LEFT",
+      "dir": "RIGHT",
       "trainer": "road_dealer",
       "sight": 4
     },
     {
       "id": "road_raver",
-      "x": 11,
-      "y": 1,
+      "x": 14,
+      "y": 2,
       "sprite": "raver",
       "dir": "LEFT",
       "trainer": "road_raver",
@@ -90,8 +94,8 @@
     },
     {
       "id": "road_sign",
-      "x": 9,
-      "y": 14,
+      "x": 13,
+      "y": 16,
       "tile": "sign",
       "script": "sign_road"
     }
@@ -99,23 +103,23 @@
   "pickups": [
     {
       "id": "road_vial",
-      "x": 13,
-      "y": 6,
+      "x": 18,
+      "y": 1,
       "item": "amber_vial",
       "n": 1,
       "hidden": true
     },
     {
       "id": "road_balm",
-      "x": 1,
-      "y": 10,
+      "x": 4,
+      "y": 13,
       "item": "tiger_balm",
       "n": 2
     },
     {
       "id": "road_powder",
-      "x": 1,
-      "y": 13,
+      "x": 6,
+      "y": 1,
       "item": "mystery_powder",
       "n": 1,
       "hidden": true

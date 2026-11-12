@@ -9,24 +9,28 @@
   "encounter": "incense",
   "indoor": true,
   "rows": [
-    "ccccccc,,ccccccc",
-    "c......,,......c",
-    "c.~~~..,,,,,,..c",
-    "cccccccccccc,..c",
-    "c.L....,,,,,,..c",
-    "c..,,,,,..~~~..c",
-    "c..,cccccccccccc",
-    "c..,,,,,,,..L..c",
-    "c.~~~....,....xc",
-    "cccccccccc,....c",
-    "c.L.....,,.....c",
-    "c.......,,.~~~.c",
-    "c.......,,.....c",
-    "ccccccc,,ccccccc"
+    "ccccccccccc,,ccccccccccc",
+    "c..x.......,,.......x..c",
+    "c.~~~....777777.....8..c",
+    "c.~~~....7cccc7.~~~....c",
+    "ccccccc..7cccc7..ccccc.c",
+    "c.....7777....7777..c..c",
+    "c.8...7..........7..c.xc",
+    "c..~~~7..cccccc..7.....c",
+    "c..~~~7..cccccc..7..~~~c",
+    "c.....7777....7777..~~~c",
+    "c..ccccccc....ccccccc..c",
+    "c..x....~~~..~~~.....8.c",
+    "c.......~~~7.~~~.......c",
+    "cccc..ccc...7....ccc..cc",
+    "c.......x...7........x.c",
+    "c.8.........7..........c",
+    "c...........7..........c",
+    "ccccccccccc,,ccccccccccc"
   ],
   "warps": [
     {
-      "x": 7,
+      "x": 11,
       "y": 0,
       "to": "flea_market",
       "tx": 11,
@@ -34,7 +38,7 @@
       "dir": "UP"
     },
     {
-      "x": 8,
+      "x": 12,
       "y": 0,
       "to": "flea_market",
       "tx": 12,
@@ -42,16 +46,16 @@
       "dir": "UP"
     },
     {
-      "x": 7,
-      "y": 13,
+      "x": 11,
+      "y": 17,
       "to": "sunset_cliff",
       "tx": 10,
       "ty": 1,
       "dir": "DOWN"
     },
     {
-      "x": 8,
-      "y": 13,
+      "x": 12,
+      "y": 17,
       "to": "sunset_cliff",
       "tx": 11,
       "ty": 1,
@@ -62,7 +66,7 @@
     {
       "id": "corridor_guard",
       "x": 1,
-      "y": 6,
+      "y": 5,
       "sprite": "guard",
       "dir": "RIGHT",
       "trainer": "corridor_guard",
@@ -70,8 +74,8 @@
     },
     {
       "id": "corridor_dealer",
-      "x": 13,
-      "y": 4,
+      "x": 22,
+      "y": 8,
       "sprite": "dealer",
       "dir": "LEFT",
       "trainer": "corridor_dealer",
@@ -79,8 +83,8 @@
     },
     {
       "id": "corridor_influencer",
-      "x": 13,
-      "y": 11,
+      "x": 22,
+      "y": 15,
       "sprite": "influencer",
       "dir": "LEFT",
       "trainer": "corridor_influencer",
@@ -88,10 +92,10 @@
     },
     {
       "id": "corridor_cop",
-      "x": 13,
-      "y": 9,
+      "x": 12,
+      "y": 6,
       "sprite": "guard",
-      "dir": "LEFT",
+      "dir": "DOWN",
       "script": "shadowcop_bribe",
       "hideIf": "cop_done"
     }
@@ -106,7 +110,7 @@
     },
     {
       "id": "corridor_chai",
-      "x": 14,
+      "x": 22,
       "y": 1,
       "item": "masala_chai",
       "n": 1
@@ -114,7 +118,7 @@
     {
       "id": "corridor_sachet",
       "x": 1,
-      "y": 4,
+      "y": 1,
       "item": "electrolyte_sachet",
       "n": 2,
       "hidden": true

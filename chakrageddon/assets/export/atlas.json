@@ -63,7 +63,20 @@
   "glowcap": 58,
   "wheat": 59,
   "crop": 60,
-  "ufo": 61
+  "ufo": 61,
+  "fence_v": 62,
+  "bonfire": 63,
+  "log": 64,
+  "cow_l": 65,
+  "cow_r": 66,
+  "shrine": 67,
+  "bridge": 68,
+  "bridge_v": 69,
+  "cable": 70,
+  "cable_v": 71,
+  "fogger": 72,
+  "coconuts": 73,
+  "dune": 74
  },
  "props": {
   "palm": {
@@ -110,6 +123,11 @@
    "file": "prop_mushroom.png",
    "w": 16,
    "h": 26
+  },
+  "surfboard": {
+   "file": "prop_surfboard.png",
+   "w": 16,
+   "h": 30
   },
   "flag": {
    "file": "prop_flag.png",
