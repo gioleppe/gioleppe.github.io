@@ -1,0 +1,259 @@
+{
+  "zoneId": "backstage",
+  "name": "Backstage Container",
+  "paletteId": "BAD_TRIP",
+  "baseBpm": 152,
+  "ground": "concrete",
+  "ground2": "path",
+  "wall": "container",
+  "encounter": "incense",
+  "cordonFlag": "beat_promoter",
+  "cordonText": "A velvet rope and a man with a clipboard. \"All-Access Hologram or nothing. The Promoter is in the big chair.\"",
+  "rows": [
+    "cccccccccc,,cccccccccc",
+    "c.........,,.........c",
+    "c..xx.....,,.....xx..c",
+    "c.L.......,,.......L.c",
+    "ck...kjeeeeeeeejk...kc",
+    "c.........,,.........c",
+    ",,,,,,,,,,,,.........c",
+    ",,,,,,,,,,,,.........c",
+    "c..~~~....,,.x..~~~x.c",
+    "c..~~~....,,.x..~~~.xc",
+    "c....C....,,....mq...c",
+    "c......L..,,..L......c",
+    "c.....xx..,,.........c",
+    "cccGccccccBBcccccccccc",
+    "c.........,,.........c",
+    "cccccccccc,,cccccccccc"
+  ],
+  "warps": [
+    {
+      "x": 10,
+      "y": 0,
+      "to": "omelette_stall",
+      "tx": 10,
+      "ty": 13,
+      "dir": "UP"
+    },
+    {
+      "x": 11,
+      "y": 0,
+      "to": "omelette_stall",
+      "tx": 11,
+      "ty": 13,
+      "dir": "UP"
+    },
+    {
+      "x": 0,
+      "y": 6,
+      "to": "sunset_cliff",
+      "tx": 19,
+      "ty": 5,
+      "dir": "LEFT"
+    },
+    {
+      "x": 0,
+      "y": 7,
+      "to": "sunset_cliff",
+      "tx": 19,
+      "ty": 6,
+      "dir": "LEFT"
+    },
+    {
+      "x": 10,
+      "y": 15,
+      "to": "mainstage_temple",
+      "tx": 9,
+      "ty": 20,
+      "dir": "DOWN"
+    },
+    {
+      "x": 11,
+      "y": 15,
+      "to": "mainstage_temple",
+      "tx": 10,
+      "ty": 20,
+      "dir": "DOWN"
+    },
+    {
+      "x": 3,
+      "y": 13,
+      "to": "green_room",
+      "tx": 8,
+      "ty": 7,
+      "dir": "UP"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "promoter",
+      "x": 10,
+      "y": 4,
+      "sprite": "promoter",
+      "dir": "DOWN",
+      "trainer": "boss_promoter",
+      "sight": 0
+    },
+    {
+      "id": "backstage_guard1",
+      "x": 4,
+      "y": 3,
+      "sprite": "guard",
+      "dir": "RIGHT",
+      "trainer": "backstage_guard1",
+      "sight": 6
+    },
+    {
+      "id": "backstage_guard2",
+      "x": 17,
+      "y": 12,
+      "sprite": "guard",
+      "dir": "LEFT",
+      "trainer": "backstage_guard2",
+      "sight": 6
+    },
+    {
+      "id": "backstage_bar",
+      "x": 16,
+      "y": 11,
+      "sprite": "vendor",
+      "dir": "DOWN",
+      "script": "backstage_bar"
+    },
+    {
+      "id": "backstage_sign",
+      "x": 9,
+      "y": 11,
+      "tile": "sign",
+      "script": "sign_backstage"
+    },
+    {
+      "id": "backstage_roadie",
+      "x": 3,
+      "y": 9,
+      "sprite": "local",
+      "dir": "RIGHT",
+      "script": "backstage_roadie",
+      "wander": [
+        2,
+        9,
+        3,
+        11
+      ]
+    },
+    {
+      "id": "speaker_stack",
+      "x": 18,
+      "y": 1,
+      "tile": "subwoofer",
+      "script": "bassilisk",
+      "showWhen": {
+        "all": [
+          {
+            "defeated": "boss_diabolo_rematch"
+          },
+          {
+            "defeated": "boss_svetlana_rematch"
+          },
+          {
+            "defeated": "boss_keta_rematch"
+          },
+          {
+            "defeated": "boss_raju_rematch"
+          },
+          {
+            "defeated": "boss_darkpsy_rematch"
+          },
+          {
+            "defeated": "boss_chloe_rematch"
+          },
+          {
+            "defeated": "boss_baba_rematch"
+          },
+          {
+            "defeated": "boss_promoter_rematch"
+          }
+        ]
+      },
+      "hideWhen": {
+        "any": [
+          {
+            "caughtSpecies": "bassilisk"
+          },
+          {
+            "flag": "bassilisk_rest"
+          }
+        ]
+      }
+    }
+  ],
+  "pickups": [
+    {
+      "id": "backstage_vial",
+      "x": 20,
+      "y": 1,
+      "item": "amber_vial",
+      "n": 3
+    },
+    {
+      "id": "backstage_chai",
+      "x": 1,
+      "y": 12,
+      "item": "masala_chai",
+      "n": 2
+    },
+    {
+      "id": "backstage_cases",
+      "x": 20,
+      "y": 10,
+      "item": "electrolyte_sachet",
+      "n": 2,
+      "hidden": true
+    }
+  ],
+  "encounters": {
+    "encounterRate": 0.15,
+    "table": [
+      {
+        "speciesId": "selfiend",
+        "minLevel": 32,
+        "maxLevel": 34,
+        "weight": 20
+      },
+      {
+        "speciesId": "ravelord",
+        "minLevel": 32,
+        "maxLevel": 34,
+        "weight": 15
+      },
+      {
+        "speciesId": "bribe_asaurus",
+        "minLevel": 32,
+        "maxLevel": 34,
+        "weight": 20
+      },
+      {
+        "speciesId": "dengoth",
+        "minLevel": 32,
+        "maxLevel": 34,
+        "weight": 20
+      },
+      {
+        "speciesId": "duvetghast",
+        "minLevel": 32,
+        "maxLevel": 34,
+        "weight": 15
+      },
+      {
+        "speciesId": "bongo_bishop",
+        "minLevel": 32,
+        "maxLevel": 34,
+        "weight": 10
+      }
+    ]
+  },
+  "resetOnEnter": [
+    "bassilisk_rest"
+  ]
+}

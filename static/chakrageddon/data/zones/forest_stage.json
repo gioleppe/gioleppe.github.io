@@ -1,0 +1,207 @@
+{
+  "zoneId": "forest_stage",
+  "name": "190 BPM Forest Stage",
+  "paletteId": "UV_BLACKLIGHT",
+  "baseBpm": 190,
+  "ground": "jungle",
+  "ground2": "path",
+  "wall": "cliff",
+  "encounter": "dancers",
+  "dark": true,
+  "rows": [
+    "ttttttttt,,ttttttttt",
+    "t.tb..L..,,.QQQ....t",
+    "t.~~~....,,.XXX~~~.t",
+    "t.~~~....,,.XGX~~~.t",
+    "tt..Y....,,....Y..tt",
+    "t....dddddddddd....t",
+    "t.bk.dddddddddd.kb.t",
+    "t..k.dddddddddd.k..t",
+    "t....dddddddddd..b.t",
+    "tb...kjeeeeeejk....t",
+    "t...L....,,....L...t",
+    "t..~~~...,,...~~~..t",
+    "tt.~~~.b.,,...~~~btt",
+    "t...C....,,..b.M...t",
+    "t..b.....,,.....b..t",
+    "ttttttttt,,ttttttttt"
+  ],
+  "warps": [
+    {
+      "x": 9,
+      "y": 0,
+      "to": "sweetwater_lake",
+      "tx": 9,
+      "ty": 12,
+      "dir": "UP"
+    },
+    {
+      "x": 10,
+      "y": 0,
+      "to": "sweetwater_lake",
+      "tx": 10,
+      "ty": 12,
+      "dir": "UP"
+    },
+    {
+      "x": 9,
+      "y": 15,
+      "to": "bamboo_thicket",
+      "tx": 7,
+      "ty": 1,
+      "dir": "DOWN"
+    },
+    {
+      "x": 10,
+      "y": 15,
+      "to": "bamboo_thicket",
+      "tx": 8,
+      "ty": 1,
+      "dir": "DOWN"
+    },
+    {
+      "x": 13,
+      "y": 3,
+      "to": "dj_booth",
+      "tx": 4,
+      "ty": 5,
+      "dir": "UP"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "darkpsy",
+      "x": 9,
+      "y": 9,
+      "sprite": "baron",
+      "dir": "UP",
+      "trainer": "boss_darkpsy",
+      "sight": 0
+    },
+    {
+      "id": "forest_raver",
+      "x": 5,
+      "y": 3,
+      "sprite": "raver",
+      "dir": "RIGHT",
+      "trainer": "forest_raver",
+      "sight": 4
+    },
+    {
+      "id": "forest_guard",
+      "x": 14,
+      "y": 11,
+      "sprite": "guard",
+      "dir": "LEFT",
+      "trainer": "forest_guard",
+      "sight": 4
+    },
+    {
+      "id": "forest_wook",
+      "x": 2,
+      "y": 8,
+      "sprite": "wook",
+      "dir": "RIGHT",
+      "script": "forest_wook",
+      "wander": [
+        1,
+        7,
+        3,
+        9
+      ]
+    },
+    {
+      "id": "forest_sign",
+      "x": 8,
+      "y": 13,
+      "tile": "sign",
+      "script": "sign_forest"
+    }
+  ],
+  "pickups": [
+    {
+      "id": "forest_powder",
+      "x": 18,
+      "y": 1,
+      "item": "mystery_powder",
+      "n": 1,
+      "hidden": true
+    },
+    {
+      "id": "forest_balm",
+      "x": 1,
+      "y": 14,
+      "item": "tiger_balm",
+      "n": 2
+    },
+    {
+      "id": "crate_forest",
+      "x": 18,
+      "y": 14,
+      "item": "record_crate",
+      "n": 1
+    },
+    {
+      "id": "forest_pocket",
+      "x": 1,
+      "y": 1,
+      "item": "tiger_balm",
+      "n": 1,
+      "hidden": true
+    }
+  ],
+  "encounters": {
+    "encounterRate": 0.16,
+    "table": [
+      {
+        "speciesId": "sirenowl",
+        "minLevel": 21,
+        "maxLevel": 24,
+        "weight": 20
+      },
+      {
+        "speciesId": "omnihound",
+        "minLevel": 24,
+        "maxLevel": 25,
+        "weight": 8
+      },
+      {
+        "speciesId": "tridog",
+        "minLevel": 21,
+        "maxLevel": 24,
+        "weight": 17
+      },
+      {
+        "speciesId": "dengoth",
+        "minLevel": 24,
+        "maxLevel": 25,
+        "weight": 10
+      },
+      {
+        "speciesId": "mozzquito",
+        "minLevel": 21,
+        "maxLevel": 24,
+        "weight": 15
+      },
+      {
+        "speciesId": "glowkid",
+        "minLevel": 21,
+        "maxLevel": 24,
+        "weight": 15
+      },
+      {
+        "speciesId": "shadowcop",
+        "minLevel": 21,
+        "maxLevel": 24,
+        "weight": 15
+      },
+      {
+        "speciesId": "gurnagama",
+        "minLevel": 24,
+        "maxLevel": 26,
+        "weight": 10,
+        "minIntox": 0.6
+      }
+    ]
+  }
+}

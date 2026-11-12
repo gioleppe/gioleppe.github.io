@@ -1,0 +1,287 @@
+{
+  "startRupees": 300,
+  "intoxStepDecay": 0.002,
+  "partyMax": 6,
+  "stat": {
+    "hpBase": 10,
+    "otherBase": 5,
+    "hydrationBase": 30,
+    "hydrationPerLevel": 3
+  },
+  "battle": {
+    "critBase": 0.0625,
+    "critMax": 0.25,
+    "critMult": 1.5,
+    "stab": 1.5,
+    "randMin": 0.9,
+    "kHoleSkip": 0.5,
+    "kHoleSpeed": 0.25,
+    "kHoleTurns": [
+      2,
+      4
+    ],
+    "thoughtLoopChance": 0.33,
+    "thoughtLoopTurns": [
+      2,
+      5
+    ],
+    "egoDeathTurns": 3,
+    "cottonmouthDrain": 3,
+    "selfHitPower": 40,
+    "whiteoutRupeeLoss": 0.15,
+    "whiteoutHours": 6,
+    "trainerXpMult": 2.0,
+    "xpDivisor": 5,
+    "intoxPerBattle": 0.015,
+    "intoxPull": 0.15,
+    "burstMult": 2
+  },
+  "capture": {
+    "statusBonus": 1.5
+  },
+  "wristbands": {
+    "hemp_string": {
+      "name": "Hemp String Wristband",
+      "note": "Astrals can now hack through tangled fairy lights.",
+      "boss": "DJ Diabolo"
+    },
+    "quartz": {
+      "name": "Quartz Wristband",
+      "note": "A blacklight pulse now lights up dark places.",
+      "boss": "Guru Svetlana"
+    },
+    "wonky_keychain": {
+      "name": "Wonky Keychain",
+      "note": "Subwoofers and passed-out wooks can now be shoved.",
+      "boss": "Captain Keta"
+    },
+    "extra_cheese": {
+      "name": "Extra Cheese Stamp",
+      "note": "You can now float across foam pits and shallows.",
+      "boss": "Chef Raju"
+    },
+    "uv_skeleton": {
+      "name": "UV Skeleton Band",
+      "note": "Padlocked VIP fences can now be chewed through.",
+      "boss": "Baron Von Darkpsy"
+    },
+    "vip_press": {
+      "name": "VIP Press Pass",
+      "note": "Tuk-tuks will now take you to any Chai Tent you have visited.",
+      "boss": "Influencer Chloe"
+    },
+    "ash_mark": {
+      "name": "Ash Mark",
+      "note": "Banyan roots on the cliffs can now be climbed.",
+      "boss": "Baba Smoke"
+    },
+    "all_access": {
+      "name": "All-Access Hologram",
+      "note": "The Mainstage Temple will let you in.",
+      "boss": "The Promoter"
+    }
+  },
+  "techniques": {
+    "machete_hack": {
+      "name": "Machete Hack",
+      "wristband": "hemp_string",
+      "types": [
+        "ORGANIC",
+        "STIMULANT"
+      ]
+    },
+    "blacklight_uv_pulse": {
+      "name": "Blacklight UV Pulse",
+      "wristband": "quartz",
+      "types": [
+        "PSYCHEDELIC"
+      ]
+    },
+    "bass_drop_shove": {
+      "name": "Bass Drop Shove",
+      "wristband": "wonky_keychain",
+      "types": [
+        "DOWNER",
+        "ORGANIC"
+      ]
+    },
+    "pink_flamingo_float": {
+      "name": "Pink Flamingo Float",
+      "wristband": "extra_cheese",
+      "types": [
+        "DISSOCIATIVE"
+      ]
+    },
+    "jaw_grind": {
+      "name": "Jaw Grind",
+      "wristband": "uv_skeleton",
+      "types": [
+        "STIMULANT"
+      ]
+    },
+    "share_taxi_tuktuk": {
+      "name": "Share Taxi Tuk-Tuk",
+      "wristband": "vip_press",
+      "types": []
+    },
+    "banyan_root_climb": {
+      "name": "Banyan Root Climb",
+      "wristband": "ash_mark",
+      "types": [
+        "ORGANIC",
+        "PSYCHEDELIC"
+      ]
+    }
+  },
+  "shops": {
+    "beach_stall": {
+      "name": "Beach Stall",
+      "items": [
+        "ziploc_baggie",
+        "coconut_water",
+        "water_bottle",
+        "tiger_balm",
+        "tie_dye_shirt",
+        "cotton_kurta"
+      ]
+    },
+    "flea_market": {
+      "name": "Anjuna Flea Market",
+      "items": [
+        "ziploc_baggie",
+        "rizla_paper",
+        "coconut_water",
+        "watermelon_slice",
+        "water_bottle",
+        "electrolyte_sachet",
+        "tiger_balm",
+        "incense_stick",
+        "wraparound_shades",
+        "earplugs",
+        "warm_kingfisher",
+        "banana_lassi",
+        "friendship_band",
+        "neon_glowstick",
+        "lucky_rupee",
+        "steel_flask",
+        "sequin_vest",
+        "glow_jacket"
+      ]
+    },
+    "backstage_bar": {
+      "name": "Backstage Bar",
+      "items": [
+        "amber_vial",
+        "rizla_paper",
+        "masala_chai",
+        "watermelon_slice",
+        "electrolyte_sachet",
+        "tiger_balm",
+        "weighted_blanket",
+        "mystery_powder"
+      ]
+    }
+  },
+  "intox": {
+    "_comment": "Bands of intoxication (0..1). The higher band applies from its min. See src/core/intox.js.",
+    "bands": [
+      {
+        "id": "MICRODOSE",
+        "name": "Microdose",
+        "min": 0,
+        "xp": 1,
+        "catch": 1,
+        "fumble": 0,
+        "encounter": 1,
+        "tilt": 0,
+        "wildLevel": 0,
+        "whiteoutLoss": 1,
+        "down": "You are back to a microdose. The world is flat and polite again."
+      },
+      {
+        "id": "COME_UP",
+        "name": "Come-up",
+        "min": 0.25,
+        "xp": 1.2,
+        "catch": 1.15,
+        "fumble": 0,
+        "encounter": 1.15,
+        "tilt": 0.5,
+        "wildLevel": 0,
+        "whiteoutLoss": 1,
+        "up": "You are coming up. Wild Astrals feel closer, and every fight teaches a little more.",
+        "down": "You are coming down to a gentle come-up."
+      },
+      {
+        "id": "PEAKING",
+        "name": "Peaking",
+        "min": 0.6,
+        "xp": 1.4,
+        "catch": 1.3,
+        "fumble": 0.1,
+        "encounter": 1.35,
+        "tilt": 1,
+        "wildLevel": 1,
+        "whiteoutLoss": 1.5,
+        "up": "You are peaking. Rare Astrals come out to look at you. So do the strong ones. Your hands are getting unreliable.",
+        "down": "The peak passes. Somewhere, a rare Astral loses interest."
+      },
+      {
+        "id": "EGO_GONE",
+        "name": "Ego gone",
+        "min": 0.9,
+        "xp": 1.6,
+        "catch": 1.3,
+        "fumble": 0.3,
+        "encounter": 1.6,
+        "tilt": 1.5,
+        "wildLevel": 2,
+        "whiteoutLoss": 2,
+        "up": "Ego gone. Everything is an Astral and every Astral is enormous. Drink some water, or do not.",
+        "down": null
+      }
+    ]
+  },
+  "abilities": {
+    "SECOND_WIND": {
+      "name": "Second Wind",
+      "desc": "Once a battle, it heals a quarter of its Serotonin when it drops below a third."
+    },
+    "OVERDRIVE": {
+      "name": "Overdrive",
+      "desc": "Below a third of its Serotonin, moves of its own type hit 30% harder."
+    },
+    "CLEAR_HEAD": {
+      "name": "Clear Head",
+      "desc": "Cannot fall into a Thought Loop or a K-hole."
+    },
+    "THICK_SKIN": {
+      "name": "Thick Skin",
+      "desc": "Takes 20% less from physical moves."
+    },
+    "DREAMER": {
+      "name": "Dreamer",
+      "desc": "Drifts out of the way of one attack in seven."
+    },
+    "STAMINA": {
+      "name": "Stamina",
+      "desc": "Every move costs one less Hydration."
+    },
+    "STATIC_CLING": {
+      "name": "Static Cling",
+      "desc": "A physical hit on it can leave the attacker with Cottonmouth."
+    },
+    "GROUNDED": {
+      "name": "Grounded",
+      "desc": "Critical hits never land on it."
+    },
+    "SHARP_EYES": {
+      "name": "Sharp Eyes",
+      "desc": "Lands critical hits more often."
+    },
+    "BURST": {
+      "name": "Burst",
+      "desc": "Its first move after coming out hits twice as hard. Then it pops."
+    }
+  }
+}

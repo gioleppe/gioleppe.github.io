@@ -1,0 +1,1970 @@
+[
+  {
+    "id": "trail_juggler",
+    "name": "Juggler Dev",
+    "sprite": "juggler",
+    "textStyle": "STIMULANT",
+    "party": [
+      {
+        "species": "djembe_monk",
+        "level": 4
+      }
+    ],
+    "reward": 80,
+    "intro": [
+      "You looked at me! I saw you look! Okay so, quantum astrology, right, it is basically that every star sign is also every other star sign until you check...",
+      "...which is why I juggle. Anyway. Astral clash?"
+    ],
+    "defeat": [
+      "Mercury must be in something."
+    ],
+    "after": "I dropped all three. I never drop all three."
+  },
+  {
+    "id": "trail_spinner",
+    "name": "Fire-Spinner Lola",
+    "sprite": "firespinner",
+    "textStyle": "NORMAL",
+    "party": [
+      {
+        "species": "crabcake",
+        "level": 4
+      },
+      {
+        "species": "snoozel",
+        "level": 5
+      }
+    ],
+    "reward": 110,
+    "intro": [
+      "Careful, the poi are lit. So am I. Let us dance!"
+    ],
+    "defeat": [
+      "You burn brighter than my paraffin."
+    ],
+    "after": "DJ Diabolo plays the Poi Pit. He never stops for water. Remember that."
+  },
+  {
+    "id": "chad1_g",
+    "name": "Astra-Zero",
+    "sprite": "chad",
+    "textStyle": "DOWNER",
+    "party": [
+      {
+        "species": "jawling",
+        "level": 6
+      }
+    ],
+    "reward": 200,
+    "setFlag": "beat_chad1",
+    "intro": [
+      "Namaste. It is Chad, from the charter flight. I go by Astra-Zero now.",
+      "I achieved ego death at the airport. It was easy. Daddy wired me a premium Astral, look."
+    ],
+    "defeat": [
+      "Whatever. Winning is attachment. I am beyond attachment."
+    ],
+    "after": "I am not ignoring you. I am practising non-engagement."
+  },
+  {
+    "id": "chad1_j",
+    "name": "Astra-Zero",
+    "sprite": "chad",
+    "textStyle": "DOWNER",
+    "party": [
+      {
+        "species": "blottertot",
+        "level": 6
+      }
+    ],
+    "reward": 200,
+    "setFlag": "beat_chad1",
+    "intro": [
+      "Namaste. It is Chad, from the charter flight. I go by Astra-Zero now.",
+      "I achieved ego death at the airport. It was easy. Daddy wired me a premium Astral, look."
+    ],
+    "defeat": [
+      "Whatever. Winning is attachment. I am beyond attachment."
+    ],
+    "after": "I am not ignoring you. I am practising non-engagement."
+  },
+  {
+    "id": "chad1_b",
+    "name": "Astra-Zero",
+    "sprite": "chad",
+    "textStyle": "DOWNER",
+    "party": [
+      {
+        "species": "ganjapod",
+        "level": 6
+      }
+    ],
+    "reward": 200,
+    "setFlag": "beat_chad1",
+    "intro": [
+      "Namaste. It is Chad, from the charter flight. I go by Astra-Zero now.",
+      "I achieved ego death at the airport. It was easy. Daddy wired me a premium Astral, look."
+    ],
+    "defeat": [
+      "Whatever. Winning is attachment. I am beyond attachment."
+    ],
+    "after": "I am not ignoring you. I am practising non-engagement."
+  },
+  {
+    "id": "pit_raver",
+    "name": "Raver Miko",
+    "sprite": "raver",
+    "textStyle": "STIMULANT",
+    "party": [
+      {
+        "species": "glowkid",
+        "level": 6
+      },
+      {
+        "species": "djembe_monk",
+        "level": 6
+      }
+    ],
+    "reward": 140,
+    "intro": [
+      "Did you feel that drop? No? It has not happened yet. It is ABOUT to. Fight me before it does!"
+    ],
+    "defeat": [
+      "The drop... was inside you all along."
+    ],
+    "after": "Diabolo is all Stimulant and Organic. Something Dissociative would wobble him."
+  },
+  {
+    "id": "pit_wook",
+    "name": "Wook Sandy",
+    "sprite": "wook",
+    "textStyle": "DOWNER",
+    "party": [
+      {
+        "species": "wooklet",
+        "level": 7
+      }
+    ],
+    "reward": 150,
+    "intro": [
+      "Hey... do you have a spare... anything? No? Then we clash, I guess."
+    ],
+    "defeat": [
+      "Far out. Got a spare rematch?"
+    ],
+    "after": "I have been on this dancefloor since the last festival."
+  },
+  {
+    "id": "boss_diabolo",
+    "name": "DJ Diabolo",
+    "sprite": "dj",
+    "textStyle": "STIMULANT",
+    "boss": true,
+    "wristband": "hemp_string",
+    "setFlag": "beat_diabolo",
+    "reward": 600,
+    "party": [
+      {
+        "species": "djembe_monk",
+        "level": 8
+      },
+      {
+        "species": "wooklet",
+        "level": 8
+      },
+      {
+        "species": "glowkid",
+        "level": 10,
+        "moves": [
+          "teeth_grind",
+          "fractal_lick",
+          "strobe_rush"
+        ]
+      }
+    ],
+    "intro": [
+      "YOU. On my stage. During my set. I have been mixing for nineteen hours and I will not be interrupted by anything less than an astral clash.",
+      "One, two, one-two-three-four!"
+    ],
+    "defeat": [
+      "...The record skipped. Nobody has made my record skip since 2011.",
+      "Take the Hemp String Wristband. Your Organic and Stimulant Astrals can hack through fairy lights with it."
+    ],
+    "after": "The road north to the Tantric Yurt is choked with fairy lights. Not for you, now.",
+    "rematch": "boss_diabolo_rematch",
+    "rematchBands": 3
+  },
+  {
+    "id": "yurt_yogi",
+    "name": "Yogi Anand",
+    "sprite": "yogi",
+    "party": [
+      {
+        "species": "snoozel",
+        "level": 9
+      },
+      {
+        "species": "lassiblob",
+        "level": 10
+      }
+    ],
+    "reward": 180,
+    "intro": [
+      "Breathe in. Hold. Hold. Hold. Oh, you are still here? Then we clash."
+    ],
+    "defeat": [
+      "And... exhale."
+    ],
+    "after": "Svetlana sits inside the yurt. Her Astrals are all Psychedelic. Bring a Bummer."
+  },
+  {
+    "id": "yurt_hippie",
+    "name": "Hippie Sol",
+    "sprite": "hippie",
+    "party": [
+      {
+        "species": "shroomba",
+        "level": 10
+      },
+      {
+        "species": "tridog",
+        "level": 10
+      }
+    ],
+    "reward": 190,
+    "intro": [
+      "Brother! Sister! Being! I can see your aura. It needs a wash. Let me help."
+    ],
+    "defeat": [
+      "Clean as a whistle."
+    ],
+    "after": "The market is east of here. Do not buy the Himalayan Kush. It is oregano."
+  },
+  {
+    "id": "yurt_acolyte",
+    "name": "Acolyte Mira",
+    "sprite": "yogi",
+    "textStyle": "PSYCHEDELIC",
+    "party": [
+      {
+        "species": "glowkid",
+        "level": 11
+      },
+      {
+        "species": "blottertot",
+        "level": 11
+      }
+    ],
+    "reward": 220,
+    "intro": [
+      "Nobody approaches the Guru without first approaching themselves. And then me."
+    ],
+    "defeat": [
+      "You have approached... adequately."
+    ],
+    "after": "She is ready for you."
+  },
+  {
+    "id": "boss_svetlana",
+    "name": "Guru Svetlana",
+    "sprite": "guru",
+    "textStyle": "PSYCHEDELIC",
+    "boss": true,
+    "wristband": "quartz",
+    "setFlag": "beat_svetlana",
+    "reward": 1000,
+    "party": [
+      {
+        "species": "blottertot",
+        "level": 12
+      },
+      {
+        "species": "tridog",
+        "level": 12
+      },
+      {
+        "species": "fractoad",
+        "level": 14,
+        "moves": [
+          "fractal_lick",
+          "kaleidoscope_spit",
+          "deep_breath",
+          "third_eye_beam"
+        ]
+      }
+    ],
+    "intro": [
+      "Sit. No, not there. That is where the energy sits.",
+      "You came for a wristband. But have you asked what the wristband wants? Let us ask it together, on the astral plane."
+    ],
+    "defeat": [
+      "The wristband wants... you. How embarrassing for me.",
+      "Take the Quartz Wristband. A Psychedelic Astral can now light up dark places. The road north of the market is very dark."
+    ],
+    "after": "I told security at the market to let you through. Captain Keta is north. He is somewhere near his body, usually.",
+    "rematch": "boss_svetlana_rematch",
+    "rematchBands": 4
+  },
+  {
+    "id": "market_dealer",
+    "name": "Dealer Vik",
+    "sprite": "dealer",
+    "textStyle": "NORMAL",
+    "party": [
+      {
+        "species": "shadowcop",
+        "level": 13
+      },
+      {
+        "species": "mozzquito",
+        "level": 13
+      }
+    ],
+    "reward": 300,
+    "intro": [
+      "Psst. Himalayan Kush. Hand-picked by monks. Very spiritual, very oregano... I mean organic. You are not buying? Then you are a problem."
+    ],
+    "defeat": [
+      "Team Undercover will hear about this."
+    ],
+    "after": "We are taking the whole festival. All that lovely dopamine. You will see."
+  },
+  {
+    "id": "road_guard",
+    "name": "Guard Pinto",
+    "sprite": "guard",
+    "party": [
+      {
+        "species": "shadowcop",
+        "level": 13
+      },
+      {
+        "species": "sirenowl",
+        "level": 14
+      }
+    ],
+    "reward": 320,
+    "intro": [
+      "Halt. This road is closed for a private event. The event is me standing here."
+    ],
+    "defeat": [
+      "I did not see you. You did not see me."
+    ],
+    "after": "Team Undercover pays better than the festival. That is all I will say."
+  },
+  {
+    "id": "road_dealer",
+    "name": "Dealer Raz",
+    "sprite": "dealer",
+    "party": [
+      {
+        "species": "mozzquito",
+        "level": 14
+      },
+      {
+        "species": "wooklet",
+        "level": 14
+      },
+      {
+        "species": "shadowcop",
+        "level": 14
+      }
+    ],
+    "reward": 340,
+    "intro": [
+      "You have a torch? Turn it off. Turn it OFF. Fine. We do this the hard way."
+    ],
+    "defeat": [
+      "Nobody was supposed to find this stash."
+    ],
+    "after": "There is something hidden further up the road. I am not telling you where."
+  },
+  {
+    "id": "road_raver",
+    "name": "Raver Jun",
+    "sprite": "raver",
+    "textStyle": "STIMULANT",
+    "party": [
+      {
+        "species": "glowkid",
+        "level": 15
+      },
+      {
+        "species": "djembe_monk",
+        "level": 15
+      }
+    ],
+    "reward": 300,
+    "intro": [
+      "Is this the afterparty? It is so dark. I love it. I cannot find my feet. Fight me!"
+    ],
+    "defeat": [
+      "Found my feet. They were on my legs."
+    ],
+    "after": "The Ditch is just ahead. Mind the scooters."
+  },
+  {
+    "id": "ditch_local",
+    "name": "Mechanic Dinesh",
+    "sprite": "local",
+    "party": [
+      {
+        "species": "ketacrab",
+        "level": 15
+      },
+      {
+        "species": "crabcake",
+        "level": 15
+      }
+    ],
+    "reward": 330,
+    "intro": [
+      "Forty scooters went into this ditch. I have fixed none of them. I blame Astrals. Yours, specifically."
+    ],
+    "defeat": [
+      "Maybe it is the carburettors."
+    ],
+    "after": "Captain Keta has not stood up straight in years. His Astrals are all wobble. Use something Organic or Psychedelic."
+  },
+  {
+    "id": "ditch_tourist",
+    "name": "Tourist Brenda",
+    "sprite": "tourist",
+    "party": [
+      {
+        "species": "lobsterlad",
+        "level": 15
+      }
+    ],
+    "reward": 350,
+    "intro": [
+      "Excuse me, do you work here? No? Well somebody has to take responsibility for this ditch."
+    ],
+    "defeat": [
+      "I shall be leaving a review."
+    ],
+    "after": "One star. Would not fall in again."
+  },
+  {
+    "id": "boss_keta",
+    "name": "Captain Keta",
+    "sprite": "captain",
+    "textStyle": "DOWNER",
+    "boss": true,
+    "wristband": "wonky_keychain",
+    "setFlag": "beat_keta",
+    "reward": 1500,
+    "party": [
+      {
+        "species": "ketacrab",
+        "level": 16
+      },
+      {
+        "species": "wooklet",
+        "level": 16
+      },
+      {
+        "species": "nitroxide",
+        "level": 15
+      },
+      {
+        "species": "wonkrab",
+        "level": 18,
+        "moves": [
+          "noodle_arm",
+          "k_hole",
+          "gravity_flip",
+          "long_stare"
+        ]
+      }
+    ],
+    "intro": [
+      "Ahoy... is the ditch moving, or is it me? It is me. I am the ditch.",
+      "You want the keychain. Everyone wants the keychain. Nobody asks how the keychain is doing. Prepare to be... prepare to... hold on."
+    ],
+    "defeat": [
+      "Oh. I was upside down the whole time.",
+      "Here. The Wonky Keychain. A Downer or Organic Astral can shove the heavy things now. Subwoofers. Wooks. That sort of thing."
+    ],
+    "after": "There is a subwoofer blocking the east side of the market. Give it a shove. Tell it the Captain sent you.",
+    "rematch": "boss_keta_rematch",
+    "rematchBands": 5
+  },
+  {
+    "id": "stall_wook",
+    "name": "Wook Bodhi",
+    "sprite": "wook",
+    "textStyle": "DOWNER",
+    "party": [
+      {
+        "species": "wooklet",
+        "level": 17
+      },
+      {
+        "species": "chillem",
+        "level": 17
+      }
+    ],
+    "reward": 380,
+    "intro": [
+      "I have been in this queue since Tuesday. You are not cutting in."
+    ],
+    "defeat": [
+      "Okay you can cut in."
+    ],
+    "after": "Extra cheese. Always extra cheese."
+  },
+  {
+    "id": "stall_raver",
+    "name": "Raver Pix",
+    "sprite": "raver",
+    "textStyle": "STIMULANT",
+    "party": [
+      {
+        "species": "glowkid",
+        "level": 17
+      },
+      {
+        "species": "mozzquito",
+        "level": 17
+      },
+      {
+        "species": "djembe_monk",
+        "level": 18
+      }
+    ],
+    "reward": 400,
+    "intro": [
+      "The thicket! The thicket goes to the forest stage! But there is foam! SO MUCH FOAM! Fight!"
+    ],
+    "defeat": [
+      "I slipped."
+    ],
+    "after": "You need to float to get through the thicket. Raju stamps people who can float."
+  },
+  {
+    "id": "chad2_g",
+    "name": "Astra-Zero",
+    "sprite": "chad",
+    "textStyle": "DOWNER",
+    "party": [
+      {
+        "species": "selfiend",
+        "level": 16
+      },
+      {
+        "species": "duvetghast",
+        "level": 17
+      },
+      {
+        "species": "gurnagama",
+        "level": 18
+      }
+    ],
+    "reward": 700,
+    "setFlag": "beat_chad2",
+    "intro": [
+      "Oh. You. I have been doing a silent retreat. I broke it to tell you how well it is going.",
+      "My Astrals did a sound bath. They are basically vibrating at a higher tax bracket."
+    ],
+    "defeat": [
+      "I let you win. To teach you about winning."
+    ],
+    "after": "Raju only cooks for people with three wristbands. I have a note from my father."
+  },
+  {
+    "id": "chad2_j",
+    "name": "Astra-Zero",
+    "sprite": "chad",
+    "textStyle": "DOWNER",
+    "party": [
+      {
+        "species": "selfiend",
+        "level": 16
+      },
+      {
+        "species": "duvetghast",
+        "level": 17
+      },
+      {
+        "species": "fractoad",
+        "level": 18
+      }
+    ],
+    "reward": 700,
+    "setFlag": "beat_chad2",
+    "intro": [
+      "Oh. You. I have been doing a silent retreat. I broke it to tell you how well it is going.",
+      "My Astrals did a sound bath. They are basically vibrating at a higher tax bracket."
+    ],
+    "defeat": [
+      "I let you win. To teach you about winning."
+    ],
+    "after": "Raju only cooks for people with three wristbands. I have a note from my father."
+  },
+  {
+    "id": "chad2_b",
+    "name": "Astra-Zero",
+    "sprite": "chad",
+    "textStyle": "DOWNER",
+    "party": [
+      {
+        "species": "selfiend",
+        "level": 16
+      },
+      {
+        "species": "duvetghast",
+        "level": 17
+      },
+      {
+        "species": "hashlump",
+        "level": 18
+      }
+    ],
+    "reward": 700,
+    "setFlag": "beat_chad2",
+    "intro": [
+      "Oh. You. I have been doing a silent retreat. I broke it to tell you how well it is going.",
+      "My Astrals did a sound bath. They are basically vibrating at a higher tax bracket."
+    ],
+    "defeat": [
+      "I let you win. To teach you about winning."
+    ],
+    "after": "Raju only cooks for people with three wristbands. I have a note from my father."
+  },
+  {
+    "id": "boss_raju",
+    "name": "Chef Raju",
+    "sprite": "chef",
+    "boss": true,
+    "wristband": "extra_cheese",
+    "setFlag": "beat_raju",
+    "reward": 2000,
+    "party": [
+      {
+        "species": "shroomba",
+        "level": 20
+      },
+      {
+        "species": "lassiblob",
+        "level": 20
+      },
+      {
+        "species": "chillem",
+        "level": 21
+      },
+      {
+        "species": "omeletron",
+        "level": 23,
+        "moves": [
+          "spore_nap",
+          "munchie_bite",
+          "third_eye_beam",
+          "herbal_tea"
+        ]
+      }
+    ],
+    "intro": [
+      "Five in the morning. Everybody is hungry, nobody has money, and you want a wristband instead of an omelette.",
+      "Fine. But I cook while we fight. Do not get shell in it."
+    ],
+    "defeat": [
+      "Perfectly done. Not the omelette. You.",
+      "The Extra Cheese Stamp. With a Dissociative Astral you can float across foam pits and shallows. Take this too, I found it in the fryer."
+    ],
+    "gives": "electrolyte_sachet",
+    "after": "The sea north of the Scooter Ditch leads to the lake and the forest. So does the thicket behind my stall. Mind the bass up there.",
+    "rematch": "boss_raju_rematch",
+    "rematchBands": 6
+  },
+  {
+    "id": "lake_hippie",
+    "name": "Hippie Rain",
+    "sprite": "hippie",
+    "party": [
+      {
+        "species": "lassiblob",
+        "level": 23
+      },
+      {
+        "species": "neighbula",
+        "level": 23
+      }
+    ],
+    "reward": 520,
+    "intro": [
+      "The lake is fresh water, you know. Ten metres from the sea. Nobody can explain it. I can, but it takes six hours. Or we clash."
+    ],
+    "defeat": [
+      "It is the mud. Definitely the mud."
+    ],
+    "after": "The forest stage is south. You will hear it before you see it. You will feel it before you hear it."
+  },
+  {
+    "id": "lake_yogi",
+    "name": "Yogi Padma",
+    "sprite": "yogi",
+    "party": [
+      {
+        "species": "duvetghast",
+        "level": 23
+      },
+      {
+        "species": "snoozel",
+        "level": 22
+      },
+      {
+        "species": "wooklet",
+        "level": 23
+      }
+    ],
+    "reward": 540,
+    "intro": [
+      "I am doing a mud cleanse. You have disturbed the mud. The mud demands a clash."
+    ],
+    "defeat": [
+      "The mud forgives you."
+    ],
+    "after": "The mud forgets nothing."
+  },
+  {
+    "id": "forest_raver",
+    "name": "Darkpsy Disciple Zed",
+    "sprite": "raver",
+    "textStyle": "STIMULANT",
+    "party": [
+      {
+        "species": "glowkid",
+        "level": 24
+      },
+      {
+        "species": "mozzquito",
+        "level": 24
+      },
+      {
+        "species": "sirenowl",
+        "level": 24
+      }
+    ],
+    "reward": 600,
+    "intro": [
+      "ONE NINETY! ONE NINETY! Can your heart do one ninety? Mine can! I checked! FIGHT!"
+    ],
+    "defeat": [
+      "One... sixty... is fine."
+    ],
+    "after": "The Baron plays facing away from the crowd. Walk round the stage."
+  },
+  {
+    "id": "forest_guard",
+    "name": "Guard Lobo",
+    "sprite": "guard",
+    "party": [
+      {
+        "species": "shadowcop",
+        "level": 24
+      },
+      {
+        "species": "dengoth",
+        "level": 24
+      }
+    ],
+    "reward": 620,
+    "intro": [
+      "Team Undercover security. This stage is being decommissioned for noise. And for joy. Mostly joy."
+    ],
+    "defeat": [
+      "The Sergeant will not like this."
+    ],
+    "after": "Our Sergeant is up on the Sunset Cliff. He is fencing off the view."
+  },
+  {
+    "id": "boss_darkpsy",
+    "name": "Baron Von Darkpsy",
+    "sprite": "baron",
+    "textStyle": "DOWNER",
+    "boss": true,
+    "wristband": "uv_skeleton",
+    "setFlag": "beat_darkpsy",
+    "reward": 2600,
+    "party": [
+      {
+        "species": "sirenowl",
+        "level": 22
+      },
+      {
+        "species": "dengoth",
+        "level": 23
+      },
+      {
+        "species": "fractoad",
+        "level": 24
+      },
+      {
+        "species": "omnihound",
+        "level": 25,
+        "moves": [
+          "bad_vibes",
+          "third_eye_beam",
+          "siren_wail",
+          "wild_swing"
+        ]
+      }
+    ],
+    "intro": [
+      "You approach the Baron from the front. Nobody approaches the Baron from the front. It is where the dread comes out.",
+      "Very well. One hundred and ninety beats per minute. Each one, a small ending."
+    ],
+    "defeat": [
+      "...A major chord. In MY forest.",
+      "The UV Skeleton Band. A Stimulant Astral can now chew through padlocked VIP fences. There is one south of the market."
+    ],
+    "after": "Leave me. I must find a darker key.",
+    "rematch": "boss_darkpsy_rematch",
+    "rematchBands": 7
+  },
+  {
+    "id": "thicket_wook",
+    "name": "Wook Moss",
+    "sprite": "wook",
+    "textStyle": "DOWNER",
+    "party": [
+      {
+        "species": "wooklet",
+        "level": 21
+      },
+      {
+        "species": "chillem",
+        "level": 22
+      }
+    ],
+    "reward": 480,
+    "intro": [
+      "I live here now. In the bamboo. This is my bamboo."
+    ],
+    "defeat": [
+      "It was always our bamboo."
+    ],
+    "after": "The foam pit ate my sandals."
+  },
+  {
+    "id": "thicket_spinner",
+    "name": "Fire-Spinner Ash",
+    "sprite": "firespinner",
+    "party": [
+      {
+        "species": "glowkid",
+        "level": 22
+      },
+      {
+        "species": "djembe_monk",
+        "level": 22
+      },
+      {
+        "species": "tridog",
+        "level": 22
+      }
+    ],
+    "reward": 500,
+    "intro": [
+      "Fire and bamboo. What could go wrong? Clash with me before we find out!"
+    ],
+    "defeat": [
+      "Something went wrong."
+    ],
+    "after": "Raju's stall is south. The forest is north. I am on fire. Slightly."
+  },
+  {
+    "id": "corridor_guard",
+    "name": "Guard Dsouza",
+    "sprite": "guard",
+    "party": [
+      {
+        "species": "shadowcop",
+        "level": 25
+      },
+      {
+        "species": "sirenowl",
+        "level": 25
+      },
+      {
+        "species": "bribe_asaurus",
+        "level": 27
+      }
+    ],
+    "reward": 720,
+    "intro": [
+      "VIP corridor. Wristband check. No, not those wristbands. The ones that cost money."
+    ],
+    "defeat": [
+      "You are on the list now. A different list."
+    ],
+    "after": "Team Undercover owns everything past this fog."
+  },
+  {
+    "id": "corridor_dealer",
+    "name": "Dealer Moe",
+    "sprite": "dealer",
+    "party": [
+      {
+        "species": "dengoth",
+        "level": 25
+      },
+      {
+        "species": "nitroxide",
+        "level": 25
+      },
+      {
+        "species": "mozzquito",
+        "level": 26
+      }
+    ],
+    "reward": 700,
+    "intro": [
+      "Balloons! Get your balloons! First one is free, second one is a clash!"
+    ],
+    "defeat": [
+      "They always pop."
+    ],
+    "after": "Chloe pays us to keep the riff-raff off her cliff. You are riff. Possibly raff."
+  },
+  {
+    "id": "corridor_influencer",
+    "name": "Influencer Jax",
+    "sprite": "influencer",
+    "textStyle": "STIMULANT",
+    "party": [
+      {
+        "species": "selfiend",
+        "level": 26
+      },
+      {
+        "species": "glowkid",
+        "level": 26
+      },
+      {
+        "species": "selfiend",
+        "level": 27
+      }
+    ],
+    "reward": 760,
+    "intro": [
+      "Oh my god you are SO authentic. Can I film you losing? It is for a reel."
+    ],
+    "defeat": [
+      "Delete that. DELETE THAT."
+    ],
+    "after": "The sunset is at the end of the corridor. Sponsored, obviously."
+  },
+  {
+    "id": "cliff_influencer",
+    "name": "Influencer Bex",
+    "sprite": "influencer",
+    "textStyle": "STIMULANT",
+    "party": [
+      {
+        "species": "selfiend",
+        "level": 26
+      },
+      {
+        "species": "bongo_bishop",
+        "level": 26
+      }
+    ],
+    "reward": 800,
+    "intro": [
+      "You are in my shot. You have been in my shot for an hour. I am going to need you to clash or leave."
+    ],
+    "defeat": [
+      "Golden hour is ruined."
+    ],
+    "after": "Chloe has the best spot. She had it fenced."
+  },
+  {
+    "id": "cliff_sergeant",
+    "name": "Sergeant Baksheesh",
+    "sprite": "guard",
+    "boss": true,
+    "setFlag": "beat_sergeant",
+    "reward": 1800,
+    "party": [
+      {
+        "species": "bribe_asaurus",
+        "level": 24
+      },
+      {
+        "species": "sirenowl",
+        "level": 25
+      },
+      {
+        "species": "dengoth",
+        "level": 25
+      },
+      {
+        "species": "bribe_asaurus",
+        "level": 26
+      }
+    ],
+    "intro": [
+      "So you are the barefoot nobody who keeps tripping over my operation.",
+      "Team Undercover has bottled half the dopamine at this festival. The free party ends tonight. After I end you."
+    ],
+    "defeat": [
+      "Impossible. I had a permit. I wrote it myself.",
+      "Take the bottles. Give it all back, see if I care. Team Undercover is finished. I am going to open a guest house."
+    ],
+    "after": "..."
+  },
+  {
+    "id": "boss_chloe",
+    "name": "Influencer Chloe",
+    "sprite": "influencer",
+    "textStyle": "STIMULANT",
+    "boss": true,
+    "wristband": "vip_press",
+    "setFlag": "beat_chloe",
+    "reward": 3200,
+    "party": [
+      {
+        "species": "selfiend",
+        "level": 25
+      },
+      {
+        "species": "gurnagama",
+        "level": 25
+      },
+      {
+        "species": "bongo_bishop",
+        "level": 26
+      },
+      {
+        "species": "ravelord",
+        "level": 26,
+        "moves": [
+          "strobe_rush",
+          "tracer_trail",
+          "espresso_shot",
+          "third_eye_beam"
+        ]
+      }
+    ],
+    "intro": [
+      "Hi guys! So today we are at the most EXCLUSIVE sunset in Goa, and... sorry, who let this person in?",
+      "Okay you know what, this is great content. Astral clash at golden hour. Smash that like button."
+    ],
+    "defeat": [
+      "My engagement... it has never been this high. People LOVE watching me lose.",
+      "Here, take the VIP Press Pass. Tuk-tuks will take you to any Chai Tent you have visited. And the sadhu at the sea cave will let you in."
+    ],
+    "after": "Baba Smoke lives in the cave north of the shallows. He refused to collab. Twice.",
+    "rematch": "boss_chloe_rematch",
+    "rematchBands": 8
+  },
+  {
+    "id": "cave_yogi",
+    "name": "Yogi Dhruv",
+    "sprite": "yogi",
+    "party": [
+      {
+        "species": "duvetghast",
+        "level": 29
+      },
+      {
+        "species": "chillem",
+        "level": 29
+      },
+      {
+        "species": "lassiblob",
+        "level": 29
+      }
+    ],
+    "reward": 900,
+    "intro": [
+      "I have held this pose for eleven days. Do not make me come out of it. Fine. I am coming out of it."
+    ],
+    "defeat": [
+      "Back to the pose."
+    ],
+    "after": "Baba has not spoken in years. He communicates in smoke. And clashes."
+  },
+  {
+    "id": "cave_disciple",
+    "name": "Disciple Tara",
+    "sprite": "shaman",
+    "textStyle": "PSYCHEDELIC",
+    "party": [
+      {
+        "species": "omeletron",
+        "level": 30
+      },
+      {
+        "species": "omnihound",
+        "level": 30
+      },
+      {
+        "species": "grand_wook",
+        "level": 30
+      }
+    ],
+    "reward": 940,
+    "intro": [
+      "The pattern in the east chamber has been watching us. It is watching you now. Show it something."
+    ],
+    "defeat": [
+      "It blinked."
+    ],
+    "after": "If you light the dark, you may see the pattern in the rock. Bring your best vials."
+  },
+  {
+    "id": "boss_baba",
+    "name": "Baba Smoke",
+    "sprite": "baba",
+    "textStyle": "PSYCHEDELIC",
+    "boss": true,
+    "wristband": "ash_mark",
+    "setFlag": "beat_baba",
+    "reward": 3800,
+    "party": [
+      {
+        "species": "omeletron",
+        "level": 31
+      },
+      {
+        "species": "grand_wook",
+        "level": 31
+      },
+      {
+        "species": "chillem",
+        "level": 31
+      },
+      {
+        "species": "hoffmanite",
+        "level": 32
+      },
+      {
+        "species": "charagolem",
+        "level": 33,
+        "moves": [
+          "root_slam",
+          "herbal_tea",
+          "weighted_crush",
+          "couch_lock"
+        ]
+      }
+    ],
+    "intro": [
+      "...",
+      "(He exhales. The smoke forms a question mark, then a wristband, then a very rude gesture.)"
+    ],
+    "defeat": [
+      "(The smoke forms a small round of applause.)",
+      "(He presses a thumb of ash to your forehead. With an Organic or Psychedelic Astral you can now climb banyan roots.)"
+    ],
+    "after": "(The smoke spells BACKSTAGE, with an arrow.)",
+    "rematch": "boss_baba_rematch",
+    "rematchBands": 8
+  },
+  {
+    "id": "backstage_guard1",
+    "name": "Bouncer Tiny",
+    "sprite": "guard",
+    "party": [
+      {
+        "species": "bribe_asaurus",
+        "level": 31
+      },
+      {
+        "species": "duvetghast",
+        "level": 31
+      },
+      {
+        "species": "dengoth",
+        "level": 32
+      }
+    ],
+    "reward": 1100,
+    "intro": [
+      "Name? Not on the list. Nobody is on the list. There is no list. There is only me."
+    ],
+    "defeat": [
+      "You are on the list."
+    ],
+    "after": "The Promoter has not left that chair since the festival began. Nobody knows which festival."
+  },
+  {
+    "id": "backstage_guard2",
+    "name": "Bouncer Mountain",
+    "sprite": "guard",
+    "party": [
+      {
+        "species": "lobsterlad",
+        "level": 32
+      },
+      {
+        "species": "wonkrab",
+        "level": 32
+      },
+      {
+        "species": "bribe_asaurus",
+        "level": 33
+      }
+    ],
+    "reward": 1150,
+    "intro": [
+      "The temple is that way. You are this way. I am in between. Do the maths."
+    ],
+    "defeat": [
+      "I never liked maths."
+    ],
+    "after": "Only an All-Access Hologram gets you past the rope."
+  },
+  {
+    "id": "boss_promoter",
+    "name": "The Promoter",
+    "sprite": "promoter",
+    "boss": true,
+    "wristband": "all_access",
+    "setFlag": "beat_promoter",
+    "reward": 5000,
+    "party": [
+      {
+        "species": "bribe_asaurus",
+        "level": 35
+      },
+      {
+        "species": "ravelord",
+        "level": 35
+      },
+      {
+        "species": "duvetghast",
+        "level": 35
+      },
+      {
+        "species": "wonkrab",
+        "level": 36
+      },
+      {
+        "species": "omeletron",
+        "level": 36
+      },
+      {
+        "species": "amphetadragon",
+        "level": 37,
+        "moves": [
+          "redline",
+          "comedown",
+          "laser_spam",
+          "gurn_lock"
+        ]
+      }
+    ],
+    "intro": [
+      "Seven wristbands. Barefoot. No passport. You are exactly the kind of story I can sell.",
+      "But I do not give All-Access. I license it. Let us negotiate, on the astral plane. I always win negotiations."
+    ],
+    "defeat": [
+      "...I am going to need that in writing. No. No, I am not. You won.",
+      "The All-Access Hologram. The rope behind me opens onto the Mainstage Temple. The Four-on-the-Floor are waiting, and behind them the Shaman Council. And your passport."
+    ],
+    "after": "Go on. Before I think of a clause.",
+    "rematch": "boss_promoter_rematch",
+    "rematchFlag": "finished"
+  },
+  {
+    "id": "elite_kick",
+    "name": "Kick Kalyani",
+    "sprite": "dj",
+    "boss": true,
+    "setFlag": "beat_elite_kick",
+    "reward": 4000,
+    "party": [
+      {
+        "species": "duvetghast",
+        "level": 36
+      },
+      {
+        "species": "chillem",
+        "level": 36
+      },
+      {
+        "species": "lassiblob",
+        "level": 37
+      },
+      {
+        "species": "grand_wook",
+        "level": 37
+      },
+      {
+        "species": "charagolem",
+        "level": 39
+      }
+    ],
+    "intro": [
+      "First of the Four-on-the-Floor. I am the kick drum. I land on every beat, and I land heavy.",
+      "Nobody dances without me. Nobody passes without me."
+    ],
+    "defeat": [
+      "You kept time. Go on. The bassline is next."
+    ],
+    "after": "..."
+  },
+  {
+    "id": "elite_bass",
+    "name": "Bassline Boris",
+    "sprite": "captain",
+    "textStyle": "DOWNER",
+    "boss": true,
+    "setFlag": "beat_elite_bass",
+    "reward": 4200,
+    "party": [
+      {
+        "species": "wonkrab",
+        "level": 37
+      },
+      {
+        "species": "neighbula",
+        "level": 37
+      },
+      {
+        "species": "nitroxide",
+        "level": 38
+      },
+      {
+        "species": "grand_wook",
+        "level": 38
+      },
+      {
+        "species": "hoffmanite",
+        "level": 39
+      }
+    ],
+    "intro": [
+      "Second. I am the bassline. I fill the gaps between her kicks, and I make the floor feel like the deck of a ship.",
+      "Try to stand up straight."
+    ],
+    "defeat": [
+      "You found your sea legs. The hi-hat will try to rush you."
+    ],
+    "after": "..."
+  },
+  {
+    "id": "elite_hat",
+    "name": "Hi-Hat Hana",
+    "sprite": "raver",
+    "textStyle": "STIMULANT",
+    "boss": true,
+    "setFlag": "beat_elite_hat",
+    "reward": 4400,
+    "party": [
+      {
+        "species": "bongo_bishop",
+        "level": 38
+      },
+      {
+        "species": "dengoth",
+        "level": 38
+      },
+      {
+        "species": "selfiend",
+        "level": 39
+      },
+      {
+        "species": "ravelord",
+        "level": 39
+      },
+      {
+        "species": "amphetadragon",
+        "level": 40
+      }
+    ],
+    "intro": [
+      "Third-third-third! I am the hi-hat, I am the offbeat, I am the reason your leg will not stop doing that!",
+      "Fast-fast-fast, here we go!"
+    ],
+    "defeat": [
+      "Okay. Okay okay okay. You are faster. The lead is last. She gets in your head."
+    ],
+    "after": "..."
+  },
+  {
+    "id": "elite_lead",
+    "name": "Lead Lakshmi",
+    "sprite": "guru",
+    "textStyle": "PSYCHEDELIC",
+    "boss": true,
+    "setFlag": "beat_elite_lead",
+    "reward": 4600,
+    "party": [
+      {
+        "species": "omnihound",
+        "level": 39
+      },
+      {
+        "species": "sirenowl",
+        "level": 39
+      },
+      {
+        "species": "omeletron",
+        "level": 39
+      },
+      {
+        "species": "bribe_asaurus",
+        "level": 39
+      },
+      {
+        "species": "hoffmanite",
+        "level": 40
+      },
+      {
+        "species": "mandalord",
+        "level": 41
+      }
+    ],
+    "intro": [
+      "Fourth. I am the lead line. The melody you will still be humming when you are eighty.",
+      "The others move your body. I only want your mind. Hold on to it if you can."
+    ],
+    "defeat": [
+      "A clean resolve. The Council is beyond. But there is somebody in the doorway. He has been there a while."
+    ],
+    "after": "..."
+  },
+  {
+    "id": "chad3_g",
+    "name": "Astra-Zero",
+    "sprite": "chad",
+    "textStyle": "NORMAL",
+    "boss": true,
+    "setFlag": "beat_chad3",
+    "reward": 8000,
+    "party": [
+      {
+        "species": "selfiend",
+        "level": 39
+      },
+      {
+        "species": "duvetghast",
+        "level": 39
+      },
+      {
+        "species": "omnihound",
+        "level": 40
+      },
+      {
+        "species": "ravelord",
+        "level": 40
+      },
+      {
+        "species": "grand_wook",
+        "level": 41
+      },
+      {
+        "species": "amphetadragon",
+        "level": 43
+      }
+    ],
+    "intro": [
+      "You. Of course it is you.",
+      "I got here yesterday. The Council would not see me. They said my ego was \"not dead, just very well dressed\".",
+      "So I am going to stand in this doorway until one of us has a breakthrough. On the astral plane. Come on."
+    ],
+    "defeat": [
+      "...",
+      "I did not achieve ego death at the airport. I bought a book about it. I did not finish the book.",
+      "Go on in. Get your passport. I think... I think I am going to go and find some water."
+    ],
+    "after": "..."
+  },
+  {
+    "id": "chad3_j",
+    "name": "Astra-Zero",
+    "sprite": "chad",
+    "textStyle": "NORMAL",
+    "boss": true,
+    "setFlag": "beat_chad3",
+    "reward": 8000,
+    "party": [
+      {
+        "species": "selfiend",
+        "level": 39
+      },
+      {
+        "species": "duvetghast",
+        "level": 39
+      },
+      {
+        "species": "omnihound",
+        "level": 40
+      },
+      {
+        "species": "ravelord",
+        "level": 40
+      },
+      {
+        "species": "grand_wook",
+        "level": 41
+      },
+      {
+        "species": "hoffmanite",
+        "level": 43
+      }
+    ],
+    "intro": [
+      "You. Of course it is you.",
+      "I got here yesterday. The Council would not see me. They said my ego was \"not dead, just very well dressed\".",
+      "So I am going to stand in this doorway until one of us has a breakthrough. On the astral plane. Come on."
+    ],
+    "defeat": [
+      "...",
+      "I did not achieve ego death at the airport. I bought a book about it. I did not finish the book.",
+      "Go on in. Get your passport. I think... I think I am going to go and find some water."
+    ],
+    "after": "..."
+  },
+  {
+    "id": "chad3_b",
+    "name": "Astra-Zero",
+    "sprite": "chad",
+    "textStyle": "NORMAL",
+    "boss": true,
+    "setFlag": "beat_chad3",
+    "reward": 8000,
+    "party": [
+      {
+        "species": "selfiend",
+        "level": 39
+      },
+      {
+        "species": "duvetghast",
+        "level": 39
+      },
+      {
+        "species": "omnihound",
+        "level": 40
+      },
+      {
+        "species": "ravelord",
+        "level": 40
+      },
+      {
+        "species": "grand_wook",
+        "level": 41
+      },
+      {
+        "species": "charagolem",
+        "level": 40
+      }
+    ],
+    "intro": [
+      "You. Of course it is you.",
+      "I got here yesterday. The Council would not see me. They said my ego was \"not dead, just very well dressed\".",
+      "So I am going to stand in this doorway until one of us has a breakthrough. On the astral plane. Come on."
+    ],
+    "defeat": [
+      "...",
+      "I did not achieve ego death at the airport. I bought a book about it. I did not finish the book.",
+      "Go on in. Get your passport. I think... I think I am going to go and find some water."
+    ],
+    "after": "..."
+  },
+  {
+    "id": "guest_grunt",
+    "name": "Undercover Grunt Ravi",
+    "sprite": "guard",
+    "gives": "memo_guesthouse",
+    "party": [
+      {
+        "species": "shadowcop",
+        "level": 14
+      },
+      {
+        "species": "mozzquito",
+        "level": 14
+      }
+    ],
+    "reward": 400,
+    "intro": [
+      "Room inspection. Team Undercover is buying this place, bed by bed. You are not in the brochure."
+    ],
+    "defeat": [
+      "Fine. Take the memo. I was going to shred it anyway. Probably."
+    ],
+    "after": "I am only here for the free breakfast now."
+  },
+  {
+    "id": "booth_selector",
+    "name": "Selector Nandini",
+    "sprite": "dj",
+    "textStyle": "STIMULANT",
+    "party": [
+      {
+        "species": "sirenowl",
+        "level": 26
+      },
+      {
+        "species": "glowkid",
+        "level": 26
+      },
+      {
+        "species": "dengoth",
+        "level": 27
+      }
+    ],
+    "reward": 900,
+    "intro": [
+      "You walked into my booth mid-set. Bold. Let us see if you can keep a beat."
+    ],
+    "defeat": [
+      "Okay. Okay. You can stay for the drop."
+    ],
+    "after": "The Baron plays facing away from the crowd. I play facing the exit."
+  },
+  {
+    "id": "villa_assistant",
+    "name": "Assistant Pippa",
+    "sprite": "influencer",
+    "party": [
+      {
+        "species": "selfiend",
+        "level": 28
+      },
+      {
+        "species": "lobsterlad",
+        "level": 28
+      },
+      {
+        "species": "bongo_bishop",
+        "level": 29
+      }
+    ],
+    "reward": 1100,
+    "intro": [
+      "This villa is a content house. You are not content. You are noise."
+    ],
+    "defeat": [
+      "Ugh. Fine. Do not read the memo on the table. Unless you want to."
+    ],
+    "after": "Chloe says the sunset belongs to us now. I just do the captions."
+  },
+  {
+    "id": "greenroom_goon1",
+    "name": "Bottler Kiran",
+    "sprite": "guard",
+    "party": [
+      {
+        "species": "dengoth",
+        "level": 33
+      },
+      {
+        "species": "bribe_asaurus",
+        "level": 34
+      }
+    ],
+    "reward": 1300,
+    "intro": [
+      "Green room. Bottles only. You are not a bottle."
+    ],
+    "defeat": [
+      "The safe is behind the subwoofers. Not that I am telling you."
+    ],
+    "after": "The speakers only move if you shove them from the right side."
+  },
+  {
+    "id": "greenroom_goon2",
+    "name": "Bottler Meera",
+    "sprite": "dealer",
+    "party": [
+      {
+        "species": "selfiend",
+        "level": 34
+      },
+      {
+        "species": "ravelord",
+        "level": 35
+      }
+    ],
+    "reward": 1300,
+    "intro": [
+      "Every drop of joy in Goa goes through this room. Back off."
+    ],
+    "defeat": [
+      "The Promoter is going to notice the bottles are light."
+    ],
+    "after": "You should not be in here. Nobody should be in here. That is the point of a green room."
+  },
+  {
+    "id": "boss_diabolo_rematch",
+    "name": "DJ Diabolo",
+    "sprite": "dj",
+    "textStyle": "STIMULANT",
+    "boss": true,
+    "offer": "You again. I have been practising. With fire this time. Want to go again?",
+    "party": [
+      {
+        "species": "djembe_monk",
+        "level": 18
+      },
+      {
+        "species": "wooklet",
+        "level": 18
+      },
+      {
+        "species": "glowkid",
+        "level": 20
+      }
+    ],
+    "reward": 900,
+    "intro": [
+      "No holding back this time."
+    ],
+    "defeat": [
+      "Fine. You really are that good. Come back when you want to feel something."
+    ],
+    "after": "The road north to the Tantric Yurt is choked with fairy lights. Not for you, now."
+  },
+  {
+    "id": "boss_svetlana_rematch",
+    "name": "Guru Svetlana",
+    "sprite": "guru",
+    "textStyle": "PSYCHEDELIC",
+    "boss": true,
+    "offer": "My chakras have realigned since you embarrassed me. Shall we test them?",
+    "party": [
+      {
+        "species": "blottertot",
+        "level": 22
+      },
+      {
+        "species": "tridog",
+        "level": 22
+      },
+      {
+        "species": "fractoad",
+        "level": 24
+      }
+    ],
+    "reward": 1500,
+    "intro": [
+      "No holding back this time."
+    ],
+    "defeat": [
+      "Fine. You really are that good. Come back when you want to feel something."
+    ],
+    "after": "I told security at the market to let you through. Captain Keta is north. He is somewhere near his body, usually."
+  },
+  {
+    "id": "boss_keta_rematch",
+    "name": "Captain Keta",
+    "sprite": "captain",
+    "textStyle": "DOWNER",
+    "boss": true,
+    "offer": "The ditch remembers you. So do I. Round two?",
+    "party": [
+      {
+        "species": "ketacrab",
+        "level": 26
+      },
+      {
+        "species": "wooklet",
+        "level": 26
+      },
+      {
+        "species": "nitroxide",
+        "level": 25
+      },
+      {
+        "species": "wonkrab",
+        "level": 28
+      }
+    ],
+    "reward": 2250,
+    "intro": [
+      "No holding back this time."
+    ],
+    "defeat": [
+      "Fine. You really are that good. Come back when you want to feel something."
+    ],
+    "after": "There is a subwoofer blocking the east side of the market. Give it a shove. Tell it the Captain sent you."
+  },
+  {
+    "id": "boss_raju_rematch",
+    "name": "Chef Raju",
+    "sprite": "chef",
+    "boss": true,
+    "offer": "New menu. Same chef. Hungry for another loss? Mine, I mean. Yours, I hope.",
+    "party": [
+      {
+        "species": "shroomba",
+        "level": 29
+      },
+      {
+        "species": "lassiblob",
+        "level": 29
+      },
+      {
+        "species": "chillem",
+        "level": 30
+      },
+      {
+        "species": "omeletron",
+        "level": 32
+      }
+    ],
+    "reward": 3000,
+    "intro": [
+      "No holding back this time."
+    ],
+    "defeat": [
+      "Fine. You really are that good. Come back when you want to feel something."
+    ],
+    "after": "The sea north of the Scooter Ditch leads to the lake and the forest. So does the thicket behind my stall. Mind the bass up there."
+  },
+  {
+    "id": "boss_darkpsy_rematch",
+    "name": "Baron Von Darkpsy",
+    "sprite": "baron",
+    "textStyle": "DOWNER",
+    "boss": true,
+    "offer": "I have turned round. I am facing the crowd now. Face me.",
+    "party": [
+      {
+        "species": "sirenowl",
+        "level": 33
+      },
+      {
+        "species": "dengoth",
+        "level": 34
+      },
+      {
+        "species": "fractoad",
+        "level": 34
+      },
+      {
+        "species": "omnihound",
+        "level": 37
+      }
+    ],
+    "reward": 3900,
+    "intro": [
+      "No holding back this time."
+    ],
+    "defeat": [
+      "Fine. You really are that good. Come back when you want to feel something."
+    ],
+    "after": "Leave me. I must find a darker key."
+  },
+  {
+    "id": "boss_chloe_rematch",
+    "name": "Influencer Chloe",
+    "sprite": "influencer",
+    "textStyle": "STIMULANT",
+    "boss": true,
+    "offer": "My engagement dipped after you. I need a rematch for the content.",
+    "party": [
+      {
+        "species": "selfiend",
+        "level": 37
+      },
+      {
+        "species": "gurnagama",
+        "level": 37
+      },
+      {
+        "species": "bongo_bishop",
+        "level": 38
+      },
+      {
+        "species": "ravelord",
+        "level": 40
+      }
+    ],
+    "reward": 4800,
+    "intro": [
+      "No holding back this time."
+    ],
+    "defeat": [
+      "Fine. You really are that good. Come back when you want to feel something."
+    ],
+    "after": "Baba Smoke lives in the cave north of the shallows. He refused to collab. Twice."
+  },
+  {
+    "id": "boss_baba_rematch",
+    "name": "Baba Smoke",
+    "sprite": "baba",
+    "textStyle": "PSYCHEDELIC",
+    "boss": true,
+    "offer": "The smoke has thickened, child. Come and sit in it again.",
+    "party": [
+      {
+        "species": "omeletron",
+        "level": 41
+      },
+      {
+        "species": "grand_wook",
+        "level": 41
+      },
+      {
+        "species": "chillem",
+        "level": 41
+      },
+      {
+        "species": "hoffmanite",
+        "level": 42
+      },
+      {
+        "species": "charagolem",
+        "level": 43
+      }
+    ],
+    "reward": 5700,
+    "intro": [
+      "No holding back this time."
+    ],
+    "defeat": [
+      "Fine. You really are that good. Come back when you want to feel something."
+    ],
+    "after": "(The smoke spells BACKSTAGE, with an arrow.)"
+  },
+  {
+    "id": "boss_promoter_rematch",
+    "name": "The Promoter",
+    "sprite": "promoter",
+    "boss": true,
+    "offer": "The festival is free again. I hate it. Let me lose properly this time.",
+    "party": [
+      {
+        "species": "bribe_asaurus",
+        "level": 45
+      },
+      {
+        "species": "ravelord",
+        "level": 45
+      },
+      {
+        "species": "duvetghast",
+        "level": 45
+      },
+      {
+        "species": "wonkrab",
+        "level": 46
+      },
+      {
+        "species": "omeletron",
+        "level": 46
+      },
+      {
+        "species": "amphetadragon",
+        "level": 47
+      }
+    ],
+    "reward": 7500,
+    "intro": [
+      "No holding back this time."
+    ],
+    "defeat": [
+      "Fine. You really are that good.",
+      "Listen. Under the speaker stacks, at the back. Something has been humming since you beat me the first time. I think it wants a word."
+    ],
+    "after": "Go on. Before I think of a clause."
+  }
+]

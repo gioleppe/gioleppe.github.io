@@ -1,0 +1,201 @@
+{
+  "zoneId": "scooter_ditch",
+  "name": "The Sunken Scooter Ditch",
+  "paletteId": "ANJUNA_DUST",
+  "baseBpm": 128,
+  "ground": "laterite",
+  "ground2": "path",
+  "wall": "cliff",
+  "encounter": "incense",
+  "rows": [
+    "tttttttttwwwwttttttttt",
+    "t....wwwwwwwwwwww....t",
+    "t....wwwwwwwwwwww....t",
+    "t.......s....s.......t",
+    "t..s.ss.s....s.ss..s.t",
+    "t..s.....,,,,.....s..t",
+    "t..ssss.eeeeee.ssss..t",
+    "t.......eeeeee.......t",
+    "t..~~~.s..,,..s.~~~..t",
+    "t..~~~.s..,,..s.~~~..t",
+    "t......ss.,,.ss......t",
+    "t...C.....,,.....s...t",
+    "t..ss.....,,.........t",
+    "t..~~~~.s.,,.s.~~~~..t",
+    "t.........,,.........t",
+    "tttttttttt,,tttttttttt"
+  ],
+  "warps": [
+    {
+      "x": 10,
+      "y": 15,
+      "to": "dirt_road",
+      "tx": 7,
+      "ty": 1,
+      "dir": "DOWN"
+    },
+    {
+      "x": 11,
+      "y": 15,
+      "to": "dirt_road",
+      "tx": 8,
+      "ty": 1,
+      "dir": "DOWN"
+    },
+    {
+      "x": 9,
+      "y": 0,
+      "to": "sea_shallows",
+      "tx": 8,
+      "ty": 12,
+      "dir": "UP"
+    },
+    {
+      "x": 10,
+      "y": 0,
+      "to": "sea_shallows",
+      "tx": 9,
+      "ty": 12,
+      "dir": "UP"
+    },
+    {
+      "x": 11,
+      "y": 0,
+      "to": "sea_shallows",
+      "tx": 10,
+      "ty": 12,
+      "dir": "UP"
+    },
+    {
+      "x": 12,
+      "y": 0,
+      "to": "sea_shallows",
+      "tx": 11,
+      "ty": 12,
+      "dir": "UP"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "keta",
+      "x": 10,
+      "y": 6,
+      "sprite": "captain",
+      "dir": "DOWN",
+      "trainer": "boss_keta",
+      "sight": 0
+    },
+    {
+      "id": "ditch_local",
+      "x": 3,
+      "y": 7,
+      "sprite": "local",
+      "dir": "RIGHT",
+      "trainer": "ditch_local",
+      "sight": 4
+    },
+    {
+      "id": "ditch_tourist",
+      "x": 15,
+      "y": 12,
+      "sprite": "tourist",
+      "dir": "LEFT",
+      "trainer": "ditch_tourist",
+      "sight": 4
+    },
+    {
+      "id": "ditch_sign",
+      "x": 9,
+      "y": 14,
+      "tile": "sign",
+      "script": "sign_ditch"
+    },
+    {
+      "id": "ditch_wook",
+      "x": 17,
+      "y": 3,
+      "sprite": "wook",
+      "dir": "LEFT",
+      "script": "ditch_wook"
+    }
+  ],
+  "pickups": [
+    {
+      "id": "ditch_kingfisher",
+      "x": 1,
+      "y": 3,
+      "item": "warm_kingfisher",
+      "n": 1
+    },
+    {
+      "id": "ditch_rizla",
+      "x": 20,
+      "y": 14,
+      "item": "rizla_paper",
+      "n": 3
+    },
+    {
+      "id": "ditch_vial",
+      "x": 20,
+      "y": 4,
+      "item": "amber_vial",
+      "n": 1,
+      "hidden": true
+    }
+  ],
+  "encounters": {
+    "encounterRate": 0.14,
+    "table": [
+      {
+        "speciesId": "ketacrab",
+        "minLevel": 13,
+        "maxLevel": 16,
+        "weight": 30
+      },
+      {
+        "speciesId": "wooklet",
+        "minLevel": 13,
+        "maxLevel": 16,
+        "weight": 20
+      },
+      {
+        "speciesId": "crabcake",
+        "minLevel": 13,
+        "maxLevel": 16,
+        "weight": 20
+      },
+      {
+        "speciesId": "nitroxide",
+        "minLevel": 14,
+        "maxLevel": 16,
+        "weight": 10
+      },
+      {
+        "speciesId": "neighbula",
+        "minLevel": 15,
+        "maxLevel": 16,
+        "weight": 8
+      },
+      {
+        "speciesId": "lassiblob",
+        "minLevel": 13,
+        "maxLevel": 16,
+        "weight": 12
+      }
+    ],
+    "water": [
+      {
+        "speciesId": "ketacrab",
+        "minLevel": 16,
+        "maxLevel": 20,
+        "weight": 60
+      },
+      {
+        "speciesId": "neighbula",
+        "minLevel": 18,
+        "maxLevel": 20,
+        "weight": 40
+      }
+    ]
+  }
+}

@@ -1,0 +1,220 @@
+{
+  "zoneId": "sandy_trail",
+  "name": "Sandy Trail",
+  "paletteId": "ANJUNA_DUST",
+  "baseBpm": 140,
+  "ground": "sand",
+  "ground2": "path",
+  "wall": "cliff",
+  "encounter": "incense",
+  "rows": [
+    "TTTTTTT,,TTTTTTT",
+    "T~~~~..,,...~~~T",
+    "T~~~~..,,..~~~~T",
+    "T.~~...,,...~~.T",
+    "T......,,...o..T",
+    "Tbbbb..,,,,,,..T",
+    "T.o.......bb,..T",
+    "T..~~~~.....,..T",
+    "T..~~~~~..,,,..T",
+    "T...~~~...,..o.T",
+    "T.T.......,..T.T",
+    "T..,,,,,,,,..bbT",
+    "T..,....~~~...LT",
+    "T..,,,,.~~~~...T",
+    "T.....,,,~~....T",
+    "T..o...,,..b...T",
+    "T......,,...b..T",
+    "TTTTTTT,,TTTTTTT"
+  ],
+  "warps": [
+    {
+      "x": 7,
+      "y": 17,
+      "to": "driftwood_beach",
+      "tx": 11,
+      "ty": 1,
+      "dir": "DOWN"
+    },
+    {
+      "x": 8,
+      "y": 17,
+      "to": "driftwood_beach",
+      "tx": 12,
+      "ty": 1,
+      "dir": "DOWN"
+    },
+    {
+      "x": 7,
+      "y": 0,
+      "to": "poi_pit",
+      "tx": 10,
+      "ty": 15,
+      "dir": "UP"
+    },
+    {
+      "x": 8,
+      "y": 0,
+      "to": "poi_pit",
+      "tx": 11,
+      "ty": 15,
+      "dir": "UP"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "trail_sign",
+      "x": 9,
+      "y": 15,
+      "tile": "sign",
+      "script": "sign_trail"
+    },
+    {
+      "id": "trail_juggler",
+      "x": 6,
+      "y": 10,
+      "sprite": "juggler",
+      "dir": "RIGHT",
+      "trainer": "trail_juggler",
+      "sight": 4
+    },
+    {
+      "id": "trail_spinner",
+      "x": 14,
+      "y": 6,
+      "sprite": "firespinner",
+      "dir": "LEFT",
+      "trainer": "trail_spinner",
+      "sight": 3
+    },
+    {
+      "id": "chad_g",
+      "x": 8,
+      "y": 3,
+      "sprite": "chad",
+      "dir": "LEFT",
+      "trainer": "chad1_g",
+      "sight": 2,
+      "showIf": "starter_ganjapod"
+    },
+    {
+      "id": "chad_j",
+      "x": 8,
+      "y": 3,
+      "sprite": "chad",
+      "dir": "LEFT",
+      "trainer": "chad1_j",
+      "sight": 2,
+      "showIf": "starter_jawling"
+    },
+    {
+      "id": "chad_b",
+      "x": 8,
+      "y": 3,
+      "sprite": "chad",
+      "dir": "LEFT",
+      "trainer": "chad1_b",
+      "sight": 2,
+      "showIf": "starter_blottertot"
+    },
+    {
+      "id": "trail_yogi",
+      "x": 4,
+      "y": 15,
+      "sprite": "yogi",
+      "dir": "RIGHT",
+      "script": "trail_yogi"
+    }
+  ],
+  "pickups": [
+    {
+      "id": "trail_melon",
+      "x": 14,
+      "y": 14,
+      "item": "watermelon_slice",
+      "n": 1
+    },
+    {
+      "id": "trail_baggie",
+      "x": 1,
+      "y": 4,
+      "item": "ziploc_baggie",
+      "n": 2
+    },
+    {
+      "id": "trail_sandals",
+      "x": 1,
+      "y": 9,
+      "item": "lost_sandals",
+      "n": 1
+    }
+  ],
+  "encounters": {
+    "encounterRate": 0.15,
+    "table": [
+      {
+        "speciesId": "crabcake",
+        "minLevel": 3,
+        "maxLevel": 5,
+        "weight": 25
+      },
+      {
+        "speciesId": "djembe_monk",
+        "minLevel": 3,
+        "maxLevel": 5,
+        "weight": 25
+      },
+      {
+        "speciesId": "tridog",
+        "minLevel": 3,
+        "maxLevel": 5,
+        "weight": 20
+      },
+      {
+        "speciesId": "shroomba",
+        "minLevel": 4,
+        "maxLevel": 5,
+        "weight": 15
+      },
+      {
+        "speciesId": "snoozel",
+        "minLevel": 3,
+        "maxLevel": 5,
+        "weight": 15
+      },
+      {
+        "speciesId": "jawling",
+        "minLevel": 4,
+        "maxLevel": 6,
+        "weight": 10,
+        "minIntox": 0.6
+      }
+    ],
+    "nightTable": [
+      {
+        "speciesId": "mozzquito",
+        "minLevel": 3,
+        "maxLevel": 5,
+        "weight": 40
+      },
+      {
+        "speciesId": "tridog",
+        "minLevel": 4,
+        "maxLevel": 6,
+        "weight": 30
+      },
+      {
+        "speciesId": "shadowcop",
+        "minLevel": 4,
+        "maxLevel": 5,
+        "weight": 10
+      },
+      {
+        "speciesId": "snoozel",
+        "minLevel": 3,
+        "maxLevel": 5,
+        "weight": 20
+      }
+    ]
+  }
+}

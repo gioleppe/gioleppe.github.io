@@ -1,0 +1,60 @@
+{
+  "zoneId": "dj_booth",
+  "name": "The DJ Booth",
+  "paletteId": "UV_BLACKLIGHT",
+  "baseBpm": 190,
+  "ground": "wood",
+  "ground2": "mat",
+  "wall": "inwall",
+  "encounter": "incense",
+  "indoor": true,
+  "interior": true,
+  "parent": "forest_stage",
+  "rows": [
+    "KK%%KK%%KK",
+    "KkFFjjFFkK",
+    "KFFFFFFFFK",
+    "KFFUUUUFFK",
+    "KFFFFFFFFK",
+    "KAFFFFFF%K",
+    "KKKKaKKKKK"
+  ],
+  "warps": [
+    {
+      "x": 4,
+      "y": 6,
+      "to": "forest_stage",
+      "tx": 13,
+      "ty": 4,
+      "dir": "DOWN"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "booth_selector",
+      "x": 5,
+      "y": 2,
+      "sprite": "dj",
+      "dir": "DOWN",
+      "trainer": "booth_selector",
+      "sight": 3
+    },
+    {
+      "id": "booth_roadie",
+      "x": 7,
+      "y": 4,
+      "sprite": "raver",
+      "dir": "LEFT",
+      "script": "booth_roadie"
+    }
+  ],
+  "pickups": [
+    {
+      "id": "booth_sachet",
+      "x": 2,
+      "y": 4,
+      "item": "electrolyte_sachet",
+      "n": 2
+    }
+  ]
+}

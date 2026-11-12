@@ -1,0 +1,164 @@
+{
+  "zoneId": "dry_ice_corridor",
+  "name": "Dry Ice Corridor",
+  "paletteId": "UV_BLACKLIGHT",
+  "baseBpm": 148,
+  "ground": "concrete",
+  "ground2": "path",
+  "wall": "container",
+  "encounter": "incense",
+  "indoor": true,
+  "rows": [
+    "ccccccc,,ccccccc",
+    "c......,,......c",
+    "c.~~~..,,,,,,..c",
+    "cccccccccccc,..c",
+    "c.L....,,,,,,..c",
+    "c..,,,,,..~~~..c",
+    "c..,cccccccccccc",
+    "c..,,,,,,,..L..c",
+    "c.~~~....,....xc",
+    "cccccccccc,....c",
+    "c.L.....,,.....c",
+    "c.......,,.~~~.c",
+    "c.......,,.....c",
+    "ccccccc,,ccccccc"
+  ],
+  "warps": [
+    {
+      "x": 7,
+      "y": 0,
+      "to": "flea_market",
+      "tx": 11,
+      "ty": 13,
+      "dir": "UP"
+    },
+    {
+      "x": 8,
+      "y": 0,
+      "to": "flea_market",
+      "tx": 12,
+      "ty": 13,
+      "dir": "UP"
+    },
+    {
+      "x": 7,
+      "y": 13,
+      "to": "sunset_cliff",
+      "tx": 10,
+      "ty": 1,
+      "dir": "DOWN"
+    },
+    {
+      "x": 8,
+      "y": 13,
+      "to": "sunset_cliff",
+      "tx": 11,
+      "ty": 1,
+      "dir": "DOWN"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "corridor_guard",
+      "x": 1,
+      "y": 6,
+      "sprite": "guard",
+      "dir": "RIGHT",
+      "trainer": "corridor_guard",
+      "sight": 5
+    },
+    {
+      "id": "corridor_dealer",
+      "x": 13,
+      "y": 4,
+      "sprite": "dealer",
+      "dir": "LEFT",
+      "trainer": "corridor_dealer",
+      "sight": 5
+    },
+    {
+      "id": "corridor_influencer",
+      "x": 13,
+      "y": 11,
+      "sprite": "influencer",
+      "dir": "LEFT",
+      "trainer": "corridor_influencer",
+      "sight": 5
+    },
+    {
+      "id": "corridor_cop",
+      "x": 13,
+      "y": 9,
+      "sprite": "guard",
+      "dir": "LEFT",
+      "script": "shadowcop_bribe",
+      "hideIf": "cop_done"
+    }
+  ],
+  "pickups": [
+    {
+      "id": "corridor_vial",
+      "x": 1,
+      "y": 12,
+      "item": "amber_vial",
+      "n": 2
+    },
+    {
+      "id": "corridor_chai",
+      "x": 14,
+      "y": 1,
+      "item": "masala_chai",
+      "n": 1
+    },
+    {
+      "id": "corridor_sachet",
+      "x": 1,
+      "y": 4,
+      "item": "electrolyte_sachet",
+      "n": 2,
+      "hidden": true
+    }
+  ],
+  "encounters": {
+    "encounterRate": 0.15,
+    "table": [
+      {
+        "speciesId": "selfiend",
+        "minLevel": 25,
+        "maxLevel": 28,
+        "weight": 25
+      },
+      {
+        "speciesId": "glowkid",
+        "minLevel": 25,
+        "maxLevel": 28,
+        "weight": 15
+      },
+      {
+        "speciesId": "ravelord",
+        "minLevel": 30,
+        "maxLevel": 30,
+        "weight": 5
+      },
+      {
+        "speciesId": "nitroxide",
+        "minLevel": 25,
+        "maxLevel": 28,
+        "weight": 15
+      },
+      {
+        "speciesId": "shadowcop",
+        "minLevel": 25,
+        "maxLevel": 28,
+        "weight": 20
+      },
+      {
+        "speciesId": "dengoth",
+        "minLevel": 26,
+        "maxLevel": 28,
+        "weight": 20
+      }
+    ]
+  }
+}

@@ -1,0 +1,177 @@
+{
+  "zoneId": "sadhu_cave",
+  "name": "The Sadhu Cave",
+  "paletteId": "CHAI_TENT_WARMTH",
+  "baseBpm": 108,
+  "ground": "cave",
+  "ground2": "path",
+  "wall": "cave_wall",
+  "encounter": "incense",
+  "dark": true,
+  "indoor": true,
+  "rows": [
+    "zzzzzzzzzzzzzzzzzz",
+    "z.....zaaaaz.....z",
+    "z.~~..zaaaaz..o..z",
+    "z.~~..zzaazz.....z",
+    "z.......,,.......z",
+    "z..o...,,,,...~~.z",
+    "z.....,,..,,..~~.z",
+    "z.~~..,....,.....z",
+    "z.~~..,..o.,..o..z",
+    "zz.zzz,zzzz,zzz.zz",
+    "z.....,....,.....z",
+    "z.~~.z,....,z.~~.z",
+    "z.~~.z,,,,,,z....z",
+    "z.....zzzzzz.....z",
+    "z.......,,.......z",
+    "zzzzzzzz,,zzzzzzzz"
+  ],
+  "warps": [
+    {
+      "x": 8,
+      "y": 15,
+      "to": "sea_shallows",
+      "tx": 9,
+      "ty": 2,
+      "dir": "DOWN"
+    },
+    {
+      "x": 9,
+      "y": 15,
+      "to": "sea_shallows",
+      "tx": 10,
+      "ty": 2,
+      "dir": "DOWN"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "baba",
+      "x": 8,
+      "y": 1,
+      "sprite": "baba",
+      "dir": "DOWN",
+      "trainer": "boss_baba",
+      "sight": 0
+    },
+    {
+      "id": "cave_yogi",
+      "x": 2,
+      "y": 8,
+      "sprite": "yogi",
+      "dir": "RIGHT",
+      "trainer": "cave_yogi",
+      "sight": 6
+    },
+    {
+      "id": "cave_disciple",
+      "x": 15,
+      "y": 4,
+      "sprite": "shaman",
+      "dir": "LEFT",
+      "trainer": "cave_disciple",
+      "sight": 6
+    },
+    {
+      "id": "cave_glyph",
+      "x": 15,
+      "y": 10,
+      "tile": "glyph",
+      "script": "mandalord",
+      "hideWhen": {
+        "any": [
+          {
+            "caughtSpecies": "mandalord"
+          },
+          {
+            "flag": "mandalord_rest"
+          }
+        ]
+      }
+    },
+    {
+      "id": "cave_sign",
+      "x": 10,
+      "y": 14,
+      "tile": "sign",
+      "script": "sign_cave"
+    }
+  ],
+  "pickups": [
+    {
+      "id": "cave_powder",
+      "x": 1,
+      "y": 10,
+      "item": "mystery_powder",
+      "n": 1,
+      "hidden": true
+    },
+    {
+      "id": "cave_chai",
+      "x": 16,
+      "y": 1,
+      "item": "masala_chai",
+      "n": 2
+    },
+    {
+      "id": "cave_vial",
+      "x": 16,
+      "y": 12,
+      "item": "amber_vial",
+      "n": 2,
+      "hidden": true
+    }
+  ],
+  "encounters": {
+    "encounterRate": 0.15,
+    "table": [
+      {
+        "speciesId": "chillem",
+        "minLevel": 29,
+        "maxLevel": 32,
+        "weight": 25
+      },
+      {
+        "speciesId": "omeletron",
+        "minLevel": 29,
+        "maxLevel": 32,
+        "weight": 15
+      },
+      {
+        "speciesId": "duvetghast",
+        "minLevel": 29,
+        "maxLevel": 32,
+        "weight": 15
+      },
+      {
+        "speciesId": "grand_wook",
+        "minLevel": 29,
+        "maxLevel": 32,
+        "weight": 15
+      },
+      {
+        "speciesId": "omnihound",
+        "minLevel": 29,
+        "maxLevel": 32,
+        "weight": 15
+      },
+      {
+        "speciesId": "sirenowl",
+        "minLevel": 29,
+        "maxLevel": 32,
+        "weight": 15
+      },
+      {
+        "speciesId": "hoffmanite",
+        "minLevel": 31,
+        "maxLevel": 33,
+        "weight": 8,
+        "minIntox": 0.9
+      }
+    ]
+  },
+  "resetOnEnter": [
+    "mandalord_rest"
+  ]
+}

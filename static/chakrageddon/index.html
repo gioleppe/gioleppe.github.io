@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#0B0314">
+  <title>Chakra-geddon</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" href="assets/icon-192.png">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="description" content="A satirical festival creature-collector RPG for phones and PC. Plays offline.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="stage"><canvas id="game" width="320" height="180"></canvas></div>
+  <div id="pad" aria-hidden="true">
+    <div id="dpad"><i class="u"></i><i class="d"></i><i class="l"></i><i class="r"></i></div>
+    <button id="btn-start" data-btn="start">MENU</button>
+    <div id="ab">
+      <button data-btn="b" class="round b">B</button>
+      <button data-btn="a" class="round a">A</button>
+    </div>
+  </div>
+  <script type="module" src="src/view/main.js"></script>
+</body>
+</html>

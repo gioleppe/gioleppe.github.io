@@ -1,0 +1,235 @@
+{
+  "zoneId": "sunset_cliff",
+  "name": "The Sunset Cliff",
+  "paletteId": "ANJUNA_DUST",
+  "baseBpm": 126,
+  "ground": "laterite",
+  "ground2": "path",
+  "wall": "cliff",
+  "encounter": "incense",
+  "rows": [
+    "^^^^^^^^^^,,^^^^^^^^^^",
+    "^.o...QQQQ,,^.^.b....^",
+    "^..~~~XXXX,,^.^.~~~..^",
+    "^..~~~XXGX,,.S..~~~..^",
+    "^.........,,.........^",
+    "^.L..v....,,....v...R,",
+    "^o........,,,,,,,,,,R,",
+    "^..b......,,......o..^",
+    "^...eeeeeeeeeeeeee...^",
+    "^...eeeeeeeeeeeeee..b^",
+    "^..C..............M..^",
+    ",....................^",
+    "wwwwwwwwwwwwwwwwwwwwww",
+    "WWWWWWWWWWWWWWWWWWWWWW"
+  ],
+  "warps": [
+    {
+      "x": 10,
+      "y": 0,
+      "to": "dry_ice_corridor",
+      "tx": 7,
+      "ty": 12,
+      "dir": "UP"
+    },
+    {
+      "x": 11,
+      "y": 0,
+      "to": "dry_ice_corridor",
+      "tx": 8,
+      "ty": 12,
+      "dir": "UP"
+    },
+    {
+      "x": 21,
+      "y": 5,
+      "to": "backstage",
+      "tx": 1,
+      "ty": 6,
+      "dir": "RIGHT"
+    },
+    {
+      "x": 21,
+      "y": 6,
+      "to": "backstage",
+      "tx": 1,
+      "ty": 7,
+      "dir": "RIGHT"
+    },
+    {
+      "x": 8,
+      "y": 3,
+      "to": "sunset_villa",
+      "tx": 5,
+      "ty": 5,
+      "dir": "UP"
+    },
+    {
+      "x": 0,
+      "y": 11,
+      "to": "driftwood_beach",
+      "tx": 22,
+      "ty": 9,
+      "dir": "LEFT"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "chloe",
+      "x": 10,
+      "y": 9,
+      "sprite": "influencer",
+      "dir": "DOWN",
+      "trainer": "boss_chloe",
+      "sight": 0
+    },
+    {
+      "id": "cliff_influencer",
+      "x": 5,
+      "y": 4,
+      "sprite": "influencer",
+      "dir": "RIGHT",
+      "trainer": "cliff_influencer",
+      "sight": 5
+    },
+    {
+      "id": "cliff_sergeant",
+      "x": 18,
+      "y": 6,
+      "sprite": "guard",
+      "dir": "LEFT",
+      "trainer": "cliff_sergeant",
+      "sight": 6,
+      "hideIf": "beat_sergeant"
+    },
+    {
+      "id": "cliff_sign",
+      "x": 9,
+      "y": 7,
+      "tile": "sign",
+      "script": "sign_cliff"
+    },
+    {
+      "id": "cliff_tourist",
+      "x": 16,
+      "y": 11,
+      "sprite": "tourist",
+      "dir": "DOWN",
+      "script": "cliff_tourist",
+      "wander": [
+        14,
+        10,
+        19,
+        11
+      ]
+    },
+    {
+      "id": "sunset_orb",
+      "x": 10,
+      "y": 11,
+      "tile": "sunorb",
+      "script": "sunraga",
+      "showWhen": {
+        "all": [
+          {
+            "flag": "exposed_undercover"
+          },
+          {
+            "hour": [
+              17,
+              20
+            ]
+          },
+          {
+            "intox": 0.6
+          }
+        ]
+      },
+      "hideWhen": {
+        "any": [
+          {
+            "caughtSpecies": "sunraga"
+          },
+          {
+            "flag": "sunraga_rest"
+          }
+        ]
+      }
+    },
+    {
+      "id": "sunset_watcher",
+      "x": 4,
+      "y": 11,
+      "sprite": "local",
+      "dir": "RIGHT",
+      "script": "sunset_watcher"
+    }
+  ],
+  "pickups": [
+    {
+      "id": "cliff_shades",
+      "x": 1,
+      "y": 11,
+      "item": "wraparound_shades",
+      "n": 1
+    },
+    {
+      "id": "cliff_blanket",
+      "x": 20,
+      "y": 1,
+      "item": "weighted_blanket",
+      "n": 1
+    },
+    {
+      "id": "cliff_ledge",
+      "x": 13,
+      "y": 1,
+      "item": "neon_glowstick",
+      "n": 1
+    }
+  ],
+  "encounters": {
+    "encounterRate": 0.14,
+    "table": [
+      {
+        "speciesId": "selfiend",
+        "minLevel": 23,
+        "maxLevel": 25,
+        "weight": 30
+      },
+      {
+        "speciesId": "lobsterlad",
+        "minLevel": 23,
+        "maxLevel": 25,
+        "weight": 20
+      },
+      {
+        "speciesId": "bongo_bishop",
+        "minLevel": 23,
+        "maxLevel": 25,
+        "weight": 15
+      },
+      {
+        "speciesId": "tridog",
+        "minLevel": 23,
+        "maxLevel": 25,
+        "weight": 15
+      },
+      {
+        "speciesId": "nitroxide",
+        "minLevel": 23,
+        "maxLevel": 25,
+        "weight": 10
+      },
+      {
+        "speciesId": "neighbula",
+        "minLevel": 23,
+        "maxLevel": 25,
+        "weight": 10
+      }
+    ]
+  },
+  "resetOnEnter": [
+    "sunraga_rest"
+  ]
+}

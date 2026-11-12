@@ -1,0 +1,49 @@
+{
+  "_comment": "chart[attackType][defenderType] = damage multiplier; missing pairs are 1.0",
+  "types": [
+    "PSYCHEDELIC",
+    "STIMULANT",
+    "DISSOCIATIVE",
+    "ORGANIC",
+    "DOWNER",
+    "BUMMER"
+  ],
+  "chart": {
+    "PSYCHEDELIC": {
+      "DISSOCIATIVE": 2,
+      "ORGANIC": 2,
+      "BUMMER": 0.5,
+      "DOWNER": 0.5
+    },
+    "STIMULANT": {
+      "DOWNER": 2,
+      "ORGANIC": 2,
+      "DISSOCIATIVE": 0.5,
+      "BUMMER": 0.5
+    },
+    "DISSOCIATIVE": {
+      "STIMULANT": 2,
+      "BUMMER": 2,
+      "ORGANIC": 0.5,
+      "PSYCHEDELIC": 0.5
+    },
+    "ORGANIC": {
+      "DISSOCIATIVE": 2,
+      "DOWNER": 2,
+      "STIMULANT": 0.5,
+      "BUMMER": 0.5
+    },
+    "DOWNER": {
+      "PSYCHEDELIC": 2,
+      "BUMMER": 2,
+      "STIMULANT": 0.5,
+      "ORGANIC": 0.5
+    },
+    "BUMMER": {
+      "PSYCHEDELIC": 2,
+      "ORGANIC": 2,
+      "DISSOCIATIVE": 0.5,
+      "DOWNER": 0.5
+    }
+  }
+}

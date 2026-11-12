@@ -1,0 +1,246 @@
+{
+  "zoneId": "omelette_stall",
+  "name": "The 5 AM Omelette Stall",
+  "paletteId": "CHAI_TENT_WARMTH",
+  "baseBpm": 124,
+  "ground": "sand",
+  "ground2": "path",
+  "wall": "cliff",
+  "encounter": "incense",
+  "rows": [
+    "tttttttttt,,tttttttttt",
+    "t..=.....IffI........t",
+    "t..=......,,.........t",
+    "t..=.OOOO.,,..~~~~...t",
+    "t..=.eeee.,,..~~~~...t",
+    ",..=......,,.........t",
+    ",,,,,,,,,,,,.........t",
+    ",..=......,,.........t",
+    "t..=~~....,,...q.q...t",
+    "t..=~~....,,.........t",
+    "t..=......,,....C....t",
+    "t..=......,,.........t",
+    "t..=h.....,,.........t",
+    "t..=......,,.........t",
+    "t..=......RR.........t",
+    "tttttttttt,,tttttttttt"
+  ],
+  "warps": [
+    {
+      "x": 0,
+      "y": 5,
+      "to": "flea_market",
+      "tx": 24,
+      "ty": 5,
+      "dir": "LEFT"
+    },
+    {
+      "x": 0,
+      "y": 6,
+      "to": "flea_market",
+      "tx": 24,
+      "ty": 6,
+      "dir": "LEFT"
+    },
+    {
+      "x": 0,
+      "y": 7,
+      "to": "flea_market",
+      "tx": 24,
+      "ty": 7,
+      "dir": "LEFT"
+    },
+    {
+      "x": 10,
+      "y": 0,
+      "to": "bamboo_thicket",
+      "tx": 7,
+      "ty": 14,
+      "dir": "UP"
+    },
+    {
+      "x": 11,
+      "y": 0,
+      "to": "bamboo_thicket",
+      "tx": 8,
+      "ty": 14,
+      "dir": "UP"
+    },
+    {
+      "x": 10,
+      "y": 15,
+      "to": "backstage",
+      "tx": 10,
+      "ty": 1,
+      "dir": "DOWN"
+    },
+    {
+      "x": 11,
+      "y": 15,
+      "to": "backstage",
+      "tx": 11,
+      "ty": 1,
+      "dir": "DOWN"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "raju",
+      "x": 7,
+      "y": 4,
+      "sprite": "chef",
+      "dir": "DOWN",
+      "trainer": "boss_raju",
+      "sight": 0
+    },
+    {
+      "id": "chad2_g",
+      "x": 4,
+      "y": 6,
+      "sprite": "chad",
+      "dir": "LEFT",
+      "trainer": "chad2_g",
+      "sight": 3,
+      "showIf": "starter_ganjapod",
+      "hideIf": "beat_chad2"
+    },
+    {
+      "id": "chad2_j",
+      "x": 4,
+      "y": 6,
+      "sprite": "chad",
+      "dir": "LEFT",
+      "trainer": "chad2_j",
+      "sight": 3,
+      "showIf": "starter_jawling",
+      "hideIf": "beat_chad2"
+    },
+    {
+      "id": "chad2_b",
+      "x": 4,
+      "y": 6,
+      "sprite": "chad",
+      "dir": "LEFT",
+      "trainer": "chad2_b",
+      "sight": 3,
+      "showIf": "starter_blottertot",
+      "hideIf": "beat_chad2"
+    },
+    {
+      "id": "stall_wook",
+      "x": 15,
+      "y": 11,
+      "sprite": "wook",
+      "dir": "LEFT",
+      "trainer": "stall_wook",
+      "sight": 4
+    },
+    {
+      "id": "stall_raver",
+      "x": 13,
+      "y": 2,
+      "sprite": "raver",
+      "dir": "LEFT",
+      "trainer": "stall_raver",
+      "sight": 2
+    },
+    {
+      "id": "stall_sign",
+      "x": 9,
+      "y": 7,
+      "tile": "sign",
+      "script": "sign_stall"
+    },
+    {
+      "id": "stall_local",
+      "x": 16,
+      "y": 9,
+      "sprite": "local",
+      "dir": "UP",
+      "script": "stall_local"
+    }
+  ],
+  "pickups": [
+    {
+      "id": "stall_blanket",
+      "x": 20,
+      "y": 13,
+      "item": "weighted_blanket",
+      "n": 1
+    },
+    {
+      "id": "stall_chai",
+      "x": 1,
+      "y": 13,
+      "item": "masala_chai",
+      "n": 1
+    }
+  ],
+  "encounters": {
+    "encounterRate": 0.14,
+    "table": [
+      {
+        "speciesId": "shroomba",
+        "minLevel": 15,
+        "maxLevel": 18,
+        "weight": 25
+      },
+      {
+        "speciesId": "lassiblob",
+        "minLevel": 15,
+        "maxLevel": 18,
+        "weight": 20
+      },
+      {
+        "speciesId": "chillem",
+        "minLevel": 15,
+        "maxLevel": 18,
+        "weight": 20
+      },
+      {
+        "speciesId": "snoozel",
+        "minLevel": 15,
+        "maxLevel": 17,
+        "weight": 10
+      },
+      {
+        "speciesId": "wooklet",
+        "minLevel": 15,
+        "maxLevel": 18,
+        "weight": 15
+      },
+      {
+        "speciesId": "djembe_monk",
+        "minLevel": 15,
+        "maxLevel": 18,
+        "weight": 10
+      }
+    ],
+    "nightTable": [
+      {
+        "speciesId": "mozzquito",
+        "minLevel": 15,
+        "maxLevel": 18,
+        "weight": 25
+      },
+      {
+        "speciesId": "sirenowl",
+        "minLevel": 15,
+        "maxLevel": 18,
+        "weight": 20
+      },
+      {
+        "speciesId": "shadowcop",
+        "minLevel": 15,
+        "maxLevel": 18,
+        "weight": 25
+      },
+      {
+        "speciesId": "chillem",
+        "minLevel": 15,
+        "maxLevel": 18,
+        "weight": 30
+      }
+    ]
+  }
+}

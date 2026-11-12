@@ -1,0 +1,199 @@
+{
+  "zoneId": "sweetwater_lake",
+  "name": "Arambol Sweetwater Lake",
+  "paletteId": "ANJUNA_DUST",
+  "baseBpm": 118,
+  "ground": "grass",
+  "ground2": "path",
+  "wall": "cliff",
+  "encounter": "incense",
+  "rows": [
+    "tttttttttttttttttttt",
+    "t..~~~ttt.....~~~..t",
+    "t..~~~bwwww.b.~~~..t",
+    "t...bwwwwwwwwo.....t",
+    "t...wwwwwwwwwwwo...t",
+    "t..wwwwww..wwwwww..t",
+    "wwwwwwww.M..wwwww..t",
+    "wwwwwwwww..wwwwFF..t",
+    "t..owwwwwwwwwwww...t",
+    "t....wwwwwwwwwwb...t",
+    "t..b...wwwwwww.....t",
+    "t..~~~..F,,..~~~...t",
+    "t...~...F,,........t",
+    "ttttttttt,,ttttttttt"
+  ],
+  "warps": [
+    {
+      "x": 0,
+      "y": 6,
+      "to": "sea_shallows",
+      "tx": 18,
+      "ty": 6,
+      "dir": "LEFT"
+    },
+    {
+      "x": 0,
+      "y": 7,
+      "to": "sea_shallows",
+      "tx": 18,
+      "ty": 7,
+      "dir": "LEFT"
+    },
+    {
+      "x": 9,
+      "y": 13,
+      "to": "forest_stage",
+      "tx": 9,
+      "ty": 1,
+      "dir": "DOWN"
+    },
+    {
+      "x": 10,
+      "y": 13,
+      "to": "forest_stage",
+      "tx": 10,
+      "ty": 1,
+      "dir": "DOWN"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "lake_hippie",
+      "x": 15,
+      "y": 12,
+      "sprite": "hippie",
+      "dir": "LEFT",
+      "trainer": "lake_hippie",
+      "sight": 5
+    },
+    {
+      "id": "lake_yogi",
+      "x": 3,
+      "y": 12,
+      "sprite": "yogi",
+      "dir": "RIGHT",
+      "trainer": "lake_yogi",
+      "sight": 5
+    },
+    {
+      "id": "lake_sign",
+      "x": 8,
+      "y": 11,
+      "tile": "sign",
+      "script": "sign_lake"
+    },
+    {
+      "id": "lake_local",
+      "x": 17,
+      "y": 4,
+      "sprite": "local",
+      "dir": "LEFT",
+      "script": "lake_local"
+    }
+  ],
+  "pickups": [
+    {
+      "id": "lake_lassi",
+      "x": 1,
+      "y": 1,
+      "item": "banana_lassi",
+      "n": 1
+    },
+    {
+      "id": "lake_melon",
+      "x": 18,
+      "y": 10,
+      "item": "watermelon_slice",
+      "n": 3
+    },
+    {
+      "id": "crate_lake",
+      "x": 18,
+      "y": 1,
+      "item": "record_crate",
+      "n": 1
+    },
+    {
+      "id": "lake_island",
+      "x": 10,
+      "y": 6,
+      "item": "electrolyte_sachet",
+      "n": 2
+    }
+  ],
+  "encounters": {
+    "encounterRate": 0.14,
+    "table": [
+      {
+        "speciesId": "lassiblob",
+        "minLevel": 21,
+        "maxLevel": 24,
+        "weight": 20
+      },
+      {
+        "speciesId": "neighbula",
+        "minLevel": 21,
+        "maxLevel": 24,
+        "weight": 20
+      },
+      {
+        "speciesId": "duvetghast",
+        "minLevel": 22,
+        "maxLevel": 24,
+        "weight": 15
+      },
+      {
+        "speciesId": "grand_wook",
+        "minLevel": 29,
+        "maxLevel": 29,
+        "weight": 5
+      },
+      {
+        "speciesId": "wooklet",
+        "minLevel": 21,
+        "maxLevel": 24,
+        "weight": 20
+      },
+      {
+        "speciesId": "omnihound",
+        "minLevel": 27,
+        "maxLevel": 28,
+        "weight": 5
+      },
+      {
+        "speciesId": "tridog",
+        "minLevel": 21,
+        "maxLevel": 24,
+        "weight": 15
+      },
+      {
+        "speciesId": "hashlump",
+        "minLevel": 23,
+        "maxLevel": 25,
+        "weight": 10,
+        "minIntox": 0.6
+      }
+    ],
+    "water": [
+      {
+        "speciesId": "neighbula",
+        "minLevel": 22,
+        "maxLevel": 24,
+        "weight": 50
+      },
+      {
+        "speciesId": "wonkrab",
+        "minLevel": 24,
+        "maxLevel": 25,
+        "weight": 30
+      },
+      {
+        "speciesId": "lassiblob",
+        "minLevel": 22,
+        "maxLevel": 24,
+        "weight": 20
+      }
+    ]
+  }
+}

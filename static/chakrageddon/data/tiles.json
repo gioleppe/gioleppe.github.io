@@ -1,0 +1,252 @@
+{
+  "_comment": "Zone maps are rows of characters. id = logic tile from the spec legend (0 floor, 1 solid, 2 encounter, 3 water, 4 cordon, 5 fairy lights, 6 pushable, 7 padlock, 8 roots, 9 chai tent). sprite '@x' reads zone.x. prop = tall sprite anchored bottom-centre on the tile. 'D' draws a whole 3x2 shack; put 'rrr' above 'HDH' for its solid footprint. 'E' is a walkable shack doorway (put a warp on it). 'X' wall, 'Q' roof and 'G' door build a house front; interiors use 'K' walls and 'a' as the exit mat.",
+  "legend": {
+    ".": {
+      "id": 0,
+      "sprite": "@ground"
+    },
+    ",": {
+      "id": 0,
+      "sprite": "@ground2"
+    },
+    "#": {
+      "id": 1,
+      "sprite": "@wall"
+    },
+    "~": {
+      "id": 2,
+      "sprite": "@encounter"
+    },
+    "w": {
+      "id": 3,
+      "sprite": "water"
+    },
+    "B": {
+      "id": 4,
+      "sprite": "cordon"
+    },
+    "f": {
+      "id": 5,
+      "sprite": "fairy"
+    },
+    "S": {
+      "id": 6,
+      "sprite": "subwoofer"
+    },
+    "P": {
+      "id": 7,
+      "sprite": "padlock"
+    },
+    "R": {
+      "id": 8,
+      "sprite": "roots"
+    },
+    "C": {
+      "id": 9,
+      "sprite": "@ground",
+      "prop": "chai"
+    },
+    "W": {
+      "id": 1,
+      "sprite": "deep"
+    },
+    "T": {
+      "id": 1,
+      "sprite": "@ground",
+      "prop": "palm"
+    },
+    "t": {
+      "id": 1,
+      "sprite": "@ground",
+      "prop": "tree"
+    },
+    "b": {
+      "id": 1,
+      "sprite": "bush"
+    },
+    "o": {
+      "id": 1,
+      "sprite": "rock"
+    },
+    "I": {
+      "id": 1,
+      "sprite": "@ground",
+      "prop": "bamboo"
+    },
+    "^": {
+      "id": 1,
+      "sprite": "cliff"
+    },
+    "H": {
+      "id": 1,
+      "sprite": "@ground"
+    },
+    "r": {
+      "id": 1,
+      "sprite": "@ground"
+    },
+    "D": {
+      "id": 1,
+      "sprite": "@ground",
+      "prop": "shack"
+    },
+    "=": {
+      "id": 1,
+      "sprite": "fence"
+    },
+    "k": {
+      "id": 1,
+      "sprite": "@ground",
+      "prop": "speaker"
+    },
+    "j": {
+      "id": 1,
+      "sprite": "booth"
+    },
+    "m": {
+      "id": 1,
+      "sprite": "stall"
+    },
+    "x": {
+      "id": 1,
+      "sprite": "crate"
+    },
+    "L": {
+      "id": 1,
+      "sprite": "@ground",
+      "prop": "lamp"
+    },
+    "M": {
+      "id": 1,
+      "sprite": "@ground",
+      "prop": "mushroom"
+    },
+    "Y": {
+      "id": 1,
+      "sprite": "@ground",
+      "prop": "totem"
+    },
+    "c": {
+      "id": 1,
+      "sprite": "container"
+    },
+    "n": {
+      "id": 1,
+      "sprite": "temple_wall"
+    },
+    "y": {
+      "id": 1,
+      "sprite": "yurt"
+    },
+    "z": {
+      "id": 1,
+      "sprite": "cave_wall"
+    },
+    "s": {
+      "id": 1,
+      "sprite": "scooter"
+    },
+    "u": {
+      "id": 1,
+      "sprite": "tuktuk"
+    },
+    "h": {
+      "id": 1,
+      "sprite": "hammock"
+    },
+    "q": {
+      "id": 1,
+      "sprite": "table"
+    },
+    "v": {
+      "id": 1,
+      "sprite": "@ground",
+      "prop": "flag"
+    },
+    "O": {
+      "id": 1,
+      "sprite": "omelette"
+    },
+    "F": {
+      "id": 0,
+      "sprite": "wood"
+    },
+    "a": {
+      "id": 0,
+      "sprite": "mat"
+    },
+    "d": {
+      "id": 0,
+      "sprite": "dancefloor"
+    },
+    "e": {
+      "id": 0,
+      "sprite": "stage"
+    },
+    "g": {
+      "id": 0,
+      "sprite": "grass"
+    },
+    "p": {
+      "id": 0,
+      "sprite": "path"
+    },
+    "l": {
+      "id": 0,
+      "sprite": "temple_floor"
+    },
+    "E": {
+      "id": 0,
+      "sprite": "@ground",
+      "prop": "shack"
+    },
+    "X": {
+      "id": 1,
+      "sprite": "wall"
+    },
+    "Q": {
+      "id": 1,
+      "sprite": "roof"
+    },
+    "G": {
+      "id": 0,
+      "sprite": "door"
+    },
+    "K": {
+      "id": 1,
+      "sprite": "inwall"
+    },
+    "V": {
+      "id": 1,
+      "sprite": "canvas"
+    },
+    "Z": {
+      "id": 1,
+      "sprite": "bed"
+    },
+    "N": {
+      "id": 1,
+      "sprite": "shelf"
+    },
+    "U": {
+      "id": 0,
+      "sprite": "rug"
+    },
+    "J": {
+      "id": 1,
+      "sprite": "counter"
+    },
+    "A": {
+      "id": 1,
+      "sprite": "plant"
+    },
+    "!": {
+      "id": 1,
+      "sprite": "tapestry"
+    },
+    "%": {
+      "id": 1,
+      "sprite": "records"
+    }
+  }
+}

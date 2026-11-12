@@ -1,0 +1,59 @@
+{
+  "zoneId": "sunset_villa",
+  "name": "Sunset Content Villa",
+  "paletteId": "CHAI_TENT_WARMTH",
+  "baseBpm": 118,
+  "ground": "wood",
+  "ground2": "mat",
+  "wall": "inwall",
+  "encounter": "incense",
+  "indoor": true,
+  "interior": true,
+  "parent": "sunset_cliff",
+  "rows": [
+    "KK!KKKKKK!KK",
+    "KZZFFFFFFNAK",
+    "KFFFFUUFFFFK",
+    "KFFFFUUFFFFK",
+    "KqFFFFFFFFqK",
+    "KAFFFFFFFFAK",
+    "KKKKKaKKKKKK"
+  ],
+  "warps": [
+    {
+      "x": 5,
+      "y": 6,
+      "to": "sunset_cliff",
+      "tx": 8,
+      "ty": 4,
+      "dir": "DOWN"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "villa_assistant",
+      "x": 6,
+      "y": 1,
+      "sprite": "influencer",
+      "dir": "DOWN",
+      "trainer": "villa_assistant",
+      "sight": 3
+    }
+  ],
+  "pickups": [
+    {
+      "id": "villa_memo",
+      "x": 2,
+      "y": 4,
+      "item": "memo_villa",
+      "n": 1
+    },
+    {
+      "id": "villa_lassi",
+      "x": 9,
+      "y": 5,
+      "item": "banana_lassi",
+      "n": 1
+    }
+  ]
+}

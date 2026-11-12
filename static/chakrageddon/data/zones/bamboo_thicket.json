@@ -1,0 +1,168 @@
+{
+  "zoneId": "bamboo_thicket",
+  "name": "Dense Bamboo Thicket",
+  "paletteId": "ANJUNA_DUST",
+  "baseBpm": 150,
+  "ground": "grass",
+  "ground2": "path",
+  "wall": "cliff",
+  "encounter": "darkbush",
+  "rows": [
+    "IIIIIII,,IIIIIII",
+    "I.~~~..,,..I..xI",
+    "I.~~~..,,.....~I",
+    "IIIIIIIffIIIIIII",
+    "I..II..,,......I",
+    "I..I~~~,,.II~~.I",
+    "I......,,..I...I",
+    "wwwwwwwwwwwwwwww",
+    "wwwwwwwwwwwwwwww",
+    "I...I..,,..~~~.I",
+    "I.~~I..,,.II...I",
+    "I......,,......I",
+    "IIIIIIIffIIIIIII",
+    "I....I.,,.I....I",
+    "I.II...,,...II.I",
+    "IIIIIII,,IIIIIII"
+  ],
+  "warps": [
+    {
+      "x": 7,
+      "y": 0,
+      "to": "forest_stage",
+      "tx": 9,
+      "ty": 14,
+      "dir": "UP"
+    },
+    {
+      "x": 8,
+      "y": 0,
+      "to": "forest_stage",
+      "tx": 10,
+      "ty": 14,
+      "dir": "UP"
+    },
+    {
+      "x": 7,
+      "y": 15,
+      "to": "omelette_stall",
+      "tx": 10,
+      "ty": 2,
+      "dir": "DOWN"
+    },
+    {
+      "x": 8,
+      "y": 15,
+      "to": "omelette_stall",
+      "tx": 11,
+      "ty": 2,
+      "dir": "DOWN"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "thicket_wook",
+      "x": 1,
+      "y": 6,
+      "sprite": "wook",
+      "dir": "RIGHT",
+      "trainer": "thicket_wook",
+      "sight": 5
+    },
+    {
+      "id": "thicket_spinner",
+      "x": 13,
+      "y": 11,
+      "sprite": "firespinner",
+      "dir": "LEFT",
+      "trainer": "thicket_spinner",
+      "sight": 5
+    }
+  ],
+  "pickups": [
+    {
+      "id": "thicket_kingfisher",
+      "x": 13,
+      "y": 1,
+      "item": "warm_kingfisher",
+      "n": 1
+    },
+    {
+      "id": "thicket_water",
+      "x": 1,
+      "y": 13,
+      "item": "electrolyte_sachet",
+      "n": 2
+    },
+    {
+      "id": "thicket_sachet",
+      "x": 14,
+      "y": 13,
+      "item": "electrolyte_sachet",
+      "n": 1,
+      "hidden": true
+    },
+    {
+      "id": "crate_bamboo",
+      "x": 1,
+      "y": 9,
+      "item": "record_crate",
+      "n": 1
+    }
+  ],
+  "encounters": {
+    "encounterRate": 0.16,
+    "table": [
+      {
+        "speciesId": "wooklet",
+        "minLevel": 20,
+        "maxLevel": 23,
+        "weight": 25
+      },
+      {
+        "speciesId": "glowkid",
+        "minLevel": 20,
+        "maxLevel": 23,
+        "weight": 20
+      },
+      {
+        "speciesId": "shroomba",
+        "minLevel": 20,
+        "maxLevel": 23,
+        "weight": 15
+      },
+      {
+        "speciesId": "chillem",
+        "minLevel": 20,
+        "maxLevel": 23,
+        "weight": 20
+      },
+      {
+        "speciesId": "grand_wook",
+        "minLevel": 29,
+        "maxLevel": 29,
+        "weight": 5
+      },
+      {
+        "speciesId": "mozzquito",
+        "minLevel": 20,
+        "maxLevel": 23,
+        "weight": 15
+      }
+    ],
+    "water": [
+      {
+        "speciesId": "ketacrab",
+        "minLevel": 20,
+        "maxLevel": 23,
+        "weight": 60
+      },
+      {
+        "speciesId": "neighbula",
+        "minLevel": 20,
+        "maxLevel": 23,
+        "weight": 40
+      }
+    ]
+  }
+}

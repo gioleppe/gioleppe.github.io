@@ -1,0 +1,70 @@
+{
+  "zoneId": "green_room",
+  "name": "The Green Room",
+  "paletteId": "UV_BLACKLIGHT",
+  "baseBpm": 150,
+  "ground": "wood",
+  "ground2": "mat",
+  "wall": "inwall",
+  "encounter": "incense",
+  "indoor": true,
+  "interior": true,
+  "parent": "backstage",
+  "rows": [
+    "KKKKKKKKKKKK",
+    "KFFNKKFFFFFK",
+    "KFFFKKFFFFAK",
+    "KFFFKKFFFFFK",
+    "KKSKKKFFFFFK",
+    "KFSFFFFFFFFK",
+    "KFFFFFFUUFJK",
+    "KAFFFFFUUFFK",
+    "KKKKKKKKaKKK"
+  ],
+  "warps": [
+    {
+      "x": 8,
+      "y": 8,
+      "to": "backstage",
+      "tx": 3,
+      "ty": 12,
+      "dir": "UP"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "greenroom_goon1",
+      "x": 9,
+      "y": 2,
+      "sprite": "guard",
+      "dir": "DOWN",
+      "trainer": "greenroom_goon1",
+      "sight": 3
+    },
+    {
+      "id": "greenroom_goon2",
+      "x": 6,
+      "y": 6,
+      "sprite": "dealer",
+      "dir": "RIGHT",
+      "trainer": "greenroom_goon2",
+      "sight": 3
+    }
+  ],
+  "pickups": [
+    {
+      "id": "greenroom_memo",
+      "x": 1,
+      "y": 1,
+      "item": "memo_greenroom",
+      "n": 1
+    },
+    {
+      "id": "greenroom_vial",
+      "x": 3,
+      "y": 3,
+      "item": "amber_vial",
+      "n": 2
+    }
+  ]
+}

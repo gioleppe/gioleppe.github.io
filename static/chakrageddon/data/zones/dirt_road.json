@@ -1,0 +1,159 @@
+{
+  "zoneId": "dirt_road",
+  "name": "Clogged Dirt Road",
+  "paletteId": "UV_BLACKLIGHT",
+  "baseBpm": 142,
+  "ground": "jungle",
+  "ground2": "path",
+  "wall": "cliff",
+  "encounter": "darkbush",
+  "dark": true,
+  "rows": [
+    "ttttttt,,ttttttt",
+    "t~~~...,,....~~t",
+    "t~~~...,,....~~t",
+    "t....tt,,tt....t",
+    "t.....s,,s.....t",
+    "tttt..,,,,,..ttt",
+    "t.....,..,,....t",
+    "t.L..ss..s,,ss.t",
+    "t~~~....ss.,...t",
+    "t~~~.tt....,..xt",
+    "t.....,,,,,,.ttt",
+    "t.....,..ss....t",
+    "t.ttt.,,.s..~~~t",
+    "t.x...s,,...~~~t",
+    "t......,,......t",
+    "ttttttt,,ttttttt"
+  ],
+  "warps": [
+    {
+      "x": 7,
+      "y": 15,
+      "to": "flea_market",
+      "tx": 11,
+      "ty": 2,
+      "dir": "DOWN"
+    },
+    {
+      "x": 8,
+      "y": 15,
+      "to": "flea_market",
+      "tx": 12,
+      "ty": 2,
+      "dir": "DOWN"
+    },
+    {
+      "x": 7,
+      "y": 0,
+      "to": "scooter_ditch",
+      "tx": 10,
+      "ty": 14,
+      "dir": "UP"
+    },
+    {
+      "x": 8,
+      "y": 0,
+      "to": "scooter_ditch",
+      "tx": 11,
+      "ty": 14,
+      "dir": "UP"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "road_guard",
+      "x": 1,
+      "y": 6,
+      "sprite": "guard",
+      "dir": "RIGHT",
+      "trainer": "road_guard",
+      "sight": 5
+    },
+    {
+      "id": "road_dealer",
+      "x": 13,
+      "y": 9,
+      "sprite": "dealer",
+      "dir": "LEFT",
+      "trainer": "road_dealer",
+      "sight": 4
+    },
+    {
+      "id": "road_raver",
+      "x": 11,
+      "y": 1,
+      "sprite": "raver",
+      "dir": "LEFT",
+      "trainer": "road_raver",
+      "sight": 3
+    },
+    {
+      "id": "road_sign",
+      "x": 9,
+      "y": 14,
+      "tile": "sign",
+      "script": "sign_road"
+    }
+  ],
+  "pickups": [
+    {
+      "id": "road_vial",
+      "x": 13,
+      "y": 6,
+      "item": "amber_vial",
+      "n": 1,
+      "hidden": true
+    },
+    {
+      "id": "road_balm",
+      "x": 1,
+      "y": 10,
+      "item": "tiger_balm",
+      "n": 2
+    },
+    {
+      "id": "road_powder",
+      "x": 1,
+      "y": 13,
+      "item": "mystery_powder",
+      "n": 1,
+      "hidden": true
+    }
+  ],
+  "encounters": {
+    "encounterRate": 0.16,
+    "table": [
+      {
+        "speciesId": "shadowcop",
+        "minLevel": 12,
+        "maxLevel": 15,
+        "weight": 30
+      },
+      {
+        "speciesId": "mozzquito",
+        "minLevel": 12,
+        "maxLevel": 15,
+        "weight": 25
+      },
+      {
+        "speciesId": "sirenowl",
+        "minLevel": 13,
+        "maxLevel": 15,
+        "weight": 15
+      },
+      {
+        "speciesId": "wooklet",
+        "minLevel": 12,
+        "maxLevel": 15,
+        "weight": 15
+      },
+      {
+        "speciesId": "ketacrab",
+        "minLevel": 12,
+        "maxLevel": 15,
+        "weight": 15
+      }
+    ]
+  }
+}
