@@ -22,8 +22,8 @@
     "t...L....,,....L...t",
     "t..~~~...,,...~~~..t",
     "tt.~~~.b.,,...~~~btt",
-    "t...C....,,..b.M...t",
-    "t..b.....,,.....b..t",
+    "t...C....,,....M...t",
+    "t........,,........t",
     "ttttttttt,,ttttttttt"
   ],
   "warps": [
@@ -104,7 +104,7 @@
       "dir": "RIGHT",
       "script": "forest_wook",
       "wander": [
-        1,
+        2,
         7,
         3,
         9
@@ -113,14 +113,14 @@
     {
       "id": "forest_sign",
       "x": 8,
-      "y": 13,
+      "y": 12,
       "tile": "sign",
       "script": "sign_forest"
     },
     {
       "id": "vicchio_cap2",
-      "x": 18,
-      "y": 13,
+      "x": 16,
+      "y": 12,
       "tile": "glowcap",
       "script": "vicchio_cap2",
       "showWhen": {
@@ -144,7 +144,7 @@
   "pickups": [
     {
       "id": "forest_powder",
-      "x": 18,
+      "x": 17,
       "y": 1,
       "item": "mystery_powder",
       "n": 1,
@@ -152,21 +152,21 @@
     },
     {
       "id": "forest_balm",
-      "x": 1,
-      "y": 14,
+      "x": 2,
+      "y": 12,
       "item": "tiger_balm",
       "n": 2
     },
     {
       "id": "crate_forest",
-      "x": 18,
-      "y": 14,
+      "x": 16,
+      "y": 10,
       "item": "record_crate",
       "n": 1
     },
     {
       "id": "forest_pocket",
-      "x": 1,
+      "x": 4,
       "y": 1,
       "item": "tiger_balm",
       "n": 1,

@@ -22,8 +22,8 @@
     "t.....m....,,.........=..t",
     "t.~~~.m.qmm,,.~~~~.m..=..t",
     "t.~~~~...m.,,.~~~~.mm.=x.t",
-    "t..~~......,,....x....=..t",
-    "t.x.L..xm..,,..L..mq..=..t",
+    "t..~~......,,.........=..t",
+    "t..........,,.........=..t",
     "tttttttttttPPttttttttttttt",
     "ttttttttttt,,ttttttttttttt"
   ],
@@ -40,16 +40,16 @@
       "x": 11,
       "y": 0,
       "to": "dirt_road",
-      "tx": 7,
-      "ty": 14,
+      "tx": 11,
+      "ty": 18,
       "dir": "UP"
     },
     {
       "x": 12,
       "y": 0,
       "to": "dirt_road",
-      "tx": 8,
-      "ty": 14,
+      "tx": 12,
+      "ty": 18,
       "dir": "UP"
     },
     {
@@ -80,7 +80,7 @@
       "x": 11,
       "y": 15,
       "to": "dry_ice_corridor",
-      "tx": 7,
+      "tx": 11,
       "ty": 1,
       "dir": "DOWN"
     },
@@ -88,7 +88,7 @@
       "x": 12,
       "y": 15,
       "to": "dry_ice_corridor",
-      "tx": 8,
+      "tx": 12,
       "ty": 1,
       "dir": "DOWN"
     },
@@ -157,8 +157,8 @@
     },
     {
       "id": "market_dealer",
-      "x": 19,
-      "y": 12,
+      "x": 18,
+      "y": 11,
       "sprite": "dealer",
       "dir": "LEFT",
       "trainer": "market_dealer",
@@ -183,16 +183,16 @@
     {
       "id": "astral_auntie",
       "x": 5,
-      "y": 12,
+      "y": 11,
       "sprite": "chaimama",
       "dir": "DOWN",
       "script": "astral_auntie",
       "minIntox": 0.6,
       "wander": [
         3,
-        12,
+        9,
         7,
-        13
+        11
       ]
     },
     {
@@ -208,14 +208,14 @@
     {
       "id": "market_shades",
       "x": 23,
-      "y": 13,
+      "y": 10,
       "item": "incense_stick",
       "n": 2
     },
     {
       "id": "market_sachet",
-      "x": 1,
-      "y": 13,
+      "x": 3,
+      "y": 9,
       "item": "electrolyte_sachet",
       "n": 1
     },

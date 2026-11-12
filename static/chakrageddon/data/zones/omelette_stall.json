@@ -21,8 +21,8 @@
     "t..=......,,....C....t",
     "t..=......,,.........t",
     "t..=h.....,,.........t",
-    "t..=......,,.........t",
-    "t..=......RR.........t",
+    "t.........,,.........t",
+    "t.........RR.........t",
     "tttttttttt,,tttttttttt"
   ],
   "warps": [
@@ -154,14 +154,14 @@
     {
       "id": "stall_local",
       "x": 16,
-      "y": 9,
+      "y": 8,
       "sprite": "local",
       "dir": "UP",
       "script": "stall_local"
     },
     {
       "id": "vicchio_cap1",
-      "x": 20,
+      "x": 19,
       "y": 2,
       "tile": "glowcap",
       "script": "vicchio_cap1",
@@ -183,15 +183,15 @@
   "pickups": [
     {
       "id": "stall_blanket",
-      "x": 20,
-      "y": 13,
+      "x": 19,
+      "y": 12,
       "item": "weighted_blanket",
       "n": 1
     },
     {
       "id": "stall_chai",
-      "x": 1,
-      "y": 13,
+      "x": 2,
+      "y": 12,
       "item": "masala_chai",
       "n": 1
     }

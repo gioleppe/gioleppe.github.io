@@ -61,7 +61,7 @@
     {
       "id": "lake_hippie",
       "x": 15,
-      "y": 12,
+      "y": 10,
       "sprite": "hippie",
       "dir": "LEFT",
       "trainer": "lake_hippie",
@@ -70,7 +70,7 @@
     {
       "id": "lake_yogi",
       "x": 3,
-      "y": 12,
+      "y": 9,
       "sprite": "yogi",
       "dir": "RIGHT",
       "trainer": "lake_yogi",
@@ -78,8 +78,8 @@
     },
     {
       "id": "lake_sign",
-      "x": 8,
-      "y": 11,
+      "x": 6,
+      "y": 10,
       "tile": "sign",
       "script": "sign_lake"
     },
@@ -93,7 +93,7 @@
     },
     {
       "id": "vicchio_cap3",
-      "x": 18,
+      "x": 17,
       "y": 5,
       "tile": "glowcap",
       "script": "vicchio_cap3",
@@ -118,21 +118,21 @@
   "pickups": [
     {
       "id": "lake_lassi",
-      "x": 1,
+      "x": 2,
       "y": 1,
       "item": "banana_lassi",
       "n": 1
     },
     {
       "id": "lake_melon",
-      "x": 18,
+      "x": 17,
       "y": 10,
       "item": "watermelon_slice",
       "n": 3
     },
     {
       "id": "crate_lake",
-      "x": 18,
+      "x": 17,
       "y": 1,
       "item": "record_crate",
       "n": 1

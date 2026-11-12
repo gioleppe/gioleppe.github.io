@@ -488,7 +488,7 @@
   ],
   "sign_trail": [
     {
-      "t": "SANDY TRAIL. Mind the incense clouds. Things come out of them."
+      "t": "SANDY TRAIL. One plank bridge over the creek, no lifeguard. Mind the incense clouds: things come out of them."
     }
   ],
   "beach_hippie": [
@@ -560,6 +560,10 @@
     }
   ],
   "trail_yogi": [
+    {
+      "s": "Yogi",
+      "t": "The fire was here before the festival. So was I. Sit, if you like. The logs do not mind."
+    },
     {
       "s": "Yogi",
       "t": "If somebody locks eyes with you out here, there is no walking away. Wraparound shades help. So does looking at your feet."
@@ -853,7 +857,7 @@
   ],
   "sign_road": [
     {
-      "t": "CLOGGED DIRT ROAD. No lights. No refunds."
+      "t": "CLOGGED DIRT ROAD. A sacred cow has been lying across it since Tuesday, and nobody is going to argue. Detours: west through the jungle, or east past the shrine. No lights. No refunds."
     }
   ],
   "sign_ditch": [

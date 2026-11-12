@@ -8,44 +8,46 @@
   "wall": "cliff",
   "encounter": "incense",
   "rows": [
-    "TTTTTTT,,TTTTTTT",
-    "T~~~~..,,...~~~T",
-    "T~~~~..,,..~~~~T",
-    "T.~~...,,...~~.T",
-    "T......,,...o..T",
-    "Tbbbb..,,,,,,..T",
-    "T.o.......bb,..T",
-    "T..~~~~.....,..T",
-    "T..~~~~~..,,,..T",
-    "T...~~~...,..o.T",
-    "T.T.......,..T.T",
-    "T..,,,,,,,,..bbT",
-    "T..,....~~~...LT",
-    "T..,,,,.~~~~...T",
-    "T.....,,,~~....T",
-    "T..o...,,..b...T",
-    "T......,,...b..T",
-    "TTTTTTT,,TTTTTTT"
+    "TTTTTTTTTTTTTTT,,TTTTTTT",
+    "T~~~~~......b..,,..~~~~T",
+    "T::::::b:::::::,,.:::::T",
+    "T~~~..:...9....,,...~~.T",
+    "T..........;;.,,,,.....T",
+    "T..:.......;..,......o.T",
+    "T.....:.....u.,...:....T",
+    "T~~~.........,,........T",
+    "T~~~~....,,,,,..bb..~~~T",
+    "wwwwwwwww6wwwwwwwwwwwwww",
+    "T.~~~....,....o...~~~~.T",
+    "T.~~~...,,......:..~~~.T",
+    "T......,,....b.....~~..T",
+    "T.1.1..,......:........T",
+    "T.0....,,,,,,,.....o...T",
+    "T.1.........,,.....bb..T",
+    "T.....o......,,........T",
+    "T~~~~~.......,,..~~~~~.T",
+    "T~~~~~~.....,,...~~~~~.T",
+    "TTTTTTTTTTTT,,TTTTTTTTTT"
   ],
   "warps": [
     {
-      "x": 7,
-      "y": 17,
+      "x": 12,
+      "y": 19,
       "to": "driftwood_beach",
       "tx": 11,
       "ty": 1,
       "dir": "DOWN"
     },
     {
-      "x": 8,
-      "y": 17,
+      "x": 13,
+      "y": 19,
       "to": "driftwood_beach",
       "tx": 12,
       "ty": 1,
       "dir": "DOWN"
     },
     {
-      "x": 7,
+      "x": 15,
       "y": 0,
       "to": "poi_pit",
       "tx": 10,
@@ -53,7 +55,7 @@
       "dir": "UP"
     },
     {
-      "x": 8,
+      "x": 16,
       "y": 0,
       "to": "poi_pit",
       "tx": 11,
@@ -64,15 +66,15 @@
   "npcs": [
     {
       "id": "trail_sign",
-      "x": 9,
-      "y": 15,
+      "x": 11,
+      "y": 16,
       "tile": "sign",
       "script": "sign_trail"
     },
     {
       "id": "trail_juggler",
-      "x": 6,
-      "y": 10,
+      "x": 4,
+      "y": 12,
       "sprite": "juggler",
       "dir": "RIGHT",
       "trainer": "trail_juggler",
@@ -80,7 +82,7 @@
     },
     {
       "id": "trail_spinner",
-      "x": 14,
+      "x": 17,
       "y": 6,
       "sprite": "firespinner",
       "dir": "LEFT",
@@ -89,8 +91,8 @@
     },
     {
       "id": "chad_g",
-      "x": 8,
-      "y": 3,
+      "x": 17,
+      "y": 2,
       "sprite": "chad",
       "dir": "LEFT",
       "trainer": "chad1_g",
@@ -99,8 +101,8 @@
     },
     {
       "id": "chad_j",
-      "x": 8,
-      "y": 3,
+      "x": 17,
+      "y": 2,
       "sprite": "chad",
       "dir": "LEFT",
       "trainer": "chad1_j",
@@ -109,8 +111,8 @@
     },
     {
       "id": "chad_b",
-      "x": 8,
-      "y": 3,
+      "x": 17,
+      "y": 2,
       "sprite": "chad",
       "dir": "LEFT",
       "trainer": "chad1_b",
@@ -119,32 +121,32 @@
     },
     {
       "id": "trail_yogi",
-      "x": 4,
-      "y": 15,
+      "x": 3,
+      "y": 14,
       "sprite": "yogi",
-      "dir": "RIGHT",
+      "dir": "LEFT",
       "script": "trail_yogi"
     }
   ],
   "pickups": [
     {
       "id": "trail_melon",
-      "x": 14,
-      "y": 14,
+      "x": 21,
+      "y": 16,
       "item": "watermelon_slice",
       "n": 1
     },
     {
       "id": "trail_baggie",
-      "x": 1,
-      "y": 4,
+      "x": 2,
+      "y": 5,
       "item": "ziploc_baggie",
       "n": 2
     },
     {
       "id": "trail_sandals",
-      "x": 1,
-      "y": 9,
+      "x": 17,
+      "y": 10,
       "item": "lost_sandals",
       "n": 1
     }

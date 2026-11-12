@@ -21,7 +21,7 @@
     "t......ss.,,.ss......t",
     "t...C.....,,.....s...t",
     "t..ss.....,,.........t",
-    "t..~~~~.s.,,.s.~~~~..t",
+    "t..~~~~...,,...~~~~..t",
     "t.........,,.........t",
     "tttttttttt,,tttttttttt"
   ],
@@ -30,7 +30,7 @@
       "x": 10,
       "y": 15,
       "to": "dirt_road",
-      "tx": 7,
+      "tx": 11,
       "ty": 1,
       "dir": "DOWN"
     },
@@ -38,7 +38,7 @@
       "x": 11,
       "y": 15,
       "to": "dirt_road",
-      "tx": 8,
+      "tx": 12,
       "ty": 1,
       "dir": "DOWN"
     },
@@ -106,7 +106,7 @@
     {
       "id": "ditch_sign",
       "x": 9,
-      "y": 14,
+      "y": 12,
       "tile": "sign",
       "script": "sign_ditch"
     },
@@ -122,22 +122,22 @@
   "pickups": [
     {
       "id": "ditch_kingfisher",
-      "x": 1,
+      "x": 2,
       "y": 3,
       "item": "warm_kingfisher",
       "n": 1
     },
     {
       "id": "ditch_rizla",
-      "x": 20,
-      "y": 14,
+      "x": 19,
+      "y": 12,
       "item": "rizla_paper",
       "n": 3
     },
     {
       "id": "ditch_vial",
-      "x": 20,
-      "y": 4,
+      "x": 19,
+      "y": 3,
       "item": "amber_vial",
       "n": 1,
       "hidden": true

@@ -33,6 +33,7 @@ const WALL_TOPS = {
   inwall: { fill: '#7A5230', grain: '#6A4426', rim: '#D8B48A', line: '#4A2C14' },
 };
 const isWall = (cls, sp) => cls === sp || cls === 'out';
+const VERTICAL = { fence: 'fence_v', cable: 'cable_v' };
 /** the top of a wall at dx, dy; open[i] (up, right, down, left) says that side faces the room and gets a rim */
 function wallTop(g, c, dx, dy, open) {
   g.fillStyle = c.fill; g.fillRect(dx, dy, TS, TS);
@@ -225,10 +226,17 @@ export const overworldView = {
         const dx = x * TS - cx, dy = y * TS - cy;
         this.tile(game, g, zone.ground, dx, dy);
         if (sp === 'water' && wave) sp = 'water_b';
+        // fences and cable runs: a north-south run gets its own upright piece, not a ladder of east-west segments
+        if (VERTICAL[sp]) { const f = (fx, fy) => classOf(fx, fy) === sp; if ((f(x, y - 1) || f(x, y + 1)) && !f(x - 1, y) && !f(x + 1, y)) sp = VERTICAL[sp]; }
         const top = WALL_TOPS[sp];
         if (top && isWall(classOf(x, y + 1), sp)) wallTop(g, top, dx, dy, [classOf(x, y - 1), classOf(x + 1, y), classOf(x, y + 1), classOf(x - 1, y)].map((c) => !isWall(c, sp)));
         else if (sp !== zone.ground) this.tile(game, g, sp, dx, dy);
         if (sp === 'dancefloor' && (x * 7 + y * 3) % 5 === 0 && !game.settings.reducedMotion) this.dancer(game, g, dx, dy, x, y);
+        if (sp === 'bonfire' && !game.settings.reducedMotion) for (let i = 0; i < 3; i++) {   // sparks rising off the fire
+          const k = (this.t * 0.9 + i / 3 + x * 0.17) % 1;
+          g.globalAlpha = 1 - k; g.fillStyle = i % 2 ? '#FFD23F' : '#FF6A2A';
+          g.fillRect(dx + 6 + ((i * 3 + Math.floor(this.t * 2)) % 5), Math.round(dy + 3 - k * 14), 1, 1); g.globalAlpha = 1;
+        }
         // soft edges: the base ground rounds off paths, shorelines get a foam line
         const cls = sp === 'water_b' || sp === 'deep' ? 'water' : sp;
         if (cls === zone.ground2 || cls === 'water') {
@@ -273,7 +281,15 @@ export const overworldView = {
     for (const e of ents) {
       if (e.prop) {
         const pr = game.atlas.props[e.prop], img = game.images[`prop:${e.prop}`], ty = Math.round(e.y + 0.01);
-        if (pr && img) this.prop(game, g, e.prop, img, pr, e.x * TS - cx + 8, ty * TS - cy + 16, e.x, ty);
+        if (pr && img) {
+          // a tall prop in front of you (a palm, a tree, the bamboo) goes see-through, so you never vanish behind it
+          const left = e.x * TS + 8 - pr.w / 2, top = (ty + 1) * TS - pr.h;
+          const ox = Math.min(px + 13, left + pr.w) - Math.max(px + 3, left), oy = Math.min(py + 14, top + pr.h) - Math.max(py - 9, top);
+          const behind = ty * TS > py && ox > 0 && oy > 0 && ox * oy > 40;
+          if (behind) g.globalAlpha = 0.45;
+          this.prop(game, g, e.prop, img, pr, e.x * TS - cx + 8, ty * TS - cy + 16, e.x, ty);
+          if (behind) g.globalAlpha = 1;
+        }
       } else if (e.player) {
         const onWater = legend[charAt(ctx, s.player.x, s.player.y, zone)]?.id === 3;
         if (onWater) this.tile(game, g, 'flamingo', px - cx, py - cy + 2); else shadow(px - cx, py - cy - 10);

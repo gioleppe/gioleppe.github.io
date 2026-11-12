@@ -107,7 +107,7 @@
       "wander": [
         16,
         6,
-        18,
+        17,
         8
       ]
     }
@@ -115,14 +115,14 @@
   "pickups": [
     {
       "id": "yurt_chai",
-      "x": 1,
+      "x": 2,
       "y": 12,
       "item": "watermelon_slice",
       "n": 2
     },
     {
       "id": "yurt_lassi",
-      "x": 18,
+      "x": 17,
       "y": 1,
       "item": "banana_lassi",
       "n": 1
