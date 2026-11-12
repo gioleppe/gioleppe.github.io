@@ -8,7 +8,7 @@ import { dialogueView } from './dialogueView.js';
 import { CUES, CUE_SECONDS } from './WebGLPostProcess.js';
 
 const SAVE_KEY = 'chakrageddon.save.v1', SETTINGS_KEY = 'chakrageddon.settings.v1';
-export const VERSION = '1.0.31';
+export const VERSION = '1.0.32';
 
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
@@ -164,6 +164,7 @@ export class Game {
   }
 
   update(dt) {
+    if (this.engine) this.engine.options.shift = this.settings.battleStyle !== 'set';   // Options: Battle style (Shift by default)
     this.t += dt;
     if (this.toast && (this.toast.t -= dt) <= 0) this.toast = null;
     if (this.screen === 'title') return;
