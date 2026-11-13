@@ -57,7 +57,7 @@ export const settingsView = {
   },
   drawRemap(game, g) {
     const st = game.settings, input = game.input, R = this.remap;
-    const ACTIONS = [['up', 'Up'], ['down', 'Down'], ['left', 'Left'], ['right', 'Right'], ['a', 'Confirm (A)'], ['b', 'Back (B)'], ['start', 'Menu'], ['item', 'Quick items']];
+    const ACTIONS = [['up', 'Up'], ['down', 'Down'], ['left', 'Left'], ['right', 'Right'], ['a', 'Confirm (A)'], ['b', 'Back (B)'], ['start', 'Menu'], ['item', 'Quick items'], ['lick', 'Lick the blotter']];
     drawText(g, 'REMAP KEYBOARD', W / 2, 15, { color: C.purple, align: 'center' });
     st.keys ||= {};
     const nameOf = (btn) => st.keys[btn] || Object.keys(input.keys).find((k) => input.keys[k] === btn && !k.startsWith('Arrow') && k !== 'Enter' && k !== 'Escape') || '-';

@@ -23,6 +23,7 @@ export function newState(data, seed = 1) {
     cleared: {}, pushed: {}, visited: { [start.zone]: 1 }, tents: [],
     dex: { seen: {}, caught: {} },
     intox: 0, clock: 16 * 60, clockSteps: 0, steps: 0, repel: 0, nextUid: 1,
+    encMeter: 0, encSteps: 0, encGap: null,                        // wild encounters: progress towards the next one
     lastTent: { zone: start.zone, x: start.x, y: start.y },
     script: null, scriptMode: null, dialogue: null, battle: null, shop: null, menu: null, scene: null,
     playerName: null, npcPos: {}, outfit: null, said: {}, visitor: null,
@@ -81,14 +82,14 @@ export class GameEngine {
       case 'TOGGLE_MENU':
         if (s.mode === 'OVERWORLD') { s.menu = { tab: cmd.tab || 'WRISTBAND_ARM' }; setMode(ctx, 'FANNY_PACK_MENU'); }
         else if (s.mode === 'FANNY_PACK_MENU') {
-          if (cmd.tab && cmd.tab !== s.menu?.tab) s.menu = { tab: cmd.tab };
+          if (cmd.tab && cmd.tab !== s.menu?.tab) s.menu = { ...s.menu, tab: cmd.tab };
           else { s.menu = null; setMode(ctx, 'OVERWORLD'); }
         }
         break;
       case 'BORED_LICK': {
         // left standing around with nothing to do, your hand finds the blotter by itself (rules.boredom)
         const R = this.data.rules.boredom || {};
-        if (s.mode === 'OVERWORLD' && !s.dialogue && !s.battle && (s.bag.glowing_blotter || 0) > 0 && s.intox < (R.ceiling ?? 0.9)) {
+        if (s.mode === 'OVERWORLD' && !s.dialogue && !s.battle && !ctx.data.zones[s.zoneId]?.indoor && (s.bag.glowing_blotter || 0) > 0 && s.intox < (R.ceiling ?? 0.9)) {
           const before = s.intox;
           s.intox = Math.min(1, s.intox + (R.dose ?? 0.12));
           events.push({ type: 'INTOXICATION_CHANGED', oldLevel: before, newLevel: s.intox });

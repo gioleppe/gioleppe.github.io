@@ -2,6 +2,7 @@
   "zoneId": "forest_stage",
   "name": "190 BPM Forest Stage",
   "paletteId": "UV_BLACKLIGHT",
+  "bossGate": "beat_darkpsy",
   "baseBpm": 190,
   "ground": "jungle",
   "ground2": "path",
@@ -81,11 +82,11 @@
     {
       "id": "forest_raver",
       "x": 5,
-      "y": 3,
+      "y": 2,
       "sprite": "raver",
       "dir": "RIGHT",
       "trainer": "forest_raver",
-      "sight": 4
+      "sight": 6
     },
     {
       "id": "forest_guard",

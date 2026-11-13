@@ -85,7 +85,7 @@ export const dialogueView = {
     const w = 112, h = 62, bs = sp.baseStats || {};
     panel(g, x, y, w, h, { bg: C.cream, accent: C.magenta });
     const img = game.images[`mon:${sp.id}`];
-    if (img) g.drawImage(img, 0, 0, 64, 64, x + 3, y + 3, 40, 40);
+    if (img) g.drawImage(img, 64, 64, 40, 40, x + 3, y + 3, 40, 40);   // the 40 px miniature (frame 11)
     drawText(g, sp.name, x + 46, y + 6, { color: C.ink });
     let ty = y + 17;
     for (const t of sp.types) { typeTag(g, t, x + 46, ty); ty += 12; }

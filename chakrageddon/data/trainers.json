@@ -2305,5 +2305,55 @@
       "Wow. I am more awake than ever. That is not what I wanted."
     ],
     "after": "Counting sheep does not work here. They all want to rave."
+  },
+  {
+    "id": "jungle_wook",
+    "name": "Wook Basil",
+    "sprite": "wook",
+    "party": [
+      {
+        "species": "wooklet",
+        "level": 15
+      },
+      {
+        "species": "mozzquito",
+        "level": 15
+      },
+      {
+        "species": "sirenowl",
+        "level": 16
+      }
+    ],
+    "reward": 340,
+    "intro": [
+      "You took the jungle way? Respect. Nobody takes the jungle way. That is why I live here."
+    ],
+    "defeat": [
+      "The jungle provides. Mostly mosquitoes."
+    ],
+    "after": "The plank holds one person at a time. One cow, too, but the cow will not come."
+  },
+  {
+    "id": "shrine_pilgrim",
+    "name": "Pilgrim Devi",
+    "sprite": "yogi",
+    "party": [
+      {
+        "species": "djembe_monk",
+        "level": 15
+      },
+      {
+        "species": "snoozel",
+        "level": 16
+      }
+    ],
+    "reward": 320,
+    "intro": [
+      "I have walked round this shrine one hundred and seven times. You make one hundred and eight."
+    ],
+    "defeat": [
+      "Fine. One hundred and nine."
+    ],
+    "after": "Whoever leaves the flowers comes before dawn. I have never managed to stay awake for it."
   }
 ]

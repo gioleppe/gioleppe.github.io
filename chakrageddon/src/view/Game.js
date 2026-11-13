@@ -10,7 +10,7 @@ import { dialogueView } from './dialogueView.js';
 import { CUES, CUE_SECONDS } from './WebGLPostProcess.js';
 
 const SAVE_KEY = 'chakrageddon.save.v1', SETTINGS_KEY = 'chakrageddon.settings.v1';
-export const VERSION = '1.0.44';
+export const VERSION = '1.0.54';   // keep in step with package.json (tests/scenarios.test.mjs checks)
 
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
@@ -181,7 +181,7 @@ export class Game {
     for (const e of events) {
       for (const v of this.views) v.onEvent?.(this, e);
       if (e.type === 'AUDIO_CUE') {
-        if (e.sfxId) this.audio?.sfx(e.sfxId);
+        if (e.sfxId && !this.extra.battle?.on) this.audio?.sfx(e.sfxId);   // in a battle the screen plays it in turn (after the bag stops shaking)
         if (e.trackBpm) this.audio?.setTrack({ bpm: e.trackBpm, lowPass: e.lowPassFilterHz, mood: e.mood || this.data.zones[this.engine.state.zoneId].paletteId, zone: e.theme || this.engine.state.zoneId });
       }
       if (e.type === 'ZONE_CHANGED') this.autosaveSoon = true;

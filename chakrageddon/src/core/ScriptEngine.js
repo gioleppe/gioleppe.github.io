@@ -9,21 +9,26 @@
 //   { rupees: n }             the player receives n Rupees
 //   { clock: minutes }        sets the festival clock (time passes while you wait)
 //   { set / clear: flag } { give: item, n } { take: item, n } { giveMon: species, level } { pay: n, else: label }
-//   { heal } { shop: id } { battle: trainerId } { wild: species, level } { wristband: id }
+//   { heal, respawn? } { stash: true } { shop: id } { battle: trainerId } { wild: species, level } { wristband: id }
 //   { warp: { zone, x, y, dir } } { run: scriptId } { credits } { end }
 //   { fx: name, at: npcId }        a visual effect at someone (the memory vendor's rainbow burst); the view draws it
 //   { mirror: true }               a battle against a copy of your own party, for nothing (your reflection)
+//   { walkOff: npcId }             that NPC walks to its leave: [x, y] tile (the view walks them; a flag hides them after)
 //   { visitor: sprite | null }     someone stands next to you on the map while the script runs (Banyan with the timetable)
 //   { restUntilSet: true }         rest until the next set on the festival timetable starts
 //   { scene: id, show?: speciesId, phase?: n }  full-screen backdrop behind the dialogue (the opening dream); { scene: null } ends it
 //                                    phase: a scene with several beats (the Vicchio landing) moves on to beat n
 //                                    { scene: 'boss', who, card? }: a boss's cutscene; card: only the short title card
 //   a choice with nameChoice: true also sets the player's name to the chosen answer
+//   heal also makes this your whiteout point (the huts: tents, beds, the hammock), unless respawn: false
+//   stash opens the party screen with the Chai Tent stash unlocked (s.menu.hut); only huts can swap with the stash
+//   a shop in a zone with bossGate stays shut until that boss is beaten (dialogues.shop_closed)
 // Text may contain {player}, replaced by the player's name.
 // The interpreter runs until it has something to show, then waits for ADVANCE_DIALOGUE.
 
 import { check } from './quests.js';
 import { restUntilSet, clockText } from './timetable.js';
+import { pathFor } from './OverworldEngine.js';
 
 export function startScript(ctx, steps, mode = 'DIALOGUE') {
   ctx.state.script = { steps, pc: 0 };
@@ -39,6 +44,39 @@ function jump(sc, label) {
 }
 
 const fill = (s, text) => String(text ?? '').replace(/\{player\}/g, s.playerName || 'friend');
+
+/** zone.bossGate: the flag of the boss who runs this place. Until it is set, the Chai Tent and the shops here turn you away.
+ *  Returns the boss's name while the gate is shut, otherwise null. */
+export function bossGate(ctx, zone = ctx.data.zones[ctx.state.zoneId]) {
+  const flag = zone?.bossGate;
+  if (!flag || ctx.state.flags[flag]) return null;
+  return Object.values(ctx.data.trainers).find((t) => t.setFlag === flag)?.name || 'the boss';
+}
+
+/** zone.gauntlet: { trainers, reset } — a run of fights (the Four). Under way once the first is beaten and until the last is;
+ *  meanwhile the zone's Chai Tent turns you away, and a whiteout starts the run over (gauntletReset). */
+export function gauntletUnderWay(ctx, zone) {
+  const g = zone?.gauntlet;
+  if (!g) return false;
+  const beaten = g.trainers.filter((id) => ctx.state.defeated[id]).length;
+  return beaten > 0 && beaten < g.trainers.length;
+}
+/** lose mid-run and the run starts over: the Four are back at their posts, and whatever the run used up comes back */
+export function gauntletReset(ctx) {
+  let reset = false;
+  for (const zone of Object.values(ctx.data.zones)) {
+    if (!gauntletUnderWay(ctx, zone)) continue;
+    for (const id of zone.gauntlet.trainers) {
+      delete ctx.state.defeated[id];
+      const flag = ctx.data.trainers[id]?.setFlag;
+      if (flag) delete ctx.state.flags[flag];
+    }
+    for (const flag of zone.gauntlet.reset || []) delete ctx.state.flags[flag];
+    if (ctx.state.npcPos) delete ctx.state.npcPos[zone.zoneId];
+    reset = true;
+  }
+  return reset;
+}
 
 function say(ctx, speaker, text, style, choices, extra = {}) {
   const s = ctx.state;
@@ -104,7 +142,7 @@ export function runScript(ctx) {
       ctx.emit({ type: 'AUDIO_CUE', sfxId: 'fanfare' });
       return say(ctx, '', where === 'party' ? `${name} joined your party!` : `${name} was sent to the Chai Tent stash.`);
     }
-    if (st.heal) { h.healParty(ctx); ctx.emit({ type: 'PARTY_HEALED' }); ctx.emit({ type: 'AUDIO_CUE', sfxId: 'heal' }); continue; }
+    if (st.heal) { h.healParty(ctx, st.respawn !== false); ctx.emit({ type: 'PARTY_HEALED' }); ctx.emit({ type: 'AUDIO_CUE', sfxId: 'heal' }); continue; }
     if (st.wristband) {
       if (!s.wristbands.includes(st.wristband)) s.wristbands.push(st.wristband);
       const wb = ctx.data.rules.wristbands?.[st.wristband];
@@ -114,7 +152,30 @@ export function runScript(ctx) {
     }
     if (st.warp) { h.warp(ctx, st.warp); continue; }
     if (st.run) { s.script = { steps: ctx.data.dialogues[st.run], pc: 0 }; continue; }
-    if (st.shop) { s.script = null; s.shop = st.shop; setMode(ctx, 'SHOP'); return; }
+    if (st.walkOff) {
+      const zone = ctx.data.zones[s.zoneId], npc = (zone.npcs || []).find((n) => n.id === st.walkOff);
+      if (npc?.leave) {
+        const path = pathFor(ctx, npc, npc.leave, zone);
+        if (path.length > 1) ctx.emit({ type: 'NPC_WALK_OFF', npcId: npc.id, sprite: npc.sprite, path });
+      }
+      continue;
+    }
+    if (st.stash) {
+      if (s.scriptMode === 'CHAI_TENT_RECOVERY') h.rememberHut(ctx);
+      s.script = null; s.scriptMode = null; s.dialogue = null;
+      s.menu = { tab: 'WRISTBAND_ARM', hut: true };
+      setMode(ctx, 'FANNY_PACK_MENU');
+      return;
+    }
+    if (st.shop) {
+      const boss = bossGate(ctx);
+      if (boss) {
+        const who = s.script.steps.slice(0, s.script.pc).reverse().find((x) => x.s)?.s || '';
+        s.script.pc = s.script.steps.length;
+        return say(ctx, who, (ctx.data.dialogues.shop_closed?.[0]?.t || 'Closed until {boss} is beaten.').replace('{boss}', boss));
+      }
+      s.script = null; s.shop = st.shop; setMode(ctx, 'SHOP'); return;
+    }
     if (st.credits) { s.flags.finished = 1; ctx.emit({ type: 'CREDITS' }); continue; }
     if (st.battle) { h.startTrainerBattle(ctx, st.battle); return; }   // resumes through resumeAfterBattle
     if (st.wild) { h.startWildBattle(ctx, st.wild, st.level || 5, { scripted: true }); return; }

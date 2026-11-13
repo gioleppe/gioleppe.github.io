@@ -11,9 +11,9 @@
   "interior": true,
   "parent": "flea_market",
   "rows": [
-    "KKKKKKKKKK!KKK",
+    "KKŵKŵKKKKK!KKK",
     "KZFZFZFFFFFFNK",
-    "KFFFFFFFJJFFFK",
+    "KżFżFżFFJJFFFK",
     "KFFFFFFFFFFFFK",
     "KFFUUFFFFFFFAK",
     "KFFUUFFFFFFFFK",
@@ -42,9 +42,10 @@
     {
       "id": "guest_board",
       "x": 7,
-      "y": 1,
+      "y": 0,
       "tile": "notice",
-      "script": "guest_board"
+      "script": "guest_board",
+      "onWall": true
     },
     {
       "id": "guest_grunt",

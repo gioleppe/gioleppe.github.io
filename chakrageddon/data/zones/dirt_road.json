@@ -9,46 +9,56 @@
   "encounter": "darkbush",
   "dark": true,
   "rows": [
-    "ttttttttttt,,ttttttttttt",
-    "t~~~.......,,.......~~~t",
-    "t~~~..s....,,..s......~t",
-    "t.....ss...,,...ss..b..t",
-    "ttt.......s,,s.......ttt",
-    "t~~...ss...,,.L.ss....~t",
-    "t~~~......s,,s......~~~t",
-    "t~~~~......,,......~~~~t",
-    "t~~~.ssusss23ssussss.~~t",
-    "t~~~..s..s.,,.s..s...~~t",
-    "t~~........,,........~~t",
-    "tb..tt.....,,....4.q...t",
-    "t.......tt.,,.......m..t",
-    "t~~~.......,,..........t",
-    "t~~~~...ww.,,ww..tt....t",
-    "t~~~.......,,......~~~.t",
-    "t..........,,......~~~.t",
-    "t..tt......,,..........t",
-    "t..........,,..........t",
-    "ttttttttttt,,ttttttttttt"
+    "tttttttttttttt,,tttttttttttttt",
+    "t~~~.....T..L.,,....T.....~~~t",
+    "t~~~..sr......,,.......sr.~~~t",
+    "t...,,,,,,,,,,,,,,,,,,,,,,...t",
+    "t...,,........,,........,,...t",
+    "t~~.,,....b...,,...b....,,.~~t",
+    "t~~.,,........,,........,,.~~t",
+    "ttIt~~tItttt..,,..tt~T~~,,~~~t",
+    "tttI~~ttIttt..,,..tT~~~~,,~o~t",
+    "tt~o~~.~IIttrr,,srTt~~~~,,..~t",
+    "tt~~~~~,~tItur,,rrtt====,====t",
+    "tI~ttbI,,,tIsr,,urtT.v..,,..vt",
+    "t.~tttt,bbbtsr,,srTt..L.44.L.t",
+    "bbbIttt,Ibttrr,,srtt....,,...t",
+    "bwwwwww6wwttur23rrtTm...,,..qt",
+    "tttttIt,ttItsr,,urTt....,,...t",
+    "tI~~~o~~~ttIrr,,srtt~~~~,,~~.t",
+    "ttI~~~~~~tttur,,srtT~~~~,,~~~b",
+    "tt~~tttbbbttsr,,rrTt~~~~,,~~~b",
+    "tt~~ItttbIttsr,,urtt~~~~,,~~~t",
+    "tt~~tIttttItsr,,srtT~~~~,,~~~t",
+    "tI~~ttIttttI..,,..Tt~~~~,,~~~t",
+    "t.,,.......L..,,..L...sr,,...t",
+    "t.,,..........,,........,,...t",
+    "t.,,,,,,,,,,,,,,,,,,,,,,,,,,.t",
+    "t.............,,.............t",
+    "t~~~..sr......,,..m.......~~~t",
+    "t~~~.....b....,,....b.....~~~t",
+    "t~~~..........,,..........~~~t",
+    "tttttttttttttt,,tttttttttttttt"
   ],
   "warps": [
     {
-      "x": 11,
-      "y": 19,
+      "x": 14,
+      "y": 29,
       "to": "flea_market",
       "tx": 11,
       "ty": 2,
       "dir": "DOWN"
     },
     {
-      "x": 12,
-      "y": 19,
+      "x": 15,
+      "y": 29,
       "to": "flea_market",
       "tx": 12,
       "ty": 2,
       "dir": "DOWN"
     },
     {
-      "x": 11,
+      "x": 14,
       "y": 0,
       "to": "scooter_ditch",
       "tx": 10,
@@ -56,7 +66,7 @@
       "dir": "UP"
     },
     {
-      "x": 12,
+      "x": 15,
       "y": 0,
       "to": "scooter_ditch",
       "tx": 11,
@@ -66,63 +76,89 @@
   ],
   "npcs": [
     {
-      "id": "road_guard",
-      "x": 5,
-      "y": 7,
-      "sprite": "guard",
+      "id": "road_sign",
+      "x": 12,
+      "y": 23,
+      "tile": "sign",
+      "script": "sign_road"
+    },
+    {
+      "id": "jungle_wook",
+      "x": 9,
+      "y": 11,
+      "sprite": "wook",
       "dir": "LEFT",
-      "trainer": "road_guard",
-      "sight": 5
+      "trainer": "jungle_wook",
+      "sight": 2
     },
     {
       "id": "road_dealer",
-      "x": 19,
-      "y": 7,
+      "x": 8,
+      "y": 17,
       "sprite": "dealer",
-      "dir": "RIGHT",
+      "dir": "LEFT",
       "trainer": "road_dealer",
+      "sight": 5
+    },
+    {
+      "id": "road_guard",
+      "x": 27,
+      "y": 9,
+      "sprite": "guard",
+      "dir": "LEFT",
+      "trainer": "road_guard",
       "sight": 4
     },
     {
+      "id": "shrine_pilgrim",
+      "x": 21,
+      "y": 13,
+      "sprite": "yogi",
+      "dir": "RIGHT",
+      "trainer": "shrine_pilgrim",
+      "sight": 2
+    },
+    {
+      "id": "shrine_keeper",
+      "x": 26,
+      "y": 13,
+      "sprite": "local",
+      "dir": "LEFT",
+      "script": "shrine_keeper"
+    },
+    {
       "id": "road_raver",
-      "x": 14,
+      "x": 18,
       "y": 2,
       "sprite": "raver",
       "dir": "LEFT",
       "trainer": "road_raver",
       "sight": 3
-    },
-    {
-      "id": "road_sign",
-      "x": 13,
-      "y": 16,
-      "tile": "sign",
-      "script": "sign_road"
     }
   ],
   "pickups": [
     {
+      "id": "road_powder",
+      "x": 1,
+      "y": 12,
+      "item": "mystery_powder",
+      "n": 1,
+      "hidden": true
+    },
+    {
       "id": "road_vial",
-      "x": 18,
-      "y": 1,
+      "x": 28,
+      "y": 16,
       "item": "amber_vial",
       "n": 1,
       "hidden": true
     },
     {
       "id": "road_balm",
-      "x": 4,
-      "y": 13,
+      "x": 6,
+      "y": 9,
       "item": "tiger_balm",
       "n": 2
-    },
-    {
-      "id": "road_powder",
-      "x": 6,
-      "y": 1,
-      "item": "mystery_powder",
-      "n": 1,
-      "hidden": true
     }
   ],
   "encounters": {
@@ -163,8 +199,8 @@
   "hallucinations": [
     {
       "kind": "cow_walk",
-      "x": 11,
-      "y": 8,
+      "x": 14,
+      "y": 14,
       "toward": -1
     }
   ]

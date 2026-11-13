@@ -2,7 +2,7 @@
 import { enterZone, canUse } from './OverworldEngine.js';
 import { startWildBattle, startTrainerBattle, startMirrorBattle, battleAction, learnMove } from './BattleEngine.js';
 import { createMon, addToCollection, healMon, nameOf } from './mons.js';
-import { applyItem } from './items.js';
+import { applyItem, soldOut, ONE_OF_A_KIND } from './items.js';
 import { setMode } from './ScriptEngine.js';
 
 export const hooks = {
@@ -10,14 +10,20 @@ export const hooks = {
   startTrainerBattle,
   startMirrorBattle,
   giveMon(ctx, speciesId, level) { return addToCollection(ctx, createMon(ctx, speciesId, level)); },
-  /** Chai tent: full heal, sober up, remember this tent for whiteouts and fast travel. */
-  healParty(ctx) {
+  /** A hut (Chai tent, bed, hammock): full heal, sober up, and with respawn remember it for whiteouts and fast travel. */
+  healParty(ctx, respawn = true) {
     const s = ctx.state;
     for (const m of [...s.party, ...s.box]) healMon(ctx.data, m);
     s.intox = 0;
-    s.lastTent = { zone: s.zoneId, x: s.player.x, y: s.player.y };
-    if (!s.tents.some((t) => t.zone === s.zoneId)) s.tents.push({ ...s.lastTent, name: ctx.data.zones[s.zoneId].name });
+    if (respawn) hooks.rememberHut(ctx);
     ctx.emit({ type: 'INTOXICATION_CHANGED', oldLevel: 0, newLevel: 0 });
+  },
+  /** the last hut that took you in: where a whiteout wakes you, and a tuk-tuk stop */
+  rememberHut(ctx) {
+    const s = ctx.state, name = ctx.data.zones[s.zoneId].name;
+    const place = s.scriptMode === 'CHAI_TENT_RECOVERY' ? `the Chai Tent at ${name}` : name;
+    s.lastTent = { zone: s.zoneId, x: s.player.x, y: s.player.y, place };
+    if (!s.tents.some((t) => t.zone === s.zoneId)) s.tents.push({ zone: s.zoneId, x: s.player.x, y: s.player.y, name });
   },
   warp(ctx, w) { enterZone(ctx, w.zone, w.x, w.y, w.dir); },
 };
@@ -75,8 +81,9 @@ export function handleExtra(ctx, cmd) {
       if (s.party[a] && s.party[b] && a !== b) [s.party[a], s.party[b]] = [s.party[b], s.party[a]];
       break;
     }
-    case 'STASH_SWAP': {   // move between party and the Chai Tent stash (box)
+    case 'STASH_SWAP': {   // move between party and the Chai Tent stash (box): only while you sit at a Chai Tent
       if (s.mode !== 'FANNY_PACK_MENU') break;
+      if (!s.menu?.hut) { say(ctx, 'The stash is kept at the Chai Tents. Ask Chai Mama.'); break; }
       if (cmd.boxIndex !== undefined && cmd.partyIndex !== undefined && s.box[cmd.boxIndex] && s.party[cmd.partyIndex]) {
         [s.party[cmd.partyIndex], s.box[cmd.boxIndex]] = [s.box[cmd.boxIndex], s.party[cmd.partyIndex]];
         if (!s.party.some((m) => m.hp > 0)) [s.party[cmd.partyIndex], s.box[cmd.boxIndex]] = [s.box[cmd.boxIndex], s.party[cmd.partyIndex]];
@@ -89,8 +96,9 @@ export function handleExtra(ctx, cmd) {
     }
     case 'BUY': {
       if (s.mode !== 'SHOP') break;
-      const item = d.items[cmd.itemId], n = Math.max(1, cmd.n || 1);
+      const item = d.items[cmd.itemId], n = ONE_OF_A_KIND.includes(item?.category) ? 1 : Math.max(1, cmd.n || 1);
       if (!item || !d.rules.shops[s.shop]?.items.includes(item.id)) break;
+      if (soldOut(s, item)) { say(ctx, `Sold out. There was only the one ${item.name}, and you have it.`); ctx.emit({ type: 'AUDIO_CUE', sfxId: 'deny' }); break; }
       if (s.rupees < item.price * n) { say(ctx, 'Not enough rupees.'); ctx.emit({ type: 'AUDIO_CUE', sfxId: 'deny' }); break; }
       s.rupees -= item.price * n; s.bag[item.id] = (s.bag[item.id] || 0) + n;
       ctx.emit({ type: 'RUPEES_CHANGED', rupees: s.rupees }); ctx.emit({ type: 'AUDIO_CUE', sfxId: 'coin' });

@@ -6,7 +6,7 @@
 import { bandOf } from './intox.js';
 import { statsOf, snapshot, nameOf, gainXp, evolutionTarget, evolve, createMon, addToCollection, healMon } from './mons.js';
 import { selectAction } from './AIController.js';
-import { setMode, runScript } from './ScriptEngine.js';
+import { setMode, runScript, gauntletReset } from './ScriptEngine.js';
 import { enterZone, zoneOf } from './OverworldEngine.js';
 import { applyItem } from './items.js';
 
@@ -596,11 +596,12 @@ function whiteout(ctx) {
   msg(ctx, 'You have nobody left standing. Everything goes white...');
   ctx.emit({ type: 'BATTLE_END', result: 'LOST' });
   for (const m of [...s.party, ...s.box]) healMon(ctx.data, m);
+  const runLost = gauntletReset(ctx);                                  // lost halfway up the Four: the climb starts over
   s.clock = (s.clock + R.whiteoutHours * 60) % 1440;
   s.battle = null; s.script = null; s.scriptMode = null; s.intox = 0;
   ctx.emit({ type: 'INTOXICATION_CHANGED', oldLevel: b.intox, newLevel: 0 });
   enterZone(ctx, s.lastTent.zone, s.lastTent.x, s.lastTent.y, 'DOWN');
-  s.dialogue = { speaker: '', text: `You white out. ${R.whiteoutHours} hours later you wake at the Chai Tent${loss ? `, Rs ${loss} lighter` : ''}. Somebody has tucked you in.${lostOutfit ? ` Your ${lostOutfit.name} is gone.` : ''}`, style: 'DOWNER', choices: null };
+  s.dialogue = { speaker: '', text: `You white out. ${R.whiteoutHours} hours later you wake at ${s.lastTent.place || 'the Chai Tent'}${loss ? `, Rs ${loss} lighter` : ''}. Somebody has tucked you in.${lostOutfit ? ` Your ${lostOutfit.name} is gone.` : ''}${runLost ? ' The Four are back at their posts: the climb starts over.' : ''}`, style: 'DOWNER', choices: null };
   ctx.emit({ type: 'RUPEES_CHANGED', rupees: s.rupees });
   setMode(ctx, 'K_HOLE_WHITEOUT', 'WHITEOUT');
 }

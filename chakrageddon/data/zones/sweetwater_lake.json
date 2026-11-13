@@ -65,7 +65,11 @@
       "sprite": "hippie",
       "dir": "LEFT",
       "trainer": "lake_hippie",
-      "sight": 5
+      "sight": 5,
+      "look": [
+        "LEFT",
+        "DOWN"
+      ]
     },
     {
       "id": "lake_yogi",
@@ -74,7 +78,11 @@
       "sprite": "yogi",
       "dir": "RIGHT",
       "trainer": "lake_yogi",
-      "sight": 5
+      "sight": 5,
+      "look": [
+        "RIGHT",
+        "LEFT"
+      ]
     },
     {
       "id": "lake_sign",

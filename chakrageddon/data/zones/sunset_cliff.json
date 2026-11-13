@@ -2,6 +2,7 @@
   "zoneId": "sunset_cliff",
   "name": "The Sunset Cliff",
   "paletteId": "ANJUNA_DUST",
+  "bossGate": "beat_chloe",
   "baseBpm": 126,
   "ground": "laterite",
   "ground2": "path",
@@ -85,12 +86,12 @@
     },
     {
       "id": "cliff_influencer",
-      "x": 5,
+      "x": 10,
       "y": 3,
       "sprite": "influencer",
       "dir": "RIGHT",
       "trainer": "cliff_influencer",
-      "sight": 5
+      "sight": 3
     },
     {
       "id": "cliff_sergeant",

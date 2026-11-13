@@ -15,6 +15,7 @@ const TABS = [
   { id: 'QUESTS', label: 'Quests' }, { id: 'BANDS', label: 'Wristbands' }, { id: 'SAVE', label: 'Save' }, { id: 'OPTIONS', label: 'Options' }, { id: 'LOG', label: 'Log' },
 ];
 const CAT_ORDER = ['BAGGING', 'RECOVERY', 'CATALYST', 'HELD', 'GEAR', 'OUTFIT', 'KEY'];
+const SORTS = ['type', 'name', 'count'], SORT_NAME = { type: 'By type', name: 'A to Z', count: 'Most first' };
 const CAT_NAME = { BAGGING: 'Bagging tools', RECOVERY: 'Recovery', CATALYST: 'Catalysts', HELD: 'To hold', GEAR: 'Gear', OUTFIT: 'Clothing', KEY: 'Key items' };
 // nickname suggestions: typing on a phone is a pain, so pick one (the list depends on the creature)
 const NICKS = ['Dave', 'Moonchild', 'Biscuit', 'Disco', 'Noodle', 'Ziggy', 'Pickle', 'Tofu', 'Bongo', 'Wobbles', 'Mango', 'Sparkle', 'Gus', 'Lentil', 'Fizz', 'Bubbles', 'Chai', 'Kevin', 'Pixie', 'Big Steve'];
@@ -59,7 +60,10 @@ export const menuView = {
   tab: 0, focus: 'tabs', cur: {}, sub: null, open: 0, t: 0,
 
   onEvent(game, e) {
-    if (e.type === 'TRANSITION_MODE' && e.to === 'FANNY_PACK_MENU') { this.focus = 'tabs'; this.sub = null; this.open = 0; game.audio?.sfx('zip'); }
+    if (e.type === 'TRANSITION_MODE' && e.to === 'FANNY_PACK_MENU') {
+      this.focus = 'tabs'; this.sub = null; this.open = 0; game.audio?.sfx('zip');
+      if (game.engine.state.menu?.hut) { this.tab = 0; this.focus = 'content'; this.cur.party = game.engine.state.party.length; }   // Chai Mama's stash
+    }
   },
   update(game, dt) { this.t += dt; if (game.engine.state.mode === 'FANNY_PACK_MENU') this.open = Math.min(1, this.open + dt * 5); },
 
@@ -136,21 +140,24 @@ export const menuView = {
     if (!s.party.length) { drawText(g, 'No Astrals yet. Bare forearm.', X, Y, { color: C.chai }); if (active && (input.pressed('b') || input.pressed('left'))) back(); return; }
     if (this.sub?.kind === 'summary') return this.summary(game, g, s.party[this.sub.i] || s.box[this.sub.i], X, Y, CW, back);
     if (this.sub?.kind === 'box') {
-      drawText(g, 'Chai Tent stash', X, Y, { color: C.purple });
-      const r = list(game, g, s.box.map((m) => ({ label: `${nameOf(d, m)} Lv${m.level}`, right: 'Take' })), X - 4, Y + 12, CW + 8, cur.box || 0, { rowH: 14, maxRows: 9 });
+      const hut = !!s.menu?.hut;
+      drawText(g, hut ? 'Chai Tent stash' : 'Chai Tent stash (swap at a Chai Tent)', X, Y, { color: C.purple });
+      if (!s.box.length) wrap('Nobody here. Astrals you bag while your party is full wait here.', CW).forEach((ln, k) => drawText(g, ln, X, Y + 14 + k * 10, { color: C.chai }));
+      const r = list(game, g, s.box.map((m) => ({ label: `${nameOf(d, m)} Lv${m.level}`, right: hut ? 'Take' : '' })), X - 4, Y + 12, CW + 8, cur.box || 0, { rowH: 14, maxRows: 9 });
       cur.box = r.cursor;
-      if (r.chosen >= 0) { game.send({ type: 'STASH_SWAP', boxIndex: r.chosen }); if (!s.box.length) this.sub = null; if (s.party.length >= 6) game.say('Party is full.'); }
+      if (r.chosen >= 0 && !hut) game.say('Swap at a Chai Tent: Chai Mama keeps the stash.');
+      else if (r.chosen >= 0) { if (s.party.length >= 6) game.say('Party is full.'); game.send({ type: 'STASH_SWAP', boxIndex: r.chosen }); if (!s.box.length) this.sub = null; }
       else if (input.pressed('b')) back();
       return;
     }
     if (this.sub?.kind === 'actions') {
       const i = this.sub.i, m = s.party[i];
       drawText(g, nameOf(d, m), X, Y, { color: C.purple });
-      const acts = [{ label: 'Summary' }, { label: 'Put first', disabled: i === 0 }, { label: 'Send to stash', disabled: s.party.length < 2 }, { label: 'Hold item' }, { label: 'Nickname' }, { label: 'Back' }];
+      const acts = [{ label: 'Summary' }, { label: 'Move', disabled: s.party.length < 2 }, { label: 'Send to stash', disabled: s.party.length < 2 || !s.menu?.hut }, { label: 'Hold item' }, { label: 'Nickname' }, { label: 'Back' }];
       const r = list(game, g, acts, X - 4, Y + 14, 110, cur.act || 0, { rowH: 16 });
       cur.act = r.cursor;
       if (r.chosen === 0) this.sub = { kind: 'summary', i };
-      else if (r.chosen === 1) { game.send({ type: 'SWAP_PARTY', a: 0, b: i }); this.sub = null; }
+      else if (r.chosen === 1) { this.sub = { kind: 'move', from: i }; cur.party = i; }
       else if (r.chosen === 2) { game.send({ type: 'STASH_SWAP', partyIndex: i }); this.sub = null; }
       else if (r.chosen === 3) { this.sub = { kind: 'hold', i }; cur.hold = 0; }
       else if (r.chosen === 4) { this.sub = { kind: 'nick', i }; cur.nick = 0; }
@@ -202,8 +209,8 @@ export const menuView = {
       return;
     }
     // one row per Astral: mini sprite, name, types, serotonin and hydration; a woven band marks each row
-    const RH = 21;
-    const rows = s.party.length + (s.box.length ? 1 : 0);
+    const RH = 21, moving = this.sub?.kind === 'move' ? this.sub : null;
+    const rows = s.party.length + (!moving && (s.box.length || s.menu?.hut) ? 1 : 0);
     let chosen = -1;
     const c = Math.max(0, Math.min(rows - 1, cur.party || 0));
     for (let i = 0; i < rows; i++) {
@@ -211,13 +218,14 @@ export const menuView = {
       const box = i >= s.party.length;
       if (active && input.tapIn(X - 4, y, CW + 8, RH)) { cur.party = i; chosen = i; }
       if (active && i === c) { g.fillStyle = '#F4A26166'; g.fillRect(X - 4, y, CW + 8, RH - 1); }
+      if (moving && i === moving.from) { g.fillStyle = C.magenta; g.fillRect(X - 4, y, CW + 8, 1); g.fillRect(X - 4, y + RH - 2, CW + 8, 1); g.fillRect(X - 4, y, 1, RH - 1); g.fillRect(X + CW + 3, y, 1, RH - 1); }
       if (box) { drawText(g, `Chai Tent stash (${s.box.length})`, X + 22, y + 6, { color: C.purple }); continue; }
       const m = s.party[i], st = statsOf(d, m), sp = d.dex[m.speciesId];
       // woven wristband behind the sprite, in the creature's type colours
       g.fillStyle = TYPE_COLORS[sp.types[0]]; g.fillRect(X - 4, y + 15, 22, 4);
       g.fillStyle = TYPE_COLORS[sp.types[1] || sp.types[0]]; for (let k = 0; k < 22; k += 4) g.fillRect(X - 4 + k, y + 15, 2, 4);
       const img = game.images[`mon:${m.speciesId}`];
-      if (img) { if (m.hp <= 0) g.globalAlpha = 0.4; g.drawImage(img, 0, 0, 64, 64, X - 5, y - 2, 24, 24); g.globalAlpha = 1; }
+      if (img) { if (m.hp <= 0) g.globalAlpha = 0.4; g.drawImage(img, 0, 64, 24, 24, X - 5, y - 2, 24, 24); g.globalAlpha = 1; }   // the 24 px miniature (frame 10), drawn for this size
       drawText(g, nameOf(d, m), X + 22, y + 1, { color: C.ink });
       drawText(g, `Lv${m.level}`, X + CW, y + 1, { color: C.ink, align: 'right' });
       let tx = X + 22; for (const t of sp.types) tx += typeTag(g, t, tx, y + 10);
@@ -227,11 +235,17 @@ export const menuView = {
       if (m.hp <= 0) drawText(g, 'OUT', X + CW, y + 11, { color: C.red, align: 'right' });
       else if (m.status) drawText(g, m.status.id.slice(0, 4), X + CW, y + 11, { color: C.purple, align: 'right' });
     }
+    if (moving) drawText(g, "Move where?  A: swap here  B: cancel", X, Y + s.party.length * RH + 2, { color: C.purple });
     if (!active) return;
     cur.party = c;
     if (input.pressed('down')) cur.party = Math.min(rows - 1, c + 1);
     if (input.pressed('up')) cur.party = Math.max(0, c - 1);
     if (input.pressed('a')) chosen = cur.party;
+    if (moving) {
+      if (chosen >= 0) { if (chosen !== moving.from) game.send({ type: 'SWAP_PARTY', a: moving.from, b: chosen }); game.audio?.sfx('select'); this.sub = null; cur.party = chosen; }
+      else if (input.pressed('b') || input.pressed('left')) { this.sub = { kind: 'actions', i: moving.from }; }
+      return;
+    }
     if (chosen >= 0) { game.audio?.sfx('select'); this.sub = chosen >= s.party.length ? { kind: 'box' } : { kind: 'actions', i: chosen }; cur.act = 0; }
     else if (input.pressed('b') || input.pressed('left')) back();
   },
@@ -254,15 +268,26 @@ export const menuView = {
     drawText(g, 'Moves', X, Y + 90, { color: C.grey });
     // ability and held item
     const ab = d.rules.abilities?.[sp.ability || sp.trait];
-    if (ab) { drawText(g, ab.name, X, Y + 125, { color: C.purple }); drawText(g, wrap(ab.desc, CW - textWidth(ab.name) - 8)[0], X + textWidth(ab.name) + 8, Y + 125, { color: C.chai }); }
-    drawText(g, `Holding: ${m.held ? d.items[m.held].name : 'nothing'}`, X, Y + 136, { color: C.grey });
+    // the ability: its name, then the description flowing on from beside it (it used to stop after one line)
+    let holdY = Y + 136;
+    if (ab) {
+      const nw = textWidth(ab.name) + 6, first = wrap(ab.desc, CW - nw), rest = first.length > 1 ? wrap(first.slice(1).join(' '), CW) : [];
+      drawText(g, ab.name, X, Y + 124, { color: C.purple });
+      drawText(g, first[0], X + nw, Y + 124, { color: C.chai });
+      rest.forEach((ln, k) => drawText(g, ln, X, Y + 133 + k * 9, { color: C.chai }));
+      holdY = Y + 134 + rest.length * 9;
+    }
+    drawText(g, `Holding: ${m.held ? d.items[m.held].name : 'nothing'}`, X, holdY, { color: C.grey });
     if (input.pressed('b') || input.pressed('a') || input.anyTap()) back();
   },
 
   // ---- Stash Tin: a mint tin with compartments
   stash(game, g, X, Y, CW, active, back) {
     const s = game.engine.state, d = game.data, input = game.input, cur = this.cur;
-    const ids = Object.keys(s.bag).filter((id) => s.bag[id] > 0).sort((a, b) => CAT_ORDER.indexOf(d.items[a].category) - CAT_ORDER.indexOf(d.items[b].category));
+    const sort = SORTS.includes(game.settings.bagSort) ? game.settings.bagSort : 'type';
+    const byType = (a, b) => CAT_ORDER.indexOf(d.items[a].category) - CAT_ORDER.indexOf(d.items[b].category);
+    const ids = Object.keys(s.bag).filter((id) => s.bag[id] > 0).sort(sort === 'name' ? (a, b) => d.items[a].name.localeCompare(d.items[b].name)
+      : sort === 'count' ? (a, b) => (s.bag[b] - s.bag[a]) || byType(a, b) : byType);
     if (!ids.length) { drawText(g, 'The tin rattles. It is empty.', X, Y, { color: C.chai }); if (active && (input.pressed('b') || input.pressed('left'))) back(); return; }
     if (this.sub?.kind === 'holder') {         // a held item chosen from the tin: who should hold it?
       const item = d.items[this.sub.item];
@@ -285,16 +310,20 @@ export const menuView = {
     // the tin: brushed metal rim with a hinge
     g.fillStyle = '#A8AEB6'; g.fillRect(X - 5, Y - 5, CW + 10, 100); g.fillStyle = '#D8DEE6'; g.fillRect(X - 4, Y - 4, CW + 8, 98); g.fillStyle = '#F4F8FA'; g.fillRect(X - 3, Y - 3, CW + 6, 96);
     g.fillStyle = '#A8AEB6'; g.fillRect(X + 20, Y - 6, 10, 2); g.fillRect(X + CW - 30, Y - 6, 10, 2);
-    const items = ids.map((id) => ({ label: d.items[id].name, right: d.items[id].category === 'KEY' ? '' : d.items[id].category === 'OUTFIT' && s.outfit === d.items[id].effect.outfit ? 'worn' : `x${s.bag[id]}` }));
+    // the first row sorts the tin: by type, A to Z, or most first (remembered on this device)
+    const items = [{ label: `Sort: ${SORT_NAME[sort]}`, color: C.purple }].concat(ids.map((id) => ({ label: d.items[id].name, right: d.items[id].category === 'KEY' ? '' : d.items[id].category === 'OUTFIT' && s.outfit === d.items[id].effect.outfit ? 'worn' : `x${s.bag[id]}` })));
     const r = list(game, g, items, X - 4, Y, CW + 8, cur.item || 0, { rowH: 13, maxRows: 7, passive: !active });
     cur.item = r.cursor;
-    const it = d.items[ids[Math.min(cur.item, ids.length - 1)]];
+    const it = cur.item > 0 ? d.items[ids[Math.min(cur.item - 1, ids.length - 1)]] : null;
     g.fillStyle = '#E8D8C0'; g.fillRect(X - 2, Y + 96, CW + 4, 1);
-    drawText(g, CAT_NAME[it.category], X, Y + 100, { color: C.purple });
-    wrap(it.desc, CW).slice(0, 3).forEach((ln, i) => drawText(g, ln, X, Y + 111 + i * 10, { color: C.chai }));
+    if (it) {
+      drawText(g, CAT_NAME[it.category], X, Y + 100, { color: C.purple });
+      wrap(it.desc, CW).slice(0, 3).forEach((ln, i) => drawText(g, ln, X, Y + 111 + i * 10, { color: C.chai }));
+    } else wrap(`A: sort the tin ${SORT_NAME[SORTS[(SORTS.indexOf(sort) + 1) % SORTS.length]].toLowerCase()} instead.`, CW).forEach((ln, i) => drawText(g, ln, X, Y + 100 + i * 10, { color: C.chai }));
     if (!active) return;
-    if (r.chosen >= 0) {
-      const item = d.items[ids[r.chosen]];
+    if (r.chosen === 0) { game.settings.bagSort = SORTS[(SORTS.indexOf(sort) + 1) % SORTS.length]; game.saveSettings?.(); game.audio?.sfx('select'); }
+    else if (r.chosen > 0) {
+      const item = d.items[ids[r.chosen - 1]];
       if (item.category === 'RECOVERY' || item.category === 'CATALYST') { if (s.party.length) { this.sub = { kind: 'target', item: item.id }; cur.target = 0; } else game.say('Nobody to use it on.'); }
       else if (item.category === 'HELD') { if (s.party.length) { this.sub = { kind: 'holder', item: item.id }; cur.target = 0; } else game.say('Nobody to give it to.'); }
       else game.send({ type: 'USE_ITEM', itemId: item.id });
@@ -305,6 +334,7 @@ export const menuView = {
   journal(game, g, X, Y, CW, active, back) {
     const s = game.engine.state, d = game.data, input = game.input, cur = this.cur;
     g.fillStyle = '#F4EAD0'; g.fillRect(X - 4, Y - 4, CW + 8, H - 26);
+    if (this.sub?.kind === 'page') return this.journalPage(game, g, d.dexList[this.sub.i], X, Y, CW, active);
     g.fillStyle = '#A8AEB6'; g.fillRect(X + 40, Y - 5, 26, 6);                       // duct tape
     for (let y = Y + 9; y < H - 14; y += 11) { g.fillStyle = '#D8CCE8'; g.fillRect(X - 2, y, CW + 4, 1); }
     g.strokeStyle = '#C9A878'; g.lineWidth = 1; g.beginPath(); g.arc(X + CW - 16, Y + 108, 11, 0, 7); g.stroke();   // coffee ring
@@ -321,7 +351,11 @@ export const menuView = {
       if (img) g.drawImage(img, (s.dex.caught[sp.id] ? 0 : 4) * 64, 0, 64, 64, px + 18, Y - 6, 64, 64);
       let tx = px; for (const t of sp.types) tx += typeTag(g, t, tx, Y + 56);
       if (highOnly(d)[sp.id]) drawEye(g, tx + 2, Y + 57);                // only seen when high
-      if (s.dex.caught[sp.id]) wrap(sp.journalNotes, NW).slice(0, 5).forEach((ln, i) => drawText(g, ln, px, Y + 69 + i * 10, { color: '#1E3A8A' }));
+      if (s.dex.caught[sp.id]) {                                          // the start of the notes; A turns to the full page
+        const notes = wrap(sp.journalNotes, NW), more = notes.length > 5;
+        notes.slice(0, more ? 4 : 5).forEach((ln, i) => drawText(g, ln, px, Y + 69 + i * 10, { color: '#1E3A8A' }));
+        if (more) drawText(g, 'A: read on...', px, Y + 109, { color: '#B02A2A' });
+      }
       else wrap('(bag one to take notes)', NW).forEach((ln, i) => drawText(g, ln, px, Y + 69 + i * 10, { color: C.grey }));
     } else {
       drawText(g, 'not seen yet', px + 10, Y + 30, { color: C.grey });
@@ -329,7 +363,20 @@ export const menuView = {
       const at = sp && (highOnly(d)[sp.id] || []).find((a) => s.visited[a.zone]);
       if (at) { drawEye(g, px + 10, Y + 47); wrap(`Something else lives at ${d.zones[at.zone].name}. Get higher to see it.`, NW).slice(0, 5).forEach((ln, i) => drawText(g, ln, px, Y + 58 + i * 10, { color: '#7A4FE0' })); }
     }
-    if (active && (input.pressed('b') || input.pressed('left') || r.chosen >= 0)) back();
+    if (active && r.chosen >= 0 && sp && s.dex.caught[sp.id]) { this.sub = { kind: 'page', i: cur.dex }; game.audio?.sfx('select'); }
+    else if (active && (input.pressed('b') || input.pressed('left') || r.chosen >= 0)) back();
+  },
+
+  /** a bagged Astral's whole page: the sketch, its types, and every word of the notes across the full width */
+  journalPage(game, g, sp, X, Y, CW, active) {
+    const d = game.data, input = game.input, img = game.images[`mon:${sp.id}`];
+    for (let y = Y + 9; y < H - 14; y += 11) { g.fillStyle = '#D8CCE8'; g.fillRect(X - 2, y, CW + 4, 1); }
+    if (img) g.drawImage(img, 0, 0, 64, 64, X - 4, Y - 8, 64, 64);
+    drawText(g, `${String(sp.dexNumber).padStart(2, '0')} ${sp.name}`, X + 64, Y + 4, { color: '#1E3A8A' });
+    let tx = X + 64; for (const ty of sp.types) tx += typeTag(g, ty, tx, Y + 16);
+    if (highOnly(d)[sp.id]) drawEye(g, tx + 2, Y + 17);
+    wrap(sp.journalNotes, CW).forEach((ln, i) => drawText(g, ln, X, Y + 58 + i * 10, { color: '#1E3A8A' }));
+    if (active && (input.pressed('a') || input.pressed('b') || input.pressed('left') || input.anyTap())) { this.sub = null; game.audio?.sfx('back'); }
   },
 
   // ---- Log: what people said and what happened, newest at the bottom; up and down scroll back

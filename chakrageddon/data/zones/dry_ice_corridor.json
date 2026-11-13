@@ -65,21 +65,21 @@
   "npcs": [
     {
       "id": "corridor_guard",
-      "x": 1,
+      "x": 5,
       "y": 5,
       "sprite": "guard",
       "dir": "RIGHT",
       "trainer": "corridor_guard",
-      "sight": 5
+      "sight": 6
     },
     {
       "id": "corridor_dealer",
-      "x": 22,
-      "y": 8,
+      "x": 21,
+      "y": 7,
       "sprite": "dealer",
       "dir": "LEFT",
       "trainer": "corridor_dealer",
-      "sight": 5
+      "sight": 6
     },
     {
       "id": "corridor_influencer",

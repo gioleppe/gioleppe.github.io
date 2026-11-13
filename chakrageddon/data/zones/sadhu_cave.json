@@ -70,7 +70,12 @@
       "sprite": "yogi",
       "dir": "RIGHT",
       "trainer": "cave_yogi",
-      "sight": 6
+      "sight": 6,
+      "look": [
+        "RIGHT",
+        "UP",
+        "DOWN"
+      ]
     },
     {
       "id": "cave_disciple",
@@ -79,7 +84,12 @@
       "sprite": "shaman",
       "dir": "LEFT",
       "trainer": "cave_disciple",
-      "sight": 6
+      "sight": 6,
+      "look": [
+        "LEFT",
+        "DOWN",
+        "UP"
+      ]
     },
     {
       "id": "cave_glyph",

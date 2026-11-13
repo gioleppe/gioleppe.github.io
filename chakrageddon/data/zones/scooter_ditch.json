@@ -2,6 +2,7 @@
   "zoneId": "scooter_ditch",
   "name": "The Sunken Scooter Ditch",
   "paletteId": "ANJUNA_DUST",
+  "bossGate": "beat_keta",
   "baseBpm": 128,
   "ground": "laterite",
   "ground2": "path",
@@ -11,16 +12,16 @@
     "tttttttttwwwwttttttttt",
     "t....wwwwwwwwwwww....t",
     "t....wwwwwwwwwwww....t",
-    "t.......s....s.......t",
-    "t..s.ss.s....s.ss..s.t",
-    "t..s.....,,,,.....s..t",
-    "t..ssss.eeeçee.ssss..t",
+    "t.......sr...sr......t",
+    "t..srsr.sr...srsr..srt",
+    "t..sr....,,,,.....sr.t",
+    "t..srsr.eeeçee.srsr..t",
     "t.......eeeeee.......t",
-    "t..~~~.s..,,..s.~~~..t",
-    "t..~~~.s..,,..s.~~~..t",
-    "t......ss.,,.ss......t",
-    "t...C.....,,.....s...t",
-    "t..ss.....,,.........t",
+    "t..~~~.sr.,,..sr~~~..t",
+    "t..~~~.sr.,,..sr~~~..t",
+    "t......sr.,,.sr......t",
+    "t...C.....,,.....sr..t",
+    "t..sr.....,,.........t",
     "t..~~~~...,,...~~~~..t",
     "t.........,,.........t",
     "tttttttttt,,tttttttttt"
@@ -30,7 +31,7 @@
       "x": 10,
       "y": 15,
       "to": "dirt_road",
-      "tx": 11,
+      "tx": 14,
       "ty": 1,
       "dir": "DOWN"
     },
@@ -38,7 +39,7 @@
       "x": 11,
       "y": 15,
       "to": "dirt_road",
-      "tx": 12,
+      "tx": 15,
       "ty": 1,
       "dir": "DOWN"
     },
@@ -92,7 +93,12 @@
       "sprite": "local",
       "dir": "RIGHT",
       "trainer": "ditch_local",
-      "sight": 4
+      "sight": 4,
+      "look": [
+        "RIGHT",
+        "DOWN",
+        "LEFT"
+      ]
     },
     {
       "id": "ditch_tourist",
@@ -101,7 +107,12 @@
       "sprite": "tourist",
       "dir": "LEFT",
       "trainer": "ditch_tourist",
-      "sight": 4
+      "sight": 4,
+      "look": [
+        "LEFT",
+        "UP",
+        "RIGHT"
+      ]
     },
     {
       "id": "ditch_sign",

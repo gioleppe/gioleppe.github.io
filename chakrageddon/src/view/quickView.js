@@ -1,6 +1,7 @@
 // Quick items: from the overworld, one button (Q or I, or ITEMS on the touch pad) opens a small panel to use
 // snacks and water on any Astral without going through the Fanny Pack. Pick an item, then an Astral; it stays
 // on the Astral list so the same item can go to the next one straight away. B steps back, then closes.
+// Once you have the blotter it is the first row: A licks it, no Astral needed (L, Y or LICK do it in one press).
 import { W, H } from './CanvasRenderer.js';
 import { drawText, wrap, panel, list, C } from './ui.js';
 import { statsOf, nameOf } from '../core/mons.js';
@@ -14,7 +15,7 @@ export const quickView = {
   /** recovery items in the bag, in bag order */
   items(game) {
     const s = game.engine.state, d = game.data;
-    return Object.keys(s.bag).filter((id) => s.bag[id] > 0 && d.items[id]?.category === 'RECOVERY');
+    return [...(s.bag.glowing_blotter > 0 ? ['glowing_blotter'] : []), ...Object.keys(s.bag).filter((id) => s.bag[id] > 0 && d.items[id]?.category === 'RECOVERY')];
   },
 
   update(game) {
@@ -47,7 +48,7 @@ export const quickView = {
     const pick = this.step === 'item';
 
     // left: what you have
-    const ir = list(game, g, ids.map((id) => ({ label: d.items[id].name, right: `x${s.bag[id]}`, color: !pick && id === this.itemId ? C.magenta : undefined })), PX + 4, PY + 18, 136, Math.min(this.cursor.item, ids.length - 1), { rowH: 14, maxRows: 6, passive: !pick });
+    const ir = list(game, g, ids.map((id) => ({ label: id === 'glowing_blotter' ? 'Lick the blotter' : d.items[id].name, right: id === 'glowing_blotter' ? '' : `x${s.bag[id]}`, color: !pick && id === this.itemId ? C.magenta : undefined })), PX + 4, PY + 18, 136, Math.min(this.cursor.item, ids.length - 1), { rowH: 14, maxRows: 6, passive: !pick });
     if (pick) this.cursor.item = ir.cursor;
     const shown = d.items[ids[Math.min(this.cursor.item, ids.length - 1)]];
 
@@ -72,7 +73,8 @@ export const quickView = {
     wrap(help, PW - 20).slice(0, 2).forEach((ln, i) => drawText(g, ln, PX + 8, PY + PH - 24 + i * 10, { color: C.chai }));
 
     if (pick) {
-      if (ir.chosen >= 0) { this.itemId = ids[ir.chosen]; this.step = 'mon'; game.audio?.sfx('select'); }
+      if (ir.chosen >= 0 && ids[ir.chosen] === 'glowing_blotter') { this.open = false; game.send({ type: 'USE_ITEM', itemId: 'glowing_blotter' }); }
+      else if (ir.chosen >= 0) { this.itemId = ids[ir.chosen]; this.step = 'mon'; game.audio?.sfx('select'); }
       else if (input.pressed('b')) this.close(game);
     } else {
       if (mr.chosen >= 0) game.send({ type: 'USE_ITEM', itemId: this.itemId, target: mr.chosen });   // stays here for the next one

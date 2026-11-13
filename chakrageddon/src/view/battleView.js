@@ -58,6 +58,7 @@ export const battleView = {
     const d = this.disp;
     switch (e.type) {
       case 'MESSAGE': this.cur = { type: 'msg', lines: wrap(e.text, W - 28), shown: 0, hold: 0 }; break;
+      case 'AUDIO_CUE': if (e.sfxId) game.audio?.sfx(e.sfxId); this.next(game); break;   // a sound in its place in the queue: the fanfare after the capture, not over it
       case 'STAT_DELTA': {
         const t = d[e.targetId];
         if (e.stat === 'SEROTONIN') {
@@ -88,14 +89,14 @@ export const battleView = {
         this.cur = { type: 'wait', t: 0.7 };
         break;
       case 'FAINT': this.fx[e.side].faint = 0.001; this.cur = { type: 'wait', t: 0.5 }; break;
-      case 'CAPTURE_THROW': this.capture = { t: 0, shakes: e.shakes, success: e.success }; this.cur = { type: 'capture' }; game.audio?.sfx('throw'); break;
+      case 'CAPTURE_THROW': this.capture = { t: 0, shakes: e.shakes, success: e.success, item: e.itemId }; this.cur = { type: 'capture' }; game.audio?.sfx('throw'); break;
       case 'LEVEL_UP': if (d.p && d.p.uid === e.uid) d.p = { ...d.p, ...e.mon }; this.next(game); break;
       case 'EVOLVED':
         // the creature on screen gets the full sequence; one on the bench just changes
         if (d.p && d.p.uid === e.uid) this.cur = { type: 'evolve', t: 0, from: e.from, to: e.to, name: e.newName };
         else { this.flash = 0.6; this.cur = { type: 'wait', t: 0.6 }; }
         break;
-      case 'LEARN_PROMPT': this.learn = e; this.cursor.learn = 0; this.next(game); break;
+      case 'LEARN_PROMPT': this.learn = e; this.forget = null; this.cursor.learn = 0; this.next(game); break;
       case 'BATTLE_END': if (e.result === 'LOST') game.cue?.('WHITEOUT'); if (e.result === 'WON' || e.result === 'CAUGHT') this.happy = 0.9; this.cur = { type: 'outro', t: 0 }; break;
       default: this.next(game);
     }
@@ -405,10 +406,48 @@ export const battleView = {
     let x = 232, y = 52;
     if (t < 0.6) { const k = t / 0.6; x = 60 + (232 - 60) * k; y = 110 + (52 - 110) * k - Math.sin(k * Math.PI) * 40; }
     else { const st = (t - 0.6) / 0.55, n = Math.floor(st); if (n < c.shakes) x += Math.round(Math.sin((st - n) * Math.PI * 4) * 4); y = 62; }
+    const flying = t < 0.6, held = c.success && t > 0.6 + c.shakes * 0.55;
+    const st = (t - 0.6) / 0.55, n = Math.floor(st), rocking = !flying && n < c.shakes ? Math.sin((st - n) * Math.PI * 4) : 0;
+    const R = (col, rx, ry, w, h) => { g.fillStyle = col; g.fillRect(Math.round(rx), Math.round(ry), w, h); };
+    if (c.item === 'rizla_paper') {
+      // a rolling paper: a sheet fluttering through the air, then rolled tight round the Astral like a joint, rocking;
+      // when it holds, the tip glows like an ember
+      if (flying) {
+        const flap = Math.abs(Math.sin(t * 28)), w = Math.max(2, Math.round(16 * flap));
+        R(C.ink, x - w / 2 - 1, y - 6, w + 2, 12); R('#FBF6EA', x - w / 2, y - 5, w, 10); R('#E2D8C2', x - w / 2, y + 3, w, 1);
+      } else {
+        const tilt = Math.round(rocking * 3);
+        for (let i = 0; i < 22; i++) {                      // the roll, leaning as it rocks
+          const yy = y + Math.round(((i - 11) / 11) * tilt);
+          R(C.ink, x - 11 + i, yy - 4, 1, 9); R('#FBF6EA', x - 11 + i, yy - 3, 1, 7); R('#E2D8C2', x - 11 + i, yy + 2, 1, 1);
+        }
+        R('#C9B48A', x - 12, y - 2 - tilt, 2, 5);                                 // the twist at one end
+        R(held ? '#FF7A2A' : '#9A8F80', x + 10, y - 2 + tilt, 3, 5);              // the tip: an ember when it holds
+        if (held) { R('#FFE066', x + 11, y - 1 + tilt, 1, 2); g.globalAlpha = 0.5; R('#C8C0B8', x + 13, y - 6 + tilt - Math.round((t * 10) % 4), 2, 2); g.globalAlpha = 1; }
+      }
+      return;
+    }
+    if (c.item === 'amber_vial') {
+      // a lab vial: brown glass and a cork, tumbling end over end, then tipping side to side with the liquid sloshing;
+      // when it holds, the cork seals with a flash of light
+      const sideways = flying && Math.floor(t * 12) % 2 === 1;
+      const w = sideways ? 18 : 10, h = sideways ? 10 : 18, lean = Math.round(rocking * 3);
+      for (let row = 0; row < h; row++) {                   // the glass, leaning as it tips
+        const dx = sideways ? 0 : Math.round(((row - h / 2) / h) * -lean * 2);
+        R(C.ink, x - w / 2 - 1 + dx, y - h / 2 + row, w + 2, 1);
+        R(row > h * 0.35 ? '#C8741E' : '#E8A050', x - w / 2 + dx, y - h / 2 + row, w, 1);
+      }
+      R('#FFE8C0', x - w / 2 + 1, y - h / 2 + 2, 1, Math.max(2, h - 6));              // a glint down the glass
+      if (sideways) { R(C.ink, x + w / 2 + 1, y - 3, 4, 6); R('#B08458', x + w / 2 + 1, y - 2, 3, 4); }
+      else { R(C.ink, x - 4 + lean, y - h / 2 - 5, 8, 6); R(held ? C.acid : '#B08458', x - 3 + lean, y - h / 2 - 4, 6, 4); }
+      if (held) { g.globalAlpha = 0.6; R('#FFFFFF', x - 1 + lean, y - h / 2 - 9, 2, 2); R('#FFFFFF', x + 5 + lean, y - h / 2 - 6, 1, 1); g.globalAlpha = 1; }
+      return;
+    }
+    // the ziploc baggie
     g.fillStyle = C.ink; g.fillRect(x - 9, y - 11, 18, 22);
     g.fillStyle = '#E8F4FA'; g.fillRect(x - 8, y - 10, 16, 20);
     g.fillStyle = '#3FB8D8'; g.fillRect(x - 8, y - 10, 16, 3);
-    g.fillStyle = c.success && t > 0.6 + c.shakes * 0.55 ? C.acid : C.magenta; g.fillRect(x - 3, y - 1, 6, 6);
+    g.fillStyle = held ? C.acid : C.magenta; g.fillRect(x - 3, y - 1, 6, 6);
   },
 
   // ------------------------------------------------------------ menus
@@ -421,6 +460,18 @@ export const battleView = {
     if (b.phase === 'PHASE_LEARN_MOVE' && this.learn) {
       const L = this.learn, mv = d.moves[L.moveId];
       const lm = s.party.find((m) => m.uid === L.uid);
+      // forgetting a move asks first, No by default; No goes back to the choice, until you skip or replace one
+      if (this.forget !== null && this.forget !== undefined && lm.moves[this.forget]) {
+        const old = d.moves[lm.moves[this.forget]];
+        let q = `Forget ${old.name} for ${mv.name}?`;
+        if (textWidth(q) > W - 24) q = `Forget ${moveName(old, 0)} for ${moveName(mv, 0)}?`;
+        drawText(g, q, 12, BOX_Y + 4, { color: C.ink });
+        const c = list(game, g, [{ label: 'No, keep it' }, { label: `Yes, forget ${moveName(old, 150)}`, color: C.red }], 8, BOX_Y + 16, W - 16, cur.forget || 0, { rowH: 12 });
+        cur.forget = c.cursor;
+        if (c.chosen === 1) { const slot = this.forget; this.forget = null; this.learn = null; game.send({ type: 'LEARN_MOVE', slot }); }
+        else if (c.chosen === 0 || input.pressed('b')) { this.forget = null; game.audio?.sfx('back'); }
+        return;
+      }
       let ask = `${L.name} can learn ${mv.name}. Forget which move?`;
       if (textWidth(ask) > W - 24) ask = `${L.name} can learn ${moveName(mv, 0)}. Forget which?`;
       if (textWidth(ask) > W - 24) ask = `Learn ${moveName(mv, 0)}? Forget which move?`;
@@ -430,7 +481,8 @@ export const battleView = {
         .concat([{ label: `Skip ${moveName(mv, 130 - textWidth('Skip '))}`, color: C.red }]);
       const r = list(game, g, items, 8, BOX_Y + 14, W - 16, cur.learn, { cols: 2, rowH: 10 });
       cur.learn = r.cursor;
-      if (r.chosen >= 0) { this.learn = null; game.send({ type: 'LEARN_MOVE', slot: r.chosen < lm.moves.length ? r.chosen : -1 }); }
+      if (r.chosen >= 0 && r.chosen < lm.moves.length) { this.forget = r.chosen; cur.forget = 0; game.audio?.sfx('select'); }
+      else if (r.chosen >= 0) { this.learn = null; game.send({ type: 'LEARN_MOVE', slot: -1 }); }   // skip: no harm done, no question
       return;
     }
     if (b.phase === 'PHASE_AWAIT_SWITCH') this.menu = 'party';

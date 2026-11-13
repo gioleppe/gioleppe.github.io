@@ -1,7 +1,7 @@
 // Overworld: tiles, characters, camera, smooth steps. Reads engine state, never decides rules.
 import { W, H } from './CanvasRenderer.js';
 import { drawText, textWidth, wrap, panel, C } from './ui.js';
-import { charAt, npcVisible, npcPos, isNight, nightLevel } from '../core/OverworldEngine.js';
+import { charAt, npcVisible, npcPos, isNight, nightLevel, facing } from '../core/OverworldEngine.js';
 import { bandOf, bandIndex, egoGone } from '../core/intox.js';
 import { highWorld, TRAIL_SPRITES } from './highWorld.js';
 import { liveSet } from '../core/timetable.js';
@@ -32,9 +32,16 @@ const TS = 16, STEP = 0.15;
 // Interior walls: a wall tile shows its front (the panelled face) only where open floor lies right below it,
 // as the back wall of a room. Side and bottom walls are seen from above: the top of the wall, with a lit rim
 // on each edge that faces the room. (They used to repeat the face, so side walls read as stacked panels.)
-const WALL_TOPS = {
+// The same goes for the yurt's ring, the temple's walls and the cave's rock (1.0.50).
+export const WALL_TOPS = {
   inwall: { fill: '#7A5230', grain: '#6A4426', rim: '#D8B48A', line: '#4A2C14' },
+  yurt: { fill: '#D8C8A4', grain: '#C9B48A', rim: '#9A4FE0', line: '#7A3AB8' },
+  temple_wall: { fill: '#9A7038', grain: '#8A6230', rim: '#F0CC78', line: '#6E4C24' },
+  cave_wall: { fill: '#3A2E29', grain: '#2A211D', rim: '#6A5A50', line: '#1E1714' },
 };
+/** solid tiles that may stack in a column as they are: crates and containers pile up, cliffs and dunes terrace, fences and
+ *  cables have an upright piece, water is water. Any other solid tile in a column must be a wall top (tests/walls). */
+export const STACKS_FINE = ['container', 'crate', 'stall', 'deep', 'fence', 'wall', 'cliff', 'sand', 'dune', 'wheat', 'bush'];   // a hedge of bushes stacks fine
 const isWall = (cls, sp) => cls === sp || cls === 'out';
 const VERTICAL = { fence: 'fence_v', cable: 'cable_v' };
 /** the top of a wall at dx, dy; open[i] (up, right, down, left) says that side faces the room and gets a rim */
@@ -52,6 +59,48 @@ function wallTop(g, c, dx, dy, open) {
   if (right) g.fillRect(dx + TS - 3, dy + (up ? 2 : 0), 1, TS - (up ? 2 : 0));
 }
 const DIR_OF = { up: 'UP', down: 'DOWN', left: 'LEFT', right: 'RIGHT' };
+
+// Vehicles come in colours without extra sprites: the sprite's body shades (light, base, dark) are swapped at run time
+// for a ramp built from the chosen colour, outline shades too. Each vehicle's colour comes from where it is parked.
+export const VEHICLE_KEYS = { tuktuk: ['#F4D03F', '#E0B020', '#A87C10'], scooter: ['#F2705A', '#E0303C', '#A8202A'] };
+export const VEHICLE_COLORS = {
+  tuktuk: ['#E0B020', '#2FA84F', '#2A6FD0', '#D8402A', '#5A5A68'],
+  scooter: ['#E0303C', '#2A6FD0', '#E8E8E8', '#3A3A44', '#FF4FA8', '#2FC8B0', '#F28C28'],
+};
+const hexRgb = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+const mix = (a, b, k) => a.map((v, i) => Math.round(v + (b[i] - v) * k));
+const clampByte = (v) => Math.min(255, Math.max(0, Math.round(v)));
+const outlineOf = (n) => [clampByte(n[0] * 0.42), clampByte(n[1] * 0.36), clampByte(n[2] * 0.5 + 14)];   // as render.lua's 'auto' outline
+/** the colour swap for one vehicle kind and colour: [[from rgb, to rgb], ...] */
+export function vehicleSwap(kind, color) {
+  const keys = VEHICLE_KEYS[kind].map(hexRgb), base = hexRgb(color);
+  const ramp = [mix(base, [255, 255, 255], 0.35), base, mix(base, [0, 0, 0], 0.3)];
+  return [...keys.map((k, i) => [k, ramp[i]]), ...keys.map((k, i) => [outlineOf(k), outlineOf(ramp[i])])];
+}
+export const vehicleColor = (kind, zoneId, x, y) => { const list = VEHICLE_COLORS[kind]; let h = 7; for (const ch of `${zoneId}:${x}:${y}`) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return list[h % list.length]; };
+const tintCache = new Map();
+/** the sprite with its body recoloured (cached); falls back to the sprite as drawn where there is no canvas to paint on */
+function tinted(img, pr, kind, color) {
+  const key = `${kind}:${color}`;
+  if (tintCache.has(key)) return tintCache.get(key);
+  let out = img;
+  try {
+    const cv = typeof OffscreenCanvas !== 'undefined' ? new OffscreenCanvas(pr.w, pr.h) : document.createElement('canvas');
+    cv.width = pr.w; cv.height = pr.h;
+    const c = cv.getContext('2d');
+    c.drawImage(img, 0, 0, pr.w, pr.h, 0, 0, pr.w, pr.h);
+    const d = c.getImageData(0, 0, pr.w, pr.h), px = d.data, swap = vehicleSwap(kind, color);
+    for (let i = 0; i < px.length; i += 4) {
+      if (!px[i + 3]) continue;
+      const hit = swap.find(([f]) => f[0] === px[i] && f[1] === px[i + 1] && f[2] === px[i + 2]);
+      if (hit) { px[i] = hit[1][0]; px[i + 1] = hit[1][1]; px[i + 2] = hit[1][2]; }
+    }
+    c.putImageData(d, 0, 0);
+    out = cv;
+  } catch { out = img; }
+  tintCache.set(key, out);
+  return out;
+}
 export const IDLE_DANCE = 4;   // seconds standing still before you start dancing
 
 /** outdoor light for the clock: a night tint that deepens through dusk and lifts through dawn, and a warm glow
@@ -125,9 +174,10 @@ export const overworldView = {
       highWorld.crowd = { start: this.t, end: this.t + ARRIVAL };
     } else if (e.type === 'BATTLE_END' && e.boss && e.result === 'WON') { this.cheer = 3; game.audio?.sfx('cheer'); }                      // set down somewhere else (coming down off the stairs of light)
     else if (e.type === 'FX' && e.fx === 'rainbow_burst') highWorld.burst(game, e);
-    else if (e.type === 'ZONE_CHANGED') { highWorld.reset(); this.anim = null; this.fade = 1; this.banner = e.name; this.bannerT = 3.2; this.npcDir = {}; this.npcAnim = {}; this.hint = routeHint(game.data, game.engine.state)?.text || null; }
+    else if (e.type === 'ZONE_CHANGED') { highWorld.reset(); this.anim = null; this.fade = 1; this.banner = e.name; this.bannerT = 3.2; this.npcDir = {}; this.npcAnim = {}; this.leaving = []; this.hint = routeHint(game.data, game.engine.state)?.text || null; }
     else if (e.type === 'EYE_CONTACT') { this.alert = { x: e.x, y: e.y, t: 0.8 }; }
     else if (e.type === 'NPC_FACE') this.npcDir[e.npcId] = e.dir;
+    else if (e.type === 'NPC_WALK_OFF') (this.leaving ||= []).push({ id: e.npcId, sprite: e.sprite, path: e.path, t: 0 });   // beaten, they walk away
     else if (e.type === 'NPC_MOVED') { (this.npcAnim ||= {})[e.npcId] = { from: e.from, to: e.to, t: 0, dist: Math.abs(e.to[0] - e.from[0]) + Math.abs(e.to[1] - e.from[1]), walkUp: !!e.walkUp }; this.npcDir[e.npcId] = e.dir; }
   },
 
@@ -149,14 +199,20 @@ export const overworldView = {
     if (this.alert) { this.alert.t -= dt; if (this.alert.t <= 0) this.alert = null; }
     if (this.bumpT > 0) this.bumpT -= dt;
     if (this.anim) { this.anim.t += dt / STEP; if (this.anim.t >= 1) this.anim = null; }
+    // someone walking off (Astra-Zero after your second fight): a tile at a walking pace, gone at the end of the path
+    for (const l of this.leaving || []) l.t += dt / (STEP * 1.6);
+    if (this.leaving) this.leaving = this.leaving.filter((l) => l.t < l.path.length - 1);
     for (const [id, a] of Object.entries(this.npcAnim || {})) { a.t += dt / (STEP * (a.walkUp ? 1.2 : 1.6) * Math.max(1, a.dist || 1)); if (a.t >= 1) delete this.npcAnim[id]; }
     // rainbow trails behind you when your ego is gone (not in grounded mode, not with reduced motion)
     const st = game.engine.state, trails = bandIndex(game.data.rules, st.intox) >= 3 && !game.settings.grounded && !game.settings.reducedMotion;
     if (!trails) this.trail = [];
     else if (this.anim && this.camPos) { (this.trail ||= []).push({ ...this.camPos, dir: st.player.dir, t: this.t }); if (this.trail.length > 8) this.trail.shift(); }
     const s = game.engine.state, input = game.input;
+    document?.documentElement?.classList?.toggle?.('has-blotter', s.bag.glowing_blotter > 0);   // the phone's LICK button
     // how long you have stood still with nothing going on (see the idle dance in draw)
-    this.idleT = s.mode === 'OVERWORLD' && !this.anim && !s.dialogue && !game.busy() && !input.dir() ? (this.idleT || 0) + dt : 0;
+    // (not indoors: nobody starts dancing in a guesthouse, or licks the blotter out of boredom in someone's living room)
+    const indoor = !!game.data.zones[s.zoneId]?.indoor;
+    this.idleT = s.mode === 'OVERWORLD' && !indoor && !this.anim && !s.dialogue && !game.busy() && !input.dir() ? (this.idleT || 0) + dt : 0;
     // and if you stand there long enough, you get bored and lick the blotter (then the count starts again)
     this.boredT = this.idleT > 0 ? (this.boredT || 0) + dt : 0;
     const bored = game.data.rules.boredom?.seconds;
@@ -164,6 +220,7 @@ export const overworldView = {
     if (s.mode !== 'OVERWORLD' || this.anim || game.busy()) return;
     if (input.pressed('a') || input.anyTap()) return game.send({ type: 'INTERACT_TILE' });
     if (input.pressed('start')) return game.send({ type: 'TOGGLE_MENU' });
+    if (input.pressed('lick') && s.bag.glowing_blotter > 0) return game.send({ type: 'USE_ITEM', itemId: 'glowing_blotter' });   // L, Y on a pad, LICK on the phone
     input.pressed('b');
     const d = input.dir();
     if (d && this.bumpT <= 0) game.send({ type: 'MOVE_STEP', direction: DIR_OF[d] });
@@ -320,7 +377,7 @@ export const overworldView = {
     const set = liveSet(game.data, s);
     for (let y = y0; y <= py1; y++) for (let x = px0; x <= px1; x++) {
       const def = legend[charAt(ctx, x, y, zone)];
-      if (def?.prop) ents.push({ y: y - 0.01, prop: def.prop, x });
+      if (def?.prop) ents.push({ y: y - 0.01, prop: def.prop, x, span: def.propSpan || 1, tint: def.tint });
       // dancers: on every crowd tile, every few dancefloor tiles; none where you or someone else is standing
       if (def && (def.crowd || (resolve(def.sprite) === 'dancefloor' && (x * 7 + y * 3) % 5 === 0)) && !taken.has(`${x},${y}`)) ents.push({ y: y - 0.02, dancer: true, x, ty: y });
       // people who are always there (zone.crowd: the omelette queue, Chloe's fans)
@@ -338,6 +395,11 @@ export const overworldView = {
       const fx = a ? a.from[0] + (a.to[0] - a.from[0]) * a.t : p.x, fy = a ? a.from[1] + (a.to[1] - a.from[1]) * a.t : p.y;
       ents.push({ y: fy, npc: n, nx: fx, ny: fy, walking: !!a });
     }
+    for (const l of this.leaving || []) {
+      const i = Math.min(l.path.length - 2, Math.floor(l.t)), k = l.t - i, [ax, ay] = l.path[i], [bx, by] = l.path[i + 1];
+      const lx = ax + (bx - ax) * k, ly = ay + (by - ay) * k, dir = bx > ax ? 'RIGHT' : bx < ax ? 'LEFT' : by > ay ? 'DOWN' : 'UP';
+      ents.push({ y: ly, draw: () => { g.fillStyle = 'rgba(20,10,40,0.27)'; g.fillRect(Math.round(lx * TS - cx) + 4, Math.round(ly * TS - cy) + 11, 8, 4); this.char(game, g, l.sprite, dir, Math.floor(l.t * 2) % 2, Math.round(lx * TS - cx), Math.round(ly * TS - cy) - 10); } });
+    }
     const flash = game.canFlash();
     for (const p of zone.pickups || []) if (!s.picked[p.id] && (!p.hidden || flash) && !(p.minIntox > s.intox)) ents.push({ y: p.y, pickup: p });
     ents.push({ y: py / TS, player: true });
@@ -349,14 +411,16 @@ export const overworldView = {
       if (e.draw) { e.draw(); continue; }
       if (e.dancer) { this.dancer(game, g, e.x * TS - cx, e.ty * TS - cy, e.x, e.ty, e.pose ?? null); continue; }
       if (e.prop) {
-        const pr = game.atlas.props[e.prop], img = game.images[`prop:${e.prop}`], ty = Math.round(e.y + 0.01);
+        const pr = game.atlas.props[e.prop], ty = Math.round(e.y + 0.01), mid = (e.span || 1) * TS / 2;   // a wide prop (a tuk-tuk) is centred on its span
+        let img = game.images[`prop:${e.prop}`];
+        if (img && pr && e.tint) img = tinted(img, pr, e.tint, vehicleColor(e.tint, s.zoneId, e.x, ty));
         if (pr && img) {
           // a tall prop in front of you (a palm, a tree, the bamboo) goes see-through, so you never vanish behind it
-          const left = e.x * TS + 8 - pr.w / 2, top = (ty + 1) * TS - pr.h;
+          const left = e.x * TS + mid - pr.w / 2, top = (ty + 1) * TS - pr.h;
           const ox = Math.min(px + 13, left + pr.w) - Math.max(px + 3, left), oy = Math.min(py + 14, top + pr.h) - Math.max(py - 9, top);
           const behind = ty * TS > py && ox > 0 && oy > 0 && ox * oy > 40;
           if (behind) g.globalAlpha = 0.45;
-          this.prop(game, g, e.prop, img, pr, e.x * TS - cx + 8, ty * TS - cy + 16, e.x, ty);
+          this.prop(game, g, e.prop, img, pr, e.x * TS - cx + mid, ty * TS - cy + 16, e.x, ty);
           if (behind) g.globalAlpha = 1;
         }
       } else if (e.player) {
@@ -395,7 +459,7 @@ export const overworldView = {
           const dancing = n.dance && !still && !turned && !e.walking && !(this.alert && this.alert.x === e.nx && this.alert.y === e.ny);
           const hop = dancing && beats % 1 < 0.3 ? 1 : 0;
           const sprite = n.mirror ? s.outfit || 'player' : n.sprite;
-          const dir = dancing ? 'DOWN' : turned && n.dance ? (e.ny < s.player.y ? 'DOWN' : 'UP') : highWorld.face(game, n.id) || this.npcDir[n.id] || n.dir || 'DOWN';
+          const dir = dancing ? 'DOWN' : turned && n.dance ? (e.ny < s.player.y ? 'DOWN' : 'UP') : highWorld.face(game, n.id) || this.npcDir[n.id] || facing(ctx, n);
           const step = dancing ? Math.floor(beats / 2) % 2 : e.walking ? Math.floor(this.t * 8) % 2 : fidget ? 1 : 0;
           // the performers leave trails of colour when you are Peaking
           if (TRAIL_SPRITES.has(n.sprite) && bandIndex(game.data.rules, s.intox) >= 2 && !still && !game.settings.grounded) {

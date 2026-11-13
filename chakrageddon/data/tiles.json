@@ -144,11 +144,19 @@
     },
     "s": {
       "id": 1,
-      "sprite": "scooter"
+      "sprite": "@ground",
+      "prop": "scooter",
+      "propSpan": 2,
+      "tint": "scooter",
+      "footprint": [[1, 0]]
     },
     "u": {
       "id": 1,
-      "sprite": "tuktuk"
+      "sprite": "@ground",
+      "prop": "tuktuk",
+      "propSpan": 2,
+      "tint": "tuktuk",
+      "footprint": [[1, 0], [0, -1], [1, -1]]
     },
     "h": {
       "id": 1,
@@ -223,6 +231,14 @@
     "Z": {
       "id": 1,
       "sprite": "bed"
+    },
+    "ż": {
+      "id": 1,
+      "sprite": "bed_foot"
+    },
+    "ŵ": {
+      "id": 1,
+      "sprite": "window"
     },
     "N": {
       "id": 1,

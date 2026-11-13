@@ -205,6 +205,11 @@
       ]
     }
   },
+  "encounters": {
+    "_comment": "Wild encounters fill a meter by the zone's encounterRate per grass step; the next one comes when it passes 1 +/- spread, and never sooner than minSteps.",
+    "spread": 0.4,
+    "minSteps": 3
+  },
   "intox": {
     "_comment": "Bands of intoxication (0..1). The higher band applies from its min. See src/core/intox.js.",
     "bands": [
@@ -228,7 +233,7 @@
         "xp": 1.2,
         "catch": 1.15,
         "fumble": 0,
-        "encounter": 1.15,
+        "encounter": 1.08,
         "tilt": 0.5,
         "wildLevel": 0,
         "whiteoutLoss": 1,
@@ -242,7 +247,7 @@
         "xp": 1.4,
         "catch": 1.3,
         "fumble": 0.1,
-        "encounter": 1.35,
+        "encounter": 1.16,
         "tilt": 1,
         "wildLevel": 1,
         "whiteoutLoss": 1.5,
@@ -256,7 +261,7 @@
         "xp": 1.6,
         "catch": 1.3,
         "fumble": 0.3,
-        "encounter": 1.6,
+        "encounter": 1.25,
         "tilt": 1.5,
         "wildLevel": 2,
         "whiteoutLoss": 2,
