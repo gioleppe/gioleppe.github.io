@@ -26,7 +26,7 @@ export function newState(data, seed = 1) {
     encMeter: 0, encSteps: 0, encGap: null,                        // wild encounters: progress towards the next one
     lastTent: { zone: start.zone, x: start.x, y: start.y },
     script: null, scriptMode: null, dialogue: null, battle: null, shop: null, menu: null, scene: null,
-    playerName: null, npcPos: {}, outfit: null, said: {}, visitor: null,
+    playerName: null, npcPos: {}, outfit: null, said: {}, visitor: null, entered: null,
     elapsed: 0, peakIntox: 0,                                       // for the end card: festival minutes lived, highest high
   };
 }
@@ -84,6 +84,13 @@ export class GameEngine {
         else if (s.mode === 'FANNY_PACK_MENU') {
           if (cmd.tab && cmd.tab !== s.menu?.tab) s.menu = { ...s.menu, tab: cmd.tab };
           else { s.menu = null; setMode(ctx, 'OVERWORLD'); }
+        }
+        break;
+      case 'UNSTUCK':
+        // System > Unstuck: from the map or the Fanny Pack, back to where you came into this area
+        if (s.mode === 'OVERWORLD' || s.mode === 'FANNY_PACK_MENU') {
+          if (s.mode === 'FANNY_PACK_MENU') { s.menu = null; setMode(ctx, 'OVERWORLD'); }
+          OW.unstuck(ctx);
         }
         break;
       case 'BORED_LICK': {

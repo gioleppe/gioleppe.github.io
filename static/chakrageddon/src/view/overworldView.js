@@ -31,6 +31,8 @@ function drawMarker(g, mark, x, y) {
 const TS = 16, STEP = 0.15;   // a tile at an NPC's walking pace
 // your own steps: a walk, or a run while B is held (not afloat on the flamingo)
 export const WALK = 0.18, RUN = 0.09;
+// moving between areas: the old one goes out, then the new one comes in (seconds)
+export const T_OUT = 0.22, T_IN = 0.3;
 
 // Interior walls: a wall tile shows its front (the panelled face) only where open floor lies right below it,
 // as the back wall of a room. Side and bottom walls are seen from above: the top of the wall, with a lit rim
@@ -164,12 +166,13 @@ function drawSky(g, sky, still) {
 }
 
 export const overworldView = {
-  anim: null, bumpT: 0, fade: 0, banner: null, bannerT: 0, alert: null, npcDir: {}, t: 0, walkFlip: 0,
+  anim: null, bumpT: 0, trans: null, banner: null, bannerT: 0, alert: null, npcDir: {}, t: 0, walkFlip: 0,
 
   onEvent(game, e) {
     if (e.type === 'ENTITY_MOVED' && e.entityId === 'player') { this.anim = { from: e.from, to: e.to, t: 0, dur: this.running(game) ? RUN : WALK }; this.walkFlip ^= 1; }
     else if (e.type === 'BUMP') { this.bumpT = 0.18; game.audio?.sfx('bump'); }
     else if (e.type === 'PLAYER_PLACED') this.anim = null;
+    if (e.type === 'UNSTUCK') this.startTrans(game, 'iris');
     else if (e.type === 'BOSS_ARRIVAL') {
       // the music drops, the crowd turns to look, the camera slides over to the boss; then their cutscene
       this.arrival = { t: 0, x: e.x, y: e.y };
@@ -177,7 +180,7 @@ export const overworldView = {
       highWorld.crowd = { start: this.t, end: this.t + ARRIVAL };
     } else if (e.type === 'BATTLE_END' && e.boss && e.result === 'WON') { this.cheer = 3; game.audio?.sfx('cheer'); }                      // set down somewhere else (coming down off the stairs of light)
     else if (e.type === 'FX' && e.fx === 'rainbow_burst') highWorld.burst(game, e);
-    else if (e.type === 'ZONE_CHANGED') { highWorld.reset(); this.anim = null; this.fade = 1; this.banner = e.name; this.bannerT = 3.2; this.npcDir = {}; this.npcAnim = {}; this.leaving = []; this.hint = routeHint(game.data, game.engine.state)?.text || null; }
+    else if (e.type === 'ZONE_CHANGED') { highWorld.reset(); this.anim = null; this.startTrans(game, this.transKind(game, e)); this.banner = e.name; this.bannerT = 3.2; this.npcDir = {}; this.npcAnim = {}; this.leaving = []; this.hint = routeHint(game.data, game.engine.state)?.text || null; }
     else if (e.type === 'EYE_CONTACT') { this.alert = { x: e.x, y: e.y, t: 0.8 }; }
     else if (e.type === 'NPC_FACE') this.npcDir[e.npcId] = e.dir;
     else if (e.type === 'NPC_WALK_OFF') (this.leaving ||= []).push({ id: e.npcId, sprite: e.sprite, path: e.path, t: 0 });   // beaten, they walk away
@@ -199,7 +202,7 @@ export const overworldView = {
     if (this.dayFor !== game.engine) { this.dayFor = game.engine; this.wasNight = night; this.sky = null; }
     else if (night !== this.wasNight) { this.wasNight = night; this.sky = { icon: night ? 'moon' : 'sun', t: 0 }; }
     if (this.sky && (this.sky.t += dt) > SKY_T) this.sky = null;
-    if (this.fade > 0) this.fade = Math.max(0, this.fade - dt * 3);
+    if (this.trans && (this.trans.t += dt) >= T_OUT + T_IN) this.trans = null;
     if (this.bannerT > 0) this.bannerT -= dt;
     if (this.alert) { this.alert.t -= dt; if (this.alert.t <= 0) this.alert = null; }
     if (this.bumpT > 0) this.bumpT -= dt;
@@ -222,7 +225,7 @@ export const overworldView = {
     this.boredT = this.idleT > 0 ? (this.boredT || 0) + dt : 0;
     const bored = game.data.rules.boredom?.seconds;
     if (bored && this.boredT >= bored) { this.boredT = 0; game.send({ type: 'BORED_LICK' }); }
-    if (s.mode !== 'OVERWORLD' || this.anim || game.busy()) return;
+    if (s.mode !== 'OVERWORLD' || this.anim || this.changing() || game.busy()) return;
     if (input.pressed('a') || input.anyTap()) return game.send({ type: 'INTERACT_TILE' });
     if (input.pressed('start')) return game.send({ type: 'TOGGLE_MENU' });
     if (input.pressed('lick') && s.bag.glowing_blotter > 0) return game.send({ type: 'USE_ITEM', itemId: 'glowing_blotter' });   // L, Y on a pad, LICK on the phone
@@ -281,7 +284,62 @@ export const overworldView = {
     const s = game.engine.state;
     return !!game.input?.held?.b && s.mode === 'OVERWORLD' && logicAt({ data: game.data, state: s }, s.player.x, s.player.y, game.data.zones[s.zoneId]) !== T.WATER;
   },
-  walking() { return Object.values(this.npcAnim || {}).some((a) => a.walkUp) || this.arriving(); },
+  /** an area change is still going out or only half way in: hold your steps and any line that comes with it */
+  changing() { return !!this.trans && this.trans.t < T_OUT + T_IN * 0.5; },
+  /** walking off the edge of the map sweeps; doors, rides, whiteouts and Unstuck close and open round you */
+  transKind(game, e) {
+    const zs = game.data.zones, from = zs[e.from], to = zs[e.to], p = game.engine.state.player;
+    if (!from || !to || from.interior || to.interior) return 'iris';
+    const ZW = to.rows[0].length, ZH = to.rows.length;
+    return ({ UP: p.y >= ZH - 2, DOWN: p.y <= 1, LEFT: p.x >= ZW - 2, RIGHT: p.x <= 1 })[p.dir] ? 'wipe' : 'iris';
+  },
+  /** keep the last frame of the old area (still in the back buffer when the event arrives) to play the way out over */
+  startTrans(game, kind) {
+    const back = game.renderer?.back;
+    this.hasSnap = false;
+    if (back && typeof document !== 'undefined') {
+      this.snap ||= document.createElement('canvas');
+      this.snap.width = W; this.snap.height = H;
+      const sg = this.snap.getContext('2d');
+      if (sg) { sg.drawImage(back, 0, 0); this.hasSnap = true; }
+    }
+    this.trans = { t: 0, kind, dir: game.engine.state.player.dir };
+  },
+  /** a new or loaded game opens round you (only the way in) */
+  arrive() { this.hasSnap = false; this.trans = { t: T_OUT, kind: 'iris', dir: 'DOWN' }; },
+  /** the way out (over the old frame), then the way in (over the new one) */
+  drawTrans(game, g, sx, sy) {
+    const tr = this.trans;
+    if (!tr) return;
+    const out = tr.t < T_OUT, k = Math.min(1, out ? tr.t / T_OUT : (tr.t - T_OUT) / T_IN);
+    if (out && this.hasSnap) g.drawImage(this.snap, 0, 0);
+    if (game.settings.reducedMotion) { g.fillStyle = `rgba(11,3,20,${out ? k : 1 - k})`; g.fillRect(0, 0, W, H); return; }
+    g.fillStyle = '#0B0314';
+    if (tr.kind === 'wipe') {
+      // a dark band crosses the screen from the side you are walking towards: it covers the old area, then uncovers the new
+      const horiz = tr.dir === 'LEFT' || tr.dir === 'RIGHT', L = horiz ? W : H, across = horiz ? H : W;
+      const a = out ? 0 : k * L, b = out ? k * L : L;
+      for (let i = 0; i * 8 < across; i++) {
+        const j = (i % 2) * 6, lo = a <= 0 ? 0 : Math.min(L, a + j), hi = b >= L ? L : Math.min(L, b + j);
+        if (hi <= lo) continue;
+        if (tr.dir === 'UP') g.fillRect(i * 8, lo, 8, hi - lo);
+        else if (tr.dir === 'DOWN') g.fillRect(i * 8, H - hi, 8, hi - lo);
+        else if (tr.dir === 'LEFT') g.fillRect(lo, i * 8, hi - lo, 8);
+        else g.fillRect(W - hi, i * 8, hi - lo, 8);
+      }
+      return;
+    }
+    // iris: a stepped diamond round you closes, then opens on the other side
+    const cx = Math.round(sx + 8), cy = Math.round(sy + 4);
+    const R = Math.max(cx, W - cx) + Math.max(cy, H - cy) + 8, r = R * (out ? 1 - k : k);
+    for (let y = 0; y < H; y += 4) {
+      const half = Math.floor((r - Math.abs(y + 2 - cy)) / 4) * 4;
+      if (half <= 0) { g.fillRect(0, y, W, 4); continue; }
+      if (cx - half > 0) g.fillRect(0, y, cx - half, 4);
+      if (cx + half < W) g.fillRect(cx + half, y, W - cx - half, 4);
+    }
+  },
+  walking() { return Object.values(this.npcAnim || {}).some((a) => a.walkUp) || this.arriving() || this.changing(); },
   arriving() { return !!this.arrival; },
 
   camera(game, flat = false) {
@@ -549,6 +607,6 @@ export const overworldView = {
       g.fillStyle = BAND_COLORS[bi] || C.magenta; g.fillRect(W - w + 1, H - 12, 4, 4);
       drawText(g, name, W - w + 8, H - 14, { color: C.cream });
     }
-    if (this.fade > 0) { g.fillStyle = `rgba(11,3,20,${this.fade})`; g.fillRect(0, 0, W, H); }
+    this.drawTrans(game, g, px - cx, py - cy);
   },
 };
