@@ -7,7 +7,9 @@ import { canUse } from '../core/OverworldEngine.js';
 import { currentGoal, routeHint } from '../core/goals.js';
 import { questLog, questMarker } from '../core/quests.js';
 import { highOnly } from '../core/intox.js';
+import { whereLines } from '../core/where.js';
 import { highWorld } from './highWorld.js';
+import { moveFacts, typeFacts, TERMS, drawNote, growthWords } from './moveInfo.js';
 import { sets as allSets, liveSet, minutesUntil, clockText } from '../core/timetable.js';
 
 const TABS = [
@@ -137,16 +139,52 @@ export const menuView = {
   party(game, g, X, Y, CW, active, back) {
     const s = game.engine.state, d = game.data, input = game.input, cur = this.cur;
     if (!s.party.length) { drawText(g, 'No Astrals yet. Bare forearm.', X, Y, { color: C.chai }); if (active && (input.pressed('b') || input.pressed('left'))) back(); return; }
-    if (this.sub?.kind === 'summary') return this.summary(game, g, s.party[this.sub.i] || s.box[this.sub.i], X, Y, CW, back);
+    if (this.sub?.kind === 'summary') return this.summary(game, g, this.sub.box !== undefined ? s.box[this.sub.box] : s.party[this.sub.i], X, Y, CW, () => { this.sub = this.sub.box !== undefined ? { kind: 'boxmon', j: this.sub.box } : null; game.audio?.sfx('back'); });
+    // the stash: sorted as you like (order caught, name, level), each one can be taken, swapped for a party Astral, or read
+    const BOX_SORTS = ['caught', 'name', 'level'];
+    const bsort = BOX_SORTS.includes(game.settings.stashSort) ? game.settings.stashSort : 'caught';
+    const order = s.box.map((m, j) => j);
+    if (bsort === 'name') order.sort((a, b2) => nameOf(d, s.box[a]).localeCompare(nameOf(d, s.box[b2])));
+    else if (bsort === 'level') order.sort((a, b2) => s.box[b2].level - s.box[a].level || nameOf(d, s.box[a]).localeCompare(nameOf(d, s.box[b2])));
     if (this.sub?.kind === 'box') {
       const hut = !!s.menu?.hut;
-      drawText(g, hut ? 'Chai Tent stash' : 'Chai Tent stash (swap at a Chai Tent)', X, Y, { color: C.purple });
+      drawText(g, 'Chai Tent stash', X, Y, { color: C.purple });
+      // the sort chip: tap it, or left / right
+      const label = `Sort: ${{ caught: 'caught', name: 'name', level: 'level' }[bsort]}`, cw = textWidth(label) + 8, cx = X + CW + 4 - cw;
+      const cycle = (k) => { game.settings.stashSort = BOX_SORTS[(BOX_SORTS.indexOf(bsort) + k + BOX_SORTS.length) % BOX_SORTS.length]; game.saveSettings?.(); game.audio?.sfx('blip'); };
+      if (active && input.tapIn(cx, Y - 2, cw, 12)) cycle(1);
+      else if (active && input.pressed('right')) cycle(1);
+      else if (active && input.pressed('left')) cycle(-1);
+      g.fillStyle = '#E8D8C0'; g.fillRect(cx, Y - 2, cw, 11); drawText(g, label, cx + 4, Y, { color: C.chai });
       if (!s.box.length) wrap('Nobody here. Astrals you bag while your party is full wait here.', CW).forEach((ln, k) => drawText(g, ln, X, Y + 14 + k * 10, { color: C.chai }));
-      const r = list(game, g, s.box.map((m) => ({ label: `${nameOf(d, m)} Lv${m.level}`, right: hut ? 'Take' : '' })), X - 4, Y + 12, CW + 8, cur.box || 0, { rowH: 14, maxRows: 9 });
+      const r = list(game, g, order.map((j) => ({ label: nameOf(d, s.box[j]), right: `Lv${s.box[j].level}` })), X - 4, Y + 12, CW + 8, cur.box || 0, { rowH: 14, maxRows: 9 });
       cur.box = r.cursor;
-      if (r.chosen >= 0 && !hut) game.say('Swap at a Chai Tent: Chai Mama keeps the stash.');
-      else if (r.chosen >= 0) { if (s.party.length >= 6) game.say('Party is full.'); game.send({ type: 'STASH_SWAP', boxIndex: r.chosen }); if (!s.box.length) this.sub = null; }
+      if (r.chosen >= 0) { this.sub = { kind: 'boxmon', j: order[r.chosen] }; cur.boxAct = 0; }
       else if (input.pressed('b')) back();
+      return;
+    }
+    if (this.sub?.kind === 'boxmon') {        // one Astral from the stash: take it, swap it for someone, or read its summary
+      const j = this.sub.j, m = s.box[j], hut = !!s.menu?.hut, full = s.party.length >= (d.rules.partyMax || 6);
+      if (!m) { this.sub = { kind: 'box' }; return; }
+      drawText(g, `${nameOf(d, m)} Lv${m.level}`, X, Y, { color: C.purple });
+      const acts = [{ label: 'Take', disabled: !hut || full }, { label: 'Swap with...', disabled: !hut }, { label: 'Summary' }, { label: 'Back' }];
+      const r = list(game, g, acts, X - 4, Y + 14, 120, cur.boxAct || 0, { rowH: 16 });
+      cur.boxAct = r.cursor;
+      const why = !hut ? 'Chai Mama keeps the stash: swap at a Chai Tent.' : full && cur.boxAct === 0 ? 'Your party is full: swap instead.' : '';
+      if (why) wrap(why, CW).forEach((ln, k) => drawText(g, ln, X, Y + 84 + k * 10, { color: C.chai }));
+      if (r.chosen === 0) { game.send({ type: 'STASH_SWAP', boxIndex: j }); this.sub = s.box.length ? { kind: 'box' } : null; }
+      else if (r.chosen === 1) { this.sub = { kind: 'swapwith', j }; cur.swap = 0; }
+      else if (r.chosen === 2) this.sub = { kind: 'summary', box: j };
+      else if (r.chosen === 3 || input.pressed('b')) { this.sub = { kind: 'box' }; game.audio?.sfx('back'); }
+      return;
+    }
+    if (this.sub?.kind === 'swapwith') {      // who goes to the stash in its place
+      const j = this.sub.j, m = s.box[j];
+      drawText(g, `${nameOf(d, m)} joins. Who goes to the stash?`, X, Y, { color: C.purple });
+      const r = list(game, g, s.party.map((p) => ({ label: nameOf(d, p), right: `Lv${p.level}` })).concat([{ label: 'Back' }]), X - 4, Y + 14, CW + 8, cur.swap || 0, { rowH: 16 });
+      cur.swap = r.cursor;
+      if (r.chosen >= 0 && r.chosen < s.party.length) { game.send({ type: 'STASH_SWAP', boxIndex: j, partyIndex: r.chosen }); this.sub = { kind: 'box' }; }
+      else if (r.chosen >= 0 || input.pressed('b')) { this.sub = { kind: 'boxmon', j }; game.audio?.sfx('back'); }
       return;
     }
     if (this.sub?.kind === 'actions') {
@@ -249,35 +287,90 @@ export const menuView = {
     else if (input.pressed('b') || input.pressed('left')) back();
   },
 
+  /** An Astral's summary. Everything on it can be pointed at (d-pad, or a tap) and A tells you what it is: each move's
+   *  numbers and effects, the stats, the types, the ability, the held item. B closes the note, then the summary. */
   summary(game, g, m, X, Y, CW, back) {
-    const d = game.data, input = game.input;
+    const d = game.data, input = game.input, S = this.sub?.kind === 'summary' ? this.sub : (this.loose ||= {});   // (tests draw it bare)
     if (!m) return back();
     const sp = d.dex[m.speciesId], st = statsOf(d, m);
+    const ab = d.rules.abilities?.[sp.ability || sp.trait];
+    // what can be pointed at: [x, y, w, h, note]
+    const ents = [];
+    let tx = X; const tags = sp.types.map((t) => { const x = tx; tx += textWidth(t.slice(0, 5)) + 8; return [x, t]; });
+    for (const [x, t] of tags) ents.push([x - 1, Y + 10, textWidth(t.slice(0, 5)) + 8, 12, () => typeFacts(d, t)]);
+    ents.push([X - 2, Y + 24, 112, 10, () => ({ ...TERMS.serotonin, text: TERMS.serotonin.text + growthWords(d, m.speciesId, 'serotonin') })], [X - 2, Y + 34, 112, 10, () => TERMS.hydration], [X - 2, Y + 44, 140, 10, () => TERMS.vibes]);
+    const rows = [['Vibe Atk', 'vibeAttack'], ['Ego Def', 'egoDefense'], ['Fractal', 'spFractal'], ['Grounded', 'spGrounded'], ['BPM', 'bpmSpeed']];
+    rows.forEach(([, k], i) => ents.push([X + (i % 2) * 104 - 2, Y + 59 + Math.floor(i / 2) * 10, 80, 10, () => ({ ...TERMS[k], text: TERMS[k].text + growthWords(d, m.speciesId, k) })]));
+    const firstMove = ents.length;
+    const MY = Y + 93, AY = Y + 117;                 // the moves, then the ability (the held item last, inside the panel)
+    m.moves.forEach((id, i) => ents.push([X + (i % 2) * 104 - 7, MY - 1 + Math.floor(i / 2) * 11, 102, 11, () => moveFacts(d, d.moves[id], m)]));
+    let holdY = AY, abLines = null;
+    if (ab) {
+      const nw = textWidth(ab.name) + 6, first = wrap(ab.desc, CW - nw), rest = first.length > 1 ? wrap(first.slice(1).join(' '), CW) : [];
+      abLines = { nw, first, rest };
+      holdY = AY + 10 + rest.length * 9;
+      ents.push([X - 2, AY - 1, CW + 2, 10 + rest.length * 9, () => ({ title: ab.name, text: `${ab.desc} An ability works by itself; every ${sp.name} has this one.` })]);
+    }
+    ents.push([X - 2, holdY - 1, 160, 10, () => (m.held ? { title: d.items[m.held].name, text: `${d.items[m.held].desc} ${TERMS.held.text}` } : TERMS.held)]);
+    if (S.at == null || S.at >= ents.length) S.at = m.moves.length ? firstMove : 0;
+
+    // a note is open: read it, B (or a tap, or A) puts it away
+    if (S.note) {
+      const n = S.note, nx = X - 4, ny = Y - 4, nw = CW + 8;
+      panel(g, nx, ny, nw, H - 8 - ny, { accent: C.purple });     // the whole page: the longest note (11 lines) fits
+      drawNote(g, n, nx + 6, ny + 5, nw - 12);
+      if (input.pressed('b') || input.pressed('a') || input.anyTap()) { S.note = null; game.audio?.sfx('back'); }
+      return;
+    }
+
+    // move the pointer to the nearest thing that way
+    const centre = (e) => [e[0] + e[2] / 2, e[1] + e[3] / 2];
+    const go = (dx, dy) => {
+      const [ax, ay] = centre(ents[S.at]); let best = -1, score = Infinity;
+      ents.forEach((e, j) => {
+        if (j === S.at) return;
+        const [ex, ey] = centre(e), ahead = (ex - ax) * dx + (ey - ay) * dy, aside = Math.abs(dx ? ey - ay : ex - ax);
+        if (ahead > 2 && ahead + aside * 3 < score) { score = ahead + aside * 3; best = j; }
+      });
+      if (best >= 0) { S.at = best; game.audio?.sfx('blip'); }
+    };
+    if (input.pressed('up')) go(0, -1); else if (input.pressed('down')) go(0, 1);
+    else if (input.pressed('left')) go(-1, 0); else if (input.pressed('right')) go(1, 0);
+    let open = input.pressed('a') ? S.at : -1;
+    if (input.taps?.length) {
+      const t = input.taps.splice(0, 1)[0];
+      const j = ents.findIndex((e) => t.x >= e[0] - 2 && t.x < e[0] + e[2] + 2 && t.y >= e[1] - 1 && t.y < e[1] + e[3] + 1);
+      if (j >= 0) { S.at = j; open = j; } else return back();     // a tap on nothing: done here
+    }
+
+    // the pointer, under the text
+    const at = ents[S.at];
+    g.fillStyle = '#F4A26188'; g.fillRect(at[0], at[1], at[2], at[3]);
+
     const img = game.images[`mon:${m.speciesId}`];
     if (img) g.drawImage(img, (Math.floor(this.t * 2) % 2) * 64, 0, 64, 64, X + CW - 62, Y - 4, 64, 64);
     drawText(g, `${nameOf(d, m)}  Lv${m.level}`, X, Y, { color: C.ink });
-    let tx = X; for (const t of sp.types) tx += typeTag(g, t, tx, Y + 11);
+    for (const [x, t] of tags) typeTag(g, t, x, Y + 11);
     drawText(g, `Serotonin ${m.hp}/${st.maxHp}`, X, Y + 25, { color: C.chai });
     drawText(g, `Hydration ${m.hyd}/${st.maxHyd}`, X, Y + 35, { color: C.chai });
     const need = xpForLevel(m.level + 1) - m.xp;
     drawText(g, `Next peak in ${Math.max(0, need)} Vibes`, X, Y + 45, { color: C.grey });
-    const rows = [['Vibe Atk', st.vibeAttack], ['Ego Def', st.egoDefense], ['Fractal', st.spFractal], ['Grounded', st.spGrounded], ['BPM', st.bpmSpeed]];
-    rows.forEach(([n, v], i) => { drawText(g, n, X + (i % 2) * 104, Y + 60 + Math.floor(i / 2) * 10, { color: C.ink }); drawText(g, String(v), X + (i % 2) * 104 + 74, Y + 60 + Math.floor(i / 2) * 10, { color: C.purple, align: 'right' }); });
-    m.moves.forEach((id, i) => { const mv = d.moves[id]; drawText(g, moveName(mv, 94), X + (i % 2) * 104, Y + 100 + Math.floor(i / 2) * 11, { color: C.ink }); g.fillStyle = TYPE_COLORS[mv.type]; g.fillRect(X + (i % 2) * 104 - 5, Y + 102 + Math.floor(i / 2) * 11, 3, 3); });
-    drawText(g, 'Moves', X, Y + 90, { color: C.grey });
-    // ability and held item
-    const ab = d.rules.abilities?.[sp.ability || sp.trait];
-    // the ability: its name, then the description flowing on from beside it (it used to stop after one line)
-    let holdY = Y + 136;
-    if (ab) {
-      const nw = textWidth(ab.name) + 6, first = wrap(ab.desc, CW - nw), rest = first.length > 1 ? wrap(first.slice(1).join(' '), CW) : [];
-      drawText(g, ab.name, X, Y + 124, { color: C.purple });
-      drawText(g, first[0], X + nw, Y + 124, { color: C.chai });
-      rest.forEach((ln, k) => drawText(g, ln, X, Y + 133 + k * 9, { color: C.chai }));
-      holdY = Y + 134 + rest.length * 9;
+    rows.forEach(([n, k], i) => { drawText(g, n, X + (i % 2) * 104, Y + 60 + Math.floor(i / 2) * 10, { color: C.ink }); drawText(g, String(st[k]), X + (i % 2) * 104 + 74, Y + 60 + Math.floor(i / 2) * 10, { color: C.purple, align: 'right' }); });
+    m.moves.forEach((id, i) => {
+      const mv = d.moves[id], mx = X + (i % 2) * 104, my = MY + Math.floor(i / 2) * 11;
+      drawText(g, moveName(mv, 94), mx, my, { color: C.ink });
+      g.fillStyle = TYPE_COLORS[mv.type]; g.fillRect(mx - 5, my + 2, 3, 3);
+    });
+    drawText(g, 'A: what is this?', X + CW, Y + 80, { color: C.grey, align: 'right' });
+    if (abLines) {
+      drawText(g, ab.name, X, AY, { color: C.purple });
+      drawText(g, abLines.first[0], X + abLines.nw, AY, { color: C.chai });
+      abLines.rest.forEach((ln, k) => drawText(g, ln, X, AY + 9 + k * 9, { color: C.chai }));
     }
     drawText(g, `Holding: ${m.held ? d.items[m.held].name : 'nothing'}`, X, holdY, { color: C.grey });
-    if (input.pressed('b') || input.pressed('a') || input.anyTap()) back();
+
+    if (open >= 0) { S.note = ents[open][4](); game.audio?.sfx('select'); }
+    else if (input.pressed('b')) back();
   },
 
   // ---- Stash Tin: a mint tin with compartments
@@ -351,31 +444,50 @@ export const menuView = {
       let tx = px; for (const t of sp.types) tx += typeTag(g, t, tx, Y + 56);
       if (highOnly(d)[sp.id]) drawEye(g, tx + 2, Y + 57);                // only seen when high
       if (s.dex.caught[sp.id]) {                                          // the start of the notes; A turns to the full page
-        const notes = wrap(sp.journalNotes, NW), more = notes.length > 5;
-        notes.slice(0, more ? 4 : 5).forEach((ln, i) => drawText(g, ln, px, Y + 69 + i * 10, { color: '#1E3A8A' }));
-        if (more) drawText(g, 'A: read on...', px, Y + 109, { color: '#B02A2A' });
+        const notes = wrap(sp.journalNotes, NW);
+        notes.slice(0, 4).forEach((ln, i) => drawText(g, ln, px, Y + 69 + i * 10, { color: '#1E3A8A' }));
       }
       else wrap('(bag one to take notes)', NW).forEach((ln, i) => drawText(g, ln, px, Y + 69 + i * 10, { color: C.grey }));
+      drawText(g, 'A: where to find it', px, Y + 109, { color: '#B02A2A' });
     } else {
       drawText(g, 'not seen yet', px + 10, Y + 30, { color: C.grey });
       // an Astral that only comes out when you are high: where it hides, once you have been there
       const at = sp && (highOnly(d)[sp.id] || []).find((a) => s.visited[a.zone]);
       if (at) { drawEye(g, px + 10, Y + 47); wrap(`Something else lives at ${d.zones[at.zone].name}. Get higher to see it.`, NW).slice(0, 5).forEach((ln, i) => drawText(g, ln, px, Y + 58 + i * 10, { color: '#7A4FE0' })); }
     }
-    if (active && r.chosen >= 0 && sp && s.dex.caught[sp.id]) { this.sub = { kind: 'page', i: cur.dex }; game.audio?.sfx('select'); }
+    if (active && r.chosen >= 0 && sp && s.dex.seen[sp.id]) { this.sub = { kind: 'page', i: cur.dex, view: 'where', off: 0 }; game.audio?.sfx('select'); }
     else if (active && (input.pressed('b') || input.pressed('left') || r.chosen >= 0)) back();
   },
 
-  /** a bagged Astral's whole page: the sketch, its types, and every word of the notes across the full width */
+  /** a seen Astral's page: the sketch and its types, then Where (every place it lives, and its line) or Notes (every
+   *  word, once bagged). Left and right turn between them, up and down scroll a long list, A or B closes it. */
   journalPage(game, g, sp, X, Y, CW, active) {
-    const d = game.data, input = game.input, img = game.images[`mon:${sp.id}`];
+    const d = game.data, s = game.engine.state, input = game.input, img = game.images[`mon:${sp.id}`], S = this.sub;
     for (let y = Y + 9; y < H - 14; y += 11) { g.fillStyle = '#D8CCE8'; g.fillRect(X - 2, y, CW + 4, 1); }
-    if (img) g.drawImage(img, 0, 0, 64, 64, X - 4, Y - 8, 64, 64);
+    if (img) g.drawImage(img, (s.dex.caught[sp.id] ? 0 : 4) * 64, 0, 64, 64, X - 4, Y - 8, 64, 64);
     drawText(g, `${String(sp.dexNumber).padStart(2, '0')} ${sp.name}`, X + 64, Y + 4, { color: '#1E3A8A' });
     let tx = X + 64; for (const ty of sp.types) tx += typeTag(g, ty, tx, Y + 16);
     if (highOnly(d)[sp.id]) drawEye(g, tx + 2, Y + 17);
-    wrap(sp.journalNotes, CW).forEach((ln, i) => drawText(g, ln, X, Y + 58 + i * 10, { color: '#1E3A8A' }));
-    if (active && (input.pressed('a') || input.pressed('b') || input.pressed('left') || input.anyTap())) { this.sub = null; game.audio?.sfx('back'); }
+    // the two pages, as tabs: tap one, or left / right
+    const views = ['where', 'notes'], label = { where: 'Where', notes: 'Notes' };
+    views.forEach((v, i) => {
+      const x = X + 64 + i * 52, on = (S.view || 'where') === v;
+      if (active && input.tapIn(x, Y + 32, 48, 13)) { S.view = v; S.off = 0; }
+      g.fillStyle = on ? '#1E3A8A' : '#E8DCC0'; g.fillRect(x, Y + 32, 48, 13);
+      drawText(g, label[v], x + 24, Y + 35, { color: on ? C.white : '#1E3A8A', align: 'center' });
+    });
+    if (active && (input.pressed('right') || input.pressed('left'))) { S.view = S.view === 'notes' ? 'where' : 'notes'; S.off = 0; game.audio?.sfx('blip'); }
+    const lines = (S.view === 'notes'
+      ? (s.dex.caught[sp.id] ? [sp.journalNotes] : ['(bag one to take notes)'])
+      : whereLines(d, s, sp.id)).flatMap((l) => wrap(l, CW - 8));   // a little room on the right for the scroll arrows
+    const rows = Math.floor((H - 22 - (Y + 58)) / 9) + 1, max = Math.max(0, lines.length - rows);   // down to the page's bottom edge
+    S.off = Math.max(0, Math.min(max, S.off || 0));
+    if (active && input.pressed('down')) S.off = Math.min(max, S.off + 1);
+    if (active && input.pressed('up')) S.off = Math.max(0, S.off - 1);
+    lines.slice(S.off, S.off + rows).forEach((ln, i) => drawText(g, ln, X, Y + 58 + i * 9, { color: S.view === 'notes' && !s.dex.caught[sp.id] ? C.grey : '#1E3A8A' }));
+    if (S.off > 0) drawText(g, '^', X + CW - 6, Y + 50, { color: C.magenta });
+    if (S.off < max) drawText(g, 'v', X + CW - 6, H - 22, { color: C.magenta });
+    if (active && (input.pressed('a') || input.pressed('b') || input.anyTap())) { this.sub = null; game.audio?.sfx('back'); }
   },
 
   // ---- Log: what people said and what happened, newest at the bottom; up and down scroll back

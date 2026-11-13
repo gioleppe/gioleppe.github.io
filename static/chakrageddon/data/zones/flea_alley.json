@@ -1,0 +1,298 @@
+{
+  "zoneId": "flea_alley",
+  "name": "Flea Market Back Alley",
+  "paletteId": "UV_BLACKLIGHT",
+  "baseBpm": 132,
+  "ground": "sand",
+  "ground2": "path",
+  "wall": "cliff",
+  "encounter": "incense",
+  "dark": true,
+  "rows": [
+    "cccccccccccccccccccccccccccccc",
+    "c........c.mq......c..L......c",
+    "c.xx..L..c....,,,,,,,....cc..c",
+    "c.x......c....,....c,....cc..c",
+    "c........c.cc.,....c,........c",
+    ",........c.cc.,....c,........,",
+    ",,,,,,,,,c....,....c,,,,,,,,,,",
+    ",.77777.,c....,.cc.c.........,",
+    "c..0....,c.x..,.cc.c..77777..c",
+    "c...xx..,c....,....c..xx.....c",
+    "c.L.....,,,,,,,....c.......x.c",
+    "c.....x..c.......L.c....L....c",
+    "cccccccccccccccccccccccccccccc"
+  ],
+  "arriveScript": "alley_lock",
+  "arriveUnless": {
+    "any": [
+      {
+        "flag": "alley_locked"
+      },
+      {
+        "flag": "alley_cleared"
+      }
+    ]
+  },
+  "warps": [
+    {
+      "x": 0,
+      "y": 5,
+      "to": "flea_market",
+      "tx": 24,
+      "ty": 5,
+      "dir": "LEFT",
+      "closedIf": {
+        "all": [
+          {
+            "flag": "alley_locked"
+          },
+          {
+            "not": {
+              "flag": "alley_cleared"
+            }
+          }
+        ]
+      },
+      "closedBy": "Constable Shah",
+      "closedText": "Exit closed. Routine inspection. Of the... air. Nobody leaves until the whole team has had a word with you."
+    },
+    {
+      "x": 0,
+      "y": 6,
+      "to": "flea_market",
+      "tx": 24,
+      "ty": 6,
+      "dir": "LEFT",
+      "closedIf": {
+        "all": [
+          {
+            "flag": "alley_locked"
+          },
+          {
+            "not": {
+              "flag": "alley_cleared"
+            }
+          }
+        ]
+      },
+      "closedBy": "Constable Shah",
+      "closedText": "Exit closed. Routine inspection. Of the... air. Nobody leaves until the whole team has had a word with you."
+    },
+    {
+      "x": 0,
+      "y": 7,
+      "to": "flea_market",
+      "tx": 24,
+      "ty": 7,
+      "dir": "LEFT",
+      "closedIf": {
+        "all": [
+          {
+            "flag": "alley_locked"
+          },
+          {
+            "not": {
+              "flag": "alley_cleared"
+            }
+          }
+        ]
+      },
+      "closedBy": "Constable Shah",
+      "closedText": "Exit closed. Routine inspection. Of the... air. Nobody leaves until the whole team has had a word with you."
+    },
+    {
+      "x": 29,
+      "y": 5,
+      "to": "omelette_stall",
+      "tx": 1,
+      "ty": 5,
+      "dir": "RIGHT",
+      "closedIf": {
+        "all": [
+          {
+            "flag": "alley_locked"
+          },
+          {
+            "not": {
+              "flag": "alley_cleared"
+            }
+          }
+        ]
+      },
+      "closedBy": "Inspector Desai",
+      "closedText": "Not so fast. My whole team has questions first. Then I have questions. Then we all have chai."
+    },
+    {
+      "x": 29,
+      "y": 6,
+      "to": "omelette_stall",
+      "tx": 1,
+      "ty": 6,
+      "dir": "RIGHT",
+      "closedIf": {
+        "all": [
+          {
+            "flag": "alley_locked"
+          },
+          {
+            "not": {
+              "flag": "alley_cleared"
+            }
+          }
+        ]
+      },
+      "closedBy": "Inspector Desai",
+      "closedText": "Not so fast. My whole team has questions first. Then I have questions. Then we all have chai."
+    },
+    {
+      "x": 29,
+      "y": 7,
+      "to": "omelette_stall",
+      "tx": 1,
+      "ty": 7,
+      "dir": "RIGHT",
+      "closedIf": {
+        "all": [
+          {
+            "flag": "alley_locked"
+          },
+          {
+            "not": {
+              "flag": "alley_cleared"
+            }
+          }
+        ]
+      },
+      "closedBy": "Inspector Desai",
+      "closedText": "Not so fast. My whole team has questions first. Then I have questions. Then we all have chai."
+    }
+  ],
+  "npcs": [
+    {
+      "id": "alley_shah",
+      "x": 2,
+      "y": 5,
+      "sprite": "guard",
+      "dir": "RIGHT",
+      "trainer": "alley_shah",
+      "hideIf": "alley_cleared"
+    },
+    {
+      "id": "alley_gary",
+      "x": 10,
+      "y": 11,
+      "sprite": "tourist",
+      "dir": "UP",
+      "trainer": "alley_gary",
+      "sight": 2,
+      "hideIf": "alley_cleared"
+    },
+    {
+      "id": "alley_river",
+      "x": 13,
+      "y": 7,
+      "sprite": "hippie",
+      "dir": "DOWN",
+      "trainer": "alley_river",
+      "sight": 3,
+      "hideIf": "alley_cleared"
+    },
+    {
+      "id": "alley_baba",
+      "x": 13,
+      "y": 1,
+      "sprite": "baba",
+      "dir": "DOWN",
+      "trainer": "alley_baba",
+      "sight": 2,
+      "hideIf": "alley_cleared"
+    },
+    {
+      "id": "alley_sunil",
+      "x": 18,
+      "y": 4,
+      "sprite": "vendor",
+      "dir": "UP",
+      "trainer": "alley_sunil",
+      "sight": 2,
+      "hideIf": "alley_cleared"
+    },
+    {
+      "id": "alley_prakash",
+      "x": 21,
+      "y": 4,
+      "sprite": "juggler",
+      "dir": "DOWN",
+      "trainer": "alley_prakash",
+      "sight": 2,
+      "hideIf": "alley_cleared"
+    },
+    {
+      "id": "alley_desai",
+      "x": 27,
+      "y": 4,
+      "sprite": "sergeant",
+      "dir": "DOWN",
+      "trainer": "alley_desai",
+      "sight": 3,
+      "hideIf": "alley_cleared"
+    },
+    {
+      "id": "alley_chillum",
+      "x": 3,
+      "y": 9,
+      "sprite": "hippie",
+      "dir": "UP",
+      "script": "alley_chillum",
+      "showIf": "alley_cleared"
+    },
+    {
+      "id": "alley_raver",
+      "x": 12,
+      "y": 7,
+      "sprite": "raver",
+      "dir": "RIGHT",
+      "script": "alley_raver",
+      "showIf": "alley_cleared",
+      "dance": true
+    },
+    {
+      "id": "alley_wook",
+      "x": 16,
+      "y": 4,
+      "sprite": "wook",
+      "dir": "LEFT",
+      "script": "alley_wook",
+      "showIf": "alley_cleared"
+    },
+    {
+      "id": "alley_lady",
+      "x": 23,
+      "y": 10,
+      "sprite": "influencer",
+      "dir": "UP",
+      "script": "alley_lady",
+      "showIf": "alley_cleared"
+    },
+    {
+      "id": "alley_guy",
+      "x": 27,
+      "y": 4,
+      "sprite": "local",
+      "dir": "DOWN",
+      "script": "alley_guy",
+      "showIf": "alley_cleared"
+    }
+  ],
+  "pickups": [
+    {
+      "id": "alley_evidence",
+      "x": 28,
+      "y": 11,
+      "item": "water_bottle",
+      "n": 2,
+      "hidden": true
+    }
+  ]
+}

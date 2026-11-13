@@ -7,10 +7,10 @@
     "party": [
       {
         "species": "djembe_monk",
-        "level": 4
+        "level": 3
       }
     ],
-    "reward": 80,
+    "reward": 100,
     "intro": [
       "You looked at me! I saw you look! Okay so, quantum astrology, right, it is basically that every star sign is also every other star sign until you check...",
       "...which is why I juggle. Anyway. Astral clash?"
@@ -28,14 +28,14 @@
     "party": [
       {
         "species": "crabcake",
-        "level": 4
+        "level": 3
       },
       {
         "species": "snoozel",
-        "level": 5
+        "level": 4
       }
     ],
-    "reward": 110,
+    "reward": 140,
     "intro": [
       "Careful, the poi are lit. So am I. Let us dance!"
     ],
@@ -52,10 +52,10 @@
     "party": [
       {
         "species": "jawling",
-        "level": 6
+        "level": 5
       }
     ],
-    "reward": 200,
+    "reward": 250,
     "setFlag": "beat_chad1",
     "intro": [
       "Namaste. It is Chad, from the charter flight. I go by Astra-Zero now.",
@@ -74,10 +74,10 @@
     "party": [
       {
         "species": "blottertot",
-        "level": 6
+        "level": 5
       }
     ],
-    "reward": 200,
+    "reward": 250,
     "setFlag": "beat_chad1",
     "intro": [
       "Namaste. It is Chad, from the charter flight. I go by Astra-Zero now.",
@@ -96,10 +96,10 @@
     "party": [
       {
         "species": "ganjapod",
-        "level": 6
+        "level": 5
       }
     ],
-    "reward": 200,
+    "reward": 250,
     "setFlag": "beat_chad1",
     "intro": [
       "Namaste. It is Chad, from the charter flight. I go by Astra-Zero now.",
@@ -2480,7 +2480,8 @@
     "defeat": [
       "Fine, fine. Take a marigold, on the house. Do not tell the old woman. She thinks they grow on the shrine by themselves."
     ],
-    "after": "The garden loses a string of marigolds every night, and the shrine gains one every morning. Not my business. Mine cost money."
+    "after": "The garden loses a string of marigolds every night, and the shrine gains one every morning. Not my business. Mine cost money.",
+    "then": "shrine_flowers_after"
   },
   {
     "id": "shrine_sadhu",
@@ -2509,5 +2510,387 @@
       "You pass. You may continue to walk. You were going to anyway."
     ],
     "after": "The pujari wants a coconut. Everyone at a shrine wants a coconut. Coconuts do not grow at shrines. Think about it."
+  },
+  {
+    "id": "coconut_wallah",
+    "name": "Coconut Wallah Pradeep",
+    "sprite": "local",
+    "party": [
+      {
+        "species": "wooklet",
+        "level": 15
+      },
+      {
+        "species": "chillem",
+        "level": 16
+      },
+      {
+        "species": "ketacrab",
+        "level": 16
+      }
+    ],
+    "reward": 380,
+    "then": "coconut_wallah",
+    "intro": [
+      "These are my palms. Every coconut on them is counted, and every one has a name. Want one off the top? Beat my Astrals, and I climb."
+    ],
+    "defeat": [
+      "Okay, okay. A deal is a deal. Hold my sandals."
+    ],
+    "after": "Windfalls are for tourists. The good ones, you climb for."
+  },
+  {
+    "id": "alley_shah",
+    "name": "Constable Shah",
+    "sprite": "guard",
+    "party": [
+      {
+        "species": "shadowcop",
+        "level": 19
+      },
+      {
+        "species": "mozzquito",
+        "level": 19
+      }
+    ],
+    "reward": 360,
+    "intro": [
+      "Routine inspection of your Astrals. Hold still. This will not hurt. It will hurt a bit."
+    ],
+    "defeat": [
+      "That concludes the inspection. Result: inconclusive."
+    ],
+    "after": "I am not a policeman. I am a man who likes shutters.",
+    "then": "alley_check"
+  },
+  {
+    "id": "alley_gary",
+    "name": "Undercover Tourist Gary",
+    "sprite": "tourist",
+    "party": [
+      {
+        "species": "sirenowl",
+        "level": 19
+      },
+      {
+        "species": "shadowcop",
+        "level": 20
+      }
+    ],
+    "reward": 380,
+    "intro": [
+      "Just a normal tourist! Look: a camera. *click*. That was a real photo. Of you. For my album. My police album."
+    ],
+    "defeat": [
+      "My cover! It was sunscreen-proof!"
+    ],
+    "after": "The moustache is real. The rest of me is undercover.",
+    "then": "alley_check"
+  },
+  {
+    "id": "alley_river",
+    "name": "Undercover Hippie River",
+    "sprite": "hippie",
+    "party": [
+      {
+        "species": "chillem",
+        "level": 20
+      },
+      {
+        "species": "mozzquito",
+        "level": 20
+      }
+    ],
+    "reward": 400,
+    "intro": [
+      "Peace and love, man. Also, could you empty your pockets? For the peace."
+    ],
+    "defeat": [
+      "Bad vibes. Officially. I will be writing that down."
+    ],
+    "after": "My real name is Rajesh. River is my working name.",
+    "then": "alley_check"
+  },
+  {
+    "id": "alley_baba",
+    "name": "Undercover Sadhu Bhola",
+    "sprite": "baba",
+    "party": [
+      {
+        "species": "djembe_monk",
+        "level": 20
+      },
+      {
+        "species": "sirenowl",
+        "level": 21
+      }
+    ],
+    "reward": 400,
+    "intro": [
+      "Om. Om. ...Do you have a permit for that om?"
+    ],
+    "defeat": [
+      "Om... ow."
+    ],
+    "after": "Thirty years undercover as a sadhu. I have started to believe it.",
+    "then": "alley_check"
+  },
+  {
+    "id": "alley_sunil",
+    "name": "Undercover Chai Wallah Sunil",
+    "sprite": "vendor",
+    "party": [
+      {
+        "species": "lassiblob",
+        "level": 20
+      },
+      {
+        "species": "shadowcop",
+        "level": 21
+      }
+    ],
+    "reward": 420,
+    "intro": [
+      "Chai! Hot chai! And a few questions about where you were last night."
+    ],
+    "defeat": [
+      "The chai was evidence. Now it is just chai."
+    ],
+    "after": "Free chai for anyone who confesses. Nobody confesses. Everybody drinks.",
+    "then": "alley_check"
+  },
+  {
+    "id": "alley_prakash",
+    "name": "Undercover Juggler Prakash",
+    "sprite": "juggler",
+    "party": [
+      {
+        "species": "glowkid",
+        "level": 21
+      },
+      {
+        "species": "mozzquito",
+        "level": 21
+      }
+    ],
+    "reward": 420,
+    "intro": [
+      "Three balls, two hands, one warrant. Watch the balls. Not the warrant."
+    ],
+    "defeat": [
+      "I dropped everything. Including the case."
+    ],
+    "after": "I am actually quite a good juggler. Nobody ever asks.",
+    "then": "alley_check"
+  },
+  {
+    "id": "alley_desai",
+    "name": "Inspector Ashok Desai",
+    "sprite": "sergeant",
+    "party": [
+      {
+        "species": "shadowcop",
+        "level": 21
+      },
+      {
+        "species": "dengoth",
+        "level": 22
+      },
+      {
+        "species": "sirenowl",
+        "level": 22
+      }
+    ],
+    "reward": 650,
+    "intro": [
+      "Inspector Ashok Desai, Narcotics. I mean: Ashok. A tourist. A tourist with a badge.",
+      "Nobody leaves my alley until my whole team has had a word with them. Here is mine."
+    ],
+    "defeat": [
+      "Fine. FINE. We were never here."
+    ],
+    "after": "This alley is clean. It was always clean. Write that down.",
+    "then": "alley_check",
+    "gives": "mystery_powder"
+  },
+  {
+    "id": "brit_nigel",
+    "name": "Lobster Nigel",
+    "sprite": "brit",
+    "party": [
+      {
+        "species": "lobsterlad",
+        "level": 22
+      },
+      {
+        "species": "ketacrab",
+        "level": 22
+      }
+    ],
+    "reward": 420,
+    "intro": [
+      "Oi! You're in my sun! I've paid for this sun. All-inclusive."
+    ],
+    "defeat": [
+      "Me shoulders! Don't touch me shoulders!"
+    ],
+    "after": "Base tan. 1997. Still working."
+  },
+  {
+    "id": "brit_tracy",
+    "name": "Tracy from Leeds",
+    "sprite": "brit_f",
+    "party": [
+      {
+        "species": "neighbula",
+        "level": 22
+      },
+      {
+        "species": "lassiblob",
+        "level": 23
+      }
+    ],
+    "reward": 430,
+    "intro": [
+      "Four hours in the sun and I'm not even red yet. Is that bad? It feels bad."
+    ],
+    "defeat": [
+      "Everything stings now. Ta for that."
+    ],
+    "after": "Is my back red? Don't tell me. Tell me."
+  },
+  {
+    "id": "brit_dave",
+    "name": "Dave, Shirt Off",
+    "sprite": "brit",
+    "party": [
+      {
+        "species": "wonkrab",
+        "level": 23
+      },
+      {
+        "species": "mozzquito",
+        "level": 23
+      }
+    ],
+    "reward": 440,
+    "intro": [
+      "Shirt off since Gatwick, mate. Respect the commitment."
+    ],
+    "defeat": [
+      "Right. Shirt on. For a bit."
+    ],
+    "after": "Sun cream's for people who don't believe in themselves."
+  },
+  {
+    "id": "lifeguard_rohan",
+    "name": "Lifeguard Rohan",
+    "sprite": "lifeguard",
+    "party": [
+      {
+        "species": "nitroxide",
+        "level": 23
+      },
+      {
+        "species": "sirenowl",
+        "level": 24
+      }
+    ],
+    "reward": 460,
+    "intro": [
+      "Whistle! No battling in the red flag zone. ...There is no red flag. Fine. Battle."
+    ],
+    "defeat": [
+      "Saved by the whistle. Well. Not saved."
+    ],
+    "after": "Every day the same. They arrive white, they lie in the sun like chapatis on a tawa, they go red."
+  },
+  {
+    "id": "grotto_vasco",
+    "name": "Smuggler Vasco",
+    "sprite": "dealer",
+    "party": [
+      {
+        "species": "mozzquito",
+        "level": 23
+      },
+      {
+        "species": "lobsterlad",
+        "level": 24
+      }
+    ],
+    "reward": 480,
+    "intro": [
+      "Nobody comes in here. That is why I keep things in here. And now somebody came in here."
+    ],
+    "defeat": [
+      "You saw nothing. I saw nothing. We are both very blind."
+    ],
+    "after": "The clay at the back? Take it. It is the only thing in here that is legal."
+  },
+  {
+    "id": "grotto_meera",
+    "name": "Cave Diver Meera",
+    "sprite": "local",
+    "party": [
+      {
+        "species": "neighbula",
+        "level": 23
+      },
+      {
+        "species": "nitroxide",
+        "level": 24
+      }
+    ],
+    "reward": 480,
+    "intro": [
+      "I dive this cave every day. Today I found you. Not my best find."
+    ],
+    "defeat": [
+      "Okay. You can swim."
+    ],
+    "after": "The blue clay is right at the back. It smells like the bottom of the sea. Because it is."
+  },
+  {
+    "id": "trail_bum",
+    "name": "Beach Bum Rick",
+    "sprite": "tourist",
+    "party": [
+      {
+        "species": "crabcake",
+        "level": 3
+      }
+    ],
+    "reward": 90,
+    "intro": [
+      "First fight? Mine too, today. Let us both be gentle."
+    ],
+    "defeat": [
+      "Gentle! You said gentle!"
+    ],
+    "after": "The incense clouds along the trail are where the Astrals are. Walk through slowly."
+  },
+  {
+    "id": "trail_drummer",
+    "name": "Drummer Kofi",
+    "sprite": "hippie",
+    "party": [
+      {
+        "species": "djembe_monk",
+        "level": 4
+      },
+      {
+        "species": "tridog",
+        "level": 4
+      }
+    ],
+    "reward": 160,
+    "intro": [
+      "You are off the beat, friend. Let me tune you up."
+    ],
+    "defeat": [
+      "Okay. You found the one."
+    ],
+    "after": "The circle drums from sunset to whenever. Sit in, if you can keep time."
   }
 ]

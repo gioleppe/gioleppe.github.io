@@ -205,6 +205,9 @@ export function step(ctx, dir) {
     if (useTechnique(ctx, id, nx, ny, dir, zone)) return;
     return bump(ctx);
   }
+  // a way out that is closed for now (the back alley, until every undercover has had a word): closedIf, closedBy, closedText
+  const shut = (zone.warps || []).find((w) => w.x === nx && w.y === ny && w.closedIf && check(s, w.closedIf, ctx.data));
+  if (shut) { bump(ctx); return startScript(ctx, [{ s: shut.closedBy || '', t: shut.closedText || 'The way is closed.' }]); }
   s.player.x = nx; s.player.y = ny;
   s.steps++;
   // the festival clock: one minute every few steps, so an hour is about a minute of walking

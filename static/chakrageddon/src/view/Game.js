@@ -5,12 +5,12 @@ import { bandIndex } from '../core/intox.js';
 import { liveSet } from '../core/timetable.js';
 import { W, H } from './CanvasRenderer.js';
 import { drawText, panel, list, wrap, textWidth, C } from './ui.js';
-import { overworldView } from './overworldView.js';
+import { overworldView, SLEEP_OUT, SLEEP_NIGHT } from './overworldView.js';
 import { dialogueView } from './dialogueView.js';
 import { CUES, CUE_SECONDS } from './WebGLPostProcess.js';
 
 const SAVE_KEY = 'chakrageddon.save.v1', SETTINGS_KEY = 'chakrageddon.settings.v1';
-export const VERSION = '1.0.57';   // keep in step with package.json (tests/scenarios.test.mjs checks)
+export const VERSION = '1.2.1';   // keep in step with package.json (tests/scenarios.test.mjs checks)
 
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
@@ -23,7 +23,7 @@ export class Game {
     this.data = assets.data; this.atlas = assets.atlas; this.images = assets.images;
     this.input = input; this.renderer = renderer; this.audio = audio;
     queueMicrotask?.(() => this.applyPictureSize());
-    this.settings = { grounded: false, reducedMotion: false, textSpeed: 1, volume: 0.7, battleSpeed: 0, ...JSON.parse(store.get(SETTINGS_KEY) || '{}') };
+    this.settings = { grounded: false, reducedMotion: false, textSpeed: 1, volume: 0.7, battleSpeed: 0, difficulty: 'normal', ...JSON.parse(store.get(SETTINGS_KEY) || '{}') };
     this.engine = null;
     this.screen = 'title';
     this.titleCursor = 0;
@@ -80,6 +80,10 @@ export class Game {
     if (manual) this.say(ok ? 'Game saved.' : 'Saving failed (storage blocked).');
     return ok;
   }
+  /** a music cue from the engine (AUDIO_CUE with trackBpm); fade: seconds to fade the old song out first */
+  playCue(e, fade = 0) {
+    this.audio?.setTrack({ bpm: e.trackBpm, lowPass: e.lowPassFilterHz, mood: e.mood || this.data.zones[this.engine.state.zoneId].paletteId, zone: e.theme || this.engine.state.zoneId, ...(fade ? { fade } : {}) });
+  }
   startZoneAudio() {
     const zone = this.data.zones[this.engine.state.zoneId];
     this.audio?.setTrack({ bpm: zone.baseBpm, mood: zone.paletteId, zone: zone.zoneId });
@@ -116,7 +120,8 @@ export class Game {
     if (pad !== this.padOn) { this.padOn = pad; this.audio?.setTrack({ highPad: pad }); }
     // a set on the festival timetable brings its own music (back to the zone's when it ends or you leave)
     const st0 = this.engine?.state;
-    if (this.screen === 'play' && st0?.mode === 'OVERWORLD') {
+    // (also while a line is up: waking at a tent to a set brings its music as the night fades, not after you close the box)
+    if (this.screen === 'play' && ['OVERWORLD', 'DIALOGUE', 'CHAI_TENT_RECOVERY'].includes(st0?.mode) && !this.extra.battle?.on && !(overworldView.sleep && overworldView.sleep.t < SLEEP_OUT + SLEEP_NIGHT)) {
       const live = liveSet(this.data, st0), key = `${st0.zoneId}:${live ? live.id : ''}`;
       if (key !== this.setKey) {
         const was = this.setKey; this.setKey = key;
@@ -124,7 +129,7 @@ export class Game {
         if (live) this.audio?.setTrack({ mood: live.mood, bpm: live.bpm, zone: `${z.zoneId}:${live.id}` });
         else if (was && !was.endsWith(':') && was.startsWith(`${z.zoneId}:`)) this.audio?.setTrack({ mood: z.paletteId, bpm: z.baseBpm, zone: z.zoneId });
       }
-    } else if (st0?.mode === 'ASTRAL_BATTLE') this.setKey = null;
+    } else if (st0?.mode === 'ASTRAL_BATTLE' || this.extra.battle?.on) this.setKey = null;
     let cue = 0, cueT = 0;
     if (this.fxCue) {
       this.fxCue.t += dt / (CUE_SECONDS[this.fxCue.name] || 0.5);
@@ -170,7 +175,7 @@ export class Game {
     if (!this.engine) return 0;
     const s = this.engine.state;
     let raw = s.battle ? s.battle.intox : s.intox;
-    if (s.mode === 'FANNY_PACK_MENU' || s.mode === 'SHOP') raw *= 0.4;   // keep menus readable
+    if (s.mode === 'FANNY_PACK_MENU' || s.mode === 'SHOP' || s.mode === 'TAROT') raw *= 0.4;   // keep menus readable
     if (s.scene?.id === 'dream') raw = Math.max(raw, 0.45);              // the opening dream wobbles
     return this.settings.grounded ? Math.min(0.25, raw) : raw;
   }
@@ -182,7 +187,9 @@ export class Game {
       for (const v of this.views) v.onEvent?.(this, e);
       if (e.type === 'AUDIO_CUE') {
         if (e.sfxId && !this.extra.battle?.on) this.audio?.sfx(e.sfxId);   // in a battle the screen plays it in turn (after the bag stops shaking)
-        if (e.trackBpm) this.audio?.setTrack({ bpm: e.trackBpm, lowPass: e.lowPassFilterHz, mood: e.mood || this.data.zones[this.engine.state.zoneId].paletteId, zone: e.theme || this.engine.state.zoneId });
+        // music: at once, except inside a battle, where the battle screen plays it in turn (a boss speeding up with their
+        // line) and the world's music waits until the screen closes (not the moment you pick the winning move)
+        if (e.trackBpm && (e.start || !this.extra.battle?.on)) this.playCue(e);
       }
       if (e.type === 'ZONE_CHANGED') this.autosaveSoon = true;
       if (e.type === 'MESSAGE' && !this.extra.battle?.on) this.say(e.text, e.kind);
@@ -195,7 +202,7 @@ export class Game {
   }
 
   update(dt) {
-    if (this.engine) this.engine.options.shift = this.settings.battleStyle !== 'set';   // Options: Battle style (Shift by default)
+    if (this.engine) { this.engine.options.shift = this.settings.battleStyle !== 'set'; this.engine.options.difficulty = this.settings.difficulty || 'normal'; }   // Options: Battle style (Shift by default), Difficulty
     this.t += dt;
     if (this.toast && (this.toast.t -= dt) <= 0) {
       const next = this.toasts?.shift(), n = typeof next === 'string' ? { text: next } : next;

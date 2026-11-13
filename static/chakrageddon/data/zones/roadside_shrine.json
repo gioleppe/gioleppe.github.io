@@ -131,7 +131,8 @@
       "sprite": "vendor",
       "dir": "DOWN",
       "trainer": "shrine_flowers",
-      "sight": 2
+      "sight": 2,
+      "script": "shrine_flowers_after"
     },
     {
       "id": "shrine_sadhu",
@@ -261,8 +262,8 @@
     {
       "flag": "lakshmi_moved",
       "tiles": {
-        "3,10": "2",
-        "4,10": "3"
+        "4,10": "2",
+        "5,10": "3"
       }
     }
   ]

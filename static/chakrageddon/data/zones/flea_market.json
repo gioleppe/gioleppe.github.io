@@ -55,7 +55,7 @@
     {
       "x": 25,
       "y": 5,
-      "to": "omelette_stall",
+      "to": "flea_alley",
       "tx": 1,
       "ty": 5,
       "dir": "RIGHT"
@@ -63,7 +63,7 @@
     {
       "x": 25,
       "y": 6,
-      "to": "omelette_stall",
+      "to": "flea_alley",
       "tx": 1,
       "ty": 6,
       "dir": "RIGHT"
@@ -71,7 +71,7 @@
     {
       "x": 25,
       "y": 7,
-      "to": "omelette_stall",
+      "to": "flea_alley",
       "tx": 1,
       "ty": 7,
       "dir": "RIGHT"
@@ -257,6 +257,15 @@
           }
         ]
       }
+    },
+    {
+      "id": "tarot_reader",
+      "x": 20,
+      "y": 3,
+      "sprite": "tarot",
+      "dir": "DOWN",
+      "script": "tarot_reader",
+      "showIf": "tarot_arrived"
     }
   ],
   "pickups": [
@@ -367,5 +376,13 @@
   ],
   "resetOnEnter": [
     "memory_gone"
+  ],
+  "flagTiles": [
+    {
+      "flag": "tarot_arrived",
+      "tiles": {
+        "19,3": "q"
+      }
+    }
   ]
 }

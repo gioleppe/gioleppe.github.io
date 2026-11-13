@@ -1,7 +1,7 @@
 // Glue between the overworld/script engines and the creature, battle, item and shop systems.
 import { enterZone, canUse } from './OverworldEngine.js';
 import { startWildBattle, startTrainerBattle, startMirrorBattle, battleAction, learnMove } from './BattleEngine.js';
-import { createMon, addToCollection, healMon, nameOf } from './mons.js';
+import { createMon, addToCollection, healMon, nameOf, rememberable } from './mons.js';
 import { applyItem, soldOut, ONE_OF_A_KIND } from './items.js';
 import { setMode } from './ScriptEngine.js';
 
@@ -86,7 +86,8 @@ export function handleExtra(ctx, cmd) {
       if (!s.menu?.hut) { say(ctx, 'The stash is kept at the Chai Tents. Ask Chai Mama.'); break; }
       if (cmd.boxIndex !== undefined && cmd.partyIndex !== undefined && s.box[cmd.boxIndex] && s.party[cmd.partyIndex]) {
         [s.party[cmd.partyIndex], s.box[cmd.boxIndex]] = [s.box[cmd.boxIndex], s.party[cmd.partyIndex]];
-        if (!s.party.some((m) => m.hp > 0)) [s.party[cmd.partyIndex], s.box[cmd.boxIndex]] = [s.box[cmd.boxIndex], s.party[cmd.partyIndex]];
+        if (!s.party.some((m) => m.hp > 0)) { [s.party[cmd.partyIndex], s.box[cmd.boxIndex]] = [s.box[cmd.boxIndex], s.party[cmd.partyIndex]]; say(ctx, 'Then nobody in your party could fight.'); }
+        else say(ctx, `${nameOf(d, s.party[cmd.partyIndex])} joins. ${nameOf(d, s.box[cmd.boxIndex])} stays with Chai Mama.`);
       } else if (cmd.boxIndex !== undefined && s.box[cmd.boxIndex] && s.party.length < (d.rules.partyMax || 6)) s.party.push(...s.box.splice(cmd.boxIndex, 1));
       else if (cmd.partyIndex !== undefined && s.party.length > 1 && s.party[cmd.partyIndex]) {
         const rest = s.party.filter((_, i) => i !== cmd.partyIndex);
@@ -116,6 +117,26 @@ export function handleExtra(ctx, cmd) {
       break;
     }
     case 'CLOSE_SHOP': if (s.mode === 'SHOP') { s.shop = null; setMode(ctx, 'OVERWORLD'); } break;
+
+    // the tarot reader (rules.tarot): an Astral remembers a move from its past lives, for a price. slot: the move it
+    // forgets for it (none needed with a free slot)
+    case 'RELEARN_MOVE': {
+      if (s.mode !== 'TAROT') break;
+      const mon = s.party[cmd.partyIndex], price = d.rules.tarot?.price ?? 500;
+      if (!mon || !rememberable(d, mon).includes(cmd.moveId)) break;
+      if (s.rupees < price) { say(ctx, 'Not enough rupees.'); ctx.emit({ type: 'AUDIO_CUE', sfxId: 'deny' }); break; }
+      const full = mon.moves.length >= 4;
+      if (full && !(cmd.slot >= 0 && cmd.slot < mon.moves.length)) break;
+      const old = full ? d.moves[mon.moves[cmd.slot]].name : null, mv = d.moves[cmd.moveId];
+      if (full) mon.moves[cmd.slot] = cmd.moveId; else mon.moves.push(cmd.moveId);
+      s.rupees -= price;
+      ctx.emit({ type: 'RUPEES_CHANGED', rupees: s.rupees });
+      ctx.emit({ type: 'MOVE_LEARNED', uid: mon.uid, name: nameOf(d, mon), moveId: cmd.moveId, remembered: true });
+      ctx.emit({ type: 'AUDIO_CUE', sfxId: 'fanfare' });
+      say(ctx, old ? `${nameOf(d, mon)} forgot ${old} and remembered ${mv.name}!` : `${nameOf(d, mon)} remembered ${mv.name}!`);
+      break;
+    }
+    case 'CLOSE_TAROT': if (s.mode === 'TAROT') setMode(ctx, 'OVERWORLD'); break;
 
     case 'USE_FIELD_TECHNIQUE': {
       if (cmd.techniqueId !== 'share_taxi_tuktuk' || (s.mode !== 'FANNY_PACK_MENU' && s.mode !== 'OVERWORLD')) break;

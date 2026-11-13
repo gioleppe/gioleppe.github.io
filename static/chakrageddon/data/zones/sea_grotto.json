@@ -1,0 +1,118 @@
+{
+  "zoneId": "sea_grotto",
+  "name": "The Sea Grotto",
+  "paletteId": "UV_BLACKLIGHT",
+  "baseBpm": 112,
+  "ground": "cave",
+  "ground2": "path",
+  "wall": "cave_wall",
+  "encounter": "incense",
+  "dark": true,
+  "indoor": true,
+  "rows": [
+    "zzzzzzzzzzzzzzzzzz",
+    "z....zzz.....~~~.z",
+    "z.~~...z..o..~~~.z",
+    "z.~~...z.....zz..z",
+    "z......z,,....z..z",
+    "z..o....,,.......z",
+    "zzz.....,,....o..z",
+    "z.......,,...zzz.z",
+    "z..~~...,,.......z",
+    "z..~~..z,,z...~~.z",
+    "z......z,,z......z",
+    "z.......,,.......z",
+    "zzzzzzzz,,zzzzzzzz"
+  ],
+  "warps": [
+    {
+      "x": 8,
+      "y": 12,
+      "to": "sea_shallows",
+      "tx": 20,
+      "ty": 18,
+      "dir": "DOWN"
+    },
+    {
+      "x": 9,
+      "y": 12,
+      "to": "sea_shallows",
+      "tx": 20,
+      "ty": 18,
+      "dir": "DOWN"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "grotto_vasco",
+      "x": 11,
+      "y": 5,
+      "sprite": "dealer",
+      "dir": "LEFT",
+      "trainer": "grotto_vasco",
+      "sight": 2
+    },
+    {
+      "id": "grotto_meera",
+      "x": 3,
+      "y": 4,
+      "sprite": "local",
+      "dir": "RIGHT",
+      "trainer": "grotto_meera",
+      "sight": 3
+    },
+    {
+      "id": "grotto_sign",
+      "x": 11,
+      "y": 10,
+      "tile": "sign",
+      "script": "sign_grotto"
+    }
+  ],
+  "pickups": [
+    {
+      "id": "grotto_clay",
+      "x": 16,
+      "y": 1,
+      "item": "blue_clay",
+      "n": 1
+    },
+    {
+      "id": "grotto_amber",
+      "x": 1,
+      "y": 10,
+      "item": "amber_vial",
+      "n": 1,
+      "hidden": true
+    }
+  ],
+  "encounters": {
+    "encounterRate": 0.12,
+    "table": [
+      {
+        "speciesId": "ketacrab",
+        "minLevel": 21,
+        "maxLevel": 24,
+        "weight": 25
+      },
+      {
+        "speciesId": "lobsterlad",
+        "minLevel": 22,
+        "maxLevel": 25,
+        "weight": 20
+      },
+      {
+        "speciesId": "neighbula",
+        "minLevel": 21,
+        "maxLevel": 24,
+        "weight": 20
+      },
+      {
+        "speciesId": "sirenowl",
+        "minLevel": 22,
+        "maxLevel": 24,
+        "weight": 15
+      }
+    ]
+  }
+}

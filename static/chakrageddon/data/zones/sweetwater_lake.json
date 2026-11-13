@@ -28,16 +28,16 @@
       "x": 0,
       "y": 6,
       "to": "sea_shallows",
-      "tx": 18,
-      "ty": 6,
+      "tx": 38,
+      "ty": 10,
       "dir": "LEFT"
     },
     {
       "x": 0,
       "y": 7,
       "to": "sea_shallows",
-      "tx": 18,
-      "ty": 7,
+      "tx": 38,
+      "ty": 11,
       "dir": "LEFT"
     },
     {

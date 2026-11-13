@@ -19,6 +19,7 @@ export function check(s, c, data) {
   if (c.defeated) return !!s.defeated[c.defeated];
   if (c.caught !== undefined) return Object.keys(s.dex.caught).length >= c.caught;
   if (c.bands !== undefined) return s.wristbands.length >= c.bands;
+  if (c.party !== undefined) return (s.party || []).length >= c.party;   // how many Astrals you carry (the trail's ranger)
   if (c.hour) { const h = Math.floor(s.clock / 60) % 24; return h >= c.hour[0] && h < c.hour[1]; }
   if (c.intox !== undefined) return s.intox >= c.intox;
   if (c.set) return !!data && setOn(data, s, c.set);

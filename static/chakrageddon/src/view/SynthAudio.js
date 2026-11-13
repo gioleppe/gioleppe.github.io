@@ -87,7 +87,18 @@ export class SynthAudio {
   /** { bpm, mood, zone, lowPass, highPad } - any subset. highPad (0..1): a warm chord under the music from the Come-up on */
   setTrack(t) {
     if (t.highPad !== undefined) this.highPad = t.highPad;
-    if (!this.ctx) { this.pending = { ...this.pending, ...t }; return; }
+    if (!this.ctx) { const { fade, ...rest } = t; this.pending = { ...this.pending, ...rest }; return; }
+    // fade: the song playing now fades out over that many seconds, then this one starts (the end of a battle)
+    if (t.fade && t.mood && (t.mood !== this.mood || (t.zone ?? this.zone) !== this.zone) && this.music?.gain?.linearRampToValueAtTime) {
+      const now = this.ctx.currentTime, g = this.music.gain;
+      g.cancelScheduledValues(now); g.setValueAtTime(g.value, now); g.linearRampToValueAtTime(0.0001, now + t.fade);
+      this.fadeTo = { track: { ...t, fade: 0 }, at: now + t.fade };
+      return;
+    }
+    if (t.mood && this.fadeTo) {                                   // another song asked for meanwhile: it wins, at full level
+      this.fadeTo = null; this.music.gain.cancelScheduledValues?.(this.ctx.currentTime);
+      if (t.mood === this.mood && (t.zone ?? this.zone) === this.zone) this.music.gain.setTargetAtTime(MUSIC_LEVEL * (this.prof?.level || 1), this.ctx.currentTime, 0.2);
+    }
     if (t.bpm) this.bpm = t.bpm;
     const zone = t.zone ?? this.zone;
     if (t.mood && MOODS[t.mood] && (t.mood !== this.mood || zone !== this.zone)) {
@@ -100,6 +111,7 @@ export class SynthAudio {
   tick() {
     const c = this.ctx;
     if (!c || c.state !== 'running' || !this.mood) return;
+    if (this.fadeTo && c.currentTime >= this.fadeTo.at) { const f = this.fadeTo; this.fadeTo = null; this.setTrack(f.track); }
     if (this.next < c.currentTime - 0.2) this.next = c.currentTime + 0.05;
     const spb = 60 / this.bpm / 4;
     while (this.next < c.currentTime + 0.12) { this.playStep(this.step, this.next, spb); this.next += spb; this.step = (this.step + 1) % 256; }
@@ -166,8 +178,10 @@ export class SynthAudio {
       if (note !== null) this.voice(m.leadWave, m.root * 4 * 2 ** (note / 12), t, spb * (m.major ? 2.5 : m.arp === 1 ? 1.1 : 1.4), (m.major ? 0.11 : 0.06) * Math.min(1, m.lead + 0.3), this.music, { cutoff: m.bright * 2, cutoffTo: 500, q: 6, detune: m.detune || 0 });
     }
     if ((m.pad || this.highPad > 0) && i % 32 === 0) {
-      const chord = [[0, 4, 7], [5, 9, 12], [7, 11, 14], [0, 4, 9]][bar % 8 >> 1];
-      const gain = m.pad ? 0.09 : 0.055 * this.highPad;                 // the Come-up's pad sits under the zone's music
+      // chords in the track's own key: I IV V vi for the major moods, I bII iv I for the Goa scale (the pad used to play
+      // the major ones over every track, a second song in another key under the boss music)
+      const chord = (m.major ? [[0, 4, 7], [5, 9, 12], [7, 11, 14], [0, 4, 9]] : [[0, 4, 7], [1, 5, 8], [5, 8, 12], [0, 4, 7]])[bar % 8 >> 1];
+      const gain = m.pad ? 0.09 : 0.035 * this.highPad;                 // the Come-up's pad sits under the zone's music, below the lead
       for (const n of chord) this.voice('triangle', m.root * 2 * 2 ** (n / 12), t, spb * 34, gain, this.music, { attack: spb * 6 });
     }
   }

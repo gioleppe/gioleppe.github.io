@@ -31,6 +31,10 @@ function drawMarker(g, mark, x, y) {
 const TS = 16, STEP = 0.15;   // a tile at an NPC's walking pace
 // your own steps: a walk, or a run while B is held (not afloat on the flamingo)
 export const WALK = 0.18, RUN = 0.09;
+export const ASTRAL_IN = 1.4, ASTRAL_OUT = 0.8;
+// sleeping until a set at a Chai Tent: fade out, the night goes by on a clock, fade in; then, if the set is right here,
+// the camera goes over to look at the crowd and the stage, and comes back
+export const SLEEP_OUT = 0.6, SLEEP_NIGHT = 1.8, SLEEP_IN = 0.7, PEEK_GO = 0.9, PEEK_HOLD = 1.6, PEEK_BACK = 0.8;   // Banyan's astral body: floating down, and gone in a point of light
 // moving between areas: the old one goes out, then the new one comes in (seconds)
 export const T_OUT = 0.22, T_IN = 0.3;
 
@@ -173,6 +177,10 @@ export const overworldView = {
     else if (e.type === 'BUMP') { this.bumpT = 0.18; game.audio?.sfx('bump'); }
     else if (e.type === 'PLAYER_PLACED') this.anim = null;
     if (e.type === 'UNSTUCK') this.startTrans(game, 'iris');
+    if (e.type === 'CLOCK_SET' && e.setId) this.sleep = { t: 0, from: e.from ?? e.clock, to: e.clock, setId: e.setId, here: !!e.here };
+    // an astral visitor (Banyan's projection, six wristbands): floats down out of the sky, and folds into a point of light when they go
+    if (e.type === 'VISITOR' && e.fx === 'astral') this.astral = e.sprite ? { t: 0, out: false } : { t: 0, out: true, sprite: this.astral?.sprite || 'banyan', x: e.x, y: e.y };
+    if (e.type === 'VISITOR' && e.fx === 'astral' && e.sprite) this.astral.sprite = e.sprite;
     else if (e.type === 'BOSS_ARRIVAL') {
       // the music drops, the crowd turns to look, the camera slides over to the boss; then their cutscene
       this.arrival = { t: 0, x: e.x, y: e.y };
@@ -180,7 +188,7 @@ export const overworldView = {
       highWorld.crowd = { start: this.t, end: this.t + ARRIVAL };
     } else if (e.type === 'BATTLE_END' && e.boss && e.result === 'WON') { this.cheer = 3; game.audio?.sfx('cheer'); }                      // set down somewhere else (coming down off the stairs of light)
     else if (e.type === 'FX' && e.fx === 'rainbow_burst') highWorld.burst(game, e);
-    else if (e.type === 'ZONE_CHANGED') { highWorld.reset(); this.anim = null; this.startTrans(game, this.transKind(game, e)); this.banner = e.name; this.bannerT = 3.2; this.npcDir = {}; this.npcAnim = {}; this.leaving = []; this.hint = routeHint(game.data, game.engine.state)?.text || null; }
+    else if (e.type === 'ZONE_CHANGED') { highWorld.reset(); this.anim = null; this.startTrans(game, this.transKind(game, e)); this.banner = e.name; this.bannerT = 3.2; this.npcDir = {}; this.npcAnim = {}; this.leaving = []; this.astral = null; this.peek = null; this.hint = routeHint(game.data, game.engine.state)?.text || null; }
     else if (e.type === 'EYE_CONTACT') { this.alert = { x: e.x, y: e.y, t: 0.8 }; }
     else if (e.type === 'NPC_FACE') this.npcDir[e.npcId] = e.dir;
     else if (e.type === 'NPC_WALK_OFF') (this.leaving ||= []).push({ id: e.npcId, sprite: e.sprite, path: e.path, t: 0 });   // beaten, they walk away
@@ -191,6 +199,13 @@ export const overworldView = {
     this.t += dt;
     highWorld.update(this, game, dt);
     if (this.arrival && (this.arrival.t += dt) >= ARRIVAL) this.arrival = null;
+    if (this.sleep && (this.sleep.t += dt) >= SLEEP_OUT + SLEEP_NIGHT + SLEEP_IN) {
+      const z = this.sleep.here && this.stageSpot(game, this.sleep.setId);
+      this.peek = z && !game.settings.reducedMotion ? { t: 0, x: z[0], y: z[1] } : null;
+      this.sleep = null;
+    }
+    if (this.peek && (this.peek.t += dt) >= PEEK_GO + PEEK_HOLD + PEEK_BACK) this.peek = null;
+    if (this.astral && !this.changing() && (this.astral.t += dt) >= (this.astral.out ? ASTRAL_OUT : 9e9)) this.astral = null;   // after the way in
     const lw = this.liftWanted(game);
     this.lift = game.settings.reducedMotion || Math.abs(lw - (this.lift || 0)) < 0.5 ? lw : (this.lift || 0) + (lw - (this.lift || 0)) * Math.min(1, dt * 10);
     if (this.cheer > 0) this.cheer -= dt;
@@ -225,7 +240,7 @@ export const overworldView = {
     this.boredT = this.idleT > 0 ? (this.boredT || 0) + dt : 0;
     const bored = game.data.rules.boredom?.seconds;
     if (bored && this.boredT >= bored) { this.boredT = 0; game.send({ type: 'BORED_LICK' }); }
-    if (s.mode !== 'OVERWORLD' || this.anim || this.changing() || game.busy()) return;
+    if (s.mode !== 'OVERWORLD' || this.anim || this.changing() || this.seeingOff(game) || game.busy()) return;
     if (input.pressed('a') || input.anyTap()) return game.send({ type: 'INTERACT_TILE' });
     if (input.pressed('start')) return game.send({ type: 'TOGGLE_MENU' });
     if (input.pressed('lick') && s.bag.glowing_blotter > 0) return game.send({ type: 'USE_ITEM', itemId: 'glowing_blotter' });   // L, Y on a pad, LICK on the phone
@@ -339,8 +354,46 @@ export const overworldView = {
       if (cx + half < W) g.fillRect(cx + half, y, W - cx - half, 4);
     }
   },
-  walking() { return Object.values(this.npcAnim || {}).some((a) => a.walkUp) || this.arriving() || this.changing(); },
+  walking() { return Object.values(this.npcAnim || {}).some((a) => a.walkUp) || this.arriving() || this.changing() || this.floatingIn() || this.sleeping(); },
+  sleeping() { return !!this.sleep || !!this.peek; },
+  /** the floor around a tile, if three of its four neighbours are the same floor (not the zone's ground), else null */
+  floorUnder(game, ctx, zone, x, y) {
+    const legend = game.data.legend, count = {};
+    // a tile a flag put down (Lakshmi in the courtyard): the floor that was there
+    if (zone.flagTiles?.some((f) => ctx.state.flags[f.flag] && f.tiles[`${x},${y}`])) {
+      const od = legend[zone.rows[y]?.[x]];
+      if (od && od.id === 0) { const sp = od.sprite.startsWith('@') ? zone[od.sprite.slice(1)] || zone.ground : od.sprite; if (sp !== zone.ground) return sp; }
+    }
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const ch = charAt(ctx, x + dx, y + dy, zone), def = ch !== null && legend[ch];
+      if (!def || def.id !== 0) continue;
+      const sp = def.sprite.startsWith('@') ? zone[def.sprite.slice(1)] || zone.ground : def.sprite;
+      if (sp && sp !== zone.ground) count[sp] = (count[sp] || 0) + 1;
+    }
+    const best = Object.entries(count).sort((a, b) => b[1] - a[1])[0];
+    return best && best[1] >= 3 ? best[0] : null;
+  },
+  /** where a set's crowd stands (the middle of its crowd rect, or of the dancefloor), in tiles */
+  stageSpot(game, setId) {
+    const set = (game.data.rules.timetable?.sets || []).find((x) => x.id === setId), zone = game.data.zones[game.engine.state.zoneId];
+    if (!set) return null;
+    if (set.crowd) return [(set.crowd[0] + set.crowd[2]) / 2, (set.crowd[1] + set.crowd[3]) / 2];
+    const floor = zone.rows.flatMap((r, y) => [...r].map((ch, x) => [x, y, ch])).filter(([, , ch]) => game.data.legend[ch]?.sprite === 'dancefloor');
+    return floor.length ? [floor.reduce((a, f) => a + f[0], 0) / floor.length, floor.reduce((a, f) => a + f[1], 0) / floor.length] : null;
+  },
+  floatingIn() { return !!this.astral && !this.astral.out && this.astral.t < ASTRAL_IN; },
   arriving() { return !!this.arrival; },
+  /** someone beaten walking off (the lost backpackers, Astra-Zero): you stand and watch until they are out of sight
+   *  (off the screen, or at the end of their walk), so you cannot walk off or bump into them on the way */
+  seeingOff(game) {
+    if (!this.leaving?.length) return false;
+    const { cx, cy } = this.camera(game, true);
+    return this.leaving.some((l) => {
+      const i = Math.min(l.path.length - 2, Math.floor(l.t)), k = l.t - i, [ax, ay] = l.path[i], [bx, by] = l.path[i + 1];
+      const x = (ax + (bx - ax) * k) * TS - cx, y = (ay + (by - ay) * k) * TS - cy;
+      return x > -TS && x < W && y > -TS && y < H + 10;
+    });
+  },
 
   camera(game, flat = false) {
     const s = game.engine.state, zone = game.data.zones[s.zoneId];
@@ -354,6 +407,10 @@ export const overworldView = {
     if (this.arrival) {
       const k = Math.min(1, this.arrival.t / 0.7), e = k * k * (3 - 2 * k);
       fx = px + (this.arrival.x * TS - px) * e; fy = py + (this.arrival.y * TS - py) * e;
+    }
+    if (this.peek) {                                         // waking to a set: over to the stage, a look, and back
+      const p = this.peek, k = p.t < PEEK_GO ? p.t / PEEK_GO : p.t < PEEK_GO + PEEK_HOLD ? 1 : Math.max(0, 1 - (p.t - PEEK_GO - PEEK_HOLD) / PEEK_BACK), e = k * k * (3 - 2 * k);
+      fx = px + (p.x * TS - px) * e; fy = py + (p.y * TS - py) * e;
     }
     const cx = zw <= W ? -Math.floor((W - zw) / 2) : Math.max(0, Math.min(zw - W, Math.round(fx + 8 - W / 2)));
     const cy = (zh <= H ? -Math.floor((H - zh) / 2) : Math.max(0, Math.min(zh - H, Math.round(fy + 8 - H / 2)))) + (flat ? 0 : Math.round(this.lift || 0));
@@ -372,6 +429,26 @@ export const overworldView = {
     const i = game.atlas.tiles[name];
     if (i === undefined) return;
     g.drawImage(game.images.tiles, (i % game.atlas.tileCols) * TS, Math.floor(i / game.atlas.tileCols) * TS, TS, TS, x, y, TS, TS);
+  },
+
+  /** an astral body: see-through and violet, bobbing a little above the ground; it floats down out of the sky when it
+   *  comes, and shrinks into a point of light when it goes (reduced motion: it simply appears and goes) */
+  astralBody(game, g, sprite, tx, ty, cx, cy, dir) {
+    const A = this.astral, still = game.settings.reducedMotion, t = this.t;
+    const x = tx * TS - cx, ground = ty * TS - cy - 10;
+    if (A?.out) {                                              // folding into a point of light
+      const k = still ? 1 : Math.min(1, A.t / ASTRAL_OUT), r = Math.max(0, 7 * (1 - k)), px = x + 8, py = ground + 10 - k * 18;
+      g.globalAlpha = 0.7 * (1 - k * 0.6); g.fillStyle = '#C86BFF'; g.beginPath(); g.ellipse(px, py, r + 2, r * 1.4 + 2, 0, 0, 7); g.fill();
+      g.globalAlpha = 1 - k * 0.5; g.fillStyle = '#FFFFFF'; g.fillRect(Math.round(px) - 1, Math.round(py) - 1, 2, 2); g.globalAlpha = 1;
+      return;
+    }
+    const k = still || !A ? 1 : Math.min(1, A.t / ASTRAL_IN), ease = 1 - (1 - k) * (1 - k);
+    const y = Math.round(ground - 3 - (1 - ease) * 120 + (still ? 0 : Math.sin(t * 2.4) * 1.5));
+    g.globalAlpha = 0.18; g.fillStyle = '#C86BFF'; g.beginPath(); g.ellipse(x + 8, y + 12, 11, 14, 0, 0, 7); g.fill();   // the glow
+    g.globalAlpha = 0.12 * ease; g.fillStyle = '#5FF4FF'; g.fillRect(x + 4, ty * TS - cy + 12, 8, 2);                   // a faint light on the ground
+    g.globalAlpha = 0.55 + (still ? 0 : 0.08 * Math.sin(t * 7)); this.char(game, g, sprite, dir, 0, x, y);
+    g.globalAlpha = 1;
+    if (!still && k < 1) for (let i = 0; i < 4; i++) { g.fillStyle = i % 2 ? '#5FF4FF' : '#C86BFF'; g.fillRect(x + 2 + ((i * 5 + Math.floor(t * 20)) % 13), y - 6 - i * 7, 1, 3); }   // a trail of sparks above
   },
 
   char(game, g, sprite, dir, step, x, y) {
@@ -403,6 +480,9 @@ export const overworldView = {
         let sp = resolve(def.sprite);
         const dx = x * TS - cx, dy = y * TS - cy;
         this.tile(game, g, zone.ground, dx, dy);
+        // a thing standing on a floor (a shrine, a lamp, Lakshmi in the temple courtyard) gets that floor under it, not the
+        // zone's bare ground: the floor most of its neighbours are, when three of the four agree
+        if (def.id !== 0 && def.id !== 2) { const fl = this.floorUnder(game, ctx, zone, x, y); if (fl) this.tile(game, g, fl, dx, dy); }
         const ego = egoGone(game.data.rules, s.intox);
         if (def.egoFloor && ego && def.under) sp = resolve(def.under);                 // the sacred cow has walked off
         if (sp === 'water' && wave) sp = 'water_b';
@@ -466,7 +546,7 @@ export const overworldView = {
         ents.push({ y: y - 0.02, dancer: true, x, ty: y, pose: set.pose === 'back' ? game.atlas.dancers?.back : set.pose === 'still' ? game.atlas.dancers?.still : null });
       }
     }
-    for (const n of zone.npcs || []) if (npcVisible(ctx, n) && !(s.visitor && n.sprite === s.visitor)) {   // the visitor came over: not in two places
+    for (const n of zone.npcs || []) if (npcVisible(ctx, n) && !n.invisible && !(s.visitor && s.visitorFx !== 'astral' && n.sprite === s.visitor)) {   // the visitor came over: not in two places (an astral body can be)
       const p = npcPos(ctx, n, zone), a = this.npcAnim?.[n.id];
       const fx = a ? a.from[0] + (a.to[0] - a.from[0]) * a.t : p.x, fy = a ? a.from[1] + (a.to[1] - a.from[1]) * a.t : p.y;
       ents.push({ y: fy, npc: n, nx: fx, ny: fy, walking: !!a });
@@ -480,7 +560,9 @@ export const overworldView = {
     for (const p of zone.pickups || []) if (!s.picked[p.id] && (!p.hidden || flash) && !(p.minIntox > s.intox)) ents.push({ y: p.y, pickup: p });
     ents.push({ y: py / TS, player: true });
     // someone who came to find you (Banyan with the timetable) stands beside you while they talk
-    if (s.visitor) { const vx = s.player.x + (s.player.x > 1 ? -1 : 1); ents.push({ y: s.player.y, draw: () => { g.fillStyle = 'rgba(20,10,40,0.27)'; g.fillRect(vx * TS - cx + 4, s.player.y * TS - cy + 11, 8, 4); this.char(game, g, s.visitor, vx < s.player.x ? 'RIGHT' : 'LEFT', 0, vx * TS - cx, s.player.y * TS - cy - 10); } }); }
+    if (s.visitor && s.visitorFx === 'astral') { const vx = s.player.x + (s.player.x > 1 ? -1 : 1); ents.push({ y: s.player.y + 0.5, draw: () => this.astralBody(game, g, s.visitor, vx, s.player.y, cx, cy, vx < s.player.x ? 'RIGHT' : 'LEFT') }); }
+    else if (s.visitor) { const vx = s.player.x + (s.player.x > 1 ? -1 : 1); ents.push({ y: s.player.y, draw: () => { g.fillStyle = 'rgba(20,10,40,0.27)'; g.fillRect(vx * TS - cx + 4, s.player.y * TS - cy + 11, 8, 4); this.char(game, g, s.visitor, vx < s.player.x ? 'RIGHT' : 'LEFT', 0, vx * TS - cx, s.player.y * TS - cy - 10); } }); }
+    if (!s.visitor && this.astral?.out) { const vx = this.astral.x + (this.astral.x > 1 ? -1 : 1); ents.push({ y: this.astral.y + 0.5, draw: () => this.astralBody(game, g, this.astral.sprite, vx, this.astral.y, cx, cy, 'DOWN') }); }
     ents.sort((a, b) => a.y - b.y);
     const shadow = (x, y) => { g.fillStyle = 'rgba(20,10,40,0.27)'; g.fillRect(x + 3, y + 21, 10, 3); g.fillRect(x + 4, y + 20, 8, 5); };
     for (const e of ents) {
@@ -608,5 +690,22 @@ export const overworldView = {
       drawText(g, name, W - w + 8, H - 14, { color: C.cream });
     }
     this.drawTrans(game, g, px - cx, py - cy);
+    this.drawSleep(game, g);
+  },
+
+  /** the night going by: dark, a clock running from when you lay down to the set, a few Zs */
+  drawSleep(game, g) {
+    const z = this.sleep;
+    if (!z) return;
+    const t = z.t, a = t < SLEEP_OUT ? t / SLEEP_OUT : t < SLEEP_OUT + SLEEP_NIGHT ? 1 : Math.max(0, 1 - (t - SLEEP_OUT - SLEEP_NIGHT) / SLEEP_IN);
+    g.globalAlpha = a; g.fillStyle = '#0B0314'; g.fillRect(0, 0, W, H); g.globalAlpha = 1;
+    if (t < SLEEP_OUT * 0.6 || t > SLEEP_OUT + SLEEP_NIGHT + SLEEP_IN * 0.3) return;
+    const k = Math.max(0, Math.min(1, (t - SLEEP_OUT) / SLEEP_NIGHT)), span = ((z.to - z.from) % 1440 + 1440) % 1440;
+    const m = Math.floor(z.from + span * (k * k * (3 - 2 * k))), hh = Math.floor((((m % 1440) + 1440) % 1440) / 60), mm = (((m % 1440) + 1440) % 1440) % 60;
+    const clock = `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
+    drawText(g, clock, W / 2, H / 2 - 8, { color: C.cream, align: 'center' });
+    const set = (game.data.rules.timetable?.sets || []).find((x) => x.id === z.setId);
+    if (set) drawText(g, `until the ${set.name}`, W / 2, H / 2 + 6, { color: '#9A8AB8', align: 'center' });
+    if (!game.settings.reducedMotion) for (let i = 0; i < 3; i++) { const p = (this.t * 0.6 + i / 3) % 1; g.globalAlpha = 1 - p; drawText(g, 'z', W / 2 + 24 + i * 6 + p * 10, H / 2 - 18 - p * 22, { color: '#C86BFF' }); g.globalAlpha = 1; }
   },
 };

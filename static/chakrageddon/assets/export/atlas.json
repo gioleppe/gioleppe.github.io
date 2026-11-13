@@ -244,6 +244,11 @@
   "player_sombrero": "char_player_sombrero.png",
   "wook": "char_wook.png",
   "banyan_young": "char_banyan_young.png",
+  "tarot": "char_tarot.png",
+  "brit": "char_brit.png",
+  "brit_f": "char_brit_f.png",
+  "brit_blue": "char_brit_blue.png",
+  "brit_f_blue": "char_brit_f_blue.png",
   "lifeguard": "char_lifeguard.png"
  },
  "creatures": {
@@ -348,6 +353,11 @@
   "player_sombrero": "portrait_player_sombrero.png",
   "wook": "portrait_wook.png",
   "banyan_young": "portrait_banyan_young.png",
+  "tarot": "portrait_tarot.png",
+  "brit": "portrait_brit.png",
+  "brit_f": "portrait_brit_f.png",
+  "brit_blue": "portrait_brit_blue.png",
+  "brit_f_blue": "portrait_brit_f_blue.png",
   "lifeguard": "portrait_lifeguard.png"
  }
 }
