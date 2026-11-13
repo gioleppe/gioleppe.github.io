@@ -9,6 +9,7 @@ import { questLog, questMarker } from '../core/quests.js';
 import { highOnly } from '../core/intox.js';
 import { whereLines } from '../core/where.js';
 import { highWorld } from './highWorld.js';
+import { drawBand } from './bandArt.js';
 import { moveFacts, typeFacts, TERMS, drawNote, growthWords } from './moveInfo.js';
 import { sets as allSets, liveSet, minutesUntil, clockText } from '../core/timetable.js';
 
@@ -659,19 +660,27 @@ export const menuView = {
     if (active && (game.input.pressed('b') || game.input.pressed('left'))) back();
   },
 
+  /** the Wristbands of Enlightenment: the list on the left; the one under the cursor turning in fake 3D on the right, who
+   *  gave it, what it is like and what it lets you do (one still to earn: a silhouette, and whose it will be) */
   bands(game, g, X, Y, CW, active, back) {
-    const s = game.engine.state, d = game.data, input = game.input;
+    const s = game.engine.state, d = game.data, input = game.input, cur = this.cur;
     const all = Object.keys(d.rules.wristbands);
-    drawText(g, `Wristbands of Enlightenment ${s.wristbands.length}/8`, X, Y, { color: C.purple });
-    all.forEach((id, i) => {
-      const has = s.wristbands.includes(id), wb = d.rules.wristbands[id], y = Y + 14 + i * 14;
-      g.fillStyle = C.ink; g.fillRect(X, y, 20, 8); g.fillStyle = has ? BAND_COLORS[i] : '#C8C0B0'; g.fillRect(X + 1, y + 1, 18, 6);
-      if (has) { g.fillStyle = 'rgba(0,0,0,0.25)'; for (let k = 2; k < 18; k += 4) g.fillRect(X + k, y + 1, 1, 6); }
-      drawText(g, has ? wb.name : `??? (${wb.boss})`, X + 26, y, { color: has ? C.ink : C.grey });
-    });
-    if (active && (input.pressed('b') || input.pressed('left') || input.pressed('a') || input.anyTap())) back();
+    drawText(g, `Wristbands ${s.wristbands.length}/8`, X, Y, { color: C.purple });
+    const items = all.map((id, i) => { const has = s.wristbands.includes(id), wb = d.rules.wristbands[id]; return { label: has ? wb.short || wb.name : '???', color: has ? C.ink : C.grey, i }; });
+    const r = list(game, g, items, X - 4, Y + 12, 92, cur.band || 0, { rowH: 13, passive: !active, oneTap: true });
+    cur.band = r.cursor;
+    all.forEach((id, i) => { const has = s.wristbands.includes(id); g.fillStyle = has ? BAND_COLORS[i] : '#C8C0B0'; g.fillRect(X + 87, Y + 15 + i * 13, 3, 6); });   // a dot of its colour
+    const id = all[cur.band], wb = d.rules.wristbands[id], has = s.wristbands.includes(id);
+    const px = X + 96, PW = CW - 96, still = game.settings.reducedMotion;
+    drawBand(g, id, px + PW / 2, Y + 27, this.t, { owned: has, still, R: 34 });
+    let y = Y + 52;
+    const say = (text, color, x = px, w = PW, last = Y + 117) => { for (const ln of wrap(text, w)) { if (y > last) return; drawText(g, ln, x, y, { color }); y += 9; } y += 2; };
+    if (has) {
+      say(`From ${wb.boss}.`, C.purple); say(wb.desc || '', C.chai);
+      y = Math.max(Y + 121, y + 1); say(wb.note, '#0E7C6A', X, CW, Y + 146);   // what it lets you do: across the whole page, under the list
+    } else say(`Beat ${wb.boss} for this one.`, C.grey);
+    if (active && (input.pressed('b') || input.pressed('left'))) back();
   },
-
 };
 
 /** a small eye: an Astral that only comes out when you are high (on the map, and in the Journal) */
