@@ -1,5 +1,6 @@
 // Flea market stall: buy and sell.
 import { W, H } from './CanvasRenderer.js';
+import { soldOut } from '../core/items.js';
 import { drawText, wrap, panel, list, C } from './ui.js';
 
 export const shopView = {
@@ -23,11 +24,18 @@ export const shopView = {
       drawText(g, t, x + 23, 36, { color: i === this.tab ? C.white : C.chai, align: 'center' });
     });
     if (input.pressed('left')) { this.tab = Math.max(0, this.tab - 1); this.cursor = 0; }
-    if (input.pressed('right')) { this.tab = Math.min(1, this.tab + 1); this.cursor = 0; }
+    if (input.pressed('right')) { this.tab = Math.min(2, this.tab + 1); this.cursor = 0; }
+    if (this.tab === 2) {                          // Leave: A (or a tap) walks out, left goes back to the stock
+      drawText(g, 'Leave the shop?', 14, 54, { color: C.ink });
+      drawText(g, 'A: leave   Left: back to the stall', 14, 68, { color: C.grey });
+      if (input.pressed('a') || input.pressed('b') || input.pressed('start') || input.anyTap()) game.send({ type: 'CLOSE_SHOP' });
+      return;
+    }
     const ids = this.tab === 0 ? shop.items : Object.keys(s.bag).filter((id) => s.bag[id] > 0 && d.items[id].price > 0 && d.items[id].category !== 'KEY');
     if (!ids.length) drawText(g, 'Nothing to sell.', 14, 54, { color: C.grey });
     const items = ids.map((id) => {
       const it = d.items[id], price = this.tab === 0 ? it.price : Math.floor(it.price / 2);
+      if (this.tab === 0 && soldOut(s, it)) return { label: it.name, right: 'Sold out', disabled: true };
       return { label: it.name, right: `${this.tab === 1 ? `x${s.bag[id]}  ` : ''}Rs ${price}`, disabled: this.tab === 0 && s.rupees < price };
     });
     const r = list(game, g, items, 10, 50, 190, this.cursor, { rowH: 13, maxRows: 8 });

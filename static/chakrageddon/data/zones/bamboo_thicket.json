@@ -75,7 +75,12 @@
       "sprite": "wook",
       "dir": "RIGHT",
       "trainer": "thicket_wook",
-      "sight": 5
+      "sight": 5,
+      "look": [
+        "RIGHT",
+        "UP",
+        "DOWN"
+      ]
     },
     {
       "id": "thicket_spinner",
@@ -84,7 +89,11 @@
       "sprite": "firespinner",
       "dir": "LEFT",
       "trainer": "thicket_spinner",
-      "sight": 5
+      "sight": 5,
+      "look": [
+        "LEFT",
+        "UP"
+      ]
     },
     {
       "id": "mantequilla",

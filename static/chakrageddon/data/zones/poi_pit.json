@@ -2,6 +2,7 @@
   "zoneId": "poi_pit",
   "name": "The Poi Pit",
   "paletteId": "ANJUNA_DUST",
+  "bossGate": "beat_diabolo",
   "baseBpm": 145,
   "ground": "sand",
   "ground2": "path",
@@ -83,7 +84,12 @@
       "dir": "RIGHT",
       "trainer": "pit_raver",
       "sight": 10,
-      "dance": true
+      "dance": true,
+      "look": [
+        "RIGHT",
+        "DOWN",
+        "UP"
+      ]
     },
     {
       "id": "pit_wook",
@@ -93,7 +99,12 @@
       "dir": "LEFT",
       "trainer": "pit_wook",
       "sight": 10,
-      "dance": true
+      "dance": true,
+      "look": [
+        "LEFT",
+        "DOWN",
+        "UP"
+      ]
     },
     {
       "id": "pit_vendor",

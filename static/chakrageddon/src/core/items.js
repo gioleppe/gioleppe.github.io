@@ -56,3 +56,9 @@ export function applyItem(ctx, item, mon, opts = {}) {
   const what = done.includes('status') && done.length === 1 ? 'is feeling normal again' : done.includes('serotonin') ? 'perks up' : 'rehydrates';
   return { ok: true, text: `${name} ${what}.${done.includes('sober') ? ' You have a sip too.' : ''}` };
 }
+
+/** clothes and things to hold are one of a kind: while you own one (in the bag, or held by any of your Astrals) the shop
+ *  has none left. Sell it back, or lose it on a whiteout, and it is in stock again. */
+export const ONE_OF_A_KIND = ['OUTFIT', 'HELD'];
+export const soldOut = (state, item) => ONE_OF_A_KIND.includes(item?.category)
+  && (state.bag[item.id] > 0 || [...state.party, ...state.box].some((m) => m.held === item.id));

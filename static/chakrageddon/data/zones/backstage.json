@@ -2,6 +2,7 @@
   "zoneId": "backstage",
   "name": "Backstage Container",
   "paletteId": "BAD_TRIP",
+  "bossGate": "beat_promoter",
   "baseBpm": 152,
   "ground": "concrete",
   "ground2": "path",
@@ -97,10 +98,10 @@
     },
     {
       "id": "backstage_guard1",
-      "x": 4,
-      "y": 3,
+      "x": 2,
+      "y": 5,
       "sprite": "guard",
-      "dir": "RIGHT",
+      "dir": "DOWN",
       "trainer": "backstage_guard1",
       "sight": 6
     },

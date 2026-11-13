@@ -2,6 +2,7 @@
   "zoneId": "omelette_stall",
   "name": "The 5 AM Omelette Stall",
   "paletteId": "CHAI_TENT_WARMTH",
+  "bossGate": "beat_raju",
   "baseBpm": 124,
   "ground": "sand",
   "ground2": "path",
@@ -102,7 +103,11 @@
       "trainer": "chad2_g",
       "sight": 3,
       "showIf": "starter_ganjapod",
-      "hideIf": "beat_chad2"
+      "hideIf": "beat_chad2",
+      "leave": [
+        0,
+        6
+      ]
     },
     {
       "id": "chad2_j",
@@ -113,7 +118,11 @@
       "trainer": "chad2_j",
       "sight": 3,
       "showIf": "starter_jawling",
-      "hideIf": "beat_chad2"
+      "hideIf": "beat_chad2",
+      "leave": [
+        0,
+        6
+      ]
     },
     {
       "id": "chad2_b",
@@ -124,7 +133,11 @@
       "trainer": "chad2_b",
       "sight": 3,
       "showIf": "starter_blottertot",
-      "hideIf": "beat_chad2"
+      "hideIf": "beat_chad2",
+      "leave": [
+        0,
+        6
+      ]
     },
     {
       "id": "stall_wook",
@@ -133,7 +146,12 @@
       "sprite": "wook",
       "dir": "LEFT",
       "trainer": "stall_wook",
-      "sight": 4
+      "sight": 4,
+      "look": [
+        "LEFT",
+        "RIGHT",
+        "DOWN"
+      ]
     },
     {
       "id": "stall_raver",
@@ -142,7 +160,12 @@
       "sprite": "raver",
       "dir": "LEFT",
       "trainer": "stall_raver",
-      "sight": 2
+      "sight": 4,
+      "look": [
+        "LEFT",
+        "DOWN",
+        "RIGHT"
+      ]
     },
     {
       "id": "stall_sign",

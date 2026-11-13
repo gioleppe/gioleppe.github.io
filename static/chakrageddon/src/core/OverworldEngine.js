@@ -2,7 +2,7 @@
 // Pure functions over ctx = { data, state, rng, emit }.
 import { check } from './quests.js';
 import { bandOf, bandIndex, egoGone } from './intox.js';
-import { runScript, startScript } from './ScriptEngine.js';
+import { runScript, startScript, bossGate, gauntletUnderWay } from './ScriptEngine.js';
 import { liveSet, setOn } from './timetable.js';
 
 export const DIRS = { UP: [0, -1], DOWN: [0, 1], LEFT: [-1, 0], RIGHT: [1, 0] };
@@ -38,6 +38,12 @@ export function npcVisible(ctx, npc) {
   if (npc.hideWhen && check(ctx.state, npc.hideWhen, ctx.data)) return false;
   if (npc.maxIntox !== undefined && ctx.state.intox > npc.maxIntox) return false;
   return true;
+}
+/** which way an NPC faces: a trainer with look: [dirs] turns to the next one every lookEvery steps you take (default 4),
+ *  so you cannot just plan a route around their line; beaten, they settle back to dir */
+export function facing(ctx, npc) {
+  if (!npc.look?.length || (npc.trainer && ctx.state.defeated[npc.trainer])) return npc.dir || 'DOWN';
+  return npc.look[Math.floor((ctx.state.steps || 0) / (npc.lookEvery || 4)) % npc.look.length];
 }
 /** where an NPC is now: wanderers keep their position in state.npcPos, everyone else stays put */
 export function npcPos(ctx, npc, zone = zoneOf(ctx)) {
@@ -124,8 +130,8 @@ export function settle(ctx) {
   for (const [zid, pos] of Object.entries(s.npcPos || {})) for (const [id, [x, y]] of Object.entries(pos)) {
     const n = (ctx.data.zones[zid]?.npcs || []).find((m) => m.id === id);
     if (!n || n.wander) continue;
-    const [dx, dy] = DIRS[n.dir || 'DOWN'], d = dx ? (x - n.x) * dx : (y - n.y) * dy;
-    if (!(d >= 0 && d <= (n.sight ?? 4) && x === n.x + dx * d && y === n.y + dy * d)) delete pos[id];
+    const onLine = [n.dir || 'DOWN', ...(n.look || [])].some((dir) => { const [dx, dy] = DIRS[dir], d = dx ? (x - n.x) * dx : (y - n.y) * dy; return d >= 0 && d <= (n.sight ?? 4) && x === n.x + dx * d && y === n.y + dy * d; });
+    if (!onLine) delete pos[id];
   }
   const ok = (x, y) => walkable(ctx, x, y, zone) && !entityAt(ctx, x, y, zone) && !(zone.warps || []).some((w) => w.x === x && w.y === y);
   if (ok(p.x, p.y)) return false;
@@ -191,7 +197,7 @@ export function step(ctx, dir) {
   const enc = zone.encounters;
   if (enc && s.party.length && (id === T.ENCOUNTER || (id === T.WATER && enc.water)) && s.repel <= 0) {
     const band = bandOf(ctx.data.rules, s.intox);
-    if (ctx.rng.chance(Math.min(0.9, enc.encounterRate * (band.encounter ?? 1)))) {
+    if (encounterDue(ctx, enc.encounterRate * (band.encounter ?? 1))) {
       const base = (id === T.WATER && enc.water) || (isNight(s) && enc.nightTable) || enc.table;
       // some Astrals only show themselves to people who are high enough (minIntox)
       // ...some only at night, and some only while their set is playing (set: id, the festival timetable)
@@ -207,6 +213,20 @@ export function step(ctx, dir) {
       ctx.hooks.startWildBattle?.(ctx, pick.speciesId, level);
     }
   }
+}
+/** Wild encounters fill a meter instead of rolling a fresh chance every step: each step in the grass (or on water) adds the
+ *  zone's rate, times the band's multiplier, and the encounter comes when the meter passes a target drawn around 1 (rules:
+ *  encounters.spread). The average gap stays 1 / rate steps, but there is no fight on the first step out of the last one
+ *  (encounters.minSteps) and no long walk with nothing. */
+function encounterDue(ctx, rate) {
+  const s = ctx.state, R = ctx.data.rules.encounters || {};
+  if (!(rate > 0)) return false;
+  if (s.encGap == null) { const spread = R.spread ?? 0.4; s.encGap = 1 - spread + 2 * spread * ctx.rng.next(); }
+  s.encMeter = (s.encMeter || 0) + rate;
+  s.encSteps = (s.encSteps || 0) + 1;
+  if (s.encMeter < s.encGap || s.encSteps < (R.minSteps ?? 3)) return false;
+  s.encMeter = 0; s.encSteps = 0; s.encGap = null;
+  return true;
 }
 /** small deterministic hash, so wandering does not touch the game's random numbers */
 function hash(str) { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return h; }
@@ -279,7 +299,7 @@ export function checkTrainerSight(ctx, zone) {
   if (!s.party.length) return false;
   for (const npc of zone.npcs || []) {
     if (!npc.trainer || s.defeated[npc.trainer] || !npcVisible(ctx, npc) || npc.sight === 0) continue;
-    const [dx, dy] = DIRS[npc.dir || 'DOWN'];
+    const dir = facing(ctx, npc), [dx, dy] = DIRS[dir];
     for (let d = 1; d <= sightRange(ctx, npc); d++) {
       const x = npc.x + dx * d, y = npc.y + dy * d;
       if (x === s.player.x && y === s.player.y) {
@@ -288,14 +308,14 @@ export function checkTrainerSight(ctx, zone) {
         // they walk right up to you before they start talking
         if (d > 1) {
           const ax = npc.x + dx * (d - 1), ay = npc.y + dy * (d - 1);
-          ((s.npcPos ||= {})[zone.zoneId] ||= {})[npc.id] = [ax, ay, npc.dir || 'DOWN'];
-          ctx.emit({ type: 'NPC_MOVED', npcId: npc.id, from: [npc.x, npc.y], to: [ax, ay], dir: npc.dir || 'DOWN', walkUp: true });
+          ((s.npcPos ||= {})[zone.zoneId] ||= {})[npc.id] = [ax, ay, dir];
+          ctx.emit({ type: 'NPC_MOVED', npcId: npc.id, from: [npc.x, npc.y], to: [ax, ay], dir, walkUp: true });
         }
         startTrainerFlow(ctx, npc, 'EYE_CONTACT_CUTSCENE');
         return true;
       }
       const id = logicAt(ctx, x, y, zone);
-      if (!(id === T.FLOOR || id === T.ENCOUNTER) || entityAt(ctx, x, y, zone)) break;
+      if (!(id === T.FLOOR || id === T.ENCOUNTER || id === T.WATER) || entityAt(ctx, x, y, zone)) break;   // they see across water too
     }
   }
   return false;
@@ -319,8 +339,29 @@ export function startTrainerFlow(ctx, npc, mode = 'DIALOGUE') {
   if (t.wristband) steps.push({ scene: 'wristband', who: t.wristband, by: t.sprite }, { wristband: t.wristband }, { scene: null });   // a short ceremony
   if (t.gives) steps.push({ give: t.gives, n: 1 });
   if (t.setFlag) steps.push({ set: t.setFlag });
+  if (npc.leave) steps.push({ walkOff: npc.id });                    // beaten, they walk off (Astra-Zero, the second time)
   if (t.then) steps.push({ run: t.then });
   startScript(ctx, steps, mode);
+}
+
+/** the way an NPC walks to a tile: the shortest walkable path, around you and everyone else; [] if there is none */
+export function pathFor(ctx, npc, to, zone = zoneOf(ctx)) {
+  const from = npcPos(ctx, npc, zone), key = (x, y) => `${x},${y}`, s = ctx.state;
+  const prev = new Map([[key(from.x, from.y), null]]), q = [[from.x, from.y]];
+  while (q.length) {
+    const [x, y] = q.shift();
+    if (x === to[0] && y === to[1]) break;
+    for (const [dx, dy] of Object.values(DIRS)) {
+      const nx = x + dx, ny = y + dy, k = key(nx, ny);
+      if (prev.has(k) || (nx === s.player.x && ny === s.player.y)) continue;
+      const ent = entityAt(ctx, nx, ny, zone);
+      if (!(nx === to[0] && ny === to[1]) && (!walkable(ctx, nx, ny, zone) || (ent && ent.npc !== npc))) continue;
+      prev.set(k, [x, y]); q.push([nx, ny]);
+    }
+  }
+  if (!prev.has(key(to[0], to[1]))) return [];
+  const path = []; for (let p = to; p; p = prev.get(key(p[0], p[1]))) path.unshift(p);
+  return path;
 }
 
 /** a beaten trainer with { rematch, rematchBands, rematchFlag } offers a stronger rematch once you have progressed */
@@ -386,7 +427,12 @@ export function interact(ctx) {
     return startScript(ctx, [{ give: p.item, n: p.n || 1 }]);
   }
   const id = logicAt(ctx, x, y, zone);
-  if (id === T.CHAI) return startScript(ctx, ctx.data.dialogues.chai_tent || [{ heal: true }], 'CHAI_TENT_RECOVERY');
+  if (id === T.CHAI) {
+    const boss = bossGate(ctx, zone);      // the tent by a boss's stage will not patch you up for another go at them
+    if (boss) return startScript(ctx, (ctx.data.dialogues.chai_tent_closed || [{ t: 'Closed.' }]).map((x) => (x.t ? { ...x, t: x.t.replace('{boss}', boss) } : x)));
+    if (gauntletUnderWay(ctx, zone)) return startScript(ctx, ctx.data.dialogues.chai_tent_gauntlet || [{ t: 'Not now.' }]);   // halfway up the Four: finish first
+    return startScript(ctx, ctx.data.dialogues.chai_tent || [{ heal: true }], 'CHAI_TENT_RECOVERY');
+  }
   if (id === T.CORDON && cordonOpen(ctx, zone)) return;
   if (useTechnique(ctx, id, x, y, s.player.dir, zone)) return;
   if (HINTS[id] && !(TECH_FOR[id] && canUse(ctx, TECH_FOR[id]))) startScript(ctx, [{ t: (id === T.CORDON && zone.cordonText) || HINTS[id] }]);

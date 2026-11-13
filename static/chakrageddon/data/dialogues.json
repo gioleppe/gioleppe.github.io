@@ -44,7 +44,7 @@
     },
     {
       "s": "???",
-      "t": "There is a blotter in your fanny pack. Lick a corner and the festival opens up: rarer Astrals, bigger lessons. Harder hits, clumsier hands. Water brings you down."
+      "t": "There is a blotter in your fanny pack. Lick a corner (L, or LICK on a phone) and the festival opens up: rarer Astrals, bigger lessons. Harder hits, clumsier hands. Water brings you down."
     },
     {
       "s": "???",
@@ -544,7 +544,24 @@
   "chai_tent": [
     {
       "s": "Chai Mama",
-      "t": "Sit. Drink. Here is watermelon and a heavy blanket."
+      "t": "Sit, drink, sleep it off. Or see to the friends you left with me.",
+      "choice": [
+        "Rest",
+        "Check the stash",
+        "Leave"
+      ],
+      "goto": [
+        "rest",
+        "stash",
+        "up"
+      ]
+    },
+    {
+      "label": "rest"
+    },
+    {
+      "s": "Chai Mama",
+      "t": "Here is watermelon and a heavy blanket."
     },
     {
       "heal": true
@@ -576,7 +593,41 @@
       "restUntilSet": true
     },
     {
+      "end": true
+    },
+    {
+      "label": "stash"
+    },
+    {
+      "stash": true
+    },
+    {
       "label": "up"
+    }
+  ],
+  "chai_tent_closed": [
+    {
+      "s": "Chai Mama",
+      "t": "Not while {boss} is still on, beta. Everyone who walks in mid-set wants a blanket and a second go."
+    },
+    {
+      "s": "Chai Mama",
+      "t": "Win first. Then sit, and I will pour."
+    }
+  ],
+  "chai_tent_gauntlet": [
+    {
+      "s": "Chai Mama",
+      "t": "You started the climb, beta. The Four are waiting upstairs, and they do not wait warm."
+    },
+    {
+      "s": "Chai Mama",
+      "t": "You started. Finish, then sit, and I will pour."
+    }
+  ],
+  "shop_closed": [
+    {
+      "t": "But the shutters stay down while {boss} is on. House rule: nothing sold mid-set. Come back after."
     }
   ],
   "beach_vendor": [
@@ -886,7 +937,7 @@
   ],
   "sign_road": [
     {
-      "t": "CLOGGED DIRT ROAD. A sacred cow has been lying across it since Tuesday, and nobody is going to argue. Detours: west through the jungle, or east past the shrine. No lights. No refunds."
+      "t": "CLOGGED DIRT ROAD. A sacred cow has been lying across it since Tuesday, and nobody is going to argue. Detours: west through the jungle (one plank, mind the stream), or east through the shrine (one gate). No lights. No refunds."
     }
   ],
   "sign_ditch": [
@@ -1223,7 +1274,8 @@
       "set": "finished"
     },
     {
-      "heal": true
+      "heal": true,
+      "respawn": false
     },
     {
       "credits": true
@@ -1570,6 +1622,28 @@
       "label": "thanks"
     },
     {
+      "ifHas": "festival_poncho",
+      "goto": "thanks_kept"
+    },
+    {
+      "s": "Tourist",
+      "t": "Where is the poncho? Somebody walked off with it while you were out? Festival people."
+    },
+    {
+      "s": "Tourist",
+      "t": "Here. I bought two. I always buy two of everything. That is how I ended up with two exes."
+    },
+    {
+      "give": "festival_poncho",
+      "n": 1
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "thanks_kept"
+    },
+    {
       "s": "Tourist",
       "t": "I am never taking them off again. I am going to sleep in them."
     }
@@ -1584,7 +1658,8 @@
       "t": "Halfway up the temple and you look like a raisin. Drink. All of you."
     },
     {
-      "heal": true
+      "heal": true,
+      "respawn": false
     },
     {
       "set": "temple_water_used"
@@ -2095,6 +2170,28 @@
       "label": "after"
     },
     {
+      "ifHas": "crab_suit",
+      "goto": "after_kept"
+    },
+    {
+      "s": "Crab Raver",
+      "t": "The suit is gone? The tide takes things. So do people."
+    },
+    {
+      "s": "Crab Raver",
+      "t": "Hold still. I sewed a spare from the other lilo. The crabs insisted."
+    },
+    {
+      "give": "crab_suit",
+      "n": 1
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "after_kept"
+    },
+    {
       "s": "Crab Raver",
       "t": "Still hearing it? The second bass? Good. Once you hear it, you never stop."
     }
@@ -2421,6 +2518,28 @@
     },
     {
       "label": "after"
+    },
+    {
+      "ifHas": "sombrero",
+      "goto": "after_kept"
+    },
+    {
+      "s": "Mantequilla",
+      "t": "Your thombrero! Gone? Thomebody thtole it off your thleeping head? Ay, amigo."
+    },
+    {
+      "s": "Mantequilla",
+      "t": "Lucky for you, a man from Vicchio alwayth carrieth a thpare. Under the guitarron. Do not athk."
+    },
+    {
+      "give": "sombrero",
+      "n": 1
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "after_kept"
     },
     {
       "ifCond": {
@@ -3013,6 +3132,20 @@
     {
       "s": "Acolyte",
       "t": "Sit on a cushion, any cushion. Not that one. That one is the Guru's. They are all the Guru's."
+    }
+  ],
+  "shrine_keeper": [
+    {
+      "s": "Old Woman",
+      "t": "The cow? That is Lakshmi. She lies there because the road is warm. Nobody tells a goddess to move."
+    },
+    {
+      "s": "Old Woman",
+      "t": "The jungle way is for people who like mosquitoes. My gate is for people who like being asked for money by a man in sunglasses."
+    },
+    {
+      "s": "Old Woman",
+      "t": "The flowers? Every morning, before I wake up. Fresh ones. I have stopped asking."
     }
   ]
 }

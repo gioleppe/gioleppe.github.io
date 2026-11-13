@@ -2,6 +2,7 @@
   "zoneId": "tantric_yurt",
   "name": "The Tantric Yurt",
   "paletteId": "ANJUNA_DUST",
+  "bossGate": "beat_svetlana",
   "baseBpm": 132,
   "ground": "grass",
   "ground2": "path",
@@ -66,11 +67,11 @@
     {
       "id": "yurt_acolyte",
       "x": 12,
-      "y": 4,
+      "y": 6,
       "sprite": "yogi",
-      "dir": "LEFT",
+      "dir": "DOWN",
       "trainer": "yurt_acolyte",
-      "sight": 2
+      "sight": 6
     },
     {
       "id": "yurt_yogi",
@@ -86,7 +87,7 @@
       "x": 13,
       "y": 13,
       "sprite": "hippie",
-      "dir": "LEFT",
+      "dir": "DOWN",
       "trainer": "yurt_hippie",
       "sight": 3
     },

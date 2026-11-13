@@ -1,8 +1,8 @@
-// Keyboard + touch pad + canvas taps, unified into buttons: up down left right a b start.
+// Keyboard + touch pad + canvas taps, unified into buttons: up down left right a b start item lick.
 const KEYS = {
   ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right',
   KeyW: 'up', KeyS: 'down', KeyA: 'left', KeyD: 'right',
-  KeyZ: 'a', Enter: 'a', Space: 'a', KeyX: 'b', Escape: 'b', Backspace: 'b', KeyM: 'start', Tab: 'start', KeyQ: 'item', KeyI: 'item',
+  KeyZ: 'a', Enter: 'a', Space: 'a', KeyX: 'b', Escape: 'b', Backspace: 'b', KeyM: 'start', Tab: 'start', KeyQ: 'item', KeyI: 'item', KeyL: 'lick',
 };
 export const DEFAULT_KEYS = KEYS;
 
@@ -86,10 +86,10 @@ export class InputAdapter {
     if (gp) {
       const B = (i) => !!gp.buttons[i]?.pressed, ax = gp.axes || [];
       now.up = B(12) || ax[1] < -0.5; now.down = B(13) || ax[1] > 0.5; now.left = B(14) || ax[0] < -0.5; now.right = B(15) || ax[0] > 0.5;
-      now.a = B(0); now.b = B(1); now.start = B(9) || B(8);
+      now.a = B(0); now.b = B(1); now.start = B(9) || B(8); now.item = B(2); now.lick = B(3);
     }
     this.padState ||= {};
-    for (const b of ['up', 'down', 'left', 'right', 'a', 'b', 'start']) {
+    for (const b of ['up', 'down', 'left', 'right', 'a', 'b', 'start', 'item', 'lick']) {
       if (now[b] && !this.padState[b]) this.press(b);
       if (!now[b] && this.padState[b]) this.release(b);
       this.padState[b] = !!now[b];

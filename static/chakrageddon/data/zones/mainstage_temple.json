@@ -235,5 +235,16 @@
         2
       ]
     }
-  ]
+  ],
+  "gauntlet": {
+    "trainers": [
+      "elite_kick",
+      "elite_bass",
+      "elite_hat",
+      "elite_lead"
+    ],
+    "reset": [
+      "temple_water_used"
+    ]
+  }
 }
