@@ -1,0 +1,269 @@
+{
+  "zoneId": "roadside_shrine",
+  "name": "Roadside Shrine",
+  "paletteId": "CHAI_TENT_WARMTH",
+  "baseBpm": 126,
+  "ground": "laterite",
+  "ground2": "path",
+  "wall": "temple_wall",
+  "encounter": "incense",
+  "encounters": {
+    "encounterRate": 0.15,
+    "table": [
+      {
+        "speciesId": "djembe_monk",
+        "minLevel": 12,
+        "maxLevel": 15,
+        "weight": 25
+      },
+      {
+        "speciesId": "snoozel",
+        "minLevel": 12,
+        "maxLevel": 15,
+        "weight": 20
+      },
+      {
+        "speciesId": "lassiblob",
+        "minLevel": 12,
+        "maxLevel": 15,
+        "weight": 15
+      },
+      {
+        "speciesId": "chillem",
+        "minLevel": 13,
+        "maxLevel": 15,
+        "weight": 15
+      },
+      {
+        "speciesId": "shadowcop",
+        "minLevel": 12,
+        "maxLevel": 15,
+        "weight": 15
+      },
+      {
+        "speciesId": "sirenowl",
+        "minLevel": 13,
+        "maxLevel": 16,
+        "weight": 10
+      }
+    ]
+  },
+  "rows": [
+    "bTbITtbttttIbTTbtbTtttTt",
+    "I~~~~~~~~~~~~btttttttItt",
+    ",,,,,,,,,,,,~TtTbbItTITI",
+    "I~~~,,~~~~~~~tttttbtbbtT",
+    "t~~~,,~.....~tbITTTtttbt",
+    "t~~~,,~.....~ItbIIttTTtT",
+    "t~~~,,~.....~tbbttttITIt",
+    "T~~~,,~~~~~~~tTTttItttTt",
+    "tnnnllnnnnnnnnnnnttIbTTt",
+    "bnllllllllllllllnttITItt",
+    "InlLllllllllllLlntITbtTt",
+    "bnllllllllllllllnbIbtTtt",
+    "tnllllll44llllllnttITtbb",
+    "bnllllllllllllllnttTTtIt",
+    "tnllllllllllllllnTtttttt",
+    "tnlllllllllllqAlntTttttt",
+    "InllllllllllllllnttIbItT",
+    "tnllllllllllllllnbTbtttt",
+    "TnnnnnllnnnnnnnnnTbbtTTT",
+    "bbbbbb__bbbbbbbbbbtTtttt",
+    "bbbbbb__bbbbbbbbbbtTTtTT",
+    "tbb~~~~~~~~~~~~~~~tbbtIb",
+    "Tt~~~~,~~~~~,~~~~~~~,,~t",
+    "tt~~~~,~~o~~,~~~~~~~,,~b",
+    "Tb~~~~,~~~~~,~~~~~~~,,~b",
+    "bT~,,,,,,,,,,,,,,,,,,,~b",
+    "tb~~~~,~~~~~,~~~~~~~,,~t",
+    "bb~~~~,.....,~~~~~~~,,~T",
+    "bI~~~~,.....,~~~~~~~,,Lt",
+    "tb~~~~,~~~~~,~~~~~~~,,~T",
+    "tb~~~~~~~~~~~~~~~bL~,,~T",
+    "ttTTtbttbItttbtttt~~,,~t",
+    "IItTbTbtttttbbtttb~~,,~b",
+    "TttITttbbbbbttIttb~~,,~b",
+    "TTIIbItttIbttbTtTT~~,,LI",
+    "tttttIIttttttbtbtI~~,,~t",
+    "TbTttIbtbntbTIITTb~~,,~t",
+    "TtITIttttnIttbITbb~~,,~b",
+    "TTtTtITtbnTTtTIbtb~~,,~t",
+    "TIbTttTbtnL.........,,.t",
+    "bIttTTbtbn..~~~~~~~.,,.T",
+    "ttt~~~~~tn..~~~~~~~.,,.b",
+    ".........n..m.m.m...,,.t",
+    ",,,,,,,,,,,,,,,,,,,,,,,T",
+    "..~~~~~..n.~~~~~~~~...Lt",
+    "TIbITtTbbntTtttbTTIttTbt"
+  ],
+  "warps": [
+    {
+      "x": 0,
+      "y": 43,
+      "to": "dirt_road",
+      "tx": 28,
+      "ty": 24,
+      "dir": "LEFT"
+    },
+    {
+      "x": 0,
+      "y": 2,
+      "to": "dirt_road",
+      "tx": 28,
+      "ty": 3,
+      "dir": "LEFT"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "road_guard",
+      "x": 10,
+      "y": 42,
+      "sprite": "guard",
+      "dir": "DOWN",
+      "trainer": "road_guard",
+      "sight": 2
+    },
+    {
+      "id": "shrine_flowers",
+      "x": 13,
+      "y": 42,
+      "sprite": "vendor",
+      "dir": "DOWN",
+      "trainer": "shrine_flowers",
+      "sight": 2
+    },
+    {
+      "id": "shrine_sadhu",
+      "x": 18,
+      "y": 31,
+      "sprite": "baba",
+      "dir": "RIGHT",
+      "trainer": "shrine_sadhu",
+      "sight": 4
+    },
+    {
+      "id": "shrine_sleeper",
+      "x": 8,
+      "y": 27,
+      "sprite": "local",
+      "dir": "DOWN",
+      "script": "shrine_sleeper",
+      "showWhen": {
+        "all": [
+          {
+            "hour": [
+              4,
+              6
+            ]
+          },
+          {
+            "not": {
+              "any": [
+                {
+                  "flag": "flowers_let"
+                },
+                {
+                  "flag": "flowers_woke"
+                },
+                {
+                  "flag": "flowers_done"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "shrine_pilgrim",
+      "x": 11,
+      "y": 14,
+      "sprite": "yogi",
+      "dir": "LEFT",
+      "trainer": "shrine_pilgrim",
+      "sight": 2,
+      "look": [
+        "LEFT",
+        "UP",
+        "RIGHT",
+        "DOWN"
+      ],
+      "lookEvery": 3
+    },
+    {
+      "id": "shrine_pujari",
+      "x": 10,
+      "y": 12,
+      "sprite": "guru",
+      "dir": "DOWN",
+      "script": "shrine_pujari"
+    },
+    {
+      "id": "shrine_keeper",
+      "x": 12,
+      "y": 15,
+      "sprite": "local",
+      "dir": "DOWN",
+      "script": "shrine_keeper",
+      "hideWhen": {
+        "all": [
+          {
+            "hour": [
+              4,
+              6
+            ]
+          },
+          {
+            "not": {
+              "any": [
+                {
+                  "flag": "flowers_let"
+                },
+                {
+                  "flag": "flowers_woke"
+                },
+                {
+                  "flag": "flowers_done"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "pickups": [
+    {
+      "id": "shrine_incense",
+      "x": 9,
+      "y": 5,
+      "item": "incense_stick",
+      "n": 2
+    },
+    {
+      "id": "shrine_hidden",
+      "x": 10,
+      "y": 28,
+      "item": "amber_vial",
+      "n": 1,
+      "hidden": true
+    },
+    {
+      "id": "shrine_chai",
+      "x": 3,
+      "y": 16,
+      "item": "masala_chai",
+      "n": 1
+    }
+  ],
+  "flagTiles": [
+    {
+      "flag": "lakshmi_moved",
+      "tiles": {
+        "3,10": "2",
+        "4,10": "3"
+      }
+    }
+  ]
+}

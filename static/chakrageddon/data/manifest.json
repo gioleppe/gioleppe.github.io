@@ -14,6 +14,8 @@
     "tantric_yurt",
     "flea_market",
     "dirt_road",
+    "roadside_shrine",
+    "jungle_shortcut",
     "scooter_ditch",
     "omelette_stall",
     "sea_shallows",
@@ -214,6 +216,16 @@
       3,
       3,
       "Vicchio"
+    ],
+    "jungle_shortcut": [
+      0,
+      3,
+      "Jungle"
+    ],
+    "roadside_shrine": [
+      2,
+      3,
+      "Shrine"
     ]
   },
   "quests": [
@@ -864,6 +876,199 @@
           }
         }
       ]
+    },
+    {
+      "id": "lost_tour",
+      "name": "The Lost Tour Group",
+      "giver": {
+        "zone": "jungle_shortcut",
+        "npc": "tour_leader"
+      },
+      "start": {
+        "any": [
+          {
+            "flag": "tour_asked"
+          },
+          {
+            "flag": "found_saskia"
+          },
+          {
+            "flag": "found_jonas"
+          },
+          {
+            "flag": "found_tim"
+          }
+        ]
+      },
+      "steps": [
+        {
+          "text": "Find Saskia, the backpacker with the ukulele, on the Jungle Shortcut.",
+          "done": {
+            "any": [
+              {
+                "flag": "found_saskia"
+              },
+              {
+                "flag": "tour_done"
+              }
+            ]
+          }
+        },
+        {
+          "text": "Find Jonas, the backpacker with the hammock, further up the jungle.",
+          "done": {
+            "any": [
+              {
+                "flag": "found_jonas"
+              },
+              {
+                "flag": "tour_done"
+              }
+            ]
+          }
+        },
+        {
+          "text": "Find Tim, the backpacker with opinions, near the top of the jungle.",
+          "done": {
+            "any": [
+              {
+                "flag": "found_tim"
+              },
+              {
+                "flag": "tour_done"
+              }
+            ]
+          }
+        },
+        {
+          "text": "Tell Fergus at the bottom of the jungle that his group is coming back.",
+          "done": {
+            "flag": "tour_done"
+          },
+          "ready": {
+            "all": [
+              {
+                "flag": "found_saskia"
+              },
+              {
+                "flag": "found_jonas"
+              },
+              {
+                "flag": "found_tim"
+              }
+            ]
+          },
+          "npc": {
+            "zone": "jungle_shortcut",
+            "id": "tour_leader"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dawn_flowers",
+      "name": "Flowers Before Dawn",
+      "giver": {
+        "zone": "roadside_shrine",
+        "npc": "shrine_keeper"
+      },
+      "start": {
+        "any": [
+          {
+            "flag": "flowers_asked"
+          },
+          {
+            "flag": "flowers_let"
+          },
+          {
+            "flag": "flowers_woke"
+          }
+        ]
+      },
+      "steps": [
+        {
+          "text": "Find out who leaves fresh marigolds on the shrine every morning. Pilgrim Devi says it happens before dawn.",
+          "done": {
+            "any": [
+              {
+                "flag": "flowers_let"
+              },
+              {
+                "flag": "flowers_woke"
+              },
+              {
+                "flag": "flowers_done"
+              }
+            ]
+          }
+        },
+        {
+          "text": "Tell the old woman at the Roadside Shrine what you saw in the garden.",
+          "done": {
+            "flag": "flowers_done"
+          },
+          "ready": {
+            "any": [
+              {
+                "flag": "flowers_let"
+              },
+              {
+                "flag": "flowers_woke"
+              }
+            ]
+          },
+          "npc": {
+            "zone": "roadside_shrine",
+            "id": "shrine_keeper"
+          }
+        }
+      ]
+    },
+    {
+      "id": "lakshmi_coconut",
+      "name": "A Coconut for Lakshmi",
+      "giver": {
+        "zone": "roadside_shrine",
+        "npc": "shrine_pujari"
+      },
+      "start": {
+        "any": [
+          {
+            "flag": "coconut_asked"
+          },
+          {
+            "flag": "lakshmi_moved"
+          }
+        ]
+      },
+      "steps": [
+        {
+          "text": "Find a green coconut among the palms on the Jungle Shortcut.",
+          "done": {
+            "any": [
+              {
+                "has": "green_coconut"
+              },
+              {
+                "flag": "lakshmi_moved"
+              }
+            ]
+          }
+        },
+        {
+          "text": "Bring the coconut to the pujari at the Roadside Shrine.",
+          "done": {
+            "flag": "lakshmi_moved"
+          },
+          "ready": {
+            "has": "green_coconut"
+          },
+          "npc": {
+            "zone": "roadside_shrine",
+            "id": "shrine_pujari"
+          }
+        }
+      ]
     }
   ],
   "worldmap": {
@@ -961,6 +1166,14 @@
       "vicchio_circle": [
         21,
         6
+      ],
+      "jungle_shortcut": [
+        8,
+        5
+      ],
+      "roadside_shrine": [
+        14,
+        5
       ]
     }
   },

@@ -1,0 +1,255 @@
+{
+  "zoneId": "jungle_shortcut",
+  "name": "Jungle Shortcut",
+  "paletteId": "UV_BLACKLIGHT",
+  "baseBpm": 138,
+  "ground": "jungle",
+  "ground2": "path",
+  "wall": "cliff",
+  "encounter": "darkbush",
+  "dark": true,
+  "encounters": {
+    "encounterRate": 0.16,
+    "table": [
+      {
+        "speciesId": "mozzquito",
+        "minLevel": 12,
+        "maxLevel": 15,
+        "weight": 25
+      },
+      {
+        "speciesId": "wooklet",
+        "minLevel": 12,
+        "maxLevel": 15,
+        "weight": 20
+      },
+      {
+        "speciesId": "tridog",
+        "minLevel": 12,
+        "maxLevel": 15,
+        "weight": 15
+      },
+      {
+        "speciesId": "shroomba",
+        "minLevel": 13,
+        "maxLevel": 15,
+        "weight": 15
+      },
+      {
+        "speciesId": "sirenowl",
+        "minLevel": 13,
+        "maxLevel": 16,
+        "weight": 15
+      },
+      {
+        "speciesId": "glowkid",
+        "minLevel": 13,
+        "maxLevel": 15,
+        "weight": 10
+      }
+    ]
+  },
+  "rows": [
+    "tttbItbbtbttbttttIbbIt",
+    "Itt~~~~~~~~~~~~~~~~~~b",
+    "tbt~,,,,,,,,,,,,,,,,,,",
+    "tII~~~~~~~~~~~.......b",
+    "bbI~,,~tttIttIbbottttt",
+    "bIt~,,~ItttttttttttItt",
+    "bII~,,~~....~~~~~~~btt",
+    "tII~,,~~....~~~~~~~~tt",
+    "Itt~,,~,,,,,,,,,,,~~II",
+    "ttt~~~~~~~~~~~~~~~~~tt",
+    "btttbIttbtttItt~,,~~tt",
+    "btttbIbttttItbI~,,~~tb",
+    "ttbttIbbtttttIb~,,~~ot",
+    "ttIIbbtItbttItb~,,~~tt",
+    "It~~~~~~~....~~~,,~~tb",
+    "tb~~~~~~~....~~~,,~~tt",
+    "It~,,,,,,,,,,,,~,,~~.I",
+    "It~~~~~~~~~~~~~~~~~~.t",
+    "bt~,,~tbItbttttIIt.99t",
+    "tb~,,~tttttttItbtb...t",
+    "tt~,,~ItIttttttbtT..9t",
+    "tt~,,~bbItttIIttII...t",
+    "tt~,,~ttItbtbttItt.9.I",
+    "bI~,,~~~~~~~~~~~~~~Ibt",
+    "bt~,,~~~~~~~~~~~~~~bbb",
+    "bt~,,,,,,,,,,,,,,,~tIt",
+    "It~~~~~..~~~~~~~~~~btb",
+    "bttttt....tMtII~,,~~bt",
+    "bttttt....tttttt.,.btt",
+    "wwwwwwwwwwwwwwwww6wwww",
+    "wwwwwwwwwwwwwwwww6wwww",
+    "bbbtItttbIttIII~,,~~It",
+    "tt~~~~M~....~~~~,,~~II",
+    "tI~~~~~~....~~~~,,~~tt",
+    "tb~,,,,,,,,,,,,~,,~~bt",
+    "tt~~~~~~~~~~~~~~,,~~Ib",
+    "tt~,,~tIttbtIbbIItbItI",
+    "tt~,,~tbbbItItbItbttIt",
+    "tt~,,~IbttItttttItttbt",
+    "bb~,,~btbttttttttbIItI",
+    "tt~,,~tItIbItttttttttt",
+    "tb~,,~~~~~~~~M~......t",
+    "tt~,,~~~~~~~~~~......b",
+    "It,,,,,,,,,,,,,,,,,,,,",
+    "tb~~~~~~~~~~~~.......t",
+    "tbbtIIbIItIttbbttttItI"
+  ],
+  "warps": [
+    {
+      "x": 21,
+      "y": 43,
+      "to": "dirt_road",
+      "tx": 1,
+      "ty": 24,
+      "dir": "RIGHT"
+    },
+    {
+      "x": 21,
+      "y": 2,
+      "to": "dirt_road",
+      "tx": 1,
+      "ty": 3,
+      "dir": "RIGHT"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "tour_leader",
+      "x": 19,
+      "y": 42,
+      "sprite": "tourist",
+      "dir": "LEFT",
+      "script": "tour_leader"
+    },
+    {
+      "id": "back_saskia",
+      "x": 16,
+      "y": 41,
+      "sprite": "tourist",
+      "dir": "DOWN",
+      "script": "back_saskia",
+      "showIf": "found_saskia"
+    },
+    {
+      "id": "back_jonas",
+      "x": 17,
+      "y": 41,
+      "sprite": "hippie",
+      "dir": "DOWN",
+      "script": "back_jonas",
+      "showIf": "found_jonas"
+    },
+    {
+      "id": "back_tim",
+      "x": 18,
+      "y": 41,
+      "sprite": "chad",
+      "dir": "DOWN",
+      "script": "back_tim",
+      "showIf": "found_tim"
+    },
+    {
+      "id": "lost_saskia",
+      "x": 10,
+      "y": 33,
+      "sprite": "tourist",
+      "dir": "DOWN",
+      "trainer": "lost_saskia",
+      "sight": 2,
+      "hideIf": "found_saskia",
+      "leave": [
+        3,
+        37
+      ]
+    },
+    {
+      "id": "jungle_wook",
+      "x": 16,
+      "y": 28,
+      "sprite": "wook",
+      "dir": "RIGHT",
+      "trainer": "jungle_wook",
+      "sight": 2
+    },
+    {
+      "id": "road_dealer",
+      "x": 8,
+      "y": 27,
+      "sprite": "dealer",
+      "dir": "UP",
+      "trainer": "road_dealer",
+      "sight": 2
+    },
+    {
+      "id": "lost_jonas",
+      "x": 5,
+      "y": 20,
+      "sprite": "hippie",
+      "dir": "LEFT",
+      "trainer": "lost_jonas",
+      "sight": 3,
+      "hideIf": "found_jonas",
+      "leave": [
+        3,
+        24
+      ]
+    },
+    {
+      "id": "lost_tim",
+      "x": 19,
+      "y": 11,
+      "sprite": "chad",
+      "dir": "LEFT",
+      "trainer": "lost_tim",
+      "sight": 4,
+      "hideIf": "found_tim",
+      "leave": [
+        16,
+        15
+      ]
+    },
+    {
+      "id": "jungle_spinner",
+      "x": 10,
+      "y": 7,
+      "sprite": "firespinner",
+      "dir": "DOWN",
+      "trainer": "jungle_spinner",
+      "sight": 2
+    }
+  ],
+  "pickups": [
+    {
+      "id": "jungle_coconut",
+      "x": 19,
+      "y": 20,
+      "item": "green_coconut",
+      "n": 1
+    },
+    {
+      "id": "road_powder",
+      "x": 6,
+      "y": 28,
+      "item": "mystery_powder",
+      "n": 1,
+      "hidden": true
+    },
+    {
+      "id": "road_balm",
+      "x": 8,
+      "y": 6,
+      "item": "tiger_balm",
+      "n": 2
+    },
+    {
+      "id": "jungle_rizla",
+      "x": 9,
+      "y": 14,
+      "item": "rizla_paper",
+      "n": 3
+    }
+  ]
+}

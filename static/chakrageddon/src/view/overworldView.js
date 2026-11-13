@@ -1,12 +1,13 @@
 // Overworld: tiles, characters, camera, smooth steps. Reads engine state, never decides rules.
 import { W, H } from './CanvasRenderer.js';
 import { drawText, textWidth, wrap, panel, C } from './ui.js';
-import { charAt, npcVisible, npcPos, isNight, nightLevel, facing } from '../core/OverworldEngine.js';
+import { charAt, logicAt, T, npcVisible, npcPos, isNight, nightLevel, facing } from '../core/OverworldEngine.js';
 import { bandOf, bandIndex, egoGone } from '../core/intox.js';
 import { highWorld, TRAIL_SPRITES } from './highWorld.js';
 import { liveSet } from '../core/timetable.js';
 import { stageFx, shakeOf } from './stageFx.js';
-const ARRIVAL = 1.8;   // seconds the camera spends on a boss before their cutscene
+const ARRIVAL = 1.8;
+const BOX_CLEAR = H - 50 - 3 - 9 - 4;   // the dialogue box with its speaker tab starts here; feet stay above it   // seconds the camera spends on a boss before their cutscene
 import { routeHint } from '../core/goals.js';
 import { hashOf } from './anim.js';
 import { questMarker } from '../core/quests.js';
@@ -27,7 +28,9 @@ function drawMarker(g, mark, x, y) {
   rows.forEach((r, j) => { for (let i = 0; i < r.length; i++) if (r[i] !== '.') { g.fillStyle = MARK_COLORS[r[i]]; g.fillRect(x + i, y + j, 1, 1); } });
 }
 
-const TS = 16, STEP = 0.15;
+const TS = 16, STEP = 0.15;   // a tile at an NPC's walking pace
+// your own steps: a walk, or a run while B is held (not afloat on the flamingo)
+export const WALK = 0.18, RUN = 0.09;
 
 // Interior walls: a wall tile shows its front (the panelled face) only where open floor lies right below it,
 // as the back wall of a room. Side and bottom walls are seen from above: the top of the wall, with a lit rim
@@ -164,7 +167,7 @@ export const overworldView = {
   anim: null, bumpT: 0, fade: 0, banner: null, bannerT: 0, alert: null, npcDir: {}, t: 0, walkFlip: 0,
 
   onEvent(game, e) {
-    if (e.type === 'ENTITY_MOVED' && e.entityId === 'player') { this.anim = { from: e.from, to: e.to, t: 0 }; this.walkFlip ^= 1; }
+    if (e.type === 'ENTITY_MOVED' && e.entityId === 'player') { this.anim = { from: e.from, to: e.to, t: 0, dur: this.running(game) ? RUN : WALK }; this.walkFlip ^= 1; }
     else if (e.type === 'BUMP') { this.bumpT = 0.18; game.audio?.sfx('bump'); }
     else if (e.type === 'PLAYER_PLACED') this.anim = null;
     else if (e.type === 'BOSS_ARRIVAL') {
@@ -185,6 +188,8 @@ export const overworldView = {
     this.t += dt;
     highWorld.update(this, game, dt);
     if (this.arrival && (this.arrival.t += dt) >= ARRIVAL) this.arrival = null;
+    const lw = this.liftWanted(game);
+    this.lift = game.settings.reducedMotion || Math.abs(lw - (this.lift || 0)) < 0.5 ? lw : (this.lift || 0) + (lw - (this.lift || 0)) * Math.min(1, dt * 10);
     if (this.cheer > 0) this.cheer -= dt;
     // a set starting where you are (or you arriving during one): say what is on
     const st0 = game.engine.state, live = st0.mode === 'OVERWORLD' ? liveSet(game.data, st0) : null, key = live ? `${st0.zoneId}:${live.id}` : '';
@@ -198,7 +203,7 @@ export const overworldView = {
     if (this.bannerT > 0) this.bannerT -= dt;
     if (this.alert) { this.alert.t -= dt; if (this.alert.t <= 0) this.alert = null; }
     if (this.bumpT > 0) this.bumpT -= dt;
-    if (this.anim) { this.anim.t += dt / STEP; if (this.anim.t >= 1) this.anim = null; }
+    if (this.anim) { this.anim.t += dt / (this.anim.dur || WALK); if (this.anim.t >= 1) this.anim = null; }
     // someone walking off (Astra-Zero after your second fight): a tile at a walking pace, gone at the end of the path
     for (const l of this.leaving || []) l.t += dt / (STEP * 1.6);
     if (this.leaving) this.leaving = this.leaving.filter((l) => l.t < l.path.length - 1);
@@ -271,10 +276,15 @@ export const overworldView = {
   },
 
   /** a trainer who spotted you is still walking over, or a boss's arrival is playing: hold their dialogue till then */
+  /** holding B on the map runs (as in the old handhelds), except afloat */
+  running(game) {
+    const s = game.engine.state;
+    return !!game.input?.held?.b && s.mode === 'OVERWORLD' && logicAt({ data: game.data, state: s }, s.player.x, s.player.y, game.data.zones[s.zoneId]) !== T.WATER;
+  },
   walking() { return Object.values(this.npcAnim || {}).some((a) => a.walkUp) || this.arriving(); },
   arriving() { return !!this.arrival; },
 
-  camera(game) {
+  camera(game, flat = false) {
     const s = game.engine.state, zone = game.data.zones[s.zoneId];
     let px = s.player.x * TS, py = s.player.y * TS;
     if (this.anim) {
@@ -288,8 +298,16 @@ export const overworldView = {
       fx = px + (this.arrival.x * TS - px) * e; fy = py + (this.arrival.y * TS - py) * e;
     }
     const cx = zw <= W ? -Math.floor((W - zw) / 2) : Math.max(0, Math.min(zw - W, Math.round(fx + 8 - W / 2)));
-    const cy = zh <= H ? -Math.floor((H - zh) / 2) : Math.max(0, Math.min(zh - H, Math.round(fy + 8 - H / 2)));
+    const cy = (zh <= H ? -Math.floor((H - zh) / 2) : Math.max(0, Math.min(zh - H, Math.round(fy + 8 - H / 2)))) + (flat ? 0 : Math.round(this.lift || 0));
     return { cx, cy, px: Math.round(px), py: Math.round(py) };
+  },
+
+  /** how far the camera must rise so the text box does not cover you (or whoever stands beside you) at the bottom of a map */
+  liftWanted(game) {
+    const s = game.engine.state;
+    if (!s.dialogue || s.battle) return 0;
+    const { cy, py } = this.camera(game, true);
+    return Math.max(0, py - cy + 14 - BOX_CLEAR);
   },
 
   tile(game, g, name, x, y) {
