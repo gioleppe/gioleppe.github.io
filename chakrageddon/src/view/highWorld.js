@@ -27,7 +27,7 @@ export const highWorld = {
   /** the hallucinations of the zone you are in, when your ego is gone */
   list(game) {
     const s = game.engine.state;
-    return egoGone(game.data.rules, s.intox) ? game.data.zones[s.zoneId].hallucinations || [] : [];
+    return egoGone(game.data.rules, s.intox) ? (game.data.zones[s.zoneId].hallucinations || []).filter((h) => !(h.unless && s.flags[h.unless])) : [];   // unless: a story flag that ends it (the cow that got up for good)
   },
   has(game, kind) { return this.list(game).find((h) => h.kind === kind); },
   calm(game) { return !!(game.settings.reducedMotion || game.settings.grounded); },

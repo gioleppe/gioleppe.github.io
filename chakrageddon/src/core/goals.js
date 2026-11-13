@@ -2,7 +2,7 @@
 // first one not yet done, and the route hint walks the zone graph (warps) towards it.
 //   goal: { id, zone, trainer?, text?, done: { flag } | { defeated } }
 
-import { canUse } from './OverworldEngine.js';
+import { canUse, passable } from './OverworldEngine.js';
 
 /** a zone name in the middle of a sentence: "The Poi Pit" -> "the Poi Pit" */
 export const midName = (name) => String(name).replace(/^The /, 'the ');
@@ -39,10 +39,63 @@ export function warpSide(zone, w) {
   return 'through the door';
 }
 
+/** the walkable areas of a zone as the player can use it now: "x,y" -> area number (a map split by the cow has two) */
+function areasOf(data, state, zoneId, memo) {
+  if (memo.has(zoneId)) return memo.get(zoneId);
+  const z = data.zones[zoneId], ctx = { data, state }, W = z.rows[0].length, H = z.rows.length, area = new Map();
+  let n = 0;
+  for (let y0 = 0; y0 < H; y0++) for (let x0 = 0; x0 < W; x0++) {
+    const k0 = `${x0},${y0}`;
+    if (area.has(k0) || !passable(ctx, x0, y0, z)) continue;
+    area.set(k0, n); const q = [[x0, y0]];
+    while (q.length) {
+      const [x, y] = q.pop();
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const nx = x + dx, ny = y + dy, k = `${nx},${ny}`;
+        if (nx < 0 || ny < 0 || nx >= W || ny >= H || area.has(k) || !passable(ctx, nx, ny, z)) continue;
+        area.set(k, n); q.push([nx, ny]);
+      }
+    }
+    n++;
+  }
+  memo.set(zoneId, area);
+  return area;
+}
+/** the area a tile belongs to; a warp on a blocked tile (a door in a wall) belongs to the floor beside it */
+function areaAt(area, x, y) {
+  for (const [dx, dy] of [[0, 0], [0, 1], [0, -1], [1, 0], [-1, 0]]) { const a = area.get(`${x + dx},${y + dy}`); if (a !== undefined) return a; }
+  return -1;
+}
+
+/** the first warp to take from where the player stands towards zone `to`, walking areas rather than zones, so a road cut in
+ *  two by a cow sends you round the detour instead of up to the cow. skip: warps known to be blocked ("zone:x,y").
+ *  Returns { warp, next } or null (already there, or no way from here). */
+export function routeWarp(data, s, to, skip = null) {
+  if (!to || !s?.player || s.zoneId === to || !data.zones[s.zoneId]) return null;
+  const memo = new Map(), node = (z, a) => `${z}#${a}`;
+  const start = node(s.zoneId, areaAt(areasOf(data, s, s.zoneId, memo), s.player.x, s.player.y));
+  const prev = new Map([[start, null]]), q = [start];
+  while (q.length) {
+    const cur = q.shift(), [z, a] = cur.split('#');
+    if (z === to) { let c = cur; while (prev.get(c).from !== start) c = prev.get(c).from; return { warp: prev.get(c).warp, next: c.split('#')[0] }; }
+    const area = areasOf(data, s, z, memo);
+    for (const w of data.zones[z].warps || []) {
+      if (!data.zones[w.to] || (w.needs && !canUse({ data, state: s }, w.needs)) || skip?.has(`${z}:${w.x},${w.y}`)) continue;
+      if (String(areaAt(area, w.x, w.y)) !== a) continue;
+      const nx = node(w.to, areaAt(areasOf(data, s, w.to, memo), w.tx, w.ty));
+      if (prev.has(nx)) continue;
+      prev.set(nx, { from: cur, warp: w }); q.push(nx);
+    }
+  }
+  return null;
+}
+
 /** first zone on the shortest warp path from `from` to `to` (null when unreachable or already there).
- *  With a state, exits that need a field technique the player cannot use yet are skipped. */
+ *  With a state, exits that need a field technique the player cannot use yet are skipped, and from where the player
+ *  stands the route follows the areas you can actually walk (routeWarp). */
 export function nextZone(data, from, to, state = null) {
   if (!to || from === to) return null;
+  if (state && state.zoneId === from) { const r = routeWarp(data, state, to); if (r) return r.next; }
   const prev = new Map([[from, null]]), q = [from];
   while (q.length) {
     const z = q.shift();
@@ -75,7 +128,7 @@ export function routeHint(data, s, goal = currentGoal(data, s)) {
   const nz = nextZone(data, s.zoneId, goal.zone, s);
   if (!nz) return { text: `Find a way to ${midName(data.zones[goal.zone].name)}.`, zone: goal.zone };
   if (here.interior && nz === here.parent) return { text: `Next: go back outside to ${midName(data.zones[nz].name)}.`, zone: goal.zone, next: nz, side: 'out' };
-  const w = (here.warps || []).find((x) => x.to === nz);
+  const w = routeWarp(data, s, goal.zone)?.warp || (here.warps || []).find((x) => x.to === nz);
   const side = w ? (data.zones[nz].interior ? 'through the door' : warpSide(here, w)) : '';
   return { text: `Next: ${side === 'through the door' ? 'go through the door' : `head ${side}`} to ${midName(data.zones[nz].name)}.`, zone: goal.zone, next: nz, side };
 }

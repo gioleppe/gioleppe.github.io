@@ -20,6 +20,8 @@ export function charAt(ctx, x, y, zone = zoneOf(ctx)) {
   if (pushed && k in pushed) return pushed[k];
   const cleared = s.cleared[zone.zoneId];
   if (cleared && cleared[k]) return '.';
+  // flagTiles: [{ flag, tiles: { "x,y": ch } }]: tiles that change for good once a story flag is set (the cow gets up)
+  if (zone.flagTiles) for (const f of zone.flagTiles) if (s.flags[f.flag] && f.tiles[k] !== undefined) return f.tiles[k];
   return zone.rows[y][x];
 }
 export function logicAt(ctx, x, y, zone = zoneOf(ctx)) {
@@ -70,6 +72,8 @@ export function canUse(ctx, techId) {
   return ctx.state.party.some((m) => ctx.data.dex[m.speciesId].types.some((ty) => t.types.includes(ty)));
 }
 const TECH_FOR = { [T.WATER]: 'pink_flamingo_float', [T.FAIRY]: 'machete_hack', [T.PUSH]: 'bass_drop_shove', [T.PADLOCK]: 'jaw_grind', [T.ROOTS]: 'banyan_root_climb' };
+/** walkable, or in the way only until you use a field technique you have (a knot of lights, a subwoofer, a padlock): for route hints */
+export function passable(ctx, x, y, zone) { if (walkable(ctx, x, y, zone)) return true; const t = TECH_FOR[logicAt(ctx, x, y, zone)]; return !!t && canUse(ctx, t); }
 
 function cordonOpen(ctx, zone) { return !!(zone.cordonFlag && ctx.state.flags[zone.cordonFlag]); }
 

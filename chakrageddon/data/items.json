@@ -347,6 +347,14 @@
     "desc": "Cosmetic. Mantequilla's sombrero. If anyone asks, you are from Vicchio. Wear it from the Stash Tin."
   },
   {
+    "id": "green_coconut",
+    "name": "Green Coconut",
+    "category": "KEY",
+    "price": 0,
+    "effect": {},
+    "desc": "A green coconut from the palms on the Jungle Shortcut, heavy and sloshing. Somebody at a shrine would know what it is for."
+  },
+  {
     "id": "festival_timetable",
     "name": "Festival Timetable",
     "category": "KEY",

@@ -329,6 +329,10 @@
     },
     {
       "s": "Prof. Banyan",
+      "t": "In a hurry? Hold B and run. Everyone at this festival is in a hurry. Nobody knows where to."
+    },
+    {
+      "s": "Prof. Banyan",
       "t": "The Chai Mama tent heals everything. The first wristband is with DJ Diabolo at the Poi Pit, north along the trail. I have taken the festival tape down for you: off you go."
     },
     {
@@ -937,7 +941,20 @@
   ],
   "sign_road": [
     {
-      "t": "CLOGGED DIRT ROAD. A sacred cow has been lying across it since Tuesday, and nobody is going to argue. Detours: west through the jungle (one plank, mind the stream), or east through the shrine (one gate). No lights. No refunds."
+      "if": "lakshmi_moved",
+      "goto": "open"
+    },
+    {
+      "t": "CLOGGED DIRT ROAD. A sacred cow has been lying across it since Tuesday, and nobody is going to argue. Detours: west by the Jungle Shortcut (one plank, mind the stream), or east by the Roadside Shrine (one gate). No lights. No refunds."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "open"
+    },
+    {
+      "t": "CLOGGED DIRT ROAD. Somebody has crossed out CLOGGED and written underneath in chalk: SHE GOT UP. Under that, in another hand: FOR NOW."
     }
   ],
   "sign_ditch": [
@@ -3136,8 +3153,27 @@
   ],
   "shrine_keeper": [
     {
+      "if": "flowers_done",
+      "goto": "done"
+    },
+    {
+      "if": "flowers_let",
+      "goto": "let"
+    },
+    {
+      "if": "flowers_woke",
+      "goto": "woke"
+    },
+    {
+      "if": "lakshmi_moved",
+      "goto": "cow"
+    },
+    {
       "s": "Old Woman",
-      "t": "The cow? That is Lakshmi. She lies there because the road is warm. Nobody tells a goddess to move."
+      "t": "The cow on the road? That is Lakshmi. She lies there because the road is warm. Nobody tells a goddess to move."
+    },
+    {
+      "label": "ask"
     },
     {
       "s": "Old Woman",
@@ -3145,7 +3181,329 @@
     },
     {
       "s": "Old Woman",
-      "t": "The flowers? Every morning, before I wake up. Fresh ones. I have stopped asking."
+      "t": "And every morning there are fresh marigolds on the shrine, before I wake up. Seventy years. I have stopped asking. You could ask. Somebody must know."
+    },
+    {
+      "set": "flowers_asked"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "cow"
+    },
+    {
+      "s": "Old Woman",
+      "t": "Lakshmi came in off the road and lay down in the corner. She likes the shade. I like the company."
+    },
+    {
+      "goto": "ask"
+    },
+    {
+      "label": "let"
+    },
+    {
+      "s": "Old Woman",
+      "t": "Before dawn? In the garden? In my nightdress? Picking marigolds... Oh."
+    },
+    {
+      "s": "Old Woman",
+      "t": "Seventy years I thought the goddess was sending them. It was me, sending them to the goddess. That is better, I think. Do not tell the pilgrim. She will want to walk round me."
+    },
+    {
+      "s": "Old Woman",
+      "t": "You let me finish. My mother always said never wake a sleepwalker, they might be busy. Take this. It was hers."
+    },
+    {
+      "give": "friendship_band",
+      "n": 1
+    },
+    {
+      "set": "flowers_done"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "woke"
+    },
+    {
+      "s": "Old Woman",
+      "t": "So that is why I woke up in the garden, holding a marigold and shouting at a stranger. I thought it was a dream. It was you."
+    },
+    {
+      "s": "Old Woman",
+      "t": "Seventy years of mystery and you clap in my ear. Well. Now I know. Here, for your trouble. Mine was worse."
+    },
+    {
+      "rupees": 500
+    },
+    {
+      "set": "flowers_done"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "done"
+    },
+    {
+      "s": "Old Woman",
+      "t": "I left a note on the shrine for my sleeping self: ALSO WATER THE GARDEN. We will see if she reads it."
+    }
+  ],
+  "sign_jungle": [
+    {
+      "t": "JUNGLE SHORTCUT. It is not shorter. It comes out at the top of the road, past the cow. Mind the stream."
+    }
+  ],
+  "sign_shrine": [
+    {
+      "t": "ROADSIDE SHRINE. Pilgrims welcome. The path round the shrine comes out at the top of the road. Shoes off in the courtyard. Cows have right of way."
+    }
+  ],
+  "tour_leader": [
+    {
+      "if": "tour_done",
+      "goto": "done"
+    },
+    {
+      "ifCond": {
+        "all": [
+          {
+            "flag": "found_saskia"
+          },
+          {
+            "flag": "found_jonas"
+          },
+          {
+            "flag": "found_tim"
+          }
+        ]
+      },
+      "goto": "all"
+    },
+    {
+      "if": "tour_asked",
+      "goto": "again"
+    },
+    {
+      "s": "Tour Leader Fergus",
+      "t": "Hiya! Fergus, Gap Year Adventures. Twelve countries, nine weeks, one laminated itinerary."
+    },
+    {
+      "s": "Tour Leader Fergus",
+      "t": "I had seven in my group this morning. I have four. Saskia, Jonas and Tim went into the jungle to find themselves, and the jungle has not given them back."
+    },
+    {
+      "s": "Tour Leader Fergus",
+      "t": "If you are going through anyway, send them back this way? They will not come quietly. Nobody on this tour does anything quietly."
+    },
+    {
+      "set": "tour_asked"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "again"
+    },
+    {
+      "s": "Tour Leader Fergus",
+      "t": "Still short. Saskia has a ukulele, Jonas has a hammock, and Tim has opinions. You will know them when you hear them."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "all"
+    },
+    {
+      "s": "Tour Leader Fergus",
+      "t": "All three! Muddy, bitten and sunburnt, but all three. Head office need never know."
+    },
+    {
+      "s": "Tour Leader Fergus",
+      "t": "Here, the group whip-round. And this flask was meant for the best-behaved member of the tour. Frankly, none of them qualify."
+    },
+    {
+      "rupees": 900
+    },
+    {
+      "give": "steel_flask",
+      "n": 1
+    },
+    {
+      "set": "tour_done"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "done"
+    },
+    {
+      "s": "Tour Leader Fergus",
+      "t": "Next stop is a silent retreat in the hills. I give it four minutes."
+    }
+  ],
+  "back_saskia": [
+    {
+      "s": "Backpacker Saskia",
+      "t": "I wrote a song about the jungle. It has one chord. The jungle has one chord too, if you listen."
+    }
+  ],
+  "back_jonas": [
+    {
+      "s": "Backpacker Jonas",
+      "t": "My hammock is still up there. I am leaving it for the next guy. That is my legacy, man.",
+      "style": "DOWNER"
+    }
+  ],
+  "back_tim": [
+    {
+      "s": "Backpacker Tim",
+      "t": "For the record, I found my own way back. You were just walking in front of me."
+    }
+  ],
+  "shrine_sleeper": [
+    {
+      "if": "flowers_asked",
+      "goto": "look"
+    },
+    {
+      "t": "An old woman in a nightdress, eyes shut, is picking marigolds one at a time in the dark and threading them onto a string."
+    },
+    {
+      "goto": "ask"
+    },
+    {
+      "label": "look"
+    },
+    {
+      "t": "The old woman from the shrine, in her nightdress, eyes shut, picking marigolds one at a time and threading them onto a string without looking."
+    },
+    {
+      "label": "ask"
+    },
+    {
+      "s": "Old Woman",
+      "t": "Mmm... for Lakshmi... the yellow ones... not by the step, the snail likes those...",
+      "style": "DOWNER"
+    },
+    {
+      "t": "She is fast asleep.",
+      "choice": [
+        "Let her finish",
+        "Wake her up"
+      ],
+      "goto": [
+        "let",
+        "wake"
+      ]
+    },
+    {
+      "label": "let"
+    },
+    {
+      "t": "You step back onto the path. She finishes the string, pats it, and pads off towards the steps, still asleep, still humming."
+    },
+    {
+      "set": "flowers_let"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "wake"
+    },
+    {
+      "t": "You clap. She jumps, stares at the marigolds, stares at you, and says a word that is not in any prayer."
+    },
+    {
+      "s": "Old Woman",
+      "t": "WHO ARE YOU? WHY AM I IN THE GARDEN? Go away! I am in my nightdress!",
+      "style": "STIMULANT"
+    },
+    {
+      "set": "flowers_woke"
+    }
+  ],
+  "shrine_pujari": [
+    {
+      "if": "lakshmi_moved",
+      "goto": "after"
+    },
+    {
+      "ifHas": "green_coconut",
+      "goto": "offer"
+    },
+    {
+      "s": "Pujari Mohan",
+      "t": "Namaste. You came the long way round, because of Lakshmi. Everybody does. Fourteen buses this morning."
+    },
+    {
+      "s": "Pujari Mohan",
+      "t": "She lies on the road because nobody has made her an offering since they tarred it. A green coconut, broken on these steps, and she will get up. That is the tradition. I made it up this morning, but it is a tradition now."
+    },
+    {
+      "s": "Pujari Mohan",
+      "t": "There are coconut palms on the Jungle Shortcut, past the fourth bend. I would go myself, but I am needed here. For sitting."
+    },
+    {
+      "set": "coconut_asked"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "offer"
+    },
+    {
+      "s": "Pujari Mohan",
+      "t": "A green coconut! From the jungle! Give it here."
+    },
+    {
+      "take": "green_coconut",
+      "n": 1
+    },
+    {
+      "t": "He lifts it over his head and brings it down on the shrine step. CRACK. Coconut water runs down the stone, and somewhere out on the road a bell on a cow's neck rings once."
+    },
+    {
+      "s": "Pujari Mohan",
+      "t": "There. Listen."
+    },
+    {
+      "set": "lakshmi_moved"
+    },
+    {
+      "t": "Hooves, slow, coming closer. A cow walks in through the gate, past you, and lies down in the corner of the courtyard with a sigh, as if this had been the plan all along."
+    },
+    {
+      "s": "Pujari Mohan",
+      "t": "The road is open, my friend. Tell the bus drivers. Do not tell anyone it was a coconut. Let them think it was me."
+    },
+    {
+      "heal": true,
+      "respawn": false
+    },
+    {
+      "t": "Lakshmi's blessing settles over your Astrals. Every one of them feels better."
+    },
+    {
+      "give": "incense_stick",
+      "n": 3
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "after"
+    },
+    {
+      "s": "Pujari Mohan",
+      "t": "Lakshmi prefers the courtyard. Cooler in the day, and the old woman brings her marigolds. The road misses her. The buses do not."
     }
   ]
 }

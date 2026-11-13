@@ -12,29 +12,29 @@
     "tttttttttttttt,,tttttttttttttt",
     "t~~~.....T..L.,,....T.....~~~t",
     "t~~~..sr......,,.......sr.~~~t",
-    "t...,,,,,,,,,,,,,,,,,,,,,,...t",
-    "t...,,........,,........,,...t",
-    "t~~.,,....b...,,...b....,,.~~t",
-    "t~~.,,........,,........,,.~~t",
-    "ttIt~~tItttt..,,..tt~T~~,,~~~t",
-    "tttI~~ttIttt..,,..tT~~~~,,~o~t",
-    "tt~o~~.~IIttrr,,srTt~~~~,,..~t",
-    "tt~~~~~,~tItur,,rrtt====,====t",
-    "tI~ttbI,,,tIsr,,urtT.v..,,..vt",
-    "t.~tttt,bbbtsr,,srTt..L.44.L.t",
-    "bbbIttt,Ibttrr,,srtt....,,...t",
-    "bwwwwww6wwttur23rrtTm...,,..qt",
-    "tttttIt,ttItsr,,urTt....,,...t",
-    "tI~~~o~~~ttIrr,,srtt~~~~,,~~.t",
-    "ttI~~~~~~tttur,,srtT~~~~,,~~~b",
-    "tt~~tttbbbttsr,,rrTt~~~~,,~~~b",
-    "tt~~ItttbIttsr,,urtt~~~~,,~~~t",
-    "tt~~tIttttItsr,,srtT~~~~,,~~~t",
-    "tI~~ttIttttI..,,..Tt~~~~,,~~~t",
-    "t.,,.......L..,,..L...sr,,...t",
-    "t.,,..........,,........,,...t",
-    "t.,,,,,,,,,,,,,,,,,,,,,,,,,,.t",
+    ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",
+    "t...~~........,,........~~...t",
+    "t~~.~~....b...,,...b....~~.~~t",
+    "t~~.~~........,,........~~.~~t",
+    "ItbbtttIItIb..,,..IttttIIItbtb",
+    "btbbtItItItt..,,..ttIttbItItIt",
+    "btbtttttItbtrr,,srtbttnnnnnnnn",
+    "bttIbtbtItttur,,rrtttInlllllln",
+    "IIIttItbItttsr,,urbttInlllllln",
+    "bttIItIbtttbsr,,srbtttnlllllln",
+    "bItttbIbttItrr,,srtbttnll44lln",
+    "IbIttbtIIbbIur23rrtttInlllllln",
+    "tttbbItttttbsr,,urttttnlllllln",
+    "bIIbtttIIbtIrr,,srIbtInlllllln",
+    "ItbttttbIItIur,,srttIInlllllln",
+    "tbbtItbbbtItsr,,rrItIbnlllllln",
+    "tbIbtbtttIIbsr,,urtttInnnnnnnn",
+    "tIIbIIItIIIbsr,,srbbtttIbttttI",
+    "btttbtIttItI..,,..tbttIbIbttbb",
+    "t..........L..,,..L...sr.....t",
     "t.............,,.............t",
+    ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",
+    "b.............,,.............b",
     "t~~~..sr......,,..m.......~~~t",
     "t~~~.....b....,,....b.....~~~t",
     "t~~~..........,,..........~~~t",
@@ -72,6 +72,38 @@
       "tx": 11,
       "ty": 14,
       "dir": "UP"
+    },
+    {
+      "x": 0,
+      "y": 24,
+      "to": "jungle_shortcut",
+      "tx": 20,
+      "ty": 43,
+      "dir": "LEFT"
+    },
+    {
+      "x": 0,
+      "y": 3,
+      "to": "jungle_shortcut",
+      "tx": 20,
+      "ty": 2,
+      "dir": "LEFT"
+    },
+    {
+      "x": 29,
+      "y": 24,
+      "to": "roadside_shrine",
+      "tx": 1,
+      "ty": 43,
+      "dir": "RIGHT"
+    },
+    {
+      "x": 29,
+      "y": 3,
+      "to": "roadside_shrine",
+      "tx": 1,
+      "ty": 2,
+      "dir": "RIGHT"
     }
   ],
   "npcs": [
@@ -83,48 +115,18 @@
       "script": "sign_road"
     },
     {
-      "id": "jungle_wook",
-      "x": 9,
-      "y": 11,
-      "sprite": "wook",
-      "dir": "LEFT",
-      "trainer": "jungle_wook",
-      "sight": 2
+      "id": "jungle_sign",
+      "x": 1,
+      "y": 23,
+      "tile": "sign",
+      "script": "sign_jungle"
     },
     {
-      "id": "road_dealer",
-      "x": 8,
-      "y": 17,
-      "sprite": "dealer",
-      "dir": "LEFT",
-      "trainer": "road_dealer",
-      "sight": 5
-    },
-    {
-      "id": "road_guard",
-      "x": 27,
-      "y": 9,
-      "sprite": "guard",
-      "dir": "LEFT",
-      "trainer": "road_guard",
-      "sight": 4
-    },
-    {
-      "id": "shrine_pilgrim",
-      "x": 21,
-      "y": 13,
-      "sprite": "yogi",
-      "dir": "RIGHT",
-      "trainer": "shrine_pilgrim",
-      "sight": 2
-    },
-    {
-      "id": "shrine_keeper",
-      "x": 26,
-      "y": 13,
-      "sprite": "local",
-      "dir": "LEFT",
-      "script": "shrine_keeper"
+      "id": "shrine_sign",
+      "x": 28,
+      "y": 23,
+      "tile": "sign",
+      "script": "sign_shrine"
     },
     {
       "id": "road_raver",
@@ -138,27 +140,12 @@
   ],
   "pickups": [
     {
-      "id": "road_powder",
-      "x": 1,
-      "y": 12,
-      "item": "mystery_powder",
-      "n": 1,
-      "hidden": true
-    },
-    {
       "id": "road_vial",
-      "x": 28,
-      "y": 16,
+      "x": 27,
+      "y": 25,
       "item": "amber_vial",
       "n": 1,
       "hidden": true
-    },
-    {
-      "id": "road_balm",
-      "x": 6,
-      "y": 9,
-      "item": "tiger_balm",
-      "n": 2
     }
   ],
   "encounters": {
@@ -201,7 +188,17 @@
       "kind": "cow_walk",
       "x": 14,
       "y": 14,
-      "toward": -1
+      "toward": -1,
+      "unless": "lakshmi_moved"
+    }
+  ],
+  "flagTiles": [
+    {
+      "flag": "lakshmi_moved",
+      "tiles": {
+        "14,14": ",",
+        "15,14": ","
+      }
     }
   ]
 }

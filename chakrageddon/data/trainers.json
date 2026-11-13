@@ -374,12 +374,12 @@
     ],
     "reward": 320,
     "intro": [
-      "Halt. This road is closed for a private event. The event is me standing here."
+      "Halt. This shrine is closed for a private event. The event is me standing here."
     ],
     "defeat": [
       "I did not see you. You did not see me."
     ],
-    "after": "Team Undercover pays better than the festival. That is all I will say."
+    "after": "Team Undercover pays better than the temple. That is all I will say."
   },
   {
     "id": "road_dealer",
@@ -406,7 +406,7 @@
     "defeat": [
       "Nobody was supposed to find this stash."
     ],
-    "after": "There is something hidden further up the road. I am not telling you where."
+    "after": "Something of mine is hidden in this pocket. I am not telling you where. It is not under the leaves."
   },
   {
     "id": "road_raver",
@@ -2326,7 +2326,7 @@
     ],
     "reward": 340,
     "intro": [
-      "You took the jungle way? Respect. Nobody takes the jungle way. That is why I live here."
+      "You took the jungle way? Respect. Nobody takes the jungle way. Well, a tour group did this morning. That is why I live here."
     ],
     "defeat": [
       "The jungle provides. Mostly mosquitoes."
@@ -2355,5 +2355,159 @@
       "Fine. One hundred and nine."
     ],
     "after": "Whoever leaves the flowers comes before dawn. I have never managed to stay awake for it."
+  },
+  {
+    "id": "lost_saskia",
+    "name": "Backpacker Saskia",
+    "sprite": "tourist",
+    "party": [
+      {
+        "species": "snoozel",
+        "level": 14
+      },
+      {
+        "species": "lassiblob",
+        "level": 15
+      }
+    ],
+    "reward": 300,
+    "setFlag": "found_saskia",
+    "intro": [
+      "Are you from the tour? I am not going back. I came into the jungle to find myself, and I did. She plays the ukulele.",
+      "Fight me. It is part of my journey."
+    ],
+    "defeat": [
+      "Okay. Maybe I am an accountant who plays the ukulele. That is still a self."
+    ],
+    "after": "Fergus is by the road? Fine. I am walking back slowly. On purpose."
+  },
+  {
+    "id": "lost_jonas",
+    "name": "Backpacker Jonas",
+    "sprite": "hippie",
+    "textStyle": "DOWNER",
+    "party": [
+      {
+        "species": "tridog",
+        "level": 14
+      },
+      {
+        "species": "wooklet",
+        "level": 15
+      }
+    ],
+    "reward": 300,
+    "setFlag": "found_jonas",
+    "intro": [
+      "Shh. I am one with the jungle. I hung my hammock here three days ago. Or this morning. The jungle has no clocks, man."
+    ],
+    "defeat": [
+      "Whoa. The jungle says I should go back to the group. The jungle sounds a lot like my mum."
+    ],
+    "after": "Tell Fergus I am coming. Tell him slowly."
+  },
+  {
+    "id": "lost_tim",
+    "name": "Backpacker Tim",
+    "sprite": "chad",
+    "party": [
+      {
+        "species": "crabcake",
+        "level": 14
+      },
+      {
+        "species": "mozzquito",
+        "level": 15
+      },
+      {
+        "species": "glowkid",
+        "level": 15
+      }
+    ],
+    "reward": 340,
+    "setFlag": "found_tim",
+    "intro": [
+      "Actually, the jungle is a social construct. So is this path. So is the tour. So is Fergus.",
+      "Prove me wrong. With Astrals."
+    ],
+    "defeat": [
+      "I would like to formally withdraw several opinions."
+    ],
+    "after": "Fine. I will go back. But I am walking at the front."
+  },
+  {
+    "id": "jungle_spinner",
+    "name": "Spinner Kavi",
+    "sprite": "firespinner",
+    "textStyle": "STIMULANT",
+    "party": [
+      {
+        "species": "glowkid",
+        "level": 15
+      },
+      {
+        "species": "nitroxide",
+        "level": 16
+      }
+    ],
+    "reward": 340,
+    "intro": [
+      "Fire in the jungle? Relax. Everything in here is too damp to burn. Mostly. Spin with me!"
+    ],
+    "defeat": [
+      "Singed my eyebrows. Again. They had only just grown back."
+    ],
+    "after": "The road is that way. Follow the smell of diesel and incense."
+  },
+  {
+    "id": "shrine_flowers",
+    "name": "Flower Seller Meena",
+    "sprite": "vendor",
+    "party": [
+      {
+        "species": "shroomba",
+        "level": 14
+      },
+      {
+        "species": "chillem",
+        "level": 15
+      }
+    ],
+    "reward": 320,
+    "intro": [
+      "Marigolds! Ten rupees a string. Twenty if you look like you can afford it. You look like you can afford a fight."
+    ],
+    "defeat": [
+      "Fine, fine. Take a marigold, on the house. Do not tell the old woman. She thinks they grow on the shrine by themselves."
+    ],
+    "after": "The garden loses a string of marigolds every night, and the shrine gains one every morning. Not my business. Mine cost money."
+  },
+  {
+    "id": "shrine_sadhu",
+    "name": "Baba Neem",
+    "sprite": "baba",
+    "textStyle": "DOWNER",
+    "party": [
+      {
+        "species": "chillem",
+        "level": 15
+      },
+      {
+        "species": "djembe_monk",
+        "level": 15
+      },
+      {
+        "species": "snoozel",
+        "level": 16
+      }
+    ],
+    "reward": 360,
+    "intro": [
+      "I have sat beside this path for eleven years. Everyone who walks it, I test. Most of them fail. They never know they were tested."
+    ],
+    "defeat": [
+      "You pass. You may continue to walk. You were going to anyway."
+    ],
+    "after": "The pujari wants a coconut. Everyone at a shrine wants a coconut. Coconuts do not grow at shrines. Think about it."
   }
 ]
