@@ -6,8 +6,13 @@
   "stat": {
     "hpBase": 10,
     "otherBase": 5,
-    "hydrationBase": 30,
-    "hydrationPerLevel": 3
+    "hydrationBase": 36,
+    "hydrationRoll": [0.4, 0.5, 0.1],
+    "growthRate": 1,
+    "growthFrom": 10,
+    "growthTurn": 24,
+    "trainerWater": 2,
+    "_growth": "1.2.0: at each level-up Hydration grows +0, +1 or +2 (hydrationRoll odds) and the other stats around 2 x base / 100 (x growthRate; Serotonin +1), by the species' schedule (dex growth: early / steady / late) from growthFrom to growthTurn and the other way after. trainerWater: extra Hydration a level for trainers' Astrals, who cannot drink. Tuned with tools/sim.mjs."
   },
   "battle": {
     "critBase": 0.0625,
@@ -28,10 +33,11 @@
     ],
     "egoDeathTurns": 3,
     "cottonmouthDrain": 3,
+    "flaskSave": 0.34,
     "selfHitPower": 40,
     "whiteoutRupeeLoss": 0.15,
     "whiteoutHours": 6,
-    "trainerXpMult": 2.0,
+    "trainerXpMult": 2,
     "xpDivisor": 5,
     "intoxPerBattle": 0.015,
     "intoxPull": 0.15,
@@ -322,6 +328,17 @@
     "dose": 0.12,
     "ceiling": 0.9
   },
+  "difficulty": {
+    "_comment": "Options > Difficulty: what your moves' damage (dealt) and the other side's (taken) are multiplied by, once, on the final number.",
+    "easy": { "dealt": 1.2, "taken": 0.8 },
+    "normal": { "dealt": 1, "taken": 1 },
+    "hard": { "dealt": 0.8, "taken": 1.2 }
+  },
+  "tarot": {
+    "_comment": "Juniper the tarot reader (Anjuna Flea Market): an Astral remembers a move its line learns by its level, for price rupees. Banyan's astral body announces her after unlockBands wristbands (dialogues.banyan_tarot).",
+    "unlockBands": 6,
+    "price": 500
+  },
   "timetable": {
     "_comment": "The festival timetable (IMPROVEMENTS point 2, src/core/timetable.js). Banyan brings it after unlockBands wristbands. Minutes on the festival clock; to may wrap past midnight.",
     "unlockBands": 3,
@@ -438,5 +455,14 @@
         "pose": "back"
       }
     ]
+  },
+  "doneIn": {
+    "_comment": "Content added after a save was made, already behind that player: flag -> condition, checked when a save loads.",
+    "alley_locked": {
+      "flag": "beat_raju"
+    },
+    "alley_cleared": {
+      "flag": "beat_raju"
+    }
   }
 }

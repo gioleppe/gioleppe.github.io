@@ -53,7 +53,7 @@
       "x": 10,
       "y": 21,
       "to": "sandy_trail",
-      "tx": 15,
+      "tx": 16,
       "ty": 1,
       "dir": "DOWN"
     },
@@ -61,7 +61,7 @@
       "x": 11,
       "y": 21,
       "to": "sandy_trail",
-      "tx": 16,
+      "tx": 17,
       "ty": 1,
       "dir": "DOWN"
     }

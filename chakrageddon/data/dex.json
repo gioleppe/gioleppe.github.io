@@ -78,7 +78,15 @@
       }
     ],
     "journalNotes": "Sleeps 19 hours a day under palm trees. Smells like sweet nag champa and oregano.",
-    "ability": "SECOND_WIND"
+    "ability": "SECOND_WIND",
+    "growth": {
+      "serotonin": "early",
+      "vibeAttack": "steady",
+      "egoDefense": "late",
+      "spFractal": "late",
+      "spGrounded": "steady",
+      "bpmSpeed": "steady"
+    }
   },
   {
     "id": "hashlump",
@@ -159,7 +167,15 @@
       }
     ],
     "journalNotes": "Has not finished a sentence since the monsoon. Rolls downhill to get anywhere.",
-    "ability": "SECOND_WIND"
+    "ability": "SECOND_WIND",
+    "growth": {
+      "serotonin": "early",
+      "vibeAttack": "steady",
+      "egoDefense": "late",
+      "spFractal": "late",
+      "spGrounded": "steady",
+      "bpmSpeed": "steady"
+    }
   },
   {
     "id": "charagolem",
@@ -235,7 +251,15 @@
       }
     ],
     "journalNotes": "A hill that learned to sigh. Villages have been built on it by mistake.",
-    "ability": "SECOND_WIND"
+    "ability": "SECOND_WIND",
+    "growth": {
+      "serotonin": "early",
+      "vibeAttack": "steady",
+      "egoDefense": "late",
+      "spFractal": "late",
+      "spGrounded": "steady",
+      "bpmSpeed": "steady"
+    }
   },
   {
     "id": "jawling",
@@ -308,7 +332,15 @@
       }
     ],
     "journalNotes": "Has been explaining its startup idea by the generator since Tuesday. Do not make eye contact.",
-    "ability": "OVERDRIVE"
+    "ability": "OVERDRIVE",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "steady",
+      "egoDefense": "steady",
+      "spFractal": "early",
+      "spGrounded": "steady",
+      "bpmSpeed": "early"
+    }
   },
   {
     "id": "gurnagama",
@@ -381,7 +413,15 @@
       }
     ],
     "journalNotes": "Its jaw moves sideways faster than the eye can follow. Dentists weep.",
-    "ability": "OVERDRIVE"
+    "ability": "OVERDRIVE",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "steady",
+      "egoDefense": "steady",
+      "spFractal": "early",
+      "spGrounded": "steady",
+      "bpmSpeed": "early"
+    }
   },
   {
     "id": "amphetadragon",
@@ -449,7 +489,15 @@
       }
     ],
     "journalNotes": "Awake since Thursday. Certain that everyone is talking about it. They are now.",
-    "ability": "OVERDRIVE"
+    "ability": "OVERDRIVE",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "steady",
+      "egoDefense": "steady",
+      "spFractal": "early",
+      "spGrounded": "steady",
+      "bpmSpeed": "early"
+    }
   },
   {
     "id": "blottertot",
@@ -522,7 +570,15 @@
       }
     ],
     "journalNotes": "Folded out of bicycle paper. If you stare at its back, the UI starts breathing.",
-    "ability": "CLEAR_HEAD"
+    "ability": "CLEAR_HEAD",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "early",
+      "egoDefense": "steady",
+      "spFractal": "late",
+      "spGrounded": "steady",
+      "bpmSpeed": "late"
+    }
   },
   {
     "id": "fractoad",
@@ -595,7 +651,15 @@
       }
     ],
     "journalNotes": "Every wart contains a smaller Fractoad. Researchers stopped counting at eleven.",
-    "ability": "CLEAR_HEAD"
+    "ability": "CLEAR_HEAD",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "early",
+      "egoDefense": "steady",
+      "spFractal": "late",
+      "spGrounded": "steady",
+      "bpmSpeed": "late"
+    }
   },
   {
     "id": "hoffmanite",
@@ -663,7 +727,15 @@
       }
     ],
     "journalNotes": "A crystal frog that exists slightly to the left of itself. Answers questions you have not asked yet.",
-    "ability": "CLEAR_HEAD"
+    "ability": "CLEAR_HEAD",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "early",
+      "egoDefense": "steady",
+      "spFractal": "late",
+      "spGrounded": "steady",
+      "bpmSpeed": "late"
+    }
   },
   {
     "id": "crabcake",
@@ -734,7 +806,15 @@
       }
     ],
     "journalNotes": "A sunburned tourist convinced he is a crustacean. Nobody has the heart to tell him.",
-    "ability": "THICK_SKIN"
+    "ability": "THICK_SKIN",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "early",
+      "egoDefense": "steady",
+      "spFractal": "early",
+      "spGrounded": "steady",
+      "bpmSpeed": "late"
+    }
   },
   {
     "id": "lobsterlad",
@@ -794,7 +874,15 @@
       }
     ],
     "journalNotes": "Factor zero for nine days. The colour is now permanent and so is the walk.",
-    "ability": "THICK_SKIN"
+    "ability": "THICK_SKIN",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "early",
+      "egoDefense": "steady",
+      "spFractal": "early",
+      "spGrounded": "steady",
+      "bpmSpeed": "late"
+    }
   },
   {
     "id": "ketacrab",
@@ -859,7 +947,15 @@
       }
     ],
     "journalNotes": "Walks exclusively sideways and upside down. Has never once arrived on purpose.",
-    "ability": "DREAMER"
+    "ability": "DREAMER",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "steady",
+      "egoDefense": "steady",
+      "spFractal": "early",
+      "spGrounded": "early",
+      "bpmSpeed": "steady"
+    }
   },
   {
     "id": "wonkrab",
@@ -918,7 +1014,15 @@
       }
     ],
     "journalNotes": "Its claws are in a different postcode from its body. Both are fine with this.",
-    "ability": "DREAMER"
+    "ability": "DREAMER",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "steady",
+      "egoDefense": "steady",
+      "spFractal": "early",
+      "spGrounded": "early",
+      "bpmSpeed": "steady"
+    }
   },
   {
     "id": "shroomba",
@@ -980,7 +1084,15 @@
       }
     ],
     "journalNotes": "A sentient clay pot of mushroom omelette. Sold at shacks that do not have a name.",
-    "ability": "STAMINA"
+    "ability": "STAMINA",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "early",
+      "egoDefense": "late",
+      "spFractal": "steady",
+      "spGrounded": "steady",
+      "bpmSpeed": "steady"
+    }
   },
   {
     "id": "omeletron",
@@ -1036,7 +1148,15 @@
       }
     ],
     "journalNotes": "Extra cheese, extra dimensions. The pot is now optional.",
-    "ability": "STAMINA"
+    "ability": "STAMINA",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "early",
+      "egoDefense": "late",
+      "spFractal": "steady",
+      "spGrounded": "steady",
+      "bpmSpeed": "steady"
+    }
   },
   {
     "id": "djembe_monk",
@@ -1097,7 +1217,15 @@
       }
     ],
     "journalNotes": "The guy who plays bongos next to your tent at 7:30 AM, given form.",
-    "ability": "STAMINA"
+    "ability": "STAMINA",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "steady",
+      "egoDefense": "steady",
+      "spFractal": "early",
+      "spGrounded": "late",
+      "bpmSpeed": "early"
+    }
   },
   {
     "id": "bongo_bishop",
@@ -1152,7 +1280,15 @@
       }
     ],
     "journalNotes": "Leads a drum circle that has not stopped since 2009. Nobody knows the original rhythm.",
-    "ability": "STAMINA"
+    "ability": "STAMINA",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "steady",
+      "egoDefense": "steady",
+      "spFractal": "early",
+      "spGrounded": "late",
+      "bpmSpeed": "early"
+    }
   },
   {
     "id": "shadowcop",
@@ -1209,7 +1345,15 @@
       }
     ],
     "journalNotes": "A mirage of flashlight beams and whistle sounds. Probably not real. Hide everything anyway.",
-    "ability": "STATIC_CLING"
+    "ability": "STATIC_CLING",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "early",
+      "egoDefense": "steady",
+      "spFractal": "early",
+      "spGrounded": "steady",
+      "bpmSpeed": "steady"
+    }
   },
   {
     "id": "bribe_asaurus",
@@ -1260,7 +1404,15 @@
       }
     ],
     "journalNotes": "Grows a little with every small folded note. Has never issued a receipt.",
-    "ability": "STATIC_CLING"
+    "ability": "STATIC_CLING",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "early",
+      "egoDefense": "steady",
+      "spFractal": "early",
+      "spGrounded": "steady",
+      "bpmSpeed": "steady"
+    }
   },
   {
     "id": "nitroxide",
@@ -1304,7 +1456,15 @@
       }
     ],
     "journalNotes": "A metallic balloon with thirty glorious seconds to live. Makes them count.",
-    "ability": "BURST"
+    "ability": "BURST",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "early",
+      "egoDefense": "steady",
+      "spFractal": "steady",
+      "spGrounded": "early",
+      "bpmSpeed": "late"
+    }
   },
   {
     "id": "snoozel",
@@ -1374,7 +1534,15 @@
       }
     ],
     "journalNotes": "Found wherever there is a beanbag. May or may not be a pile of laundry.",
-    "ability": "GROUNDED"
+    "ability": "GROUNDED",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "steady",
+      "egoDefense": "early",
+      "spFractal": "late",
+      "spGrounded": "steady",
+      "bpmSpeed": "steady"
+    }
   },
   {
     "id": "duvetghast",
@@ -1433,7 +1601,15 @@
       }
     ],
     "journalNotes": "A warm blanket with nobody under it. Five more minutes, it whispers. Five more years.",
-    "ability": "GROUNDED"
+    "ability": "GROUNDED",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "steady",
+      "egoDefense": "early",
+      "spFractal": "late",
+      "spGrounded": "steady",
+      "bpmSpeed": "steady"
+    }
   },
   {
     "id": "tridog",
@@ -1499,7 +1675,15 @@
       }
     ],
     "journalNotes": "A feral beach dog with a third eye. Knows who dropped the samosa. Knows everything.",
-    "ability": "SHARP_EYES"
+    "ability": "SHARP_EYES",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "steady",
+      "egoDefense": "steady",
+      "spFractal": "late",
+      "spGrounded": "early",
+      "bpmSpeed": "steady"
+    }
   },
   {
     "id": "omnihound",
@@ -1559,7 +1743,15 @@
       }
     ],
     "journalNotes": "Sees your past lives and judges every one of them. Still wants the samosa.",
-    "ability": "SHARP_EYES"
+    "ability": "SHARP_EYES",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "steady",
+      "egoDefense": "steady",
+      "spFractal": "late",
+      "spGrounded": "early",
+      "bpmSpeed": "steady"
+    }
   },
   {
     "id": "glowkid",
@@ -1630,7 +1822,15 @@
       }
     ],
     "journalNotes": "A lost raver made entirely of glowsticks. Has been looking for its friends since the first night.",
-    "ability": "OVERDRIVE"
+    "ability": "OVERDRIVE",
+    "growth": {
+      "serotonin": "early",
+      "vibeAttack": "steady",
+      "egoDefense": "steady",
+      "spFractal": "steady",
+      "spGrounded": "late",
+      "bpmSpeed": "early"
+    }
   },
   {
     "id": "ravelord",
@@ -1690,7 +1890,15 @@
       }
     ],
     "journalNotes": "Found its friends. They were inside it all along. So was the bassline.",
-    "ability": "OVERDRIVE"
+    "ability": "OVERDRIVE",
+    "growth": {
+      "serotonin": "early",
+      "vibeAttack": "steady",
+      "egoDefense": "steady",
+      "spFractal": "steady",
+      "spGrounded": "late",
+      "bpmSpeed": "early"
+    }
   },
   {
     "id": "chillem",
@@ -1742,7 +1950,15 @@
       }
     ],
     "journalNotes": "A clay golem with a smouldering head. Moves once per sunset.",
-    "ability": "SECOND_WIND"
+    "ability": "SECOND_WIND",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "late",
+      "egoDefense": "late",
+      "spFractal": "steady",
+      "spGrounded": "steady",
+      "bpmSpeed": "early"
+    }
   },
   {
     "id": "mozzquito",
@@ -1800,7 +2016,15 @@
       }
     ],
     "journalNotes": "You hear it only when the music stops. The music never stops. It is still there.",
-    "ability": "STATIC_CLING"
+    "ability": "STATIC_CLING",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "early",
+      "egoDefense": "steady",
+      "spFractal": "steady",
+      "spGrounded": "early",
+      "bpmSpeed": "steady"
+    }
   },
   {
     "id": "dengoth",
@@ -1852,7 +2076,15 @@
       }
     ],
     "journalNotes": "Wears eyeliner. Drinks only from people who forgot their repellent.",
-    "ability": "STATIC_CLING"
+    "ability": "STATIC_CLING",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "early",
+      "egoDefense": "steady",
+      "spFractal": "steady",
+      "spGrounded": "early",
+      "bpmSpeed": "steady"
+    }
   },
   {
     "id": "lassiblob",
@@ -1904,7 +2136,15 @@
       }
     ],
     "journalNotes": "A banana lassi that was left in the sun and developed opinions.",
-    "ability": "THICK_SKIN"
+    "ability": "THICK_SKIN",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "steady",
+      "egoDefense": "steady",
+      "spFractal": "late",
+      "spGrounded": "steady",
+      "bpmSpeed": "early"
+    }
   },
   {
     "id": "wooklet",
@@ -1966,7 +2206,15 @@
       }
     ],
     "journalNotes": "Asks if you have a spare anything. Sleeps in a hammock made of other hammocks.",
-    "ability": "DREAMER"
+    "ability": "DREAMER",
+    "growth": {
+      "serotonin": "early",
+      "vibeAttack": "late",
+      "egoDefense": "late",
+      "spFractal": "steady",
+      "spGrounded": "steady",
+      "bpmSpeed": "steady"
+    }
   },
   {
     "id": "grand_wook",
@@ -2022,7 +2270,15 @@
       }
     ],
     "journalNotes": "Has not paid for a ticket since the nineties. Its dreadlocks have their own campsite.",
-    "ability": "DREAMER"
+    "ability": "DREAMER",
+    "growth": {
+      "serotonin": "early",
+      "vibeAttack": "late",
+      "egoDefense": "late",
+      "spFractal": "steady",
+      "spGrounded": "steady",
+      "bpmSpeed": "steady"
+    }
   },
   {
     "id": "sirenowl",
@@ -2069,7 +2325,15 @@
       }
     ],
     "journalNotes": "Its call sounds exactly like an approaching patrol. Entire dancefloors have emptied for nothing.",
-    "ability": "SHARP_EYES"
+    "ability": "SHARP_EYES",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "early",
+      "egoDefense": "early",
+      "spFractal": "steady",
+      "spGrounded": "steady",
+      "bpmSpeed": "late"
+    }
   },
   {
     "id": "neighbula",
@@ -2121,7 +2385,15 @@
       }
     ],
     "journalNotes": "A horse-shaped cloud of calm. Riders report arriving somewhere else entirely, much later.",
-    "ability": "GROUNDED"
+    "ability": "GROUNDED",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "early",
+      "egoDefense": "steady",
+      "spFractal": "steady",
+      "spGrounded": "early",
+      "bpmSpeed": "late"
+    }
   },
   {
     "id": "selfiend",
@@ -2173,7 +2445,15 @@
       }
     ],
     "journalNotes": "Feeds on golden-hour light. Will block a sunset for forty minutes to get the angle.",
-    "ability": "SHARP_EYES"
+    "ability": "SHARP_EYES",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "steady",
+      "egoDefense": "early",
+      "spFractal": "steady",
+      "spGrounded": "late",
+      "bpmSpeed": "early"
+    }
   },
   {
     "id": "mandalord",
@@ -2225,7 +2505,15 @@
       }
     ],
     "journalNotes": "Sacred geometry that noticed it was being looked at. Seen once in the Sadhu Cave, if at all.",
-    "ability": "CLEAR_HEAD"
+    "ability": "CLEAR_HEAD",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "steady",
+      "egoDefense": "early",
+      "spFractal": "late",
+      "spGrounded": "steady",
+      "bpmSpeed": "steady"
+    }
   },
   {
     "id": "sunraga",
@@ -2269,7 +2557,15 @@
       }
     ],
     "journalNotes": "The sunset, finally off the clock. Only shows itself to people who stopped paying to look west.",
-    "ability": "OVERDRIVE"
+    "ability": "OVERDRIVE",
+    "growth": {
+      "serotonin": "early",
+      "vibeAttack": "steady",
+      "egoDefense": "late",
+      "spFractal": "late",
+      "spGrounded": "steady",
+      "bpmSpeed": "steady"
+    }
   },
   {
     "id": "bassilisk",
@@ -2313,7 +2609,15 @@
       }
     ],
     "journalNotes": "The bass under the Mainstage. You do not hear it. For a moment, you are it.",
-    "ability": "GROUNDED"
+    "ability": "GROUNDED",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "steady",
+      "egoDefense": "steady",
+      "spFractal": "steady",
+      "spGrounded": "late",
+      "bpmSpeed": "early"
+    }
   },
   {
     "id": "vicchiomorph",
@@ -2361,7 +2665,15 @@
       }
     ],
     "journalNotes": "The aliens of Vicchio. They follow the rave every year, a nonno in Tuscany swore it. Only lands at night, for people on the right frequency.",
-    "ability": "DREAMER"
+    "ability": "DREAMER",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "late",
+      "egoDefense": "early",
+      "spFractal": "steady",
+      "spGrounded": "early",
+      "bpmSpeed": "steady"
+    }
   },
   {
     "id": "mirrorling",
@@ -2408,7 +2720,15 @@
       }
     ],
     "journalNotes": "A puddle of the sea that learned to stand up. It copies the first thing you do to it, and is a little smug about it. Only seen by people with nobody inside.",
-    "ability": "MIRROR"
+    "ability": "MIRROR",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "steady",
+      "egoDefense": "steady",
+      "spFractal": "late",
+      "spGrounded": "early",
+      "bpmSpeed": "early"
+    }
   },
   {
     "id": "lucidra",
@@ -2456,6 +2776,14 @@
       }
     ],
     "journalNotes": "A jellyfish of light that drifts over Sweetwater Lake on the darkest nights. Its sting is a long, warm sleep. Only seen by people who have let go completely.",
-    "ability": "DREAMER"
+    "ability": "DREAMER",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "steady",
+      "egoDefense": "early",
+      "spFractal": "late",
+      "spGrounded": "steady",
+      "bpmSpeed": "late"
+    }
   }
 ]

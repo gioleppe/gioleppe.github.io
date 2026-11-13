@@ -136,6 +136,28 @@
       "dir": "LEFT",
       "trainer": "road_raver",
       "sight": 3
+    },
+    {
+      "id": "lakshmi_head",
+      "x": 14,
+      "y": 14,
+      "invisible": true,
+      "script": "lakshmi_road",
+      "hideIf": "lakshmi_moved",
+      "hideWhen": {
+        "intox": 0.9
+      }
+    },
+    {
+      "id": "lakshmi_tail",
+      "x": 15,
+      "y": 14,
+      "invisible": true,
+      "script": "lakshmi_road",
+      "hideIf": "lakshmi_moved",
+      "hideWhen": {
+        "intox": 0.9
+      }
     }
   ],
   "pickups": [

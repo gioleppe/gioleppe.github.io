@@ -4,6 +4,7 @@
 // 'crab_rave': the payoff of The Crab Rave. The four crabs dance on the night beach under lasers.
 // 'mantequilla', 'vicchio_landing': the Aliens of Vicchio (vicchioScenes.js); the landing follows the script's phase.
 import { W, H } from './CanvasRenderer.js';
+import { drawText } from './ui.js';
 import { drawForage, drawLanding } from './vicchioScenes.js';
 import { drawBoss, BOSSES } from './bossScenes.js';
 import { overworldView } from './overworldView.js';
@@ -46,7 +47,7 @@ function drawCeremony(game, g, who, by, t, still) {
 }
 
 // 'boss': a boss's cutscene (bossScenes.js), who = which one; card = the short title card of a rematch
-export const SCENES = ['dream', 'crab_rave', 'mantequilla', 'vicchio_landing', 'boss', 'wristband'];
+export const SCENES = ['dream', 'crab_rave', 'mantequilla', 'vicchio_landing', 'boss', 'wristband', 'alley_lock'];
 const CRABS = ['crabcake', 'lobsterlad', 'ketacrab', 'wonkrab'];
 
 export const sceneView = {
@@ -61,7 +62,8 @@ export const sceneView = {
     if (key !== this.id) {
       this.id = key; this.t = 0;
       const mood = sc.id === 'boss' && BOSSES[sc.who]?.mood;
-      if (mood) game.audio?.setTrack({ mood });
+      // the boss's own theme (the same one their battle plays, so the fight carries on the cutscene's song, not another)
+      if (mood) game.audio?.setTrack({ mood, zone: mood === 'BOSS' ? `boss:${sc.who}` : undefined });
     }
     if ((sc.show || null) !== this.show) { this.show = sc.show || null; this.showT = 0; }
     if ((sc.phase || 0) !== this.phase) { this.phase = sc.phase || 0; this.phaseT = 0; }
@@ -73,6 +75,7 @@ export const sceneView = {
     if (sc && overworldView.arriving()) return;
     if (sc?.id === 'wristband') return drawCeremony(game, g, sc.who, sc.by, this.t, game.settings.reducedMotion);
     if (sc?.id === 'crab_rave') return this.crabRave(game, g);
+    if (sc?.id === 'alley_lock') return this.alleyLock(game, g);
     if (sc?.id === 'boss') return drawBoss(game, g, sc.who, this.t, !!sc.card);
     if (sc?.id === 'mantequilla') return drawForage(game, g, this.t);
     if (sc?.id === 'vicchio_landing') return drawLanding(game, g, this.t, this.phase, this.phaseT);
@@ -144,3 +147,36 @@ sceneView.crabRave = function (game, g) {
 };
 
 export function install(game) { game.register('scene', sceneView); }
+
+/** the back alley: at the end of a passage of containers the market glows, until a shutter rattles down over it with a
+ *  CLANG; Constable Shah, in a tourist shirt and a stuck-on moustache, dusts off his hands in front (1.1.3) */
+sceneView.alleyLock = function (game, g) {
+  const still = game.settings.reducedMotion, t = still ? 3 : this.t, VIEW = H - 53;
+  const R = (c, x, y, w, h) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h)); };
+  R('#0B0314', 0, 0, W, H);
+  // the far end: the market behind, warm, with string lights
+  R('#F4A261', 116, 36, 88, 72); R('#E76F51', 116, 86, 88, 22);
+  for (let i = 0; i < 9; i++) R(i % 3 === 0 ? '#FFE066' : i % 3 === 1 ? '#FF4FA8' : '#5FF4FF', 120 + i * 10, 42 + (i % 2) * 2, 3, 3);
+  R('#3B2314', 130, 70, 10, 38); R('#3B2314', 172, 64, 12, 44);                       // people over there, going about their evening
+  // the shutter, coming down
+  const k = Math.min(1, t / 1.1), drop = Math.round(72 * k * k);
+  R('#8E939C', 116, 36, 88, drop);
+  for (let y = 36; y < 36 + drop; y += 4) R('#6C727C', 116, y, 88, 1);
+  if (drop > 2) R('#4A4F58', 116, 36 + drop - 2, 88, 2);
+  // the walls of the passage: shipping containers in perspective, ribbed, with posters
+  g.fillStyle = '#3A1E4A'; g.beginPath(); g.moveTo(0, 0); g.lineTo(116, 30); g.lineTo(116, 110); g.lineTo(0, VIEW); g.fill();
+  g.fillStyle = '#1E3A5A'; g.beginPath(); g.moveTo(W, 0); g.lineTo(204, 30); g.lineTo(204, 110); g.lineTo(W, VIEW); g.fill();
+  for (let i = 1; i < 7; i++) { const x = i * 18; R('#2A1438', x, 6 + x * 0.21, 2, VIEW - 12 - x * 0.55); R('#14284A', W - x - 2, 6 + x * 0.21, 2, VIEW - 12 - x * 0.55); }
+  R('#FF4FA8', 30, 40, 22, 30); R('#FFE066', 33, 44, 16, 3); R('#FFE066', 33, 50, 12, 2);          // GOA TRANCE poster
+  R('#4FE88A', 252, 46, 24, 26); R('#14101E', 256, 52, 16, 2); R('#14101E', 256, 58, 12, 2);        // WANTED (blank)
+  R('#2A1A2E', 0, VIEW - 8, W, 8);                                                                    // the ground
+  // CLANG
+  if (!still && t > 1.1 && t < 1.9) { const a = 1 - (t - 1.1) / 0.8; g.globalAlpha = a; drawText(g, 'CLANG!', 160, 18, { color: '#FFE066', align: 'center' }); g.globalAlpha = 1; }
+  else if (still) drawText(g, 'CLANG!', 160, 18, { color: '#FFE066', align: 'center' });
+  // Constable Shah: the guard, in a tourist shirt, with a moustache that is not quite on straight
+  const img = game.images['portrait:guard'];
+  const px = 208, py = VIEW - 96 + (still ? 0 : Math.round(Math.sin(t * 2) * 1));
+  if (img) { g.save(); g.imageSmoothingEnabled = false; g.drawImage(img, (!still && t % 3.1 < 0.12 ? 1 : 0) * 48, 0, 48, 48, px, py, 96, 96); g.restore(); }
+  R('#FF8FB8', px + 14, py + 78, 68, 18); for (let i = 0; i < 6; i++) R('#FFE066', px + 18 + i * 11, py + 82 + (i % 2) * 6, 4, 4);   // the shirt, hibiscus
+  R('#1E140E', px + 34, py + 56, 28, 4); R('#1E140E', px + 30, py + 58, 6, 3); R('#1E140E', px + 60, py + 55, 6, 3);              // the moustache, a bit crooked
+};

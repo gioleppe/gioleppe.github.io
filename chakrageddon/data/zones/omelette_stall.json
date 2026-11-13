@@ -30,24 +30,24 @@
     {
       "x": 0,
       "y": 5,
-      "to": "flea_market",
-      "tx": 24,
+      "to": "flea_alley",
+      "tx": 28,
       "ty": 5,
       "dir": "LEFT"
     },
     {
       "x": 0,
       "y": 6,
-      "to": "flea_market",
-      "tx": 24,
+      "to": "flea_alley",
+      "tx": 28,
       "ty": 6,
       "dir": "LEFT"
     },
     {
       "x": 0,
       "y": 7,
-      "to": "flea_market",
-      "tx": 24,
+      "to": "flea_alley",
+      "tx": 28,
       "ty": 7,
       "dir": "LEFT"
     },

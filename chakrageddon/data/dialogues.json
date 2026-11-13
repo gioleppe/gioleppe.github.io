@@ -496,7 +496,7 @@
   ],
   "sign_trail": [
     {
-      "t": "SANDY TRAIL. One plank bridge over the creek, no lifeguard. Mind the incense clouds: things come out of them."
+      "t": "SANDY TRAIL. Tide pools west, the drum circle east, one plank bridge over the creek. Mind the incense clouds: things come out of them. Ranger station at the top."
     }
   ],
   "beach_hippie": [
@@ -580,9 +580,9 @@
     },
     {
       "s": "Chai Mama",
-      "t": "You look like you are waiting for something. Sleep here until the next set?",
+      "t": "You look like you are waiting for something. Sleep here until a set starts? I will wake you.",
       "choice": [
-        "Sleep until the next set",
+        "Sleep until a set",
         "Get up"
       ],
       "goto": [
@@ -592,6 +592,12 @@
     },
     {
       "label": "sleep"
+    },
+    {
+      "s": "Chai Mama",
+      "t": "Which one? The timetable is pinned to the tent pole.",
+      "pickSet": true,
+      "cancel": "up"
     },
     {
       "restUntilSet": true
@@ -1668,7 +1674,7 @@
   "temple_water": [
     {
       "if": "temple_water_used",
-      "goto": "empty"
+      "goto": "water"
     },
     {
       "s": "Water Auntie",
@@ -1688,11 +1694,17 @@
       "end": true
     },
     {
-      "label": "empty"
+      "label": "water"
     },
     {
       "s": "Water Auntie",
-      "t": "The jug is empty, beta. The Chai Tent downstairs still pours."
+      "t": "The chai is finished, beta, but the water jug never is. Drink."
+    },
+    {
+      "water": true
+    },
+    {
+      "t": "Your Astrals drink their fill. Their Hydration is full."
     }
   ],
   "pit_spinner": [
@@ -3435,8 +3447,25 @@
       "goto": "after"
     },
     {
-      "ifHas": "green_coconut",
-      "goto": "offer"
+      "if": "coconut_blessed",
+      "goto": "go"
+    },
+    {
+      "ifCond": {
+        "all": [
+          {
+            "has": "green_coconut"
+          },
+          {
+            "has": "marigold_garland"
+          }
+        ]
+      },
+      "goto": "bless"
+    },
+    {
+      "if": "coconut_asked",
+      "goto": "remind"
     },
     {
       "s": "Pujari Mohan",
@@ -3444,11 +3473,15 @@
     },
     {
       "s": "Pujari Mohan",
-      "t": "She lies on the road because nobody has made her an offering since they tarred it. A green coconut, broken on these steps, and she will get up. That is the tradition. I made it up this morning, but it is a tradition now."
+      "t": "She lies on the road because nobody has made her an offering since they tarred it. She is not stubborn. She is offended. There is a difference, and it is a big one."
     },
     {
       "s": "Pujari Mohan",
-      "t": "There are coconut palms on the Jungle Shortcut, past the fourth bend. I would go myself, but I am needed here. For sitting."
+      "t": "She needs a green coconut, straight off the palm, not a windfall: those are for tourists. And a garland of marigolds. I bless them, and then you offer them to her, on the road, where the insult happened."
+    },
+    {
+      "s": "Pujari Mohan",
+      "t": "The palms are on the Jungle Shortcut, past the fourth bend. Pradeep owns them, or thinks he does. Meena at the gate sells marigolds. Go. I would come, but I am needed here. For sitting."
     },
     {
       "set": "coconut_asked"
@@ -3457,32 +3490,325 @@
       "end": true
     },
     {
-      "label": "offer"
+      "label": "remind"
     },
     {
       "s": "Pujari Mohan",
-      "t": "A green coconut! From the jungle! Give it here."
+      "t": "A green coconut off Pradeep's palms in the jungle, and Meena's marigolds from the gate. Both. She will know if you skimp."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "bless"
+    },
+    {
+      "s": "Pujari Mohan",
+      "t": "A coconut off the top of the palm, and Meena's best marigolds. Give them here."
+    },
+    {
+      "t": "He sprinkles them with water from a brass pot, mutters for a long time, and ties the garland around the coconut with a flourish."
+    },
+    {
+      "set": "coconut_blessed"
+    },
+    {
+      "s": "Pujari Mohan",
+      "t": "Now go. On the road, in front of her nose. Break the coconut and put the garland down. Then step back, and do not hurry her. Nobody hurries Lakshmi."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "go"
+    },
+    {
+      "s": "Pujari Mohan",
+      "t": "The road, my friend. In front of her nose. Do not hurry her."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "after"
+    },
+    {
+      "s": "Pujari Mohan",
+      "t": "Lakshmi prefers the courtyard. Cooler in the day, and the old woman brings her marigolds. The road misses her. The buses do not."
+    }
+  ],
+  "banyan_tarot": [
+    {
+      "visitor": "banyan",
+      "astral": true
+    },
+    {
+      "t": "The air in front of you starts to shimmer. A see-through Banyan drifts down out of the sky, cross-legged, glowing a faint violet.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Do not panic. My body is at home in the hammock. This is only my astral body. Very convenient. Terrible for the back."
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Six wristbands! The festival has noticed you, and so has somebody else. A card reader called Juniper has set up a table at the Anjuna Flea Market."
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "She reads the past lives of Astrals. Sit one down in front of her cards and it remembers a move it once knew, or skipped, or could have learned by now."
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "For a fee, of course. It is the Flea Market. Even the past lives have a price tag."
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Now if you will excuse me, I left my real body alone with a mango."
+    },
+    {
+      "set": "tarot_arrived"
+    },
+    {
+      "t": "He folds into a point of light and is gone.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "visitor": null
+    }
+  ],
+  "tarot_reader": [
+    {
+      "if": "tarot_met",
+      "goto": "again"
+    },
+    {
+      "t": "A girl in round glasses and a mustard beanie shuffles an enormous tarot deck. Her table smells of oat milk and palo santo."
+    },
+    {
+      "s": "Juniper",
+      "t": "Oh, you are the one with the wristbands. Banyan's astral body told me you were coming. He does that a lot. It is a bit much."
+    },
+    {
+      "s": "Juniper",
+      "t": "I read past lives. Only for Astrals, though. People's past lives are all Cleopatra. It got boring."
+    },
+    {
+      "s": "Juniper",
+      "t": "Every move an Astral ever knew, or skipped, or forgot, is still in there somewhere. The cards just find it again."
+    },
+    {
+      "set": "tarot_met"
+    },
+    {
+      "label": "again"
+    },
+    {
+      "s": "Juniper",
+      "t": "A reading is Rs {price}. One Astral, one move remembered. Cards don't lie, but they don't do refunds either.",
+      "choice": [
+        "A reading",
+        "How does it work?",
+        "Not now"
+      ],
+      "goto": [
+        "read",
+        "how",
+        "bye"
+      ]
+    },
+    {
+      "label": "how"
+    },
+    {
+      "s": "Juniper",
+      "t": "Pick an Astral and I lay out its past lives. Any move its line learns by its level, it can remember, as long as it doesn't know it now."
+    },
+    {
+      "s": "Juniper",
+      "t": "If it already knows four, it has to let one go. The cards show you what each move does before you choose. I'm not a monster."
+    },
+    {
+      "goto": "again"
+    },
+    {
+      "label": "read"
+    },
+    {
+      "s": "Juniper",
+      "t": "Sit it down. Breathe. Try not to look at the Death card, it's not about dying. It never is."
+    },
+    {
+      "tarot": true
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "bye"
+    },
+    {
+      "s": "Juniper",
+      "t": "Mercury is in retrograde anyway. Come back when it isn't."
+    }
+  ],
+  "coconut_wallah": [
+    {
+      "if": "lakshmi_moved",
+      "goto": "after"
+    },
+    {
+      "ifNot": "coconut_asked",
+      "goto": "after"
+    },
+    {
+      "if": "coconut_blessed",
+      "goto": "after"
+    },
+    {
+      "ifHas": "green_coconut",
+      "goto": "have"
+    },
+    {
+      "s": "Coconut Wallah Pradeep",
+      "t": "For Lakshmi? Why did you not say! For Lakshmi I climb for free. Well. For a fight. Same thing."
+    },
+    {
+      "t": "He hitches up his lungi, loops a rope round his ankles and goes up the palm like a lift. A green coconut thumps down at your feet. He comes down rather more slowly."
+    },
+    {
+      "give": "green_coconut",
+      "n": 1
+    },
+    {
+      "s": "Coconut Wallah Pradeep",
+      "t": "The best one. I named it Ganesh. Tell her it is from me."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "have"
+    },
+    {
+      "s": "Coconut Wallah Pradeep",
+      "t": "You have Ganesh already. Look after him."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "after"
+    },
+    {
+      "s": "Coconut Wallah Pradeep",
+      "t": "Windfalls are for tourists. The good ones, you climb for."
+    }
+  ],
+  "shrine_flowers_after": [
+    {
+      "if": "lakshmi_moved",
+      "goto": "after"
+    },
+    {
+      "ifNot": "coconut_asked",
+      "goto": "after"
+    },
+    {
+      "if": "coconut_blessed",
+      "goto": "after"
+    },
+    {
+      "ifHas": "marigold_garland",
+      "goto": "have"
+    },
+    {
+      "s": "Flower Seller Meena",
+      "t": "A garland for Lakshmi? Then it is not for sale. Here, the thick one, with the orange in the middle. She likes orange."
+    },
+    {
+      "give": "marigold_garland",
+      "n": 1
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "have"
+    },
+    {
+      "s": "Flower Seller Meena",
+      "t": "Do not wear it. I can see you thinking about wearing it."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "after"
+    },
+    {
+      "s": "Flower Seller Meena",
+      "t": "The garden loses a string of marigolds every night, and the shrine gains one every morning. Not my business. Mine cost money."
+    }
+  ],
+  "lakshmi_road": [
+    {
+      "if": "coconut_blessed",
+      "goto": "offer"
+    },
+    {
+      "t": "Lakshmi chews slowly and looks straight through you. A fly lands on her nose. She allows it."
+    },
+    {
+      "ifNot": "coconut_asked",
+      "goto": "end"
+    },
+    {
+      "t": "Not without the blessed coconut and the garland, she seems to say. You may be imagining it."
+    },
+    {
+      "label": "end"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "offer"
+    },
+    {
+      "t": "You crack the coconut on the tarmac in front of her nose and lay the garland beside it. Coconut water runs into the dust."
+    },
+    {
+      "t": "Lakshmi sniffs the garland. She drinks. Then, one leg at a time, with enormous dignity, she gets up."
+    },
+    {
+      "t": "She looks at you as if you were late, and sets off down the road towards the shrine. You follow, at her pace."
     },
     {
       "take": "green_coconut",
       "n": 1
     },
     {
-      "t": "He lifts it over his head and brings it down on the shrine step. CRACK. Coconut water runs down the stone, and somewhere out on the road a bell on a cow's neck rings once."
-    },
-    {
-      "s": "Pujari Mohan",
-      "t": "There. Listen."
+      "take": "marigold_garland",
+      "n": 1
     },
     {
       "set": "lakshmi_moved"
     },
     {
-      "t": "Hooves, slow, coming closer. A cow walks in through the gate, past you, and lies down in the corner of the courtyard with a sigh, as if this had been the plan all along."
+      "warp": {
+        "zone": "roadside_shrine",
+        "x": 6,
+        "y": 10,
+        "dir": "LEFT"
+      }
+    },
+    {
+      "t": "An hour later she walks in through the shrine gate, past you, and lies down in the corner of the courtyard with a sigh, as if this had been the plan all along."
     },
     {
       "s": "Pujari Mohan",
-      "t": "The road is open, my friend. Tell the bus drivers. Do not tell anyone it was a coconut. Let them think it was me."
+      "t": "There. The road is open, my friend. Tell the bus drivers. Do not tell anyone it was a coconut. Let them think it was me."
     },
     {
       "heal": true,
@@ -3496,14 +3822,292 @@
       "n": 3
     },
     {
+      "rupees": 400
+    }
+  ],
+  "alley_lock": [
+    {
+      "scene": "alley_lock"
+    },
+    {
+      "t": "Behind you, a metal shutter rattles down over the way you came in. CLANG. A man in a tourist shirt and a very new moustache dusts off his hands."
+    },
+    {
+      "s": "Constable Shah",
+      "t": "Good evening, sir. Madam. Sir. This exit is closed. For a routine inspection."
+    },
+    {
+      "s": "Constable Shah",
+      "t": "Of the air. Yes. The air in this alley is under inspection. Very suspicious air."
+    },
+    {
+      "s": "Constable Shah",
+      "t": "Also, I am not a policeman. I am a man who sells shutters. Nobody leaves until the whole team has had a word with you. My team of... shutter salesmen."
+    },
+    {
+      "set": "alley_locked"
+    },
+    {
+      "scene": null
+    },
+    {
+      "s": "Constable Shah",
+      "t": "Starting with me."
+    },
+    {
+      "battle": "alley_shah"
+    }
+  ],
+  "alley_check": [
+    {
+      "ifCond": {
+        "all": [
+          {
+            "defeated": "alley_shah"
+          },
+          {
+            "defeated": "alley_gary"
+          },
+          {
+            "defeated": "alley_river"
+          },
+          {
+            "defeated": "alley_baba"
+          },
+          {
+            "defeated": "alley_sunil"
+          },
+          {
+            "defeated": "alley_prakash"
+          },
+          {
+            "defeated": "alley_desai"
+          }
+        ]
+      },
+      "goto": "clear"
+    },
+    {
       "end": true
     },
     {
-      "label": "after"
+      "label": "clear"
     },
     {
-      "s": "Pujari Mohan",
-      "t": "Lakshmi prefers the courtyard. Cooler in the day, and the old woman brings her marigolds. The road misses her. The buses do not."
+      "t": "A whistle blows. All over the alley, moustaches come off, notebooks snap shut, and the whole team files out through a door in a container you had not noticed."
+    },
+    {
+      "t": "\"WE WERE NEVER HERE,\" somebody shouts from inside the container. The shutters roll up. Both ways out are open."
+    },
+    {
+      "set": "alley_cleared"
+    }
+  ],
+  "alley_chillum": [
+    {
+      "s": "Sadhu Shiv",
+      "t": "Bom Shankar! The undercovers left, so the chillum came back. It has been lit four times since. The fifth is for you. No? More for me."
+    }
+  ],
+  "alley_raver": [
+    {
+      "s": "Raver",
+      "t": "There is no music in this alley. So I brought my own. It is in my head. It is very good."
+    }
+  ],
+  "alley_wook": [
+    {
+      "s": "Wook",
+      "t": "They left a box of moustaches behind. Real hair. Not theirs, I think. Still, it is warm."
+    }
+  ],
+  "alley_lady": [
+    {
+      "s": "Influencer",
+      "t": "Do I look high? I need to look high, but classy. For the brand. Do not answer. Just nod."
+    }
+  ],
+  "alley_guy": [
+    {
+      "s": "Local",
+      "t": "This alley used to be full of policemen dressed as hippies. Now it is full of hippies dressed as hippies. Much better for business."
+    }
+  ],
+  "brit_sharon": [
+    {
+      "if": "burn_done",
+      "goto": "after"
+    },
+    {
+      "ifHas": "blue_clay",
+      "goto": "give"
+    },
+    {
+      "if": "burn_asked",
+      "goto": "remind"
+    },
+    {
+      "s": "Sharon from Basildon",
+      "t": "Ooh, hello, love. You're not from the hotel, are you? Only Nigel's gone a funny colour."
+    },
+    {
+      "s": "Sharon from Basildon",
+      "t": "We put the cooking oil on, like the man at the stall said. Factor nothing. Nigel says you don't burn if you've got a base tan. Nigel had a base tan in 1997."
+    },
+    {
+      "s": "Sharon from Basildon",
+      "t": "The lifeguard says there's cold blue clay in that cave out in the middle of the water. Takes the heat right out. I'd go meself, but I've just had me nails done. Be a love?"
+    },
+    {
+      "set": "burn_asked"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "remind"
+    },
+    {
+      "s": "Sharon from Basildon",
+      "t": "The cave, love. Middle of the water. Blue clay. Nigel's started to sizzle."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "give"
+    },
+    {
+      "s": "Sharon from Basildon",
+      "t": "Ooh, you're a STAR. Right. Everybody! Line up!"
+    },
+    {
+      "take": "blue_clay",
+      "n": 1
+    },
+    {
+      "t": "Sharon slaps cold blue clay on Nigel, Tracy, Dave and finally herself, with the confidence of a woman who has iced a lot of cakes."
+    },
+    {
+      "s": "Sharon from Basildon",
+      "t": "Ooh, that's lovely, that. That's like a fridge."
+    },
+    {
+      "set": "burn_done"
+    },
+    {
+      "t": "Four bright blue British tourists lie back down on their towels with a long sigh. Out on the water, a fisherman crosses himself."
+    },
+    {
+      "s": "Sharon from Basildon",
+      "t": "Here, have these. We won them at the hotel quiz. Don't ask what the question was."
+    },
+    {
+      "rupees": 700
+    },
+    {
+      "give": "electrolyte_sachet",
+      "n": 3
+    },
+    {
+      "label": "after"
+    }
+  ],
+  "blue_sharon": [
+    {
+      "s": "Sharon from Basildon",
+      "t": "We fly home Thursday. Blue. Mum's going to love it."
+    }
+  ],
+  "blue_nigel": [
+    {
+      "s": "Nigel",
+      "t": "I don't burn, me. I go blue now. Evolution, innit."
+    }
+  ],
+  "blue_tracy": [
+    {
+      "s": "Tracy from Leeds",
+      "t": "Can you get a tan through clay? Asking for a photo."
+    }
+  ],
+  "blue_dave": [
+    {
+      "s": "Dave",
+      "t": "Go on. Say Smurf. Everyone else has."
+    }
+  ],
+  "lifeguard_rohan": [
+    {
+      "if": "burn_done",
+      "goto": "blue"
+    },
+    {
+      "s": "Lifeguard Rohan",
+      "t": "They arrive white, they lie in the sun like chapatis on a tawa, they go red, they go home and tell everyone India is too hot."
+    },
+    {
+      "s": "Lifeguard Rohan",
+      "t": "If they want help: the sea cave in the middle of the bay has cool blue clay. Takes the heat out. Nobody ever asks me. I just have the whistle."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "blue"
+    },
+    {
+      "s": "Lifeguard Rohan",
+      "t": "Blue. All four of them. In thirty years of lifeguarding I have never had to write \"blue\" in the book."
+    }
+  ],
+  "sign_grotto": [
+    {
+      "t": "Somebody has scratched into the rock: KEEP OUT. Somebody else has scratched underneath: THE CLAY IS AT THE BACK. A third person has drawn a crab."
+    }
+  ],
+  "trail_ranger": [
+    {
+      "ifCond": {
+        "party": 2
+      },
+      "goto": "ready"
+    },
+    {
+      "s": "Ranger Asha",
+      "t": "Going north? With one Astral? DJ Diabolo's crowd will chew you up and spit out your sandals."
+    },
+    {
+      "s": "Ranger Asha",
+      "t": "Bag at least one more first. The incense clouds along the trail are full of them. Wear one down a bit, then throw a baggie at it."
+    },
+    {
+      "if": "ranger_baggies",
+      "goto": "end"
+    },
+    {
+      "s": "Ranger Asha",
+      "t": "Here. Three baggies. Rangers carry spares, because tourists never do."
+    },
+    {
+      "give": "ziploc_baggie",
+      "n": 3
+    },
+    {
+      "set": "ranger_baggies"
+    },
+    {
+      "label": "end"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "ready"
+    },
+    {
+      "s": "Ranger Asha",
+      "t": "Two Astrals. Better. Swap them around in a fight: let the one that is winning do the winning. Up the path is the Poi Pit."
     }
   ]
 }

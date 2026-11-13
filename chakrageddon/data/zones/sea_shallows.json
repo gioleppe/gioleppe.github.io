@@ -10,72 +10,88 @@
   "cordonFlag": "beat_chloe",
   "cordonText": "A sadhu bars the cave mouth with his staff. \"Baba Smoke sees nobody without a press pass. He likes the coverage.\"",
   "rows": [
-    "^^^^^^^^^,,^^^^^^^^^",
-    "^^^^^^^^^BB^^^^^^^^^",
-    "^^^^^^^......^^^^^^^",
-    "^^^^^^.......^^^^^^^",
-    "WwwwwwwwwwwwwwwwwwwW",
-    "Wwwo...wwwwwwoowwwwW",
-    "Wwww....wwwwwwwwwwww",
-    "Wwwww..wwwwwxx.wwwww",
-    "WwwwwwwwwwwoxwwwwwwW",
-    "WWwwwwwwwwwwwww..owW",
-    "WwwwoowwwwwwwwwwwwwW",
-    "WWWWWWwwwwwwwwWWWWWW",
-    "WWWWWWWWwwwwWWWWWWWW",
-    "WWWWWWWWwwwwWWWWWWWW"
+    "^^^^^^^^^^^^^^^^^^^,,^^^^^^^^^^^^^^^^^^^",
+    "^^^^^^^^^^^^^^^^^^^BB^^^^^^^^^^^^^^^^^^^",
+    "^^^^^^^^^^^^^^^..........^^^^^^^^^^^^^^^",
+    "^^^^^^^^^^^^^^^..........^^^^^^^^^^^^^^^",
+    "^..........wwww..........wwwwwwwwwwwwwwW",
+    "^T......TwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwW",
+    "^........wwwwwwwwwwwwwwwwwww..o.wwwwwwwW",
+    "^..aa....wwwwwwwwwwwwwwwwwww....wwwwwwwW",
+    "^........wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwW",
+    "^h.....aa.wwwwwwwwwwwwwwwowwwwwwwwwwwwwW",
+    "^..........wwwwwwwwwwwwwwwwwwwwwwwwwwwww",
+    "^..aa......wwwww^^^^^^^^^wwwwwwwwwwwwwww",
+    "^..........wwwww^^^^^^^^^wwwwwwwwwwwwwwW",
+    "^.T.......wwwwww^^^^^^^^^wwwwwwwwowwwwwW",
+    "^........wwwowww^^^^^^^^^wwwwwwwwwwwwwwW",
+    "^....aa..wwwwwww^^^^^^^^^wowwwwwwwwwwwwW",
+    "^........wwwwwww^^^^^^^^^wwwwwwwwwwwwwwW",
+    "^T.......wwwwwww^^^^.^^^^wwwwwwwwwwwwwwW",
+    "^.........wwwwwwwo.....owwwwwwwwwwwwwwwW",
+    "^..aa......wwwwwww.....wwwwwwwwwwwwwwwwW",
+    "^..........wwwwwwwwwwwwwwwwwwwwwwwwwwwwW",
+    "^q.........wwwwwwwwwwwwwwwwwww.....T.wwW",
+    "^.....aa..wwwwwwwwwwwwwwwwwwww.......wwW",
+    "^........wwww...wwwwwwwwwwwwww.......wwW",
+    "^.T......wwww...wwwwwwwwwwwwww.o.....wwW",
+    "^........wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwW",
+    "^wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwW",
+    "^wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwW",
+    "WWwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwWW",
+    "WWWWWWWWWWWWWWWWWWwwwwWWWWWWWWWWWWWWWWWW"
   ],
   "warps": [
     {
-      "x": 8,
-      "y": 13,
+      "x": 18,
+      "y": 29,
       "to": "scooter_ditch",
       "tx": 9,
       "ty": 1,
       "dir": "DOWN"
     },
     {
-      "x": 9,
-      "y": 13,
+      "x": 19,
+      "y": 29,
       "to": "scooter_ditch",
       "tx": 10,
       "ty": 1,
       "dir": "DOWN"
     },
     {
-      "x": 10,
-      "y": 13,
+      "x": 20,
+      "y": 29,
       "to": "scooter_ditch",
       "tx": 11,
       "ty": 1,
       "dir": "DOWN"
     },
     {
-      "x": 11,
-      "y": 13,
+      "x": 21,
+      "y": 29,
       "to": "scooter_ditch",
       "tx": 12,
       "ty": 1,
       "dir": "DOWN"
     },
     {
-      "x": 19,
-      "y": 6,
+      "x": 39,
+      "y": 10,
       "to": "sweetwater_lake",
       "tx": 1,
       "ty": 6,
       "dir": "RIGHT"
     },
     {
-      "x": 19,
-      "y": 7,
+      "x": 39,
+      "y": 11,
       "to": "sweetwater_lake",
       "tx": 1,
       "ty": 7,
       "dir": "RIGHT"
     },
     {
-      "x": 9,
+      "x": 19,
       "y": 0,
       "to": "sadhu_cave",
       "tx": 8,
@@ -83,18 +99,26 @@
       "dir": "UP"
     },
     {
-      "x": 10,
+      "x": 20,
       "y": 0,
       "to": "sadhu_cave",
       "tx": 9,
       "ty": 14,
+      "dir": "UP"
+    },
+    {
+      "x": 20,
+      "y": 17,
+      "to": "sea_grotto",
+      "tx": 8,
+      "ty": 11,
       "dir": "UP"
     }
   ],
   "npcs": [
     {
       "id": "sea_sadhu",
-      "x": 8,
+      "x": 18,
       "y": 2,
       "sprite": "baba",
       "dir": "DOWN",
@@ -102,41 +126,133 @@
     },
     {
       "id": "sea_sign",
-      "x": 11,
+      "x": 22,
       "y": 3,
       "tile": "sign",
       "script": "sign_sea"
+    },
+    {
+      "id": "brit_sharon",
+      "x": 5,
+      "y": 7,
+      "sprite": "brit_f",
+      "dir": "RIGHT",
+      "script": "brit_sharon",
+      "hideIf": "burn_done"
+    },
+    {
+      "id": "brit_nigel",
+      "x": 5,
+      "y": 11,
+      "sprite": "brit",
+      "dir": "RIGHT",
+      "trainer": "brit_nigel",
+      "sight": 3,
+      "hideIf": "burn_done"
+    },
+    {
+      "id": "brit_tracy",
+      "x": 4,
+      "y": 16,
+      "sprite": "brit_f",
+      "dir": "RIGHT",
+      "trainer": "brit_tracy",
+      "sight": 3,
+      "hideIf": "burn_done"
+    },
+    {
+      "id": "brit_dave",
+      "x": 6,
+      "y": 20,
+      "sprite": "brit",
+      "dir": "UP",
+      "trainer": "brit_dave",
+      "sight": 2,
+      "hideIf": "burn_done"
+    },
+    {
+      "id": "lifeguard",
+      "x": 8,
+      "y": 13,
+      "sprite": "lifeguard",
+      "dir": "LEFT",
+      "trainer": "lifeguard_rohan",
+      "sight": 3,
+      "script": "lifeguard_rohan"
+    },
+    {
+      "id": "blue_sharon",
+      "x": 5,
+      "y": 7,
+      "sprite": "brit_f_blue",
+      "dir": "RIGHT",
+      "script": "blue_sharon",
+      "showIf": "burn_done"
+    },
+    {
+      "id": "blue_nigel",
+      "x": 5,
+      "y": 11,
+      "sprite": "brit_blue",
+      "dir": "RIGHT",
+      "script": "blue_nigel",
+      "showIf": "burn_done"
+    },
+    {
+      "id": "blue_tracy",
+      "x": 4,
+      "y": 16,
+      "sprite": "brit_f_blue",
+      "dir": "RIGHT",
+      "script": "blue_tracy",
+      "showIf": "burn_done"
+    },
+    {
+      "id": "blue_dave",
+      "x": 6,
+      "y": 20,
+      "sprite": "brit_blue",
+      "dir": "UP",
+      "script": "blue_dave",
+      "showIf": "burn_done"
     }
   ],
   "pickups": [
     {
       "id": "sea_vial",
-      "x": 7,
+      "x": 16,
       "y": 3,
       "item": "amber_vial",
       "n": 2
     },
     {
       "id": "sea_sandbar",
-      "x": 5,
-      "y": 6,
+      "x": 29,
+      "y": 7,
       "item": "coconut_water",
       "n": 2
     },
     {
       "id": "sea_wreck",
       "x": 14,
-      "y": 7,
+      "y": 24,
       "item": "amber_vial",
       "n": 2,
       "hidden": true
     },
     {
       "id": "sea_spit",
-      "x": 16,
-      "y": 9,
+      "x": 33,
+      "y": 22,
       "item": "watermelon_slice",
       "n": 1
+    },
+    {
+      "id": "sea_towel",
+      "x": 2,
+      "y": 25,
+      "item": "water_bottle",
+      "n": 2
     }
   ],
   "encounters": {

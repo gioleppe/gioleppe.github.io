@@ -9,13 +9,16 @@
 //   { rupees: n }             the player receives n Rupees
 //   { clock: minutes }        sets the festival clock (time passes while you wait)
 //   { set / clear: flag } { give: item, n } { take: item, n } { giveMon: species, level } { pay: n, else: label }
-//   { heal, respawn? } { stash: true } { shop: id } { battle: trainerId } { wild: species, level } { wristband: id }
+//   { heal, respawn? } { water: true } (Hydration only) { stash: true } { shop: id } { battle: trainerId } { wild: species, level } { wristband: id }
 //   { warp: { zone, x, y, dir } } { run: scriptId } { credits } { end }
 //   { fx: name, at: npcId }        a visual effect at someone (the memory vendor's rainbow burst); the view draws it
 //   { mirror: true }               a battle against a copy of your own party, for nothing (your reflection)
 //   { walkOff: npcId }             that NPC walks to its leave: [x, y] tile (the view walks them; a flag hides them after)
 //   { visitor: sprite | null }     someone stands next to you on the map while the script runs (Banyan with the timetable)
-//   { restUntilSet: true }         rest until the next set on the festival timetable starts
+//                                    astral: true: they are a projection, floating down out of the sky (Banyan, six wristbands)
+//   { tarot: true }                the tarot reader's table: an Astral remembers a forgotten move (mode TAROT)
+//   { restUntilSet: true }         rest until the set picked just before (pickSet), or the next set on the timetable
+//   { s, t, pickSet: true, cancel: label }  a question with one answer per set (soonest first) and Get up (goes to cancel)
 //   { scene: id, show?: speciesId, phase?: n }  full-screen backdrop behind the dialogue (the opening dream); { scene: null } ends it
 //                                    phase: a scene with several beats (the Vicchio landing) moves on to beat n
 //                                    { scene: 'boss', who, card? }: a boss's cutscene; card: only the short title card
@@ -23,11 +26,12 @@
 //   heal also makes this your whiteout point (the huts: tents, beds, the hammock), unless respawn: false
 //   stash opens the party screen with the Chai Tent stash unlocked (s.menu.hut); only huts can swap with the stash
 //   a shop in a zone with bossGate stays shut until that boss is beaten (dialogues.shop_closed)
-// Text may contain {player}, replaced by the player's name.
+// Text may contain {player}, replaced by the player's name, and {price}: a tarot reading (rules.tarot.price).
 // The interpreter runs until it has something to show, then waits for ADVANCE_DIALOGUE.
 
 import { check } from './quests.js';
-import { restUntilSet, clockText } from './timetable.js';
+import { restUntilSet, clockText, sets, minutesUntil } from './timetable.js';
+import { statsOf } from './mons.js';
 import { pathFor } from './OverworldEngine.js';
 
 export function startScript(ctx, steps, mode = 'DIALOGUE') {
@@ -43,7 +47,7 @@ function jump(sc, label) {
   sc.pc = i;
 }
 
-const fill = (s, text) => String(text ?? '').replace(/\{player\}/g, s.playerName || 'friend');
+const fill = (s, text, data) => String(text ?? '').replace(/\{player\}/g, s.playerName || 'friend').replace(/\{price\}/g, data?.rules?.tarot?.price ?? 500);
 
 /** zone.bossGate: the flag of the boss who runs this place. Until it is set, the Chai Tent and the shops here turn you away.
  *  Returns the boss's name while the gate is shut, otherwise null. */
@@ -80,7 +84,7 @@ export function gauntletReset(ctx) {
 
 function say(ctx, speaker, text, style, choices, extra = {}) {
   const s = ctx.state;
-  speaker = fill(s, speaker); text = fill(s, text);
+  speaker = fill(s, speaker); text = fill(s, text, ctx.data);
   s.dialogue = { speaker: speaker || '', text, style: style || 'NORMAL', choices: choices || null };
   if (choices && extra.default) s.dialogue.choiceDefault = extra.default;
   if (choices && extra.show) s.dialogue.show = extra.show;
@@ -115,6 +119,13 @@ export function runScript(ctx) {
     if (st.set) { s.flags[st.set] = 1; continue; }
     if (st.clear) { delete s.flags[st.clear]; continue; }
     if (st.scene !== undefined) { s.scene = st.scene ? { id: st.scene, ...(st.show ? { show: st.show } : {}), ...(st.phase ? { phase: st.phase } : {}), ...(st.who ? { who: st.who } : {}), ...(st.by ? { by: st.by } : {}), ...(st.card ? { card: true } : {}) } : null; continue; }
+    // which set to sleep until: one answer per set on the timetable (soonest first), then Get up (goes to cancel)
+    if (st.pickSet) {
+      const list = sets(ctx.data).slice().sort((x, y) => (minutesUntil(ctx.data, s, x) || 1440) - (minutesUntil(ctx.data, s, y) || 1440));
+      sc.setPick = list.map((x) => x.id).concat(null); sc.setCancel = st.cancel;
+      const where = (x) => (x.zone === s.zoneId ? 'here' : ctx.data.zones[x.zone].name.replace(/^The /, ''));
+      return say(ctx, st.s, st.t, st.style, list.map((x) => `${clockText(x.from)} ${x.name}, ${where(x)}`).concat('Get up'));
+    }
     if (st.choice) { sc.choiceGoto = st.goto; sc.nameChoice = st.nameChoice ? st.choice : null; return say(ctx, st.s, st.t, st.style, st.choice, st); }
     if (st.t !== undefined) return say(ctx, st.s, st.t, st.style);
     if (st.give) {
@@ -142,6 +153,7 @@ export function runScript(ctx) {
       ctx.emit({ type: 'AUDIO_CUE', sfxId: 'fanfare' });
       return say(ctx, '', where === 'party' ? `${name} joined your party!` : `${name} was sent to the Chai Tent stash.`);
     }
+    if (st.water) { for (const m of s.party) m.hyd = statsOf(ctx.data, m).maxHyd; ctx.emit({ type: 'AUDIO_CUE', sfxId: 'heal' }); continue; }   // Hydration only (the temple's water jug)
     if (st.heal) { h.healParty(ctx, st.respawn !== false); ctx.emit({ type: 'PARTY_HEALED' }); ctx.emit({ type: 'AUDIO_CUE', sfxId: 'heal' }); continue; }
     if (st.wristband) {
       if (!s.wristbands.includes(st.wristband)) s.wristbands.push(st.wristband);
@@ -181,11 +193,16 @@ export function runScript(ctx) {
     if (st.wild) { h.startWildBattle(ctx, st.wild, st.level || 5, { scripted: true }); return; }
     if (st.mirror) { h.startMirrorBattle(ctx); return; }
     if (st.fx) { ctx.emit({ type: 'FX', fx: st.fx, npcId: st.at || null }); continue; }
-    if (st.visitor !== undefined) { s.visitor = st.visitor; continue; }
+    if (st.visitor !== undefined) { const fx = st.visitor ? (st.astral ? 'astral' : null) : s.visitorFx || null; ctx.emit({ type: 'VISITOR', sprite: st.visitor, fx, x: s.player.x, y: s.player.y }); s.visitor = st.visitor; s.visitorFx = st.visitor ? fx : null; continue; }
+    if (st.tarot) { s.script = null; setMode(ctx, 'TAROT'); return; }
     if (st.restUntilSet) {
-      const next = restUntilSet(ctx);
-      ctx.emit({ type: 'CLOCK_SET', clock: s.clock });
-      return say(ctx, '', next ? `You doze off on a cushion. You wake at ${clockText(next.from)}, just as the ${next.name} starts at ${ctx.data.zones[next.zone].name}.` : 'You doze off for a while.');
+      // until the set you picked (pickSet), or the next one; the view plays the night going by, and shows you the stage
+      const from = s.clock, next = restUntilSet(ctx, sc.wakeFor), here = next?.zone === s.zoneId;
+      sc.wakeFor = null;
+      ctx.emit({ type: 'CLOCK_SET', clock: s.clock, from, setId: next?.id || null, here });
+      if (!next) return say(ctx, '', 'You doze off for a while.');
+      return say(ctx, '', here ? `You doze off on a cushion. You wake at ${clockText(next.from)} to the bass coming up through the ground: the ${next.name} is starting, right here.`
+        : `You doze off on a cushion. You wake at ${clockText(next.from)}, just as the ${next.name} starts at ${ctx.data.zones[next.zone].name}.`);
     }
     throw new Error(`unknown script step: ${JSON.stringify(st)}`);
   }
@@ -194,7 +211,7 @@ export function runScript(ctx) {
 
 function finish(ctx) {
   const s = ctx.state;
-  s.script = null; s.dialogue = null; s.scriptMode = null; s.scene = null; s.visitor = null;
+  s.script = null; s.dialogue = null; s.scriptMode = null; s.scene = null; s.visitor = null; s.visitorFx = null;
   setMode(ctx, 'OVERWORLD');
 }
 
@@ -204,6 +221,7 @@ export function advance(ctx, choiceIndex) {
     const i = Math.max(0, Math.min(s.dialogue.choices.length - 1, choiceIndex ?? s.dialogue.choiceDefault ?? 0));
     if (sc && sc.nameChoice) { s.playerName = sc.nameChoice[i]; sc.nameChoice = null; }
     if (sc && sc.choiceGoto) { jump(sc, sc.choiceGoto[i]); sc.choiceGoto = null; }
+    if (sc && sc.setPick) { const id = sc.setPick[i]; sc.setPick = null; if (id) sc.wakeFor = id; else if (sc.setCancel) jump(sc, sc.setCancel); }
   }
   runScript(ctx);
 }

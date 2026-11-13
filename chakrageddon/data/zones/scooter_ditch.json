@@ -47,32 +47,32 @@
       "x": 9,
       "y": 0,
       "to": "sea_shallows",
-      "tx": 8,
-      "ty": 12,
+      "tx": 18,
+      "ty": 28,
       "dir": "UP"
     },
     {
       "x": 10,
       "y": 0,
       "to": "sea_shallows",
-      "tx": 9,
-      "ty": 12,
+      "tx": 19,
+      "ty": 28,
       "dir": "UP"
     },
     {
       "x": 11,
       "y": 0,
       "to": "sea_shallows",
-      "tx": 10,
-      "ty": 12,
+      "tx": 20,
+      "ty": 28,
       "dir": "UP"
     },
     {
       "x": 12,
       "y": 0,
       "to": "sea_shallows",
-      "tx": 11,
-      "ty": 12,
+      "tx": 21,
+      "ty": 28,
       "dir": "UP"
     }
   ],

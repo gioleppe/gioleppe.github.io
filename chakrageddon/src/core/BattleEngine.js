@@ -14,6 +14,8 @@ const other = (side) => (side === 'p' ? 'e' : 'p');
 const clamp01 = (v) => Math.max(0, Math.min(1, v));
 const B = (ctx) => ctx.state.battle;
 const msg = (ctx, text) => ctx.emit({ type: 'MESSAGE', text });
+/** a line to read, not a play-by-play (a boss speaking, your reflection): the view waits for A before going on */
+const say = (ctx, text) => ctx.emit({ type: 'MESSAGE', text, read: true });
 
 export function active(ctx, side) { const b = B(ctx); return side === 'p' ? ctx.state.party[b.pi] : b.enemy[b.ei]; }
 function label(ctx, side) {
@@ -26,9 +28,13 @@ function refreshSide(ctx, side) { B(ctx).side[side].maxHp = statsOf(ctx.data, ac
 /** a creature's passive ability (data/dex.json "ability"; Nitroxide's old "trait" still counts) */
 export const abilityOf = (ctx, mon) => { const sp = ctx.data.dex[mon.speciesId]; return sp.ability || sp.trait || null; };
 const holds = (mon, itemId) => mon.held === itemId;
-/** hydration a move really costs this creature (Stamina and the Steel Flask each take one off) */
+/** hydration a move really costs this creature: Stamina takes one off, the Steel Flask a share (rules.battle.flaskSave,
+ *  a third: at least one) */
 export function moveCost(ctx, mon, move) {
-  return Math.max(0, move.hydrationCost - (abilityOf(ctx, mon) === 'STAMINA' && move.hydrationCost > 0 ? 1 : 0) - (holds(mon, 'steel_flask') && move.hydrationCost > 0 ? 1 : 0));
+  const c = move.hydrationCost;
+  if (!(c > 0)) return 0;
+  const flask = holds(mon, 'steel_flask') ? Math.max(1, Math.round(c * (ctx.data.rules.battle.flaskSave ?? 1 / 3))) : 0;
+  return Math.max(0, c - (abilityOf(ctx, mon) === 'STAMINA' ? 1 : 0) - flask);
 }
 export function usableMoves(ctx, mon) { return mon.moves.filter((id) => mon.hyd >= moveCost(ctx, mon, ctx.data.moves[id])); }
 
@@ -52,7 +58,7 @@ export function startBattle(ctx, { kind, enemy, trainerId, scripted, restore }) 
   const mirror = kind === 'mirror';
   ctx.emit({ type: 'BATTLE_START', kind, trainerName: mirror ? 'You' : trainer?.name || null, trainerSprite: mirror ? s.outfit || 'player' : trainer?.sprite || null, boss: !!trainer?.boss, player: snapshot(ctx.data, s.party[pi]), enemy: snapshot(ctx.data, enemy[0]), enemyCount: enemy.length, paletteId: zone.paletteId });
   ctx.emit({ type: 'INTOXICATION_CHANGED', oldLevel: s.intox, newLevel: b.intox });
-  ctx.emit({ type: 'AUDIO_CUE', trackBpm: (zone.baseBpm || 140) + (trainer?.boss ? 12 : 6), lowPassFilterHz: 20000 - b.intox * 12000, mood: trainer?.boss ? 'BOSS' : 'BATTLE', ...(trainer?.boss ? { theme: `boss:${trainer.cutscene || trainer.id.replace(/_rematch$/, '')}` } : {}) });   // every boss has a theme of their own
+  ctx.emit({ type: 'AUDIO_CUE', start: true, trackBpm: (zone.baseBpm || 140) + (trainer?.boss ? 12 : 6), lowPassFilterHz: 20000 - b.intox * 12000, mood: trainer?.boss ? 'BOSS' : 'BATTLE', ...(trainer?.boss ? { theme: `boss:${trainer.cutscene || trainer.id.replace(/_rematch$/, '')}` } : {}) });   // every boss has a theme of their own
   s.dex.seen[enemy[0].speciesId] = 1;
   if (kind === 'wild') msg(ctx, `A wild ${nameOf(ctx.data, enemy[0])} drifts out of the haze!`);
   else if (mirror) { msg(ctx, 'Your reflection wants an astral clash!'); msg(ctx, `Your reflection manifests ${nameOf(ctx.data, enemy[0])}!`); }
@@ -74,7 +80,13 @@ export function startMirrorBattle(ctx) {
 }
 export function startTrainerBattle(ctx, trainerId) {
   const t = ctx.data.trainers[trainerId];
-  return startBattle(ctx, { kind: 'trainer', trainerId, enemy: t.party.map((p) => createMon(ctx, p.species, p.level, p.moves)), scripted: true });
+  return startBattle(ctx, { kind: 'trainer', trainerId, enemy: t.party.map((p) => trained(ctx, createMon(ctx, p.species, p.level, p.moves))), scripted: true });
+}
+/** a trainer's Astral: festival regulars carry more water than a wild one (rules.stat.trainerWater a level) */
+function trained(ctx, mon) {
+  const w = ctx.data.rules.stat.trainerWater || 0;
+  if (w && mon.gains) { mon.gains.hyd += w * (mon.level - 1); mon.hyd = statsOf(ctx.data, mon).maxHyd; }
+  return mon;
 }
 
 // ---------------------------------------------------------------- numbers
@@ -115,7 +127,11 @@ function calcDamage(ctx, side, move, roll) {
   const over = ab === 'OVERDRIVE' && low && atkSp.types.includes(move.type) ? 1.3 : 1;
   const skin = defAb === 'THICK_SKIN' && phys ? 0.8 : 1;
   const glow = holds(atk, 'neon_glowstick') ? 1.1 : 1;
-  return { dmg: Math.max(1, Math.floor(base * stab * mult * (crit ? R.critMult : 1) * rand * burst * over * skin * glow)), crit, mult };
+  // the difficulty (Options): your moves hit for `dealt`, theirs for `taken`. Once, on the final damage of a move, so the
+  // type chart, same-type bonus, crits, abilities and gear stay as they are; recoil and drain follow the damage they come from
+  const level = ctx.data.rules.difficulty?.[ctx.options?.difficulty || 'normal'] || { dealt: 1, taken: 1 };
+  const diff = side === 'p' ? level.dealt : level.taken;
+  return { dmg: Math.max(1, Math.floor(base * stab * mult * (crit ? R.critMult : 1) * rand * burst * over * skin * glow * diff)), crit, mult };
 }
 export function estimateDamage(ctx, battle, side, moveId) { return calcDamage(ctx, side, ctx.data.moves[moveId], false).dmg; }
 
@@ -383,7 +399,7 @@ function bossMoment(ctx) {
   if (!(now > 0 && now <= max / 2)) return;
   b.moment = true;
   ctx.emit({ type: 'BOSS_MOMENT', trainerId: t.id, name: t.name, line: m.line, fx: m.fx || null });
-  msg(ctx, `${t.name}: "${m.line}"`);
+  say(ctx, `${t.name}: "${m.line}"`);
   for (const e of m.effects || []) {
     if (e.type === 'STAT' && active(ctx, e.target || 'e').hp > 0) stage(ctx, e.target || 'e', e.stat, e.stages);
     else if (e.type === 'INVERT') { b.invert = e.turns + 1; ctx.emit({ type: 'FIELD_EFFECT', effect: 'INVERT_TYPE_CHART', turns: e.turns }); msg(ctx, 'Strengths and weaknesses turn inside out!'); }
@@ -444,7 +460,7 @@ function faintCheck(ctx) {
     ctx.emit({ type: 'FAINT', side: 'p' }); ctx.emit({ type: 'AUDIO_CUE', sfxId: 'faint' });
     msg(ctx, `${nameOf(ctx.data, p)} fades out.`);
     p.status = null;
-    if (!s.party.some((m) => m.hp > 0)) return b.kind === 'mirror' ? (b.phase = 'PHASE_VICTORY', msg(ctx, 'Your reflection wins. It does not seem to mind.'), finish(ctx, 'LOST')) : whiteout(ctx);
+    if (!s.party.some((m) => m.hp > 0)) return b.kind === 'mirror' ? (b.phase = 'PHASE_VICTORY', say(ctx, 'Your reflection wins. It does not seem to mind.'), finish(ctx, 'LOST')) : whiteout(ctx);
   }
   if (enemyOut) return victory(ctx);
   if (e.hp <= 0) {
@@ -516,7 +532,7 @@ function victory(ctx) {
     s.rupees += t.reward || 0;
     msg(ctx, `You out-vibed ${t.name}!`);
     if (t.reward) { msg(ctx, `You got Rs ${t.reward}.`); ctx.emit({ type: 'RUPEES_CHANGED', rupees: s.rupees }); }
-  } else if (b.kind === 'mirror') msg(ctx, 'You out-vibed yourself. Nobody else saw.');
+  } else if (b.kind === 'mirror') say(ctx, 'You out-vibed yourself. Nobody else saw.');
   else wildDrop(ctx);
   finish(ctx, 'WON');
 }
@@ -576,7 +592,7 @@ function finalize(ctx) {
   ctx.emit({ type: 'BATTLE_END', result, boss: !!(b.trainerId && ctx.data.trainers[b.trainerId]?.boss) });
   s.battle = null;
   const zone = zoneOf(ctx);
-  ctx.emit({ type: 'AUDIO_CUE', trackBpm: zone.baseBpm, lowPassFilterHz: 20000 - s.intox * 8000, mood: zone.paletteId });
+  ctx.emit({ type: 'AUDIO_CUE', trackBpm: zone.baseBpm, lowPassFilterHz: 20000 - s.intox * 8000, mood: zone.paletteId, after: true });   // the view plays it once the battle screen closes
   if (s.script) runScript(ctx); else setMode(ctx, 'OVERWORLD');
 }
 

@@ -250,7 +250,7 @@
     "effect": {
       "held": true
     },
-    "desc": "To hold. Its moves cost one less Hydration."
+    "desc": "To hold. Its moves cost a third less Hydration."
   },
   {
     "id": "tie_dye_shirt",
@@ -360,5 +360,21 @@
     "category": "KEY",
     "price": 0,
     "desc": "Banyan's photocopy of the festival timetable, folded into eighths. See the Sets page in your Fanny Pack."
+  },
+  {
+    "id": "marigold_garland",
+    "name": "Marigold Garland",
+    "category": "KEY",
+    "price": 0,
+    "effect": {},
+    "desc": "A thick string of orange marigolds from the shrine gate. For Lakshmi. Not for wearing, however good it looks."
+  },
+  {
+    "id": "blue_clay",
+    "name": "Cool Blue Clay",
+    "category": "KEY",
+    "price": 0,
+    "effect": {},
+    "desc": "A lump of cold blue clay from the back of the Sea Grotto. It takes the heat out of anything. It also turns it blue."
   }
 ]

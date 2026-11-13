@@ -13,12 +13,14 @@
     "poi_pit",
     "tantric_yurt",
     "flea_market",
+    "flea_alley",
     "dirt_road",
     "roadside_shrine",
     "jungle_shortcut",
     "scooter_ditch",
     "omelette_stall",
     "sea_shallows",
+    "sea_grotto",
     "sweetwater_lake",
     "forest_stage",
     "bamboo_thicket",
@@ -226,6 +228,16 @@
       2,
       3,
       "Shrine"
+    ],
+    "flea_alley": [
+      2,
+      5,
+      "Back Alley"
+    ],
+    "sea_grotto": [
+      0,
+      1,
+      "Grotto"
     ]
   },
   "quests": [
@@ -1043,29 +1055,149 @@
       },
       "steps": [
         {
-          "text": "Find a green coconut among the palms on the Jungle Shortcut.",
+          "text": "Get a green coconut off Pradeep's palms on the Jungle Shortcut.",
           "done": {
             "any": [
               {
                 "has": "green_coconut"
               },
               {
+                "flag": "coconut_blessed"
+              },
+              {
                 "flag": "lakshmi_moved"
+              }
+            ]
+          },
+          "npc": {
+            "zone": "jungle_shortcut",
+            "id": "coconut_wallah"
+          }
+        },
+        {
+          "text": "Get a marigold garland from Meena at the shrine gate.",
+          "done": {
+            "any": [
+              {
+                "has": "marigold_garland"
+              },
+              {
+                "flag": "coconut_blessed"
+              },
+              {
+                "flag": "lakshmi_moved"
+              }
+            ]
+          },
+          "npc": {
+            "zone": "roadside_shrine",
+            "id": "shrine_flowers"
+          }
+        },
+        {
+          "text": "Bring both to the pujari to be blessed.",
+          "done": {
+            "any": [
+              {
+                "flag": "coconut_blessed"
+              },
+              {
+                "flag": "lakshmi_moved"
+              }
+            ]
+          },
+          "ready": {
+            "all": [
+              {
+                "has": "green_coconut"
+              },
+              {
+                "has": "marigold_garland"
+              }
+            ]
+          },
+          "npc": {
+            "zone": "roadside_shrine",
+            "id": "shrine_pujari"
+          }
+        },
+        {
+          "text": "Offer them to Lakshmi on the Clogged Dirt Road.",
+          "done": {
+            "flag": "lakshmi_moved"
+          },
+          "ready": {
+            "flag": "coconut_blessed"
+          },
+          "npc": {
+            "zone": "dirt_road",
+            "id": "lakshmi_head"
+          }
+        }
+      ]
+    },
+    {
+      "id": "back_alley",
+      "name": "The Back Alley",
+      "offer": false,
+      "start": {
+        "flag": "alley_locked"
+      },
+      "steps": [
+        {
+          "text": "Beat every undercover in the Flea Market Back Alley. The way out stays shut until you do.",
+          "done": {
+            "flag": "alley_cleared"
+          }
+        }
+      ],
+      "giver": {
+        "zone": "flea_alley",
+        "npc": "alley_shah"
+      }
+    },
+    {
+      "id": "sunburn",
+      "name": "Mad Dogs and Englishmen",
+      "giver": {
+        "zone": "sea_shallows",
+        "npc": "brit_sharon"
+      },
+      "start": {
+        "any": [
+          {
+            "flag": "burn_asked"
+          },
+          {
+            "flag": "burn_done"
+          }
+        ]
+      },
+      "steps": [
+        {
+          "text": "Find the cool blue clay in the Sea Grotto, in the islet in the middle of the Shallows.",
+          "done": {
+            "any": [
+              {
+                "has": "blue_clay"
+              },
+              {
+                "flag": "burn_done"
               }
             ]
           }
         },
         {
-          "text": "Bring the coconut to the pujari at the Roadside Shrine.",
+          "text": "Bring the clay to Sharon on the beach.",
           "done": {
-            "flag": "lakshmi_moved"
+            "flag": "burn_done"
           },
           "ready": {
-            "has": "green_coconut"
+            "has": "blue_clay"
           },
           "npc": {
-            "zone": "roadside_shrine",
-            "id": "shrine_pujari"
+            "zone": "sea_shallows",
+            "id": "brit_sharon"
           }
         }
       ]
@@ -1174,6 +1306,14 @@
       "roadside_shrine": [
         14,
         5
+      ],
+      "flea_alley": [
+        15,
+        8
+      ],
+      "sea_grotto": [
+        12,
+        2
       ]
     }
   },

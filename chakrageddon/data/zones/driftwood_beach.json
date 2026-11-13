@@ -28,16 +28,16 @@
       "x": 11,
       "y": 0,
       "to": "sandy_trail",
-      "tx": 12,
-      "ty": 18,
+      "tx": 16,
+      "ty": 26,
       "dir": "UP"
     },
     {
       "x": 12,
       "y": 0,
       "to": "sandy_trail",
-      "tx": 13,
-      "ty": 18,
+      "tx": 17,
+      "ty": 26,
       "dir": "UP"
     },
     {

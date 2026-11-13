@@ -12,6 +12,7 @@ const MOMENT_SFX = { chant: 'gong', horns: 'horn', drop: 'drop', tempo: 'drop', 
 import { lookOf, durationOf, drawMoveFx, MARK_SECONDS, WINDUP } from './moveFx.js';
 import { tinted } from './anim.js';
 import { termRuns } from './glossary.js';
+import { moveFacts, drawNote } from './moveInfo.js';
 
 const EVOLVE_SECONDS = 2.6;
 
@@ -36,7 +37,7 @@ export const battleView = {
 
   onEvent(game, e) {
     if (e.type === 'BATTLE_START') {
-      this.on = true; this.queue = []; this.cur = null; this.intro = 1; this.outro = 0; this.menu = 'main'; this.capture = null; this.learn = null;
+      this.on = true; this.queue = []; this.cur = null; this.worldTrack = null; this.intro = 1; this.outro = 0; this.menu = 'main'; this.capture = null; this.learn = null;
       this.disp = { p: { ...e.player }, e: { ...e.enemy } };
       this.info = { kind: e.kind, trainerName: e.trainerName, trainerSprite: e.trainerSprite, boss: e.boss, paletteId: e.paletteId };
       this.effects = []; this.portrait = (e.kind === 'trainer' || e.kind === 'mirror') && e.trainerSprite ? 2.2 : 0;   // the trainer shows up before their Astral
@@ -48,8 +49,12 @@ export const battleView = {
       if (tr?.stage === 'yurt') game.audio?.sfx('gong');                       // Svetlana's battles start with a gong
       return;
     }
+    if (this.on && e.type === 'AUDIO_CUE' && e.after) { this.worldTrack = e; return; }   // the world's music: kept for the end of the screen
     if (this.on) this.queue.push(e);
   },
+
+  /** the battle is over on screen: its music fades out as the screen goes dark, and the world's comes in after */
+  worldMusic(game) { if (this.worldTrack) { game.playCue?.(this.worldTrack, 0.6); this.worldTrack = null; } },
 
   // ------------------------------------------------------------ playback
   next(game) {
@@ -57,8 +62,12 @@ export const battleView = {
     if (!e) { this.cur = null; return; }
     const d = this.disp;
     switch (e.type) {
-      case 'MESSAGE': this.cur = { type: 'msg', lines: wrap(e.text, W - 28), shown: 0, hold: 0 }; break;
-      case 'AUDIO_CUE': if (e.sfxId) game.audio?.sfx(e.sfxId); this.next(game); break;   // a sound in its place in the queue: the fanfare after the capture, not over it
+      // a line to read (a boss's words, how high you are now) waits for A; the play-by-play goes on by itself
+      case 'MESSAGE': this.cur = { type: 'msg', lines: wrap(e.text, W - 28), shown: 0, hold: 0, read: !!(e.read || e.kind === 'intox') }; break;
+      case 'AUDIO_CUE':
+        if (e.sfxId) game.audio?.sfx(e.sfxId);
+        if (e.trackBpm && !e.start) game.playCue?.(e);                    // a boss's moment: the music speeds up with their line
+        this.next(game); break;   // a sound in its place in the queue: the fanfare after the capture, not over it
       case 'STAT_DELTA': {
         const t = d[e.targetId];
         if (e.stat === 'SEROTONIN') {
@@ -97,7 +106,7 @@ export const battleView = {
         else { this.flash = 0.6; this.cur = { type: 'wait', t: 0.6 }; }
         break;
       case 'LEARN_PROMPT': this.learn = e; this.forget = null; this.cursor.learn = 0; this.next(game); break;
-      case 'BATTLE_END': if (e.result === 'LOST') game.cue?.('WHITEOUT'); if (e.result === 'WON' || e.result === 'CAUGHT') this.happy = 0.9; this.cur = { type: 'outro', t: 0 }; break;
+      case 'BATTLE_END': if (e.result === 'LOST') game.cue?.('WHITEOUT'); if (e.result === 'WON' || e.result === 'CAUGHT') this.happy = 0.9; this.cur = { type: 'outro', t: 0 }; this.worldMusic(game); break;
       default: this.next(game);
     }
   },
@@ -166,11 +175,15 @@ export const battleView = {
     if (!c) {
       // nothing to play: follow the engine
       const b = game.engine.state.battle;
-      if (!b) { this.on = false; return; }
+      if (!b) { this.on = false; this.worldMusic(game); return; }
       return;   // menus are driven from draw()
     }
-    const press = input.pressed('a') || input.pressed('b') || input.anyTap();
-    if (c.type === 'msg') {
+    const pressA = input.pressed('a'), tapped = input.anyTap(), press = pressA || input.pressed('b') || tapped;
+    if (c.type === 'msg' && c.read) {                       // only A (or a tap) moves on: B and fast-forward do not skip it
+      const total = c.lines.join('').length, ok = pressA || tapped;
+      c.shown = Math.min(total, c.shown + dt * 90 * [0.6, 1, 2.5][game.settings.textSpeed ?? 1]);
+      if (ok) { if (c.shown < total) c.shown = total; else this.cur = null; }
+    } else if (c.type === 'msg') {
       const total = c.lines.join('').length;
       c.shown = Math.min(total, c.shown + dt * 90 * [0.6, 1, 2.5][game.settings.textSpeed ?? 1]);
       if (c.shown >= total) c.hold += dt;
@@ -372,9 +385,9 @@ export const battleView = {
     for (const f of this.effects) drawMoveFx(g, f, fxo);
     if (this.capture) this.drawCapture(g);
     g.restore();
-    this.hud(game, g, 'e', 6, 6);
-    this.hud(game, g, 'p', W - 134, 90);
-    if (b && (b.kind === 'trainer' || b.kind === 'mirror')) for (let i = 0; i < b.enemy.length; i++) { g.fillStyle = b.enemy[i].hp > 0 ? C.magenta : C.grey; g.fillRect(140 + i * 7, 9, 5, 5); }
+    const learning = b?.phase === 'PHASE_LEARN_MOVE' && this.learn && !this.cur && !this.queue.length;   // the move page covers them
+    if (!learning) { this.hud(game, g, 'e', 6, 6); this.hud(game, g, 'p', W - 134, 90); }
+    if (!learning && b && (b.kind === 'trainer' || b.kind === 'mirror')) for (let i = 0; i < b.enemy.length; i++) { g.fillStyle = b.enemy[i].hp > 0 ? C.magenta : C.grey; g.fillRect(140 + i * 7, 9, 5, 5); }
     if (this.flash > 0 && !game.settings.reducedMotion) { g.fillStyle = `rgba(255,255,255,${Math.min(0.6, this.flash * 2)})`; g.fillRect(0, 0, W, H); }
 
     panel(g, 3, BOX_Y - 2, W - 6, BOX_H + 2, { bg: C.cream, accent: C.purple });
@@ -382,6 +395,8 @@ export const battleView = {
     if (c && c.type === 'msg') {
       let left = Math.floor(c.shown);
       c.lines.slice(0, 3).forEach((line, i) => { drawText(g, line.slice(0, Math.max(0, left)), 12, BOX_Y + 7 + i * 12, { color: C.ink, scramble: game.fxLevel() > 0.9 ? 0.1 : 0, t: this.t, runs: termRuns(line, game.data) }); left -= line.length; });
+      // waiting for A: a blinking arrow, as in the dialogue box
+      if (c.read && c.shown >= c.lines.join('').length && Math.floor(this.t * 2.5) % 2 === 0) { g.fillStyle = C.magenta; g.fillRect(W - 18, BOX_Y + 36, 7, 2); g.fillRect(W - 17, BOX_Y + 38, 5, 1); g.fillRect(W - 16, BOX_Y + 39, 3, 1); g.fillRect(W - 15, BOX_Y + 40, 1, 1); }
     } else if (!c && b && this.intro <= 0) this.menus(game, g, b);
 
     if (this.intro > 0) {   // iris-style bars in
@@ -450,6 +465,18 @@ export const battleView = {
     g.fillStyle = held ? C.acid : C.magenta; g.fillRect(x - 3, y - 1, 6, 6);
   },
 
+  /** learning a move: a page above the text box with the new move's numbers, then the note of the one being looked at */
+  compare(game, g, mon, mv, shown) {
+    const d = game.data, x = 4, y = 4, w = W - 8, h = BOX_Y - 8;
+    panel(g, x, y, w, h, { bg: '#FFF4E4', accent: C.purple });
+    const nf = moveFacts(d, mv, mon);
+    drawText(g, 'New', x + 6, y + 5, { color: C.magenta });
+    drawNote(g, { title: nf.title, type: nf.type, numbers: nf.numbers, text: '' }, x + 6 + textWidth('New') + 6, y + 5, w - 18 - textWidth('New'));
+    g.fillStyle = '#E8D8C0'; g.fillRect(x + 6, y + 30, w - 12, 1);
+    const sf = moveFacts(d, shown, mon);
+    drawNote(g, shown === mv ? { ...sf, title: `${sf.title}: what it does` } : sf, x + 6, y + 35, w - 12, h - 37, { titleColor: shown === mv ? C.magenta : C.purple });
+  },
+
   // ------------------------------------------------------------ menus
   menus(game, g, b) {
     const s = game.engine.state, d = game.data, input = game.input, cur = this.cursor;
@@ -460,6 +487,10 @@ export const battleView = {
     if (b.phase === 'PHASE_LEARN_MOVE' && this.learn) {
       const L = this.learn, mv = d.moves[L.moveId];
       const lm = s.party.find((m) => m.uid === L.uid);
+      // over the battle: the new move's numbers, and the whole note of the move under the cursor (Skip: the new one),
+      // so you can see what each does before you give one up
+      const shownIdx = this.forget ?? cur.learn;
+      this.compare(game, g, lm, mv, lm.moves[shownIdx] ? d.moves[lm.moves[shownIdx]] : mv);
       // forgetting a move asks first, No by default; No goes back to the choice, until you skip or replace one
       if (this.forget !== null && this.forget !== undefined && lm.moves[this.forget]) {
         const old = d.moves[lm.moves[this.forget]];

@@ -6,7 +6,8 @@ import { advance, startScript, setMode } from './ScriptEngine.js';
 import { hooks, handleExtra } from './hooks.js';
 import { bands, bandIndex, egoGone } from './intox.js';
 import { currentGoal } from './goals.js';
-import { questLog } from './quests.js';
+import { questLog, check } from './quests.js';
+import { statsOf } from './mons.js';
 
 export const SAVE_VERSION = 1;
 
@@ -14,7 +15,7 @@ export function newState(data, seed = 1) {
   const start = data.manifest.start || { zone: Object.keys(data.zones)[0], x: 1, y: 1, dir: 'DOWN' };
   return {
     v: SAVE_VERSION,
-    rng: seed >>> 0,
+    rng: seed >>> 0, salt: seed >>> 0,                                // salt: this playthrough's growth rolls (mons.js)
     mode: 'OVERWORLD',
     zoneId: start.zone,
     player: { x: start.x, y: start.y, dir: start.dir || 'DOWN' },
@@ -26,7 +27,7 @@ export function newState(data, seed = 1) {
     encMeter: 0, encSteps: 0, encGap: null,                        // wild encounters: progress towards the next one
     lastTent: { zone: start.zone, x: start.x, y: start.y },
     script: null, scriptMode: null, dialogue: null, battle: null, shop: null, menu: null, scene: null,
-    playerName: null, npcPos: {}, outfit: null, said: {}, visitor: null, entered: null,
+    playerName: null, npcPos: {}, outfit: null, said: {}, visitor: null, visitorFx: null, entered: null,
     elapsed: 0, peakIntox: 0,                                       // for the end card: festival minutes lived, highest high
   };
 }
@@ -46,6 +47,10 @@ export class GameEngine {
     // saves from earlier builds: fill in any field that did not exist yet
     const base = newState(data, 1);
     for (const k of Object.keys(base)) if (!(k in state)) state[k] = base[k];
+    // content added after a save was made, already behind you: marked as done (rules.doneIn: { flag: condition })
+    for (const [flag, cond] of Object.entries(data.rules.doneIn || {})) if (flag[0] !== '_' && !state.flags[flag] && check(state, cond, data)) state.flags[flag] = 1;
+    // stats come from growth since 1.2.0: an Astral from an older save keeps its level and lands on the average curve
+    for (const m of [...(state.party || []), ...(state.box || [])]) { const st = statsOf(data, m); m.hp = Math.min(m.hp, st.maxHp); m.hyd = Math.min(m.hyd, st.maxHyd); }
     const e = new GameEngine(data, { state });
     if (state.mode === 'OVERWORLD' && data.zones[state.zoneId]) e.run((ctx) => OW.settle(ctx));   // the map may have been redrawn since
     return e;
@@ -117,6 +122,15 @@ export class GameEngine {
     const TT = this.data.rules.timetable;
     if (TT && !s.flags.timetable && s.wristbands.length >= (TT.unlockBands ?? 3) && events.some((x) => x.type === 'ZONE_CHANGED') && s.mode === 'OVERWORLD' && !s.dialogue && !s.script && !s.battle && this.data.dialogues.banyan_timetable) {
       startScript(ctx, this.data.dialogues.banyan_timetable);
+    }
+    // an area with a scene as you arrive (the back alley: an undercover locks the way out): zone.arriveScript, unless arriveUnless
+    const AZ = this.data.zones[s.zoneId];
+    if (AZ?.arriveScript && events.some((x) => x.type === 'ZONE_CHANGED' && x.to === s.zoneId) && s.mode === 'OVERWORLD' && !s.dialogue && !s.script && !s.battle
+      && !(AZ.arriveUnless && check(s, AZ.arriveUnless, this.data)) && this.data.dialogues[AZ.arriveScript]) startScript(ctx, this.data.dialogues[AZ.arriveScript]);
+    // the tarot reader: after the sixth wristband, the next time you arrive somewhere, Banyan's astral body floats down to say she is here
+    const TR = this.data.rules.tarot;
+    if (TR && !s.flags.tarot_arrived && s.wristbands.length >= (TR.unlockBands ?? 6) && events.some((x) => x.type === 'ZONE_CHANGED') && s.mode === 'OVERWORLD' && !s.dialogue && !s.script && !s.battle && this.data.dialogues.banyan_tarot) {
+      startScript(ctx, this.data.dialogues.banyan_tarot);
     }
     // tell the player when they move into another intoxication band, and what it means
     const bandAfter = bandIndex(this.data.rules, s.intox);

@@ -5,6 +5,7 @@ import { drawText, wrap, panel, list, C } from './ui.js';
 const SPEED = ['Slow', 'Normal', 'Fast'];
 const BATTLE_SPEED = ['Normal', 'Fast', 'Very fast'];
 const PICTURE = ['Full', 'Large', 'Medium', 'Small'];
+const DIFFICULTY = { easy: 'Easy', normal: 'Normal', hard: 'Hard' };
 
 export const settingsView = {
   screen: true, titleEntry: 'Options', cursor: 0, from: 'title',
@@ -18,6 +19,7 @@ export const settingsView = {
     if (this.juke) return this.drawJukebox(game, g);
     drawText(g, 'OPTIONS', W / 2, 15, { color: C.purple, align: 'center' });
     const rows = [
+      { id: 'difficulty', label: 'Difficulty', right: DIFFICULTY[st.difficulty] || 'Normal', help: { easy: 'Easy: your Astrals hit 20% harder and take 20% less.', hard: 'Hard: your Astrals hit 20% softer and take 20% more.' }[st.difficulty] || 'Normal: everyone hits as hard as they hit.' },
       { id: 'grounded', label: 'Grounded mode', right: st.grounded ? 'ON' : 'off', help: 'Caps the trippy screen effects at their mildest level. Recommended if you are sensitive to motion or flashing.' },
       { id: 'reducedMotion', label: 'Reduced motion', right: st.reducedMotion ? 'ON' : 'off', help: 'Stops screen shake, flashes and spinning backgrounds.' },
       { id: 'textSpeed', label: 'Text speed', right: SPEED[st.textSpeed], help: 'How fast dialogue types out.' },
@@ -39,7 +41,8 @@ export const settingsView = {
     const act = r.chosen >= 0 ? 1 : side;
     if (act) {
       const id = r.chosen >= 0 ? rows[r.chosen].id : row.id;
-      if (id === 'grounded') st.grounded = !st.grounded;
+      if (id === 'difficulty') { const k = ['easy', 'normal', 'hard'], i = k.indexOf(st.difficulty || 'normal'); st.difficulty = k[(i + (act > 0 ? 1 : 2)) % 3]; }
+      else if (id === 'grounded') st.grounded = !st.grounded;
       else if (id === 'reducedMotion') st.reducedMotion = !st.reducedMotion;
       else if (id === 'textSpeed') st.textSpeed = (st.textSpeed + (act > 0 ? 1 : 2)) % 3;
       else if (id === 'battleSpeed') st.battleSpeed = ((st.battleSpeed || 0) + (act > 0 ? 1 : 2)) % 3;

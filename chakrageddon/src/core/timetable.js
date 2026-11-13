@@ -34,9 +34,9 @@ export function nextSet(data, s) {
 }
 export const clockText = (m) => `${String(Math.floor(minute(m) / 60)).padStart(2, '0')}:${String(minute(m) % 60).padStart(2, '0')}`;
 
-/** rest at a Chai Tent until the next set starts; returns that set */
-export function restUntilSet(ctx) {
-  const s = ctx.state, next = nextSet(ctx.data, s);
+/** rest at a Chai Tent until a set starts (that one, or the next); returns the set */
+export function restUntilSet(ctx, id = null) {
+  const s = ctx.state, next = (id && sets(ctx.data).find((x) => x.id === id)) || nextSet(ctx.data, s);
   if (!next) return null;
   s.clock = next.from; s.clockSteps = 0;
   return next;

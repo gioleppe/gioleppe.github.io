@@ -219,16 +219,19 @@
       "dir": "DOWN",
       "trainer": "jungle_spinner",
       "sight": 2
+    },
+    {
+      "id": "coconut_wallah",
+      "x": 19,
+      "y": 21,
+      "sprite": "local",
+      "dir": "UP",
+      "trainer": "coconut_wallah",
+      "sight": 2,
+      "script": "coconut_wallah"
     }
   ],
   "pickups": [
-    {
-      "id": "jungle_coconut",
-      "x": 19,
-      "y": 20,
-      "item": "green_coconut",
-      "n": 1
-    },
     {
       "id": "road_powder",
       "x": 6,
