@@ -7,7 +7,11 @@
     "hpBase": 10,
     "otherBase": 5,
     "hydrationBase": 36,
-    "hydrationRoll": [0.4, 0.5, 0.1],
+    "hydrationRoll": [
+      0.4,
+      0.5,
+      0.1
+    ],
     "growthRate": 1,
     "growthFrom": 10,
     "growthTurn": 24,
@@ -60,42 +64,58 @@
     "hemp_string": {
       "name": "Hemp String Wristband",
       "note": "Astrals can now hack through tangled fairy lights.",
-      "boss": "DJ Diabolo"
+      "boss": "DJ Diabolo",
+      "short": "Hemp String",
+      "desc": "Three strands of hemp, knotted by DJ Diabolo between tracks. Smells of patchouli and smoke machine."
     },
     "quartz": {
       "name": "Quartz Wristband",
       "note": "A blacklight pulse now lights up dark places.",
-      "boss": "Guru Svetlana"
+      "boss": "Guru Svetlana",
+      "short": "Quartz",
+      "desc": "A ring of rose quartz beads that hum when the bass drops. Svetlana says it chose you, not the other way round."
     },
     "wonky_keychain": {
       "name": "Wonky Keychain",
       "note": "Subwoofers and passed-out wooks can now be shoved.",
-      "boss": "Captain Keta"
+      "boss": "Captain Keta",
+      "short": "Wonky Keychain",
+      "desc": "Captain Keta's keyring: a rubber duck, a bottle opener and the key to a scooter nobody has seen since 2009."
     },
     "extra_cheese": {
       "name": "Extra Cheese Stamp",
       "note": "You can now float across foam pits and shallows.",
-      "boss": "Chef Raju"
+      "boss": "Chef Raju",
+      "short": "Extra Cheese",
+      "desc": "A stamp band from Chef Raju's kitchen, cheese-yellow. Proof you survived the 5 AM rush. Still a bit greasy."
     },
     "uv_skeleton": {
       "name": "UV Skeleton Band",
       "note": "Padlocked VIP fences can now be chewed through.",
-      "boss": "Baron Von Darkpsy"
+      "boss": "Baron Von Darkpsy",
+      "short": "UV Skeleton",
+      "desc": "Black rubber printed with tiny bones that glow under blacklight. Baron Von Darkpsy wears forty of them."
     },
     "vip_press": {
       "name": "VIP Press Pass",
       "note": "Tuk-tuks will now take you to any Chai Tent you have visited.",
-      "boss": "Influencer Chloe"
+      "boss": "Influencer Chloe",
+      "short": "VIP Press Pass",
+      "desc": "A laminated pass on a lanyard, Chloe's sponsor on both sides. Tuk-tuk drivers salute it."
     },
     "ash_mark": {
       "name": "Ash Mark",
       "note": "Banyan roots on the cliffs can now be climbed.",
-      "boss": "Baba Smoke"
+      "boss": "Baba Smoke",
+      "short": "Ash Mark",
+      "desc": "Not a band at all: holy ash Baba Smoke pressed round your wrist. It does not wash off. You tried."
     },
     "all_access": {
       "name": "All-Access Hologram",
       "note": "The Mainstage Temple will let you in.",
-      "boss": "The Promoter"
+      "boss": "The Promoter",
+      "short": "All-Access",
+      "desc": "A hologram that changes colour as it turns. The Promoter's last word, and the Temple's door knows it."
     }
   },
   "techniques": {
@@ -330,9 +350,18 @@
   },
   "difficulty": {
     "_comment": "Options > Difficulty: what your moves' damage (dealt) and the other side's (taken) are multiplied by, once, on the final number.",
-    "easy": { "dealt": 1.2, "taken": 0.8 },
-    "normal": { "dealt": 1, "taken": 1 },
-    "hard": { "dealt": 0.8, "taken": 1.2 }
+    "easy": {
+      "dealt": 1.2,
+      "taken": 0.8
+    },
+    "normal": {
+      "dealt": 1,
+      "taken": 1
+    },
+    "hard": {
+      "dealt": 0.8,
+      "taken": 1.2
+    }
   },
   "tarot": {
     "_comment": "Juniper the tarot reader (Anjuna Flea Market): an Astral remembers a move its line learns by its level, for price rupees. Banyan's astral body announces her after unlockBands wristbands (dialogues.banyan_tarot).",
