@@ -23,16 +23,15 @@ export class CanvasRenderer {
     const vw = window.innerWidth, vh = window.innerHeight;
     const touch = document.documentElement.classList.contains('touch');
     const portrait = vh > vw;
-    // portrait touch layout keeps the lower part of the screen free for the controls
-    const availH = touch && portrait ? vh * 0.58 : vh;
-    // the largest whole scale that fits (sharp pixels), less the steps chosen in Options (Picture size)
-    this.fit = Math.max(1, Math.floor(Math.min((vw * dpr) / W, (availH * dpr) / H)));
-    this.scale = Math.max(1, this.fit - (this.shrink || 0));
-    this.cssW = Math.round((W * this.scale) / dpr); this.cssH = Math.round((H * this.scale) / dpr);
+    const roomW = this.canvas.parentElement?.clientWidth || vw;
+    const { fit, scale } = pictureScale({ vw: Math.min(vw, roomW), vh, dpr, touch, portrait, shrink: this.shrink || 0 });
+    this.fit = fit; this.scale = scale;
+    const cw = Math.round(W * scale), ch = Math.round(H * scale);
+    this.cssW = Math.round(cw / dpr); this.cssH = Math.round(ch / dpr);
     const c = this.canvas;
-    if (c.width !== W * this.scale) { c.width = W * this.scale; c.height = H * this.scale; }
-    c.style.width = `${(W * this.scale) / dpr}px`;
-    c.style.height = `${(H * this.scale) / dpr}px`;
+    if (c.width !== cw || c.height !== ch) { c.width = cw; c.height = ch; }
+    c.style.width = `${cw / dpr}px`;
+    c.style.height = `${ch / dpr}px`;
     if (this.post) this.post.resize(c.width, c.height);
     // landscape touch: the on-screen controls overlay the picture, so keep them above the text box
     if (touch && !portrait && c.getBoundingClientRect) {
@@ -55,6 +54,19 @@ export class CanvasRenderer {
     const r = this.canvas.getBoundingClientRect();
     return { x: ((clientX - r.left) / r.width) * W, y: ((clientY - r.top) / r.height) * H };
   }
+}
+
+/** How big the picture is drawn, in device pixels per game pixel. Normally the largest whole scale that fits (sharp
+ *  pixels), less the steps chosen in Options (Picture size). A phone held upright on Full fills the width instead:
+ *  whole steps there leave a band of black down each side (3x of a 393 px phone is 349 px), and at two or three
+ *  device pixels per screen pixel the uneven 3-and-4 pixel columns don't show. The picture keeps the top 58% at
+ *  most, so the controls below stay as they are. */
+export function pictureScale({ vw, vh, dpr, touch, portrait, shrink = 0 }) {
+  const availH = touch && portrait ? vh * 0.58 : vh;
+  const exact = Math.min((vw * dpr) / W, (availH * dpr) / H);
+  const fit = Math.max(1, Math.floor(exact));
+  if (touch && portrait && !shrink && exact > fit) return { fit, scale: Math.floor(exact * W) / W };
+  return { fit, scale: Math.max(1, fit - shrink) };
 }
 
 /** How far up (CSS px from the bottom of the screen) the landscape controls must sit so they never cover the
