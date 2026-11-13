@@ -168,8 +168,31 @@ export function enterZone(ctx, zoneId, x, y, dir) {
   s.visited[zoneId] = 1;
   const zone = ctx.data.zones[zoneId];
   settle(ctx);
+  s.entered = { zone: zoneId, x: s.player.x, y: s.player.y, dir: s.player.dir };   // where Unstuck takes you back to
   ctx.emit({ type: 'ZONE_CHANGED', from, to: zoneId, name: zone.name });
   ctx.emit({ type: 'AUDIO_CUE', trackBpm: zone.baseBpm, lowPassFilterHz: 20000 });
+}
+
+/** where Unstuck (System menu) puts you: the spot where you came into this area; from a save older than that, the
+ *  nearest place any way in arrives */
+export function unstuckSpot(ctx) {
+  const s = ctx.state;
+  if (s.entered?.zone === s.zoneId) return { x: s.entered.x, y: s.entered.y, dir: s.entered.dir };
+  const zone = zoneOf(ctx), ins = [];
+  for (const z of Object.values(ctx.data.zones)) for (const w of z.warps || []) if (w.to === s.zoneId && walkable(ctx, w.tx, w.ty, zone)) ins.push({ x: w.tx, y: w.ty, dir: w.dir });
+  ins.sort((a, b) => Math.abs(a.x - s.player.x) + Math.abs(a.y - s.player.y) - (Math.abs(b.x - s.player.x) + Math.abs(b.y - s.player.y)));
+  return ins[0] || null;
+}
+/** Unstuck: back to where you came in. Pushed subwoofers roll back, as when you leave the area. */
+export function unstuck(ctx) {
+  const s = ctx.state, spot = unstuckSpot(ctx);
+  if (!spot) return false;
+  delete s.pushed[s.zoneId];
+  s.player.x = spot.x; s.player.y = spot.y; if (spot.dir) s.player.dir = spot.dir;
+  settle(ctx);
+  ctx.emit({ type: 'UNSTUCK', zone: s.zoneId, x: s.player.x, y: s.player.y });
+  ctx.emit({ type: 'PLAYER_PLACED', x: s.player.x, y: s.player.y });
+  return true;
 }
 
 export function step(ctx, dir) {

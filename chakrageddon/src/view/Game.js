@@ -10,7 +10,7 @@ import { dialogueView } from './dialogueView.js';
 import { CUES, CUE_SECONDS } from './WebGLPostProcess.js';
 
 const SAVE_KEY = 'chakrageddon.save.v1', SETTINGS_KEY = 'chakrageddon.settings.v1';
-export const VERSION = '1.0.55';   // keep in step with package.json (tests/scenarios.test.mjs checks)
+export const VERSION = '1.0.56';   // keep in step with package.json (tests/scenarios.test.mjs checks)
 
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
@@ -46,14 +46,14 @@ export class Game {
   newGame() {
     this.engine = new GameEngine(this.data, { seed: (Date.now() & 0x7fffffff) || 1 });
     this.screen = 'play';
-    overworldView.fade = 1;
+    overworldView.arrive();
     this.send({ type: 'BEGIN' });
     this.startZoneAudio();
   }
   loadGame(json) {
     try {
       this.engine = GameEngine.load(this.data, json ?? store.get(SAVE_KEY));
-      this.screen = 'play'; overworldView.fade = 1; overworldView.anim = null;
+      this.screen = 'play'; overworldView.arrive(); overworldView.anim = null;
       for (const v of this.views) v.reset?.(this);
       this.startZoneAudio();
       return true;

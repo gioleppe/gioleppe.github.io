@@ -12,7 +12,7 @@ import { sets as allSets, liveSet, minutesUntil, clockText } from '../core/timet
 
 const TABS = [
   { id: 'WRISTBAND_ARM', label: 'Astrals' }, { id: 'STASH_TIN', label: 'Stash Tin' }, { id: 'TRIP_JOURNAL', label: 'Journal' }, { id: 'MAP', label: 'Map' }, { id: 'SETS', label: 'Sets' },
-  { id: 'QUESTS', label: 'Quests' }, { id: 'BANDS', label: 'Wristbands' }, { id: 'SAVE', label: 'Save' }, { id: 'OPTIONS', label: 'Options' }, { id: 'LOG', label: 'Log' },
+  { id: 'QUESTS', label: 'Quests' }, { id: 'BANDS', label: 'Wristbands' }, { id: 'LOG', label: 'Log' }, { id: 'SYSTEM', label: 'System' },
 ];
 const CAT_ORDER = ['BAGGING', 'RECOVERY', 'CATALYST', 'HELD', 'GEAR', 'OUTFIT', 'KEY'];
 const SORTS = ['type', 'name', 'count'], SORT_NAME = { type: 'By type', name: 'A to Z', count: 'Most first' };
@@ -116,6 +116,7 @@ export const menuView = {
     else if (id === 'BANDS') this.bands(game, g, X, Y, CW, active, back);
     else if (id === 'QUESTS') this.quests(game, g, X, Y, CW, active, back);
     else if (id === 'SETS') this.sets(game, g, X, Y, CW, active, back);
+    else if (id === 'SYSTEM') this.system(game, g, X, Y, CW, active, back);
     else {
       const text = { SAVE: 'Write your progress to this device. The game also saves by itself when you change zone and after battles.', OPTIONS: 'Grounded mode, motion, text speed, volume, save export.', CLOSE: 'Zip it up and get back out there.' }[id];
       wrap(text, CW).forEach((ln, i) => drawText(g, ln, X, Y + i * 11, { color: C.chai }));
@@ -128,8 +129,6 @@ export const menuView = {
 
   activate(game, id) {
     if (id === 'CLOSE') return game.send({ type: 'TOGGLE_MENU' });
-    if (id === 'SAVE') return game.save(true);
-    if (id === 'OPTIONS') { game.screen = 'settings'; game.extra.settings.open(game, 'play'); return; }
     this.focus = 'content'; this.sub = null;
     game.audio?.sfx('select');
   },
@@ -390,6 +389,36 @@ export const menuView = {
     lines.slice(Math.max(0, lines.length - vis - cur.log), lines.length - cur.log).forEach((ln, i) => drawText(g, ln, X, Y + i * 10, { color: C.ink }));
     if (cur.log < maxOff) drawText(g, '^', X + CW - 4, Y - 6, { color: C.magenta });
     if (active && (input.pressed('b') || input.pressed('left'))) back();
+  },
+
+  // ---- System: Save, Options, and Unstuck (back to where you came into this area, after a question)
+  system(game, g, X, Y, CW, active, back) {
+    const s = game.engine.state, d = game.data, input = game.input, cur = this.cur;
+    if (this.sub?.kind === 'unstuck') {
+      wrap('Stuck? Go back to the spot where you came into this area.', CW).forEach((ln, i) => drawText(g, ln, X, Y + i * 10, { color: C.purple }));
+      drawText(g, d.zones[s.zoneId].name, X, H - 20, { color: C.grey });
+      const r = list(game, g, [{ label: 'No, stay here' }, { label: 'Yes, take me back' }], X - 4, Y + 30, CW + 8, cur.unstuck || 0, { rowH: 16, passive: !active });
+      cur.unstuck = r.cursor;
+      if (r.chosen === 1) { this.sub = null; this.focus = 'tabs'; cur.unstuck = 0; game.audio?.sfx('zip'); game.send({ type: 'UNSTUCK' }); }
+      else if (r.chosen === 0 || (active && input.pressed('b'))) { this.sub = null; cur.unstuck = 0; game.audio?.sfx('back'); }
+      return;
+    }
+    const rows = [
+      { label: 'Save', about: 'Write your progress to this device. The game also saves by itself when you change area and after battles.' },
+      { label: 'Options', about: 'Grounded mode, motion, text speed, volume, keys, save export.' },
+      { label: 'Unstuck', about: 'Walled in, or lost? Go back to where you came into this area. Nothing else changes.' },
+    ];
+    const r = list(game, g, rows, X - 4, Y - 2, CW + 8, cur.system || 0, { rowH: 16, passive: !active });
+    cur.system = r.cursor;
+    wrap(rows[cur.system].about, CW).forEach((ln, i) => drawText(g, ln, X, Y + 54 + i * 10, { color: C.chai }));
+    const h = Math.floor(s.clock / 60), m = s.clock % 60;
+    drawText(g, `Festival clock ${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`, X, H - 30, { color: C.grey });
+    drawText(g, `${d.zones[s.zoneId].name}`, X, H - 20, { color: C.grey });
+    if (!active) return;
+    if (r.chosen === 0) game.save(true);
+    else if (r.chosen === 1) { game.screen = 'settings'; game.extra.settings.open(game, 'play'); }
+    else if (r.chosen === 2) { this.sub = { kind: 'unstuck' }; cur.unstuck = 0; game.audio?.sfx('select'); }
+    else if (input.pressed('b') || input.pressed('left')) back();
   },
 
   // ---- Quests: active ones with their next step, finished ones greyed out below
