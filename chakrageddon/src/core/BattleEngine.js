@@ -519,7 +519,7 @@ function tryCapture(ctx, item) {
   const where = addToCollection(ctx, mon);
   ctx.emit({ type: 'AUDIO_CUE', sfxId: 'fanfare' });
   msg(ctx, tl('Bagged! {0} is stabilised.', sp.name));
-  if (where === 'box') msg(ctx, tl('Your party is full, so it went to the Chai Tent stash.'));
+  if (where === 'box') msg(ctx, tl('Your party is full, so it went to the Chai Tent stash. Chai Mama patches it up.'));
   b.enemy = [];
   finish(ctx, 'CAUGHT');
   return true;
@@ -585,7 +585,7 @@ function finalize(ctx) {
   if ((result === 'WON' || result === 'CAUGHT') && b.kind !== 'mirror') {
     for (const m of s.party) {
       const target = m.hp > 0 ? evolutionTarget(ctx.data, m) : null;
-      if (target) { const old = nameOf(ctx.data, m); evolve(ctx, m, target); msg(ctx, tl('What? {0} is changing... it became {1}!', old, ctx.data.dex[target].name)); }
+      if (target) { const old = nameOf(ctx.data, m); evolve(ctx, m, target); ctx.emit({ type: 'MESSAGE', text: tl('What? {0} is changing... it became {1}!', old, ctx.data.dex[target].name), kind: 'evolve' }); }
     }
   }
   const old = s.intox;

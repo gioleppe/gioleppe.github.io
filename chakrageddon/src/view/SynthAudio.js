@@ -157,7 +157,71 @@ export class SynthAudio {
     return { delay: Math.max(0, at - c.currentTime), dur: end - at };
   }
 
+  /** the music stops (an Astral evolving) until resumeMusic; the scheduler stays quiet meanwhile */
+  pauseMusic(fade = 0.5) {
+    this.held = true;
+    const c = this.ctx;
+    if (!c || !this.music?.gain?.linearRampToValueAtTime) return;
+    const now = c.currentTime, g = this.music.gain;
+    g.cancelScheduledValues(now); g.setValueAtTime(g.value, now); g.linearRampToValueAtTime(0.0001, now + fade);
+  }
+  /** the music comes back in where it would be (and the evolution theme, if still playing, fades out) */
+  resumeMusic(fade = 1) {
+    const c = this.ctx;
+    if (this.evo && c) { const e = this.evo; this.evo = null; e.gain.cancelScheduledValues(c.currentTime); e.gain.setValueAtTime(e.gain.value, c.currentTime); e.gain.linearRampToValueAtTime(0.0001, c.currentTime + 0.5); setTimeout(() => { try { e.disconnect(); } catch { /* gone */ } }, 900); }
+    if (!this.held) return;
+    this.held = false;
+    if (!c || !this.music?.gain?.linearRampToValueAtTime) return;
+    const now = c.currentTime, g = this.music.gain;
+    g.cancelScheduledValues(now); g.setValueAtTime(0.0001, now); g.linearRampToValueAtTime(MUSIC_LEVEL * (this.prof?.level || 1), now + fade);
+  }
+
+  /** The evolution theme, timed to the scene (beats: { WHITE, FLASH, REVEAL } in seconds, see evolveView.EVO).
+   *  A low heartbeat that quickens, slow minor chords ending on the dominant, an arpeggio climbing faster and higher,
+   *  a riser into the flash; then the resolution in major, a fanfare and bells. Its own bus, so it can be faded out. */
+  evolutionTheme(B) {
+    const c = this.ctx;
+    if (!c || c.state !== 'running') return;
+    const bus = this.evo = c.createGain(); bus.gain.value = MUSIC_LEVEL * 1.1; bus.connect(this.master);
+    const t0 = c.currentTime + 0.3, A = 110;            // A minor, resolving to A major
+    const N = (semi, oct = 1) => A * oct * 2 ** (semi / 12);
+    const V = (type, f, at, dur, gain, opts) => this.voice(type, f, t0 + at, dur, gain, bus, opts);
+    const flash = B.FLASH, reveal = B.REVEAL;
+    // the heartbeat: a pair of thumps, the gap closing as the change builds
+    for (let at = 0.4; at < flash - 0.2;) {
+      const k = at / flash;
+      V('sine', 70, at, 0.22, 0.75, { to: 38 }); V('sine', 62, at + 0.2 - k * 0.06, 0.2, 0.5, { to: 36 });
+      at += 1.15 - k * 0.8;
+    }
+    // the chords: Am, F, Dm, E (the dominant held into the flash)
+    const chords = [[0, 3, 7], [-4, 0, 3], [5, 8, 12], [7, 11, 14]], len = (flash - 0.2) / 4;
+    chords.forEach((ch, i) => { for (const n of ch) V('triangle', N(n, 2), i * len, len + 0.6, 0.07 + i * 0.012, { attack: 0.8 }); });
+    // the arpeggio: from when it goes white, climbing through each chord, faster and an octave higher by the end
+    for (let at = B.WHITE, j = 0; at < flash;) {
+      const k = (at - B.WHITE) / (flash - B.WHITE), ch = chords[Math.min(3, Math.floor(at / len))];
+      const n = ch[j % 3] + 12 * Math.floor((j % 6) / 3);
+      V('square', N(n, 4 * (k > 0.6 ? 2 : 1)), at, 0.12, 0.035 + k * 0.03, { cutoff: 1800 + k * 3000, cutoffTo: 600 });
+      at += 0.32 - k * 0.24; j++;
+    }
+    // the riser: a sawtooth climbing behind a filter, and noise swelling, into the flash
+    const rise = B.WHITE + (flash - B.WHITE) * 0.45;
+    V('sawtooth', 110, rise, flash - rise, 0.06, { to: 880, cutoff: 300, cutoffTo: 5000, q: 8, attack: flash - rise - 0.1 });
+    { const s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+      s.buffer = this.noise; s.loop = true; f.type = 'highpass'; f.frequency.setValueAtTime(800, t0 + rise); f.frequency.exponentialRampToValueAtTime(6000, t0 + flash);
+      g.gain.setValueAtTime(0.0001, t0 + rise); g.gain.exponentialRampToValueAtTime(0.18, t0 + flash); g.gain.exponentialRampToValueAtTime(0.0001, t0 + flash + 0.5);
+      s.connect(f); f.connect(g); g.connect(bus); s.start(t0 + rise); s.stop(t0 + flash + 0.6); }
+    // the flash: a cymbal-like burst and a deep boom
+    this.hiss(t0 + flash, 1.6, 0.3, 3000, bus); V('sine', 90, flash, 1.2, 0.8, { to: 30 });
+    // the reveal: A major, a fanfare up the chord, held, and bells over it
+    [[0, 0], [4, 0.14], [7, 0.28], [12, 0.42]].forEach(([n, at]) => V('square', N(n, 4), reveal + at, 0.16, 0.08, { cutoff: 3500 }));
+    V('square', N(16, 4), reveal + 0.56, 1.4, 0.08, { cutoff: 3500 });
+    for (const n of [0, 4, 7, 12]) V('triangle', N(n, 2), reveal + 0.56, 2.6, 0.1, { attack: 0.05 });
+    V('sine', N(0, 1), reveal + 0.56, 2.6, 0.3, { attack: 0.05 });
+    [28, 31, 24, 28, 36].forEach((n, i) => V('sine', N(n, 2), reveal + 1.1 + i * 0.22, 1.1, 0.05));
+  }
+
   playStep(i, t, spb) {
+    if (this.held) return;
     if (this.mute && t >= this.mute.from && t < this.mute.to) return;
     if (this.mute && t >= this.mute.to) this.mute = null;
     const m = this.prof || profileFor(this.mood), beat = i % 4, bar = Math.floor(i / 16);

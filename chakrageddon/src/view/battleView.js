@@ -14,8 +14,7 @@ import { tinted } from './anim.js';
 import { termRuns } from './glossary.js';
 import { moveFacts, drawNote } from './moveInfo.js';
 import { tl } from '../core/i18n.js';
-
-const EVOLVE_SECONDS = 2.6;
+import { evolveView } from './evolveView.js';
 
 const BOX_Y = 132, BOX_H = 46;
 const STATUS_TAG = { COTTONMOUTH: ['DRY', '#F4A261'], K_HOLED: ['K-HOLE', '#7FD6FF'], THOUGHT_LOOP: ['LOOP', '#C86BFF'], EGO_DEATH: ['EGO', '#7C8CD9'], JAW_LOCK: ['JAW', '#FFD23F'] };
@@ -100,9 +99,11 @@ export const battleView = {
     const d = this.disp;
     switch (e.type) {
       // a line to read (a boss's words, how high you are now) waits for A; the play-by-play goes on by itself
-      case 'MESSAGE': this.cur = { type: 'msg', lines: wrap(e.text, W - 28), shown: 0, hold: 0, read: !!(e.read || e.kind === 'intox') }; break;
+      case 'MESSAGE':
+        if (e.kind === 'evolve' || (e.kind === 'intox' && game.settings.tripNotes === false)) { this.next(game); break; }   // the scene said it; trip notices are off in Options
+        this.cur = { type: 'msg', lines: wrap(e.text, W - 28), shown: 0, hold: 0, read: !!(e.read || e.kind === 'intox') }; break;
       case 'AUDIO_CUE':
-        if (e.sfxId) game.audio?.sfx(e.sfxId);
+        if (e.sfxId && e.sfxId !== 'evolve') game.audio?.sfx(e.sfxId);
         if (e.trackBpm && !e.start) game.playCue?.(e);                    // a boss's moment: the music speeds up with their line
         this.next(game); break;   // a sound in its place in the queue: the fanfare after the capture, not over it
       case 'STAT_DELTA': {
@@ -147,9 +148,10 @@ export const battleView = {
       case 'CAPTURE_THROW': this.capture = { t: 0, shakes: e.shakes, success: e.success, item: e.itemId }; this.cur = { type: 'capture' }; game.audio?.sfx('throw'); break;
       case 'LEVEL_UP': if (d.p && d.p.uid === e.uid) d.p = { ...d.p, ...e.mon }; this.next(game); break;
       case 'EVOLVED':
-        // the creature on screen gets the full sequence; one on the bench just changes
-        if (d.p && d.p.uid === e.uid) this.cur = { type: 'evolve', t: 0, from: e.from, to: e.to, name: e.newName };
-        else { this.flash = 0.6; this.cur = { type: 'wait', t: 0.6 }; }
+        // the whole screen turns to it, the music stops, and it changes in front of you (evolveView); the one on the
+        // field takes its new shape when the scene ends
+        evolveView.start(game, e, 'battle');
+        this.cur = { type: 'evolve', uid: e.uid, to: e.to, name: e.newName };
         break;
       case 'LEARN_PROMPT': this.learn = e; this.forget = null; this.cursor.learn = 0; this.next(game); break;
       case 'BATTLE_END': if (e.result === 'LOST') game.cue?.('WHITEOUT'); if (e.result === 'WON' || e.result === 'CAUGHT') this.happy = 0.9; this.cur = { type: 'outro', t: 0 }; this.worldMusic(game); break;
@@ -201,6 +203,12 @@ export const battleView = {
     if (this.moment && (this.moment.t += dt) > 1.6) this.moment = null;
     if (!this.on) return;
     const input = game.input;
+    // an Astral evolving: the scene runs at its own pace (no battle speed, no fast-forward)
+    if (this.cur?.type === 'evolve') {
+      evolveView.update(game, dt);
+      if (!evolveView.on) { const c = this.cur; if (this.disp.p?.uid === c.uid) { this.disp.p.speciesId = c.to; this.disp.p.name = c.name; } this.cur = null; }
+      return;
+    }
     // battle speed from Options, and hold B to fast-forward
     dt *= [1, 2, 3.5][game.settings.battleSpeed || 0] * (input.held?.b ? 3 : 1);
     if (input.pressed('start')) this.showLog = !this.showLog;
@@ -242,10 +250,6 @@ export const battleView = {
       this.disp[c.side].hp = Math.round(c.from + (c.to - c.from) * k);
       if (k >= 1) this.cur = null;
     } else if (c.type === 'wait') { c.t -= dt * (press ? 4 : 1); if (c.t <= 0) this.cur = null; }
-    else if (c.type === 'evolve') {
-      c.t += dt * (press ? 3 : 1);
-      if (c.t >= EVOLVE_SECONDS) { this.disp.p.speciesId = c.to; this.disp.p.name = c.name; this.flash = 0.7; game.audio?.sfx('evolve'); this.cur = null; }
-    }
     else if (c.type === 'recall') {
       c.t += dt * (press ? 3 : 1);
       this.fx[c.side].recall = Math.min(1, c.t / RECALL);
@@ -308,14 +312,6 @@ export const battleView = {
     if (this.capture && side === 'e') return;
     const sink = Math.round(f.faint * 64);
     const size = 64, still = game.settings.reducedMotion;
-    // evolving: white silhouettes of the old and new forms swap faster and faster
-    const ev = side === 'p' && this.cur?.type === 'evolve' ? this.cur : null;
-    if (ev) {
-      const k = ev.t / EVOLVE_SECONDS, period = Math.max(0.05, 0.45 * (1 - k)), showNew = still ? k > 0.5 : Math.floor(ev.t / period) % 2 === 1;
-      const im = game.images[`mon:${showNew ? ev.to : ev.from}`] || img;
-      g.drawImage(tinted(im, frame * 64, 0, 64, 64, '#FFFFFF'), x, y, size, size);
-      return;
-    }
     const { ox, oy, sy, lean, flip } = this.pose(game, side);
     // coming in or going back: how big, how white, how solid, how much it shimmers
     let sc = 1, white = 0, alpha = 1, haze = 0;
@@ -509,6 +505,7 @@ export const battleView = {
     }
     if (this.showLog) this.drawLog(game, g);
     if (this.outro > 0) { g.fillStyle = `rgba(11,3,20,${this.outro})`; g.fillRect(0, 0, W, H); }
+    if (this.cur?.type === 'evolve') evolveView.draw(game, g);
     void input;
   },
 

@@ -21,6 +21,7 @@ export const settingsView = {
     drawText(g, tl('OPTIONS'), W / 2, 15, { color: C.purple, align: 'center' });
     const rows = [
       { id: 'difficulty', label: tl('Difficulty'), right: tl(DIFFICULTY[st.difficulty] || 'Normal'), help: tl({ easy: 'Easy: your Astrals hit 20% harder and take 20% less.', hard: 'Hard: your Astrals hit 20% softer and take 20% more.' }[st.difficulty] || 'Normal: everyone hits as hard as they hit.') },
+      { id: 'tripNotes', label: tl('Trip messages'), right: st.tripNotes === false ? tl('off') : tl('ON'), help: tl('A line when you lick the blotter, and each time you come up or down. Off keeps them in the log; the trip meter still shows how high you are.') },
       { id: 'grounded', label: tl('Grounded mode'), right: st.grounded ? tl('ON') : tl('off'), help: tl('Caps the trippy screen effects at their mildest level. Recommended if you are sensitive to motion or flashing.') },
       { id: 'reducedMotion', label: tl('Reduced motion'), right: st.reducedMotion ? tl('ON') : tl('off'), help: tl('Stops screen shake, flashes and spinning backgrounds.') },
       { id: 'textSpeed', label: tl('Text speed'), right: tl(SPEED[st.textSpeed]), help: tl('How fast dialogue types out.') },
@@ -46,6 +47,7 @@ export const settingsView = {
       if (id === 'language') { game.cycleLanguage(act > 0 ? 1 : -1); return; }
       else if (id === 'difficulty') { const k = ['easy', 'normal', 'hard'], i = k.indexOf(st.difficulty || 'normal'); st.difficulty = k[(i + (act > 0 ? 1 : 2)) % 3]; }
       else if (id === 'grounded') st.grounded = !st.grounded;
+      else if (id === 'tripNotes') st.tripNotes = st.tripNotes === false;
       else if (id === 'reducedMotion') st.reducedMotion = !st.reducedMotion;
       else if (id === 'textSpeed') st.textSpeed = (st.textSpeed + (act > 0 ? 1 : 2)) % 3;
       else if (id === 'battleSpeed') st.battleSpeed = ((st.battleSpeed || 0) + (act > 0 ? 1 : 2)) % 3;

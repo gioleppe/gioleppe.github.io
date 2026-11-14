@@ -30,7 +30,7 @@ async function boot() {
   if (audioMod) audio = new audioMod.SynthAudio();
   const game = new Game({ assets, input, renderer, audio, langs, lang });
   audio?.setVolume(game.settings.volume);
-  for (const mod of ['./sceneView.js', './battleView.js', './menuView.js', './shopView.js', './settingsView.js', './creditsView.js', './noticeView.js', './quickView.js', './introView.js', './endCardView.js', './tarotView.js']) {
+  for (const mod of ['./sceneView.js', './battleView.js', './menuView.js', './shopView.js', './settingsView.js', './creditsView.js', './noticeView.js', './quickView.js', './introView.js', './endCardView.js', './tarotView.js', './evolveView.js']) {
     const m = await optional(mod);
     if (m) m.install(game);
   }
