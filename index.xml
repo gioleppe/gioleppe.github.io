@@ -6,8 +6,19 @@
     <description>Recent content on Tommaso Colella | SWE</description>
     <generator>Hugo</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 30 Oct 2025 10:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 14 Nov 2026 13:24:05 +0000</lastBuildDate>
     <atom:link href="https://gioleppe.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>On conjuring childhood dreams and being somewhat wrong</title>
+      <link>https://gioleppe.github.io/posts/childhood-dreams/</link>
+      <pubDate>Sat, 14 Nov 2026 13:24:05 +0000</pubDate>
+      <guid>https://gioleppe.github.io/posts/childhood-dreams/</guid>
+      <description>&lt;p&gt;A few days ago, I was at the pub with a friend.
+He showed me some games he vibe-coded across the past few months and inspired me: we started talking about creating our own ironic monster-catching RPG.
+Being able to make that kind of game was a dream for me as a child. I spent whole afternoons on RPG Maker 2000 trying to develop many projects: obviously all of them failed miserably, but that experience was one of the most formative ones I had in those years, and it shaped my computational thinking.
+Either way, I don&amp;rsquo;t want to make this too philosophical; after 10 minutes of back-and-forth chat with Gemini, I had a design document for my over-the-top Pokémon lookalike.
+Both of us being completely hopeless at pixel art, he recommended Aseprite to me, which supports an MCP server and batch mode for sprite generation. I took the tip and went on to order another beer. We spent a couple of hours together and I quickly forgot about the matter.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>On Generative AI, Simplicity, and Easiness</title>
       <link>https://gioleppe.github.io/posts/genai-simple-easy/</link>

@@ -2,6 +2,7 @@
 - [About Me](https://gioleppe.github.io/about/)
 
 ## Posts
+- [On conjuring childhood dreams and being somewhat wrong](https://gioleppe.github.io/posts/childhood-dreams/)
 - [On Generative AI, Simplicity, and Easiness](https://gioleppe.github.io/posts/genai-simple-easy/)
 - [Faster, please! (Or, how I reverse engineered an app to cater to my needs)](https://gioleppe.github.io/posts/faster-please/)
 - [Dirt-cheap Computer Science books](https://gioleppe.github.io/posts/used-books/)
