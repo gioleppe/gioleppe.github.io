@@ -236,7 +236,7 @@ function executeMove(ctx, side, moveId) {
   const effects = move.effects || [];
   const selfOnly = move.power === 0 && effects.length > 0 && effects.every((e) => e.target === 'self' || ['HEAL', 'HYDRATE'].includes(e.effectType));
   if (!selfOnly && move.accuracy > 0 && !ctx.rng.chance(move.accuracy / 100)) { msg(ctx, 'It drifts wide.'); return; }
-  if (!selfOnly && move.power > 0 && abilityOf(ctx, active(ctx, foeSide)) === 'DREAMER' && ctx.rng.chance(0.15)) { msg(ctx, `${label(ctx, foeSide)} drifts somewhere else for a moment. It misses.`); return; }
+  if (!selfOnly && move.power > 0 && abilityOf(ctx, active(ctx, foeSide)) === 'DREAMER' && ctx.rng.chance(1 / 7)) { msg(ctx, `${label(ctx, foeSide)} drifts somewhere else for a moment. It misses.`); return; }
 
   let total = 0;
   if (move.power > 0) {
