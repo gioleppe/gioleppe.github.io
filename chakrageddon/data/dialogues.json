@@ -838,6 +838,10 @@
       "set": "exposed_undercover"
     },
     {
+      "s": "Hippie",
+      "t": "Oh, and their head of security has seen the copies. Sergeant Baksheesh. He is on his way up to the Sunset Cliff, and he is not happy. Mind yourself."
+    },
+    {
       "end": true
     },
     {
@@ -1057,8 +1061,22 @@
       "goto": "ok"
     },
     {
+      "if": "exposed_undercover",
+      "goto": "here"
+    },
+    {
       "s": "Tourist",
-      "t": "A man in a uniform is charging people to look west. He says he has a permit."
+      "t": "There is a fence along the west edge with a sign on it: LOOKING WEST, RS 2000. Nobody to pay. Just the sign. Somebody has bought the sunset."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "here"
+    },
+    {
+      "s": "Tourist",
+      "t": "A man in a uniform just stormed up the path, waving photocopies of some memos and shouting about permits. He is over by the east exit. I would go round."
     },
     {
       "end": true
@@ -1076,7 +1094,7 @@
       "t": "THE SADHU CAVE. Silence. (Smoke permitted.)"
     },
     {
-      "t": "Scratched underneath: 'Something turns in the east wall. It notices you noticing it.'"
+      "t": "Scratched underneath: 'The pattern in the east wall was never finished. Ask the one who does not talk.'"
     },
     {
       "set": "read_carving"
@@ -1084,7 +1102,181 @@
   ],
   "mandalord": [
     {
-      "t": "A pattern in the rock. It is turning, very slowly. It has noticed you noticing it."
+      "ifCond": {
+        "any": [
+          {
+            "flag": "mandala_laid"
+          },
+          {
+            "flag": "met_mandalord"
+          }
+        ]
+      },
+      "goto": "wake"
+    },
+    {
+      "ifNot": "mandala_asked",
+      "goto": "faded"
+    },
+    {
+      "ifCond": {
+        "all": [
+          {
+            "has": "shell_sand"
+          },
+          {
+            "has": "kumkum"
+          },
+          {
+            "has": "turmeric"
+          },
+          {
+            "has": "uv_powder"
+          }
+        ]
+      },
+      "goto": "have"
+    },
+    {
+      "t": "The faded mandala. Four empty quarters, and you do not have all four colours yet. Baba Smoke drew you a map, if you need it again."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "faded"
+    },
+    {
+      "t": "A pattern scratched into the rock: a circle inside a square, cut into four. There was colour in it once. A few grains of red and white still cling to the lines."
+    },
+    {
+      "t": "Nothing turns. It looks unfinished, as if whoever made it got up halfway and never came back."
+    },
+    {
+      "set": "read_carving"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "have"
+    },
+    {
+      "ifIntox": 0.25,
+      "goto": "shaky"
+    },
+    {
+      "t": "Four colours, four empty quarters. Lay the mandala?",
+      "choice": [
+        "Lay it",
+        "Not yet"
+      ],
+      "goto": [
+        "lay",
+        "later"
+      ]
+    },
+    {
+      "label": "shaky"
+    },
+    {
+      "t": "You kneel with the four colours, and the lines swim away from your fingers. Every grain wants to be a galaxy. This needs a clear head.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "Come back sober: a night in a tent, or a few bottles of water."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "later"
+    },
+    {
+      "t": "It has waited thirty years. It can wait a bit longer."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "lay"
+    },
+    {
+      "scene": "mandala"
+    },
+    {
+      "t": "You kneel in front of the wall. Grain by grain, you let the colours run off your fingertips into the old lines."
+    },
+    {
+      "scene": "mandala",
+      "phase": 1
+    },
+    {
+      "t": "White first, in the east, where the sun comes up. The shell sand still smells of the sea."
+    },
+    {
+      "scene": "mandala",
+      "phase": 2
+    },
+    {
+      "t": "Red in the south: the pujari's kumkum."
+    },
+    {
+      "scene": "mandala",
+      "phase": 3
+    },
+    {
+      "t": "Yellow in the west: Raju's mother's turmeric. Your fingers will be yellow for a week."
+    },
+    {
+      "scene": "mandala",
+      "phase": 4
+    },
+    {
+      "t": "And the UV powder in the north. With a clear head it looks grey. It does not matter. It knows what it is."
+    },
+    {
+      "take": "shell_sand",
+      "n": 1
+    },
+    {
+      "take": "kumkum",
+      "n": 1
+    },
+    {
+      "take": "turmeric",
+      "n": 1
+    },
+    {
+      "take": "uv_powder",
+      "n": 1
+    },
+    {
+      "set": "mandala_laid"
+    },
+    {
+      "scene": "mandala",
+      "phase": 5
+    },
+    {
+      "t": "The last grain drops. For a long moment, nothing happens. Then the whole pattern begins to turn, very slowly. It has noticed you noticing it.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "Something steps out of the middle of it, the way you would step through a door.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "scene": null
+    },
+    {
+      "goto": "go"
+    },
+    {
+      "label": "wake"
+    },
+    {
+      "t": "The mandala on the wall is turning, very slowly. It has noticed you noticing it."
     },
     {
       "t": "Reach out to it?",
@@ -1126,7 +1318,29 @@
       "label": "caught"
     },
     {
-      "t": "The rock is just rock now. The pattern is in your Journal, still turning."
+      "t": "The wall is still. The colours are just sand again."
+    },
+    {
+      "scene": "mandala",
+      "phase": 6
+    },
+    {
+      "t": "Baba Smoke has come down from his cushion without a sound. He takes a little broom out of his robe and, in four strokes, sweeps the mandala off the wall. The colours run together into a small grey heap."
+    },
+    {
+      "s": "Baba Smoke",
+      "t": "(The smoke over his head spells: THAT IS THE POINT.)",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "He scoops the sand into a pot and carries it out to the mouth of the cave, to pour it into the sea. A pinch is left on the floor. He rolls it between his palms into beads, threads them, and drops them into your hand."
+    },
+    {
+      "give": "sand_mala",
+      "n": 1
+    },
+    {
+      "scene": null
     },
     {
       "end": true
@@ -1135,7 +1349,7 @@
       "label": "no"
     },
     {
-      "t": "You back away. It does not mind. It has time."
+      "t": "You back away. It keeps turning. It can wait."
     }
   ],
   "shadowcop_bribe": [
@@ -2796,6 +3010,18 @@
           },
           {
             "flag": "mandalord_rest"
+          },
+          {
+            "not": {
+              "any": [
+                {
+                  "flag": "mandala_laid"
+                },
+                {
+                  "flag": "met_mandalord"
+                }
+              ]
+            }
           }
         ]
       },
@@ -3443,6 +3669,61 @@
   ],
   "shrine_pujari": [
     {
+      "ifNot": "mandala_asked",
+      "goto": "pj"
+    },
+    {
+      "ifCond": {
+        "any": [
+          {
+            "has": "kumkum"
+          },
+          {
+            "flag": "mandala_laid"
+          },
+          {
+            "flag": "met_mandalord"
+          },
+          {
+            "caughtSpecies": "mandalord"
+          }
+        ]
+      },
+      "goto": "pj"
+    },
+    {
+      "ifNot": "lakshmi_moved",
+      "goto": "kum_wait"
+    },
+    {
+      "s": "Pujari Mohan",
+      "t": "Kumkum? For a mandala? In a cave? Baba Smoke sent you. Thirty years that man has not said one word, and still he sends me customers."
+    },
+    {
+      "t": "He fills a twist of paper from the brass pot by the altar. It is the red of the dot on Lakshmi's forehead."
+    },
+    {
+      "give": "kumkum",
+      "n": 1
+    },
+    {
+      "s": "Pujari Mohan",
+      "t": "Lakshmi says thank you, by the way. She does not say it. She lies there. It is the same thing."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "kum_wait"
+    },
+    {
+      "s": "Pujari Mohan",
+      "t": "Red powder for a mandala, yes, I have it. But kumkum is for offerings, and every offering I have is for Lakshmi until she gets off that road. Help her first."
+    },
+    {
+      "label": "pj"
+    },
+    {
       "if": "lakshmi_moved",
       "goto": "after"
     },
@@ -3583,6 +3864,9 @@
       "goto": "again"
     },
     {
+      "scene": "juniper"
+    },
+    {
       "t": "A girl in round glasses and a mustard beanie shuffles an enormous tarot deck. Her table smells of oat milk and palo santo."
     },
     {
@@ -3599,6 +3883,9 @@
     },
     {
       "set": "tarot_met"
+    },
+    {
+      "scene": null
     },
     {
       "label": "again"
@@ -4108,6 +4395,1114 @@
     {
       "s": "Ranger Asha",
       "t": "Two Astrals. Better. Swap them around in a fight: let the one that is winning do the winning. Up the path is the Poi Pit."
+    }
+  ],
+  "baba_mandala": [
+    {
+      "ifCond": {
+        "caughtSpecies": "mandalord"
+      },
+      "goto": "after"
+    },
+    {
+      "ifCond": {
+        "any": [
+          {
+            "flag": "mandala_laid"
+          },
+          {
+            "flag": "met_mandalord"
+          }
+        ]
+      },
+      "goto": "laid"
+    },
+    {
+      "if": "mandala_asked",
+      "goto": "hints"
+    },
+    {
+      "s": "Baba Smoke",
+      "t": "(He points a long finger at the east wall of the cave. The smoke drifts over and traces the faded pattern there: a circle in a square, cut into four.)",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "s": "Baba Smoke",
+      "t": "(Three puffs become three little figures in orange robes, kneeling round it with funnels. The smoke hisses like falling sand. Then a gust blows the figures and their colours away. Only the outline is left.)",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "s": "Baba Smoke",
+      "t": "(The smoke points at the wall, then at you, and holds up four fingers.)",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "set": "mandala_asked"
+    },
+    {
+      "label": "hints"
+    },
+    {
+      "ifCond": {
+        "all": [
+          {
+            "has": "shell_sand"
+          },
+          {
+            "has": "kumkum"
+          },
+          {
+            "has": "turmeric"
+          },
+          {
+            "has": "uv_powder"
+          }
+        ]
+      },
+      "goto": "ready"
+    },
+    {
+      "s": "Baba Smoke",
+      "t": "(The smoke draws you a map of what is missing.)",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "ifHas": "shell_sand",
+      "goto": "h2"
+    },
+    {
+      "s": "Baba Smoke",
+      "t": "(A seashell, and the sun coming up out of the sea. White. Driftwood Beach, at sunrise.)",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "label": "h2"
+    },
+    {
+      "ifHas": "kumkum",
+      "goto": "h3"
+    },
+    {
+      "s": "Baba Smoke",
+      "t": "(A cow lying in a road, a little shrine, and a red dot on a forehead. Red. The pujari at the Roadside Shrine.)",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "label": "h3"
+    },
+    {
+      "ifHas": "turmeric",
+      "goto": "h4"
+    },
+    {
+      "s": "Baba Smoke",
+      "t": "(A frying pan, a cook with a cigarette, and two fists. Yellow. The Omelette Stall.)",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "label": "h4"
+    },
+    {
+      "ifHas": "uv_powder",
+      "goto": "h5"
+    },
+    {
+      "s": "Baba Smoke",
+      "t": "(A jar glowing purple in the dark, then an eye opened very wide, with spirals in it. The Forest Stage, while you are Peaking.)",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "label": "h5"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "ready"
+    },
+    {
+      "s": "Baba Smoke",
+      "t": "(The smoke forms four colours, then does something you have never seen it do: it clears completely. He taps his temple, and points at the wall.)",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "A clear head, then. Not a grain of anything in you when you lay it."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "laid"
+    },
+    {
+      "s": "Baba Smoke",
+      "t": "(The smoke turns slowly in a circle, the same way the wall does.)",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "after"
+    },
+    {
+      "s": "Baba Smoke",
+      "t": "(The smoke draws a small, perfect circle. Then he blows it away, and looks very pleased about it.)",
+      "style": "PSYCHEDELIC"
+    }
+  ],
+  "stall_cook_after": [
+    {
+      "ifCond": {
+        "any": [
+          {
+            "has": "turmeric"
+          },
+          {
+            "flag": "mandala_laid"
+          },
+          {
+            "flag": "met_mandalord"
+          },
+          {
+            "caughtSpecies": "mandalord"
+          }
+        ]
+      },
+      "goto": "done"
+    },
+    {
+      "ifNot": "mandala_asked",
+      "goto": "done"
+    },
+    {
+      "t": "He slips into the kitchen and comes back with his hands behind his back, whistling. A twist of paper, warm and very yellow, lands in your palm."
+    },
+    {
+      "give": "turmeric",
+      "n": 1
+    },
+    {
+      "s": "Line Cook Anil",
+      "t": "If Raju asks, the omelettes are yellow because of the eggs. Eggs are very yellow this season."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "done"
+    },
+    {
+      "s": "Line Cook Anil",
+      "t": "Fifteen years I chop onions for that man. Fifteen years he never lets me near the tin. Today I am a thief. It feels fantastic."
+    }
+  ],
+  "shell_sand": [
+    {
+      "t": "At first light the tide pulls back and leaves a line of shell along the sand, ground as fine and white as sugar. By breakfast it will be gone."
+    },
+    {
+      "give": "shell_sand",
+      "n": 1
+    },
+    {
+      "t": "You scoop a handful into a twist of paper. It still smells of the sea."
+    }
+  ],
+  "uv_jar": [
+    {
+      "t": "Under the trees, a jam jar of powder blazes like a small purple moon. Sober, you would have walked right past it: to everybody else it is a dirty jar.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "give": "uv_powder",
+      "n": 1
+    },
+    {
+      "t": "The UV Painter's, probably. They will not miss it. They will not remember it."
+    }
+  ],
+  "elite_kick_after": [
+    {
+      "s": "Kick Kalyani",
+      "t": "Don't stop now. You're on the one. Stay on it."
+    }
+  ],
+  "elite_bass_after": [
+    {
+      "s": "Bassline Boris",
+      "t": "Low end, high hopes. Go on up. I will hold the floor."
+    }
+  ],
+  "elite_hat_after": [
+    {
+      "s": "Hi-Hat Hana",
+      "t": "Fast-fast-fast! Why are you still talking to me? Up! Up!"
+    }
+  ],
+  "elite_lead_after": [
+    {
+      "s": "Lead Lakshmi",
+      "t": "The Council has never heard a melody like yours. Go and make them listen."
+    }
+  ],
+  "chad3_after": [
+    {
+      "s": "Chad",
+      "t": "Whatever. Go on, then. They are waiting."
+    },
+    {
+      "s": "Chad",
+      "t": "...Good luck, I guess. Do not tell anyone I said that."
+    }
+  ],
+  "rosa": [
+    {
+      "if": "boat_home",
+      "goto": "ferry"
+    },
+    {
+      "if": "boat_found",
+      "goto": "found"
+    },
+    {
+      "if": "lowtide_asked",
+      "goto": "remind"
+    },
+    {
+      "s": "Rosa",
+      "t": "You came round the rocks? Then you have good shoes or a bad sense of direction. I am Rosa. The one in the hammock is my grandfather, Santan."
+    },
+    {
+      "s": "Rosa",
+      "t": "At the last full moon party something came up out of the sea and dragged his boat, the Maria da Graça, into the cave on the islet. Forty years he fished from her. Now he lies in that hammock and stares at the rocks."
+    },
+    {
+      "s": "Rosa",
+      "t": "Nobody will go in. They say whatever took her is still in there. And you can only reach the cave at low tide, across the flats: four to ten in the morning, four to ten at night. The rest of the time the surf would have you."
+    },
+    {
+      "s": "Rosa",
+      "t": "If you are brave, or stupid, go and look. If you see her, come and tell me. The flat rock by the tide sign is good for waiting."
+    },
+    {
+      "set": "lowtide_asked"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "remind"
+    },
+    {
+      "s": "Rosa",
+      "t": "The cave on the islet, at low tide: four to ten, morning or night. If the tide turns while you are out there, sit on the rock on the islet and wait. Do not swim it. People who swim it become stories."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "found"
+    },
+    {
+      "s": "Rosa",
+      "t": "She is in there? In one piece? And the thing that took her... gone?"
+    },
+    {
+      "s": "Rosa",
+      "t": "Then we walk her home on the next tide. Grandpa! Wake up! We are going fishing!"
+    },
+    {
+      "t": "Santan is out of the hammock faster than you would believe. At the next low tide the three of you wade out, float the Maria da Graça off the rocks and walk her home across the flats, Santan talking to her the whole way."
+    },
+    {
+      "set": "boat_home"
+    },
+    {
+      "rupees": 1500
+    },
+    {
+      "give": "amber_vial",
+      "n": 2
+    },
+    {
+      "s": "Rosa",
+      "t": "She is scratched. So is Grandpa. They will both live. Thank you."
+    },
+    {
+      "s": "Rosa",
+      "t": "And listen: whenever you like, I will row you up the coast to the Arabian Sea Shallows. It is quicker than walking, and the dolphins are free."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "ferry"
+    },
+    {
+      "s": "Rosa",
+      "t": "Up the coast to the Arabian Sea Shallows? The Maria da Graça is ready.",
+      "choice": [
+        "Row me there",
+        "Not now"
+      ],
+      "goto": [
+        "go",
+        "no"
+      ]
+    },
+    {
+      "label": "go"
+    },
+    {
+      "t": "Rosa rows you north along the coast. Santan sits in the bow and points out every dolphin, and several rocks."
+    },
+    {
+      "warp": {
+        "zone": "sea_shallows",
+        "x": 3,
+        "y": 24,
+        "dir": "UP"
+      }
+    },
+    {
+      "s": "Rosa",
+      "t": "Shout from the beach when you want to go back. I will be fishing."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "no"
+    },
+    {
+      "s": "Rosa",
+      "t": "She is not going anywhere. Not any more."
+    }
+  ],
+  "rosa_shallows": [
+    {
+      "s": "Rosa",
+      "t": "Back down the coast to the cove?",
+      "choice": [
+        "Row me back",
+        "Not now"
+      ],
+      "goto": [
+        "go",
+        "no"
+      ]
+    },
+    {
+      "label": "go"
+    },
+    {
+      "t": "The Maria da Graça slides down the coast with the current. Santan sleeps in the bow with his hat over his face."
+    },
+    {
+      "warp": {
+        "zone": "fishermens_cove",
+        "x": 26,
+        "y": 23,
+        "dir": "UP"
+      }
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "no"
+    },
+    {
+      "s": "Rosa",
+      "t": "The fish here are bigger, but they argue more."
+    }
+  ],
+  "santan": [
+    {
+      "if": "boat_home",
+      "goto": "home"
+    },
+    {
+      "s": "Santan",
+      "t": "Forty years she carried me. Now something big is sleeping in her. I hope it is comfortable. Somebody should be."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "home"
+    },
+    {
+      "s": "Santan",
+      "t": "She came home. I knew she would. Boats are like cats: they come home when they are hungry."
+    }
+  ],
+  "big_one": [
+    {
+      "if": "boat_found",
+      "goto": "empty"
+    },
+    {
+      "t": "A fishing boat is wedged between the rocks, MARIA DA GRAÇA flaking off her side. Something enormous is curled up inside her, snoring through its antennae."
+    },
+    {
+      "t": "Wake it up?",
+      "choice": [
+        "Tap the hull",
+        "Leave it"
+      ],
+      "goto": [
+        "wake",
+        "no"
+      ]
+    },
+    {
+      "label": "wake"
+    },
+    {
+      "t": "You tap the hull. Two eyes the size of coconuts open, then a claw the size of a scooter."
+    },
+    {
+      "set": "boat_found"
+    },
+    {
+      "wild": "lobsterlad",
+      "level": 27
+    },
+    {
+      "t": "Whatever it was, it is not in the boat any more. The Maria da Graça rocks gently, empty and very scratched. Rosa should hear about this."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "empty"
+    },
+    {
+      "t": "The Maria da Graça, empty, waiting for the tide and for Rosa."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "no"
+    },
+    {
+      "t": "You back away very quietly. The snoring does not change."
+    }
+  ],
+  "tide_rock": [
+    {
+      "ifCond": {
+        "any": [
+          {
+            "hour": [
+              4,
+              10
+            ]
+          },
+          {
+            "hour": [
+              16,
+              22
+            ]
+          }
+        ]
+      },
+      "goto": "low"
+    },
+    {
+      "t": "A flat rock, worn smooth by people waiting for the sea. The surf is right over the flats. Sit and wait for the tide to go out?",
+      "choice": [
+        "Wait",
+        "Not now"
+      ],
+      "goto": [
+        "wait",
+        "no"
+      ]
+    },
+    {
+      "label": "wait"
+    },
+    {
+      "waitTide": true
+    },
+    {
+      "t": "You watch the water. It thinks about it for a long time, and then it goes. The flats are out, shining all the way to the islets."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "low"
+    },
+    {
+      "t": "The tide is out. The flats shine all the way to the islets. It turns again at ten."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "no"
+    },
+    {
+      "t": "The sea goes on doing what it does."
+    }
+  ],
+  "tide_sign": [
+    {
+      "t": "TIDE TABLE, hand painted: LOW 4 TO 10 AM. LOW 4 TO 10 PM. Underneath, smaller: \"The sea does not care about your plans.\""
+    }
+  ],
+  "cove_roots_sign": [
+    {
+      "t": "Scratched into a board: \"UP TO THE SUNSET CLIFF. Only if you can climb like a banyan root.\" Somebody has drawn a very confident stick figure."
+    }
+  ],
+  "toddy_seller": [
+    {
+      "s": "Toddy Seller",
+      "t": "Coconut water, watermelon, cold water. Toddy too, but toddy is for later. Much later."
+    },
+    {
+      "shop": "toddy"
+    }
+  ],
+  "fish_seller": [
+    {
+      "s": "Fish Seller",
+      "t": "Kingfish, pomfret, mackerel. Everything here came out of the sea this morning. Except me. I came out of Mapusa."
+    }
+  ],
+  "cove_shrine": [
+    {
+      "t": "A little shrine to the sea, hung with marigolds, a string of shells and one plastic sandal. Somebody asked for a safe return."
+    }
+  ],
+  "deepak": [
+    {
+      "if": "power_back",
+      "goto": "done"
+    },
+    {
+      "ifCond": {
+        "all": [
+          {
+            "flag": "gen1_on"
+          },
+          {
+            "flag": "gen2_on"
+          },
+          {
+            "flag": "gen3_on"
+          }
+        ]
+      },
+      "goto": "reward"
+    },
+    {
+      "if": "power_asked",
+      "goto": "remind"
+    },
+    {
+      "s": "Deepak",
+      "t": "Careful, that cable is live. Well. It should be live. Nothing is live. That is my problem."
+    },
+    {
+      "s": "Deepak",
+      "t": "I am Deepak, front of house. Three generators run everything on this road: the lights, the catering, the trucks' fridges. Last night all three died within ten minutes of each other."
+    },
+    {
+      "s": "Deepak",
+      "t": "Generators do not die together. Somebody killed them. Somebody who read a memo about cutting the power to every free party, I think."
+    },
+    {
+      "s": "Deepak",
+      "t": "One has a cable pulled out behind a drum nobody can move. One is bone dry, and the jerrycans have walked off into the lighting store. And at the third, there is a man in a very clean uniform \"doing maintenance\"."
+    },
+    {
+      "s": "Deepak",
+      "t": "Get them running and tonight we throw our own party, right here. The crew have earned one. So have you."
+    },
+    {
+      "set": "power_asked"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "remind"
+    },
+    {
+      "s": "Deepak",
+      "t": "Three generators in the yard: the one in the pen with the cable drum, the dry one round the back, and the one with the man in the clean uniform. The jerrycans were last seen going into the lighting store."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "reward"
+    },
+    {
+      "s": "Deepak",
+      "t": "Listen to that. All three. That is the most beautiful noise in the world, and I mix music for a living."
+    },
+    {
+      "t": "Down the road the festoon lights flicker, catch, and stay on. Somebody in the truck park cheers."
+    },
+    {
+      "set": "power_back"
+    },
+    {
+      "rupees": 1800
+    },
+    {
+      "give": "earplugs",
+      "n": 1
+    },
+    {
+      "s": "Deepak",
+      "t": "Take these. Earplugs, the good ones. Every engineer has a spare pair and a ruined left ear."
+    },
+    {
+      "s": "Deepak",
+      "t": "And come back tonight. Nine till three, in the truck park: the Generator Disco. No headliners, no VIPs, no wristbands. Just the crew and whoever finds us."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "done"
+    },
+    {
+      "s": "Deepak",
+      "t": "Nine till three, in the truck park. If the lights go out again, I know where you live. You live in a tent. Everybody lives in a tent."
+    }
+  ],
+  "gen1": [
+    {
+      "t": "A generator, silent. Its main cable hangs loose, the plug just out of reach behind a cable drum."
+    },
+    {
+      "t": "You squeeze in and push the plug home. The generator coughs, shudders, and roars. Diesel smoke and a smell like a bus station: lovely."
+    },
+    {
+      "set": "gen1_on"
+    },
+    {
+      "ifCond": {
+        "all": [
+          {
+            "flag": "gen2_on"
+          },
+          {
+            "flag": "gen3_on"
+          }
+        ]
+      },
+      "goto": "all"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "all"
+    },
+    {
+      "t": "That is all three. Deepak will want to hear this."
+    }
+  ],
+  "gen2": [
+    {
+      "ifHas": "jerrycan",
+      "goto": "fill"
+    },
+    {
+      "t": "A generator, silent. The fuel gauge points at a little drawing of a sad face. Somebody has drained the tank."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "fill"
+    },
+    {
+      "t": "You glug the jerrycan into the tank. The generator sniffs, considers it, and roars into life."
+    },
+    {
+      "take": "jerrycan",
+      "n": 1
+    },
+    {
+      "set": "gen2_on"
+    },
+    {
+      "ifCond": {
+        "all": [
+          {
+            "flag": "gen1_on"
+          },
+          {
+            "flag": "gen3_on"
+          }
+        ]
+      },
+      "goto": "all"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "all"
+    },
+    {
+      "t": "That is all three. Deepak will want to hear this."
+    }
+  ],
+  "gen3": [
+    {
+      "ifCond": {
+        "defeated": "load_bottler"
+      },
+      "goto": "fix"
+    },
+    {
+      "t": "A generator, silent. A man in a very clean uniform is crouched beside it with a length of hose and a guilty face."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "fix"
+    },
+    {
+      "t": "The hose is still in the tank, the other end in a bucket. You pour the bucket back in, pull the hose out and press the starter. It roars."
+    },
+    {
+      "set": "gen3_on"
+    },
+    {
+      "ifCond": {
+        "all": [
+          {
+            "flag": "gen1_on"
+          },
+          {
+            "flag": "gen2_on"
+          }
+        ]
+      },
+      "goto": "all"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "all"
+    },
+    {
+      "t": "That is all three. Deepak will want to hear this."
+    }
+  ],
+  "gen_running": [
+    {
+      "t": "The generator hammers away happily. You can feel it in your teeth."
+    }
+  ],
+  "catering_chef": [
+    {
+      "s": "Chef Bruno",
+      "t": "Crew catering! Chai, lassi, watermelon. Strictly for crew. You look like crew. You look tired enough."
+    },
+    {
+      "shop": "catering"
+    }
+  ],
+  "crew_eating": [
+    {
+      "if": "power_back",
+      "goto": "on"
+    },
+    {
+      "s": "Lighting Crew",
+      "t": "No power, no fridge, no ice. I am eating warm watermelon in the dark like an animal."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "on"
+    },
+    {
+      "s": "Lighting Crew",
+      "t": "Ice! There is ice again! I could kiss Deepak. I have kissed Deepak. Long story."
+    }
+  ],
+  "crew_asleep": [
+    {
+      "s": "Sleeping Roadie",
+      "t": "Zzz... no, the other truss... zzz... who moved my gaffer tape..."
+    }
+  ],
+  "checkpoint_guard": [
+    {
+      "s": "Security",
+      "t": "Load-in road. Crew and vehicles only. You are neither, but you walk like you mean it, so fine."
+    }
+  ],
+  "load_sign": [
+    {
+      "t": "LOAD-IN ROAD. Trucks have right of way. Forklifts have more right of way. Deepak has all the right of way."
+    }
+  ],
+  "disco_dj": [
+    {
+      "s": "DJ Roadie",
+      "t": "Generator Disco! Every light on this road runs on the three you fixed. If you see one flicker, dance harder."
+    }
+  ],
+  "bottler_after": [
+    {
+      "t": "Gunther drops the hose and walks off very fast, trying to look like a plumber. The generator sits there, silent, the hose still in its tank."
+    }
+  ],
+  "floor_sign": [
+    {
+      "t": "THE LAST DANCEFLOOR. Between the Backstage and the Mainstage: ten thousand people, and every one of them is in your way."
+    },
+    {
+      "t": "Underneath, in marker: \"The lanes move to the beat. Walk into the dancers and you wait for a gap. Do not fight the crowd. Join it.\""
+    }
+  ],
+  "merch_seller": [
+    {
+      "s": "Merch Seller",
+      "t": "Official merch! Unofficial merch! The difference is the price and nothing else."
+    },
+    {
+      "shop": "merch"
+    }
+  ],
+  "ziggy": [
+    {
+      "if": "noor_found",
+      "goto": "found"
+    },
+    {
+      "if": "lost_asked",
+      "goto": "remind"
+    },
+    {
+      "s": "Ziggy",
+      "t": "Have you seen Noor? Flowery shirt, round sunglasses, dances like a windmill? We said meet by the welfare tent if we got split up. That was three hours ago."
+    },
+    {
+      "s": "Ziggy",
+      "t": "The last time I saw her she was heading for the light towers, past the second lot of lanes. If you go that way... please. She has my phone charger. And my heart. Mostly the charger."
+    },
+    {
+      "set": "lost_asked"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "remind"
+    },
+    {
+      "s": "Ziggy",
+      "t": "Noor. Flowery shirt, windmill dancing, last seen by the light towers past the second lanes. I am not moving from this tent."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "found"
+    },
+    {
+      "if": "noor_thanked",
+      "goto": "after"
+    },
+    {
+      "s": "Ziggy",
+      "t": "NOOR! You found her! She was exactly where she said she would be, wasn't she. She always is. I am always the lost one."
+    },
+    {
+      "rupees": 1000
+    },
+    {
+      "give": "masala_chai",
+      "n": 2
+    },
+    {
+      "set": "noor_thanked"
+    },
+    {
+      "s": "Ziggy",
+      "t": "Take this, and that. We are going to dance right here, next to the tent, where nobody can lose anybody."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "after"
+    },
+    {
+      "s": "Ziggy",
+      "t": "We have tied our wristbands together. It is very romantic and quite uncomfortable."
+    }
+  ],
+  "noor": [
+    {
+      "if": "lost_asked",
+      "goto": "found"
+    },
+    {
+      "s": "Noor",
+      "t": "I am waiting for my friend Ziggy. Or she is waiting for me. One of us is definitely lost. I think it is the other one."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "found"
+    },
+    {
+      "s": "Noor",
+      "t": "Ziggy sent you? Oh, thank god. I promised I would not move from the light towers, so I have been dancing on this exact spot for three hours."
+    },
+    {
+      "s": "Noor",
+      "t": "The welfare tent, by the way in? I am going. Right now. Tell her I am coming. No, I will tell her myself, I am faster."
+    },
+    {
+      "set": "noor_found"
+    },
+    {
+      "t": "Noor windmills off into the crowd, towards the tent, with remarkable accuracy."
+    }
+  ],
+  "noor_back": [
+    {
+      "s": "Noor",
+      "t": "We are never splitting up again. Unless there is a really good set on somewhere."
+    }
+  ],
+  "marta": [
+    {
+      "if": "marta_met",
+      "goto": "again"
+    },
+    {
+      "s": "Marta",
+      "t": "Mind the desk. That fader is worth more than your tent. I am Marta, I mix the Mainstage from here, and you have the look."
+    },
+    {
+      "s": "Marta",
+      "t": "Everybody down here wants to get up there. The Council only let in people the crowd carries. There is no stairway, no guest list. There is the crowd, and the crowd decides."
+    },
+    {
+      "s": "Marta",
+      "t": "At the front, by the barrier, the Front Row stand guard: Kiki and Dex, they have been here since the gates opened. Beat them both, and the crowd will lift you."
+    },
+    {
+      "set": "marta_met"
+    },
+    {
+      "label": "again"
+    },
+    {
+      "s": "Marta",
+      "t": "Every lane of dancers moves to its own beat. Some quick, some slow, some back the other way. Walk into them and you wait a beat for a gap. Patience is a dance move too."
+    }
+  ],
+  "side_security": [
+    {
+      "s": "Security",
+      "t": "The temple's back stairs. You can come out this way. You cannot go in this way. Going in is up to the crowd."
+    }
+  ],
+  "crowdsurf": [
+    {
+      "scene": "crowdsurf"
+    },
+    {
+      "t": "You step into the gap in the barrier. Somebody behind you shouts your name. Then everybody does.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "scene": "crowdsurf",
+      "phase": 1
+    },
+    {
+      "t": "A hundred hands lift you off your feet and pass you forward over the heads, towards the stage, towards the lights. Somebody steals one of your sandals. It is worth it."
+    },
+    {
+      "scene": "crowdsurf",
+      "phase": 2
+    },
+    {
+      "t": "The last row of hands throws you, quite hard, up over the lip of the stage."
+    },
+    {
+      "set": "temple_entered"
+    },
+    {
+      "warp": {
+        "zone": "mainstage_temple",
+        "x": 15,
+        "y": 43,
+        "dir": "UP"
+      }
+    },
+    {
+      "scene": "ziggurat"
+    },
+    {
+      "t": "You land on warm stone. Behind the stage, the Mainstage Temple goes up in terraces, step after step, into the dark.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "scene": "ziggurat",
+      "phase": 1
+    },
+    {
+      "t": "On the first terrace a kick drum starts. On the second, a bassline. On the third, a hi-hat ticking like a clock. On the fourth, a melody you feel you have always known."
+    },
+    {
+      "scene": "ziggurat",
+      "phase": 2
+    },
+    {
+      "t": "At the very top, three figures stand against the stars and look down at you: the VIP Shaman Council.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "scene": "ziggurat",
+      "phase": 3
+    },
+    {
+      "s": "The Council",
+      "t": "Climb, then. Everybody wants to be at the top. Very few want to climb.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "scene": null
+    }
+  ],
+  "crowdsurf_again": [
+    {
+      "t": "The crowd knows you now. They lift you before you even ask, and pass you up onto the stage like a parcel."
+    },
+    {
+      "warp": {
+        "zone": "mainstage_temple",
+        "x": 15,
+        "y": 43,
+        "dir": "UP"
+      }
     }
   ]
 }

@@ -7,144 +7,245 @@
   "ground2": "path",
   "wall": "temple_wall",
   "encounter": "incense",
-  "indoor": true,
   "noFly": true,
   "rows": [
-    "nnnnnnnnnnnnnnnnnnnn",
-    "nlllllllllllllllllln",
-    "nlllllllllllllllllln",
-    "nnnnnnnnnlnnnnnnnnnn",
-    "nlllllllllllllllllln",
-    "nlllllllllllllllllln",
-    "nnnnnnnnnlnnnnnnnnnn",
-    "nlllllllllllllllllln",
-    "nlllllllllllllllllln",
-    "nnnnnnnnnlnnnnnnnnnn",
-    "nlllllllllllllllllln",
-    "nlllllllllllllllllln",
-    "nnnnnnnnnlnnnnnnnnnn",
-    "nlllllllllllllllllln",
-    "nlllllllllllllllllln",
-    "nnnnnnnnnlnnnnnnnnnn",
-    "nlllllllllllllllllln",
-    "nlllllllllllllllllln",
-    "nnnnnnnnnlnnnnnnnnnn",
-    "nllCllllllllllllllln",
-    "nlllllllllllllllllln",
-    "nnnnnnnnn,,nnnnnnnnn"
+    "øøøøøøøøøøøžžžžžžžžžžøøøøøøøøøøø",
+    "øøøøøøøøøøøøƒllllllƒøøøøøøøøøøøø",
+    "øøøøøøøøøøøølllllllløøøøøøøøøøøø",
+    "øøøøøøøøøøøølllllllløøøøøøøøøøøø",
+    "øøøøøøøøøøøølllllllløøøøøøøøøøøø",
+    "øøøøøøøøøøøølllllllløøøøøøøøøøøø",
+    "øøøøøøøøøøøøl<llll<løøøøøøøøøøøø",
+    "øøøøøøøøøøøølllllllløøøøøøøøøøøø",
+    "øøøøøøøøøøøølllllllløøøøøøøøøøøø",
+    "øøøøøøøøøøøøžžž__žžžøøøøøøøøøøøø",
+    "øøøøøøøøøøøƒllllllllƒøøøøøøøøøøø",
+    "øøøøøøøøøøølllllllllløøøøøøøøøøø",
+    "øøøøøøøøøøølllllllllløøøøøøøøøøø",
+    "øøøøøøøøøøølllllllllløøøøøøøøøøø",
+    "øøøøøøøøøøølllllllllløøøøøøøøøøø",
+    "øøøøøøøøøøžžžžžžžžžž_žøøøøøøøøøø",
+    "øøøøøøøøølllllllvllllvløøøøøøøøø",
+    "øøøøøøøøølllllllllllllløøøøøøøøø",
+    "øøøøøøøøølllllllllllllløøøøøøøøø",
+    "øøøøøøøøølllllllllllllƒøøøøøøøøø",
+    "øøøøøøøøølllllllllllllløøøøøøøøø",
+    "øøøøøøøøž_žžžžžžžžžžžžžžøøøøøøøø",
+    "øøøøøøøl>lll>llllll>llllløøøøøøø",
+    "øøøøøøølllllllllllllllllløøøøøøø",
+    "øøøøøøølllllllllllllllllløøøøøøø",
+    "øøøøøøølƒlllllllllllllllløøøøøøø",
+    "øøøøøøølllllllllllllllllløøøøøøø",
+    "øøøøøøžžžžžžžžžžžžžžžžžž_žøøøøøø",
+    "øøøøølllllllllllllllllllllløøøøø",
+    "øøøøølllllllklkllklkllllllløøøøø",
+    "øøøøølllllllllllllllllllllløøøøø",
+    "øøøøøllllllllllllllllllllƒløøøøø",
+    "øøøøølllllllllllllllllllllløøøøø",
+    "øøøøžž_žžžžžžžžžžžžžžžžžžžžžøøøø",
+    "øøølklllkllllllllllllllklllkløøø",
+    "øøølllllllllllllllllllllllllløøø",
+    "øøølklllkllllllllllllllklllkløøø",
+    "øøølllllllllllllllllllllllllløøø",
+    "øøølllllllllllllllllllllllllløøø",
+    "øøžžžžžžžžžžžžž_žžžžžžžžžžžžžžøø",
+    "øƒllllllllllllllllllllllllllllƒø",
+    "øllClllllllllllllllllllllllllllø",
+    "øllllllllllllllllllllllllllllllø",
+    "ølllllllƒllllllllllllllƒlllllllø",
+    "øllllllllllllllllllllllllllllllø",
+    "žžžžžžžžžžžžžžž__žžžžžžžžžžžžžžž"
   ],
   "warps": [
     {
-      "x": 9,
-      "y": 21,
-      "to": "backstage",
-      "tx": 10,
-      "ty": 14,
+      "x": 15,
+      "y": 45,
+      "to": "last_dancefloor",
+      "tx": 4,
+      "ty": 59,
       "dir": "DOWN"
     },
     {
-      "x": 10,
-      "y": 21,
-      "to": "backstage",
-      "tx": 11,
-      "ty": 14,
+      "x": 16,
+      "y": 45,
+      "to": "last_dancefloor",
+      "tx": 4,
+      "ty": 59,
       "dir": "DOWN"
     }
   ],
   "npcs": [
     {
       "id": "elite_kick",
-      "x": 9,
-      "y": 15,
+      "x": 15,
+      "y": 38,
       "sprite": "kalyani",
       "dir": "DOWN",
       "trainer": "elite_kick",
       "sight": 3,
-      "hideIf": "beat_elite_kick"
+      "hideIf": "beat_elite_kick",
+      "leave": [
+        18,
+        36
+      ]
+    },
+    {
+      "id": "elite_kick_after",
+      "x": 18,
+      "y": 36,
+      "sprite": "kalyani",
+      "dir": "DOWN",
+      "script": "elite_kick_after",
+      "showIf": "beat_elite_kick",
+      "arrives": "elite_kick"
     },
     {
       "id": "elite_bass",
-      "x": 9,
-      "y": 12,
+      "x": 6,
+      "y": 32,
       "sprite": "boris",
       "dir": "DOWN",
       "trainer": "elite_bass",
       "sight": 3,
-      "hideIf": "beat_elite_bass"
+      "hideIf": "beat_elite_bass",
+      "leave": [
+        9,
+        30
+      ]
+    },
+    {
+      "id": "elite_bass_after",
+      "x": 9,
+      "y": 30,
+      "sprite": "boris",
+      "dir": "DOWN",
+      "script": "elite_bass_after",
+      "showIf": "beat_elite_bass",
+      "arrives": "elite_bass"
     },
     {
       "id": "elite_hat",
-      "x": 9,
-      "y": 9,
+      "x": 24,
+      "y": 26,
       "sprite": "hana",
       "dir": "DOWN",
       "trainer": "elite_hat",
       "sight": 3,
-      "hideIf": "beat_elite_hat"
+      "hideIf": "beat_elite_hat",
+      "leave": [
+        21,
+        24
+      ]
+    },
+    {
+      "id": "elite_hat_after",
+      "x": 21,
+      "y": 24,
+      "sprite": "hana",
+      "dir": "DOWN",
+      "script": "elite_hat_after",
+      "showIf": "beat_elite_hat",
+      "arrives": "elite_hat"
     },
     {
       "id": "elite_lead",
       "x": 9,
-      "y": 6,
+      "y": 20,
       "sprite": "lakshmi",
       "dir": "DOWN",
       "trainer": "elite_lead",
       "sight": 3,
-      "hideIf": "beat_elite_lead"
+      "hideIf": "beat_elite_lead",
+      "leave": [
+        12,
+        18
+      ]
+    },
+    {
+      "id": "elite_lead_after",
+      "x": 12,
+      "y": 18,
+      "sprite": "lakshmi",
+      "dir": "DOWN",
+      "script": "elite_lead_after",
+      "showIf": "beat_elite_lead",
+      "arrives": "elite_lead"
     },
     {
       "id": "chad3_g",
-      "x": 9,
-      "y": 3,
+      "x": 20,
+      "y": 14,
       "sprite": "chad",
       "dir": "DOWN",
       "trainer": "chad3_g",
       "sight": 3,
       "showIf": "starter_ganjapod",
-      "hideIf": "beat_chad3"
+      "hideIf": "beat_chad3",
+      "leave": [
+        17,
+        12
+      ]
     },
     {
       "id": "chad3_j",
-      "x": 9,
-      "y": 3,
+      "x": 20,
+      "y": 14,
       "sprite": "chad",
       "dir": "DOWN",
       "trainer": "chad3_j",
       "sight": 3,
       "showIf": "starter_jawling",
-      "hideIf": "beat_chad3"
+      "hideIf": "beat_chad3",
+      "leave": [
+        17,
+        12
+      ]
     },
     {
       "id": "chad3_b",
-      "x": 9,
-      "y": 3,
+      "x": 20,
+      "y": 14,
       "sprite": "chad",
       "dir": "DOWN",
       "trainer": "chad3_b",
       "sight": 3,
       "showIf": "starter_blottertot",
-      "hideIf": "beat_chad3"
+      "hideIf": "beat_chad3",
+      "leave": [
+        17,
+        12
+      ]
+    },
+    {
+      "id": "chad3_after",
+      "x": 17,
+      "y": 12,
+      "sprite": "chad",
+      "dir": "DOWN",
+      "script": "chad3_after",
+      "showIf": "beat_chad3",
+      "arrives": "chad3"
     },
     {
       "id": "council",
-      "x": 9,
-      "y": 1,
+      "x": 16,
+      "y": 3,
       "sprite": "council_elder",
       "dir": "DOWN",
       "script": "council"
     },
     {
       "id": "council_l",
-      "x": 7,
-      "y": 1,
+      "x": 14,
+      "y": 3,
       "sprite": "council_eye",
       "dir": "DOWN",
       "script": "council_side"
     },
     {
       "id": "council_r",
-      "x": 11,
-      "y": 1,
+      "x": 18,
+      "y": 3,
       "sprite": "council_beads",
       "dir": "DOWN",
       "script": "council_side"
@@ -152,39 +253,39 @@
     {
       "id": "temple_sign",
       "x": 12,
-      "y": 19,
+      "y": 42,
       "tile": "sign",
       "script": "sign_temple"
     },
     {
       "id": "temple_local",
-      "x": 15,
-      "y": 20,
+      "x": 26,
+      "y": 42,
       "sprite": "local",
       "dir": "LEFT",
       "script": "temple_local"
     },
     {
       "id": "temple_water",
-      "x": 15,
-      "y": 10,
+      "x": 5,
+      "y": 42,
       "sprite": "chaimama",
-      "dir": "LEFT",
+      "dir": "RIGHT",
       "script": "temple_water"
     }
   ],
   "pickups": [
     {
       "id": "temple_chai",
-      "x": 17,
-      "y": 19,
+      "x": 28,
+      "y": 41,
       "item": "masala_chai",
       "n": 3
     },
     {
       "id": "temple_blanket",
       "x": 2,
-      "y": 20,
+      "y": 44,
       "item": "weighted_blanket",
       "n": 2
     }
@@ -197,42 +298,59 @@
     {
       "kind": "pulse",
       "rect": [
-        1,
-        16,
-        18,
-        17
+        3,
+        34,
+        28,
+        38
       ],
       "color": "#E0303C"
     },
     {
       "kind": "rumble",
-      "row": 12
+      "row": 27
     },
     {
       "kind": "ticks",
       "rect": [
-        1,
-        10,
-        18,
-        11
+        7,
+        22,
+        24,
+        22
       ]
     },
     {
       "kind": "notes",
       "rect": [
-        1,
-        7,
-        18,
-        8
+        9,
+        16,
+        22,
+        20
       ]
     },
     {
       "kind": "grand",
       "rect": [
+        12,
         1,
-        1,
-        18,
-        2
+        19,
+        8
+      ]
+    },
+    {
+      "kind": "lasers",
+      "at": [
+        [
+          1,
+          40
+        ],
+        [
+          30,
+          40
+        ]
+      ],
+      "colors": [
+        "#C86BFF",
+        "#FFD23F"
       ]
     }
   ],

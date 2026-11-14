@@ -1263,7 +1263,8 @@
           "delta": 0.2
         }
       ]
-    }
+    },
+    "then": "baba_mandala"
   },
   {
     "id": "backstage_guard1",
@@ -2892,5 +2893,704 @@
       "Okay. You found the one."
     ],
     "after": "The circle drums from sunset to whenever. Sit in, if you can keep time."
+  },
+  {
+    "id": "stall_cook",
+    "name": "Line Cook Anil",
+    "sprite": "local",
+    "textStyle": "ORGANIC",
+    "party": [
+      {
+        "species": "shroomba",
+        "level": 33
+      },
+      {
+        "species": "lassiblob",
+        "level": 34
+      },
+      {
+        "species": "omeletron",
+        "level": 35
+      }
+    ],
+    "reward": 1200,
+    "intro": [
+      "Turmeric? Raju's turmeric? That is not turmeric, that is his mother. She grinds it herself, on a stone, in Margao, and posts it up in a biscuit tin. Nobody touches the tin.",
+      "I am on my break. My break is for fighting people who want the tin. Let us see how badly you want it."
+    ],
+    "defeat": [
+      "Okay. Okay! Wait here. Look casual. Do not tell Raju."
+    ],
+    "then": "stall_cook_after",
+    "after": "Fifteen years I chop onions for that man. Fifteen years he never lets me near the tin. Today I am a thief. It feels fantastic."
+  },
+  {
+    "id": "cove_shells",
+    "name": "Shell Collector Maya",
+    "sprite": "brit_f",
+    "party": [
+      {
+        "species": "crabcake",
+        "level": 18
+      },
+      {
+        "species": "lobsterlad",
+        "level": 19
+      }
+    ],
+    "reward": 640,
+    "intro": [
+      "Do not step on that! That is a cowrie. That is my retirement."
+    ],
+    "defeat": [
+      "Fine. Take a shell. Not that one."
+    ],
+    "after": "I have four hundred shells and every one has a name. That one is Derek."
+  },
+  {
+    "id": "cove_wook",
+    "name": "Tidepool Wook Sunny",
+    "sprite": "wook",
+    "party": [
+      {
+        "species": "chillem",
+        "level": 18
+      },
+      {
+        "species": "wooklet",
+        "level": 18
+      },
+      {
+        "species": "shroomba",
+        "level": 19
+      }
+    ],
+    "reward": 600,
+    "intro": [
+      "Shh. The anemones are telling me something. They say: fight that person."
+    ],
+    "defeat": [
+      "The anemones lied. Anemones always lie."
+    ],
+    "after": "Put your hand in the pool. Feel that? That is the sea saying hello. Or a crab.",
+    "textStyle": "DOWNER"
+  },
+  {
+    "id": "cove_yogi",
+    "name": "Cliff Yogi Ananda",
+    "sprite": "yogi",
+    "party": [
+      {
+        "species": "snoozel",
+        "level": 19
+      },
+      {
+        "species": "lassiblob",
+        "level": 19
+      },
+      {
+        "species": "duvetghast",
+        "level": 20
+      }
+    ],
+    "reward": 680,
+    "intro": [
+      "You are walking very loudly through my silence."
+    ],
+    "defeat": [
+      "My silence has been broken. I will make another."
+    ],
+    "after": "Every morning I salute the sun from this rock. Every morning it ignores me. That is the practice."
+  },
+  {
+    "id": "cove_angler",
+    "name": "Angler Joaquim",
+    "sprite": "local",
+    "party": [
+      {
+        "species": "crabcake",
+        "level": 19
+      },
+      {
+        "species": "sirenowl",
+        "level": 20
+      }
+    ],
+    "reward": 660,
+    "intro": [
+      "Nothing is biting today. Except, maybe, you."
+    ],
+    "defeat": [
+      "Ah. That is why nothing was biting. They were all watching you."
+    ],
+    "after": "You want to catch big fish? Be patient. You want to catch big Astrals? Be a little less patient."
+  },
+  {
+    "id": "cove_captain",
+    "name": "Captain Furtado",
+    "sprite": "captain",
+    "party": [
+      {
+        "species": "ketacrab",
+        "level": 19
+      },
+      {
+        "species": "wonkrab",
+        "level": 20
+      },
+      {
+        "species": "lobsterlad",
+        "level": 21
+      }
+    ],
+    "reward": 820,
+    "intro": [
+      "Thirty years at sea! Two on land! The land is worse! Fight me!"
+    ],
+    "defeat": [
+      "A fair wind and a hard loss. Like my marriage."
+    ],
+    "after": "Rosa's grandfather taught me to fish. He also taught me to lie about fish. Both are useful."
+  },
+  {
+    "id": "cove_tapper",
+    "name": "Toddy Tapper Xavier",
+    "sprite": "local",
+    "party": [
+      {
+        "species": "hashlump",
+        "level": 19
+      },
+      {
+        "species": "chillem",
+        "level": 20
+      }
+    ],
+    "reward": 640,
+    "intro": [
+      "I climb thirty palms a day. You, I can climb over."
+    ],
+    "defeat": [
+      "Okay. Okay. Thirty-one palms, maybe, today."
+    ],
+    "after": "Fresh toddy is sweet. By evening it is not toddy any more. It is a decision."
+  },
+  {
+    "id": "cove_lifeguard",
+    "name": "Lifeguard Priya",
+    "sprite": "lifeguard",
+    "party": [
+      {
+        "species": "sirenowl",
+        "level": 20
+      },
+      {
+        "species": "lobsterlad",
+        "level": 20
+      },
+      {
+        "species": "neighbula",
+        "level": 21
+      }
+    ],
+    "reward": 760,
+    "intro": [
+      "Whistle! No swimming past the flags! Also no walking past me!"
+    ],
+    "defeat": [
+      "All right, all right. You can walk. Still no swimming."
+    ],
+    "after": "Twice a day the sea walks out and twice a day it walks back. Every year somebody tries to race it."
+  },
+  {
+    "id": "cove_cricket",
+    "name": "Beach Cricketer Arjun",
+    "sprite": "tourist",
+    "party": [
+      {
+        "species": "djembe_monk",
+        "level": 19
+      },
+      {
+        "species": "bongo_bishop",
+        "level": 20
+      }
+    ],
+    "reward": 620,
+    "intro": [
+      "You walked across our pitch! That is a no-ball! That is a fight!"
+    ],
+    "defeat": [
+      "Out! Me, I mean. I am out."
+    ],
+    "after": "Six and out if it goes in the sea. We lose a ball a day. The sea must have hundreds."
+  },
+  {
+    "id": "load_rigger",
+    "name": "Rigger Tomasz",
+    "sprite": "guard",
+    "party": [
+      {
+        "species": "bribe_asaurus",
+        "level": 28
+      },
+      {
+        "species": "dengoth",
+        "level": 28
+      },
+      {
+        "species": "shadowcop",
+        "level": 29
+      }
+    ],
+    "reward": 1100,
+    "intro": [
+      "Hard hat area. You have no hard hat. Your head will have to do."
+    ],
+    "defeat": [
+      "Good fight. Now, the hard hat rule is very real. Duck."
+    ],
+    "after": "I hang lights forty metres up. Down here I get dizzy."
+  },
+  {
+    "id": "load_lights",
+    "name": "Lighting Tech Ines",
+    "sprite": "raver",
+    "party": [
+      {
+        "species": "glowkid",
+        "level": 28
+      },
+      {
+        "species": "selfiend",
+        "level": 29
+      }
+    ],
+    "reward": 1040,
+    "intro": [
+      "No power, no lights, no show. I have to shine somehow."
+    ],
+    "defeat": [
+      "Blinded by the light. Mine, unfortunately."
+    ],
+    "after": "A hundred and twelve moving heads on the Mainstage. I named them all. Most of them are called Kevin."
+  },
+  {
+    "id": "load_forklift",
+    "name": "Forklift Fatima",
+    "sprite": "local",
+    "party": [
+      {
+        "species": "charagolem",
+        "level": 28
+      },
+      {
+        "species": "bribe_asaurus",
+        "level": 29
+      }
+    ],
+    "reward": 1060,
+    "intro": [
+      "Beep beep beep. That is me reversing into a fight."
+    ],
+    "defeat": [
+      "Beep. Beep. Beep. That is me reversing out of one."
+    ],
+    "after": "I can put a pallet on a pin. I cannot parallel park a scooter. Life is strange."
+  },
+  {
+    "id": "load_roadie",
+    "name": "Roadie Big Steve",
+    "sprite": "wook",
+    "party": [
+      {
+        "species": "grand_wook",
+        "level": 29
+      },
+      {
+        "species": "bongo_bishop",
+        "level": 29
+      }
+    ],
+    "reward": 1080,
+    "intro": [
+      "Three days, no sleep, eleven trucks. I am running on gaffer tape and spite."
+    ],
+    "defeat": [
+      "Fair. Spite does not count as fuel."
+    ],
+    "after": "The secret of roadie life: always look like you are carrying something important.",
+    "textStyle": "DOWNER"
+  },
+  {
+    "id": "load_runner",
+    "name": "Runner Jess",
+    "sprite": "tourist",
+    "party": [
+      {
+        "species": "nitroxide",
+        "level": 28
+      },
+      {
+        "species": "mozzquito",
+        "level": 29
+      },
+      {
+        "species": "selfiend",
+        "level": 29
+      }
+    ],
+    "reward": 1100,
+    "intro": [
+      "Can't stop, running a cable to the Mainstage, also you are in my way, also fight!"
+    ],
+    "defeat": [
+      "Okay, I can stop. I can stop for ages, actually."
+    ],
+    "after": "I have walked forty kilometres today. My step counter has filed a complaint."
+  },
+  {
+    "id": "load_security",
+    "name": "Security Ramesh",
+    "sprite": "guard",
+    "party": [
+      {
+        "species": "shadowcop",
+        "level": 29
+      },
+      {
+        "species": "bribe_asaurus",
+        "level": 29
+      }
+    ],
+    "reward": 1100,
+    "intro": [
+      "Lanyard? No lanyard? Then let us see your Astrals instead."
+    ],
+    "defeat": [
+      "You may pass. You may also have my lanyard. I have nine."
+    ],
+    "after": "On a quiet night I check four thousand wristbands. On a busy night I check my phone."
+  },
+  {
+    "id": "load_cater",
+    "name": "Line Cook Pilar",
+    "sprite": "chef",
+    "party": [
+      {
+        "species": "omeletron",
+        "level": 29
+      },
+      {
+        "species": "lassiblob",
+        "level": 29
+      },
+      {
+        "species": "shroomba",
+        "level": 30
+      }
+    ],
+    "reward": 1180,
+    "intro": [
+      "You are not crew. You want crew food? You fight like crew."
+    ],
+    "defeat": [
+      "Fine. You fight like crew. Eat like crew."
+    ],
+    "after": "Three hundred plates of dal a night. My arms are Astrals now."
+  },
+  {
+    "id": "load_bottler",
+    "name": "Bottler Gunther",
+    "sprite": "guard",
+    "party": [
+      {
+        "species": "bribe_asaurus",
+        "level": 30
+      },
+      {
+        "species": "shadowcop",
+        "level": 30
+      },
+      {
+        "species": "dengoth",
+        "level": 31
+      }
+    ],
+    "reward": 1400,
+    "intro": [
+      "This is official maintenance. Very official. Please look away from the hose.",
+      "Phase three, the memo said: cut the power to every free party. Somebody has to do it, and they pay overtime."
+    ],
+    "defeat": [
+      "The hose was for... watering the generator. They get thirsty. I am leaving now."
+    ],
+    "after": "There is no Team Undercover any more. There was never a Team Undercover. I have always worked in plumbing.",
+    "then": "bottler_after"
+  },
+  {
+    "id": "sf_diabolo",
+    "name": "Poi Superfan Rahul",
+    "sprite": "firespinner",
+    "party": [
+      {
+        "species": "gurnagama",
+        "level": 36
+      },
+      {
+        "species": "ravelord",
+        "level": 37
+      }
+    ],
+    "reward": 1500,
+    "intro": [
+      "Nineteen hours! No breaks! Diabolo is a god! You beat a god? Prove it!"
+    ],
+    "defeat": [
+      "Okay. You beat a god. I will go and lie down."
+    ],
+    "after": "I have a tattoo of Diabolo on my back. It is spinning. I think. I cannot see it.",
+    "textStyle": "STIMULANT"
+  },
+  {
+    "id": "sf_svetlana",
+    "name": "Breathwork Superfan Ilse",
+    "sprite": "yogi",
+    "party": [
+      {
+        "species": "duvetghast",
+        "level": 36
+      },
+      {
+        "species": "lassiblob",
+        "level": 37
+      },
+      {
+        "species": "snoozel",
+        "level": 37
+      }
+    ],
+    "reward": 1500,
+    "intro": [
+      "Breathe in for four. Hold for seven. Fight for eight."
+    ],
+    "defeat": [
+      "Breathe out. All of it. Especially the losing."
+    ],
+    "after": "Svetlana taught me that every gong is a question. Most of the answers are \"louder\".",
+    "textStyle": "DOWNER"
+  },
+  {
+    "id": "sf_keta",
+    "name": "Ditch Superfan Mo",
+    "sprite": "captain",
+    "party": [
+      {
+        "species": "wonkrab",
+        "level": 37
+      },
+      {
+        "species": "neighbula",
+        "level": 37
+      },
+      {
+        "species": "hoffmanite",
+        "level": 38
+      }
+    ],
+    "reward": 1560,
+    "intro": [
+      "I have been sideways since Tuesday. Keta says that is the right way up."
+    ],
+    "defeat": [
+      "Upside down, right way up, I still lost."
+    ],
+    "after": "The Captain says the ditch is a state of mind. My state of mind is a ditch.",
+    "textStyle": "DISSOCIATIVE"
+  },
+  {
+    "id": "sf_raju",
+    "name": "Omelette Superfan Gita",
+    "sprite": "chef",
+    "party": [
+      {
+        "species": "omeletron",
+        "level": 37
+      },
+      {
+        "species": "shroomba",
+        "level": 37
+      },
+      {
+        "species": "charagolem",
+        "level": 38
+      }
+    ],
+    "reward": 1560,
+    "intro": [
+      "Five AM omelette, every day, for nine years. Raju knows my order. Do you know my order?"
+    ],
+    "defeat": [
+      "Extra cheese. My order is extra cheese. You did not even ask."
+    ],
+    "after": "Raju's mother still grinds the turmeric. I asked once. I was banned for a week."
+  },
+  {
+    "id": "sf_darkpsy",
+    "name": "Darkpsy Superfan Vlad",
+    "sprite": "shaman",
+    "party": [
+      {
+        "species": "omnihound",
+        "level": 37
+      },
+      {
+        "species": "sirenowl",
+        "level": 38
+      }
+    ],
+    "reward": 1580,
+    "intro": [
+      "190 BPM. Anything slower is a lullaby. You look like a lullaby."
+    ],
+    "defeat": [
+      "That was... at least 200 BPM. Respect."
+    ],
+    "after": "The Baron has never once said my name. I have said his eleven thousand times.",
+    "textStyle": "BUMMER"
+  },
+  {
+    "id": "sf_chloe",
+    "name": "Influencer Superfan Bella",
+    "sprite": "influencer",
+    "party": [
+      {
+        "species": "selfiend",
+        "level": 38
+      },
+      {
+        "species": "mozzquito",
+        "level": 37
+      },
+      {
+        "species": "dengoth",
+        "level": 38
+      }
+    ],
+    "reward": 1600,
+    "intro": [
+      "Wait, wait, let me get the light right. Okay. Now I fight you. For content."
+    ],
+    "defeat": [
+      "Delete. Delete. Okay, post it anyway. Losing is relatable."
+    ],
+    "after": "Chloe followed me back once. For six minutes. Best six minutes of my life."
+  },
+  {
+    "id": "sf_baba",
+    "name": "Smoke Superfan Om",
+    "sprite": "guru",
+    "party": [
+      {
+        "species": "grand_wook",
+        "level": 38
+      },
+      {
+        "species": "hoffmanite",
+        "level": 38
+      },
+      {
+        "species": "chillem",
+        "level": 38
+      }
+    ],
+    "reward": 1620,
+    "intro": [
+      "(He exhales slowly. He has clearly practised. The smoke makes a small, wobbly question mark.)"
+    ],
+    "defeat": [
+      "(The smoke makes a much smaller question mark, and an apology.)"
+    ],
+    "after": "(He tries to spell BACKSTAGE in smoke. It comes out as BAKSTGE. He looks devastated.)",
+    "textStyle": "PSYCHEDELIC"
+  },
+  {
+    "id": "sf_promoter",
+    "name": "VIP Superfan Brent",
+    "sprite": "promoter",
+    "party": [
+      {
+        "species": "bribe_asaurus",
+        "level": 38
+      },
+      {
+        "species": "amphetadragon",
+        "level": 39
+      }
+    ],
+    "reward": 1700,
+    "intro": [
+      "Do you know who I know? I know a guy who knew the Promoter. Fight me for the privilege."
+    ],
+    "defeat": [
+      "My guy will hear about this. My guy will be fine about it."
+    ],
+    "after": "I still have my VIP lanyard. It does not open anything any more. I wear it for the feeling."
+  },
+  {
+    "id": "front_left",
+    "name": "Front Row Kiki",
+    "sprite": "raver",
+    "party": [
+      {
+        "species": "ravelord",
+        "level": 39
+      },
+      {
+        "species": "fractoad",
+        "level": 39
+      },
+      {
+        "species": "omnihound",
+        "level": 40
+      }
+    ],
+    "reward": 2000,
+    "intro": [
+      "I have had my elbows on this barrier since the gates opened. Sixty hours. I am not giving it up to you.",
+      "You want the crowd to carry you? The crowd carries people who have earned it."
+    ],
+    "defeat": [
+      "Fine. You have earned it. Do not tell anyone I cried."
+    ],
+    "after": "When they lift you, keep your arms out and your shoes on. Mostly the second one."
+  },
+  {
+    "id": "front_right",
+    "name": "Front Row Dex",
+    "sprite": "dealer",
+    "party": [
+      {
+        "species": "amphetadragon",
+        "level": 39
+      },
+      {
+        "species": "grand_wook",
+        "level": 39
+      },
+      {
+        "species": "hoffmanite",
+        "level": 40
+      }
+    ],
+    "reward": 2000,
+    "intro": [
+      "Front row. Sixty hours, no water, no sleep, no regrets. You are standing on my spot.",
+      "Kiki and I decide who goes up. Today, nobody. Unless you change my mind."
+    ],
+    "defeat": [
+      "Mind changed. Hands up, everybody, we have one for the stage."
+    ],
+    "after": "Once you are up there, you are up there. There is no coming back down the front. Only the back stairs."
   }
 ]

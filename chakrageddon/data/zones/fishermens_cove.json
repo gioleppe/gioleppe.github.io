@@ -1,0 +1,397 @@
+{
+  "zoneId": "fishermens_cove",
+  "name": "Fishermen's Cove",
+  "paletteId": "ANJUNA_DUST",
+  "baseBpm": 116,
+  "ground": "sand",
+  "ground2": "path",
+  "wall": "cliff",
+  "encounter": "incense",
+  "tide": {
+    "low": [
+      [
+        4,
+        10
+      ],
+      [
+        16,
+        22
+      ]
+    ],
+    "rising": "The tide comes in round your ankles, fast. You splash back to the nearest dry sand."
+  },
+  "rows": [
+    "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+    "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^......,",
+    "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^....o.,",
+    "^^^^^^^^^^^^..^^^^^^^^^^^^^^^^^^^^^^^^^^R^^^",
+    "^bb.....o.o........b......oo...~~~~~...^R^^^",
+    "^.....,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.^R^^^",
+    "^.~~~~,..~~~~~~~~.....~~~~~~~~.......,.^R^^^",
+    "^.~~~~,..~~~~~~~~oo...~~~~~~~~b......,,,,^^^",
+    "^.~~~~,...............~~~~~~~~..........,^^^",
+    "^bbbob,bbTbbbbb.Tbbbbbb.T...bbbbbbb.:...,..^",
+    "^~~~~..ww.o..~~~....rrr.......T.........,..^",
+    "^~~~~..www...~~~....HDH.................,..^",
+    "^~~~~...ww...~~~.T..................,,,,,..^",
+    "^~~~~.....oo..............rrr.....T.,.~~~~.^",
+    "^.........................HDH.......,T~~~~.^",
+    "^o...,,,,,,,,..:..9.....,,,,,,,h....,.....T^",
+    "^.ow.,......,...........,...........,......^",
+    "^.ww.,..o.:.,.........1.,.1.........,.....T^",
+    "^....,......,......ññ.ñ.,........mq.,......^",
+    ",,,,,,......,,,,,,,,,,,,,,,,,,,,,,,,,....9.^",
+    "^.......~~~~.....................,.........^",
+    "^~~~....~~~~..ww....ƀɓ.......ƀɓ..,.........^",
+    "^~~~....~~~~..www.4......ƀɓ......,.........^",
+    "^~~~....~~~~...............................^",
+    "Wwwwwwwwwwwwwťwwwwwwwwwwwwwwwwwwwwťwwwƀɓwwww",
+    "WWWWWWWWWWWWWťWWWWWWWWWWWWWWWWWWWWťWWWWWWWWW",
+    "WWWWWWWWWWWWťťťťťťťťťťťťťťťťťťť.......WWWWWW",
+    "WWWWWWWWWWWo....WWWWWWWWWWWWWW^^^^Ø^^^^WWWWW",
+    "WWWWWWWWWWW.....WWWWWWWWWWWWWW^^^^^^^^^WWWWW",
+    "WWWWWWWWWWW....oWWWWWWWWWWWWWW^^^^^^^^^WWWWW",
+    "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW^^^^^^^^^WWWWW",
+    "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW^^^^^^^^^WWWWW"
+  ],
+  "warps": [
+    {
+      "x": 0,
+      "y": 19,
+      "to": "driftwood_beach",
+      "tx": 22,
+      "ty": 9,
+      "dir": "LEFT"
+    },
+    {
+      "x": 43,
+      "y": 1,
+      "to": "sunset_cliff",
+      "tx": 1,
+      "ty": 11,
+      "dir": "RIGHT",
+      "needs": "banyan_root_climb"
+    },
+    {
+      "x": 43,
+      "y": 2,
+      "to": "sunset_cliff",
+      "tx": 1,
+      "ty": 11,
+      "dir": "RIGHT",
+      "needs": "banyan_root_climb"
+    },
+    {
+      "x": 34,
+      "y": 27,
+      "to": "cove_cave",
+      "tx": 8,
+      "ty": 1,
+      "dir": "DOWN"
+    }
+  ],
+  "flagTiles": [
+    {
+      "flag": "boat_home",
+      "tiles": {
+        "22,23": "ƀ",
+        "23,23": "ɓ"
+      }
+    }
+  ],
+  "npcs": [
+    {
+      "id": "rosa",
+      "x": 25,
+      "y": 16,
+      "sprite": "vendor",
+      "dir": "DOWN",
+      "script": "rosa"
+    },
+    {
+      "id": "santan",
+      "x": 32,
+      "y": 15,
+      "sprite": "guru",
+      "dir": "LEFT",
+      "script": "santan"
+    },
+    {
+      "id": "toddy_seller",
+      "x": 21,
+      "y": 12,
+      "sprite": "local",
+      "dir": "DOWN",
+      "script": "toddy_seller"
+    },
+    {
+      "id": "fish_seller",
+      "x": 34,
+      "y": 17,
+      "sprite": "chef",
+      "dir": "DOWN",
+      "script": "fish_seller"
+    },
+    {
+      "id": "cove_shrine",
+      "x": 18,
+      "y": 22,
+      "invisible": true,
+      "script": "cove_shrine"
+    },
+    {
+      "id": "tide_sign",
+      "x": 35,
+      "y": 23,
+      "tile": "sign",
+      "script": "tide_sign"
+    },
+    {
+      "id": "tide_rock_shore",
+      "x": 36,
+      "y": 23,
+      "tile": "rock",
+      "script": "tide_rock"
+    },
+    {
+      "id": "tide_rock_islet",
+      "x": 32,
+      "y": 26,
+      "tile": "rock",
+      "script": "tide_rock"
+    },
+    {
+      "id": "tide_rock_little",
+      "x": 14,
+      "y": 28,
+      "tile": "rock",
+      "script": "tide_rock"
+    },
+    {
+      "id": "roots_sign",
+      "x": 39,
+      "y": 8,
+      "tile": "sign",
+      "script": "cove_roots_sign"
+    },
+    {
+      "id": "cove_shells",
+      "x": 2,
+      "y": 15,
+      "sprite": "brit_f",
+      "dir": "RIGHT",
+      "trainer": "cove_shells",
+      "sight": 3
+    },
+    {
+      "id": "cove_wook",
+      "x": 13,
+      "y": 18,
+      "sprite": "wook",
+      "dir": "LEFT",
+      "trainer": "cove_wook",
+      "sight": 2
+    },
+    {
+      "id": "cove_yogi",
+      "x": 20,
+      "y": 4,
+      "sprite": "yogi",
+      "dir": "DOWN",
+      "trainer": "cove_yogi",
+      "sight": 2,
+      "look": [
+        "DOWN",
+        "RIGHT"
+      ],
+      "lookEvery": 3
+    },
+    {
+      "id": "cove_angler",
+      "x": 29,
+      "y": 4,
+      "sprite": "local",
+      "dir": "DOWN",
+      "trainer": "cove_angler",
+      "sight": 2
+    },
+    {
+      "id": "cove_captain",
+      "x": 28,
+      "y": 20,
+      "sprite": "captain",
+      "dir": "UP",
+      "trainer": "cove_captain",
+      "sight": 2
+    },
+    {
+      "id": "cove_tapper",
+      "x": 18,
+      "y": 13,
+      "sprite": "local",
+      "dir": "RIGHT",
+      "trainer": "cove_tapper",
+      "sight": 3
+    },
+    {
+      "id": "cove_lifeguard",
+      "x": 38,
+      "y": 21,
+      "sprite": "lifeguard",
+      "dir": "LEFT",
+      "trainer": "cove_lifeguard",
+      "sight": 5,
+      "look": [
+        "LEFT",
+        "DOWN"
+      ],
+      "lookEvery": 4
+    },
+    {
+      "id": "cove_cricket",
+      "x": 39,
+      "y": 16,
+      "sprite": "tourist",
+      "dir": "LEFT",
+      "trainer": "cove_cricket",
+      "sight": 3
+    }
+  ],
+  "pickups": [
+    {
+      "id": "cove_bottle",
+      "x": 4,
+      "y": 20,
+      "item": "water_bottle",
+      "n": 2
+    },
+    {
+      "id": "cove_nook",
+      "x": 12,
+      "y": 3,
+      "item": "amber_vial",
+      "n": 1
+    },
+    {
+      "id": "cove_sandbar",
+      "x": 22,
+      "y": 26,
+      "item": "electrolyte_sachet",
+      "n": 2
+    },
+    {
+      "id": "cove_islet",
+      "x": 12,
+      "y": 28,
+      "item": "rizla_paper",
+      "n": 3
+    },
+    {
+      "id": "cove_palms",
+      "x": 42,
+      "y": 9,
+      "item": "coconut_water",
+      "n": 2
+    },
+    {
+      "id": "cove_rocks",
+      "x": 16,
+      "y": 17,
+      "item": "tiger_balm",
+      "n": 1,
+      "hidden": true
+    }
+  ],
+  "encounters": {
+    "encounterRate": 0.12,
+    "table": [
+      {
+        "speciesId": "crabcake",
+        "minLevel": 17,
+        "maxLevel": 19,
+        "weight": 25
+      },
+      {
+        "speciesId": "lobsterlad",
+        "minLevel": 18,
+        "maxLevel": 21,
+        "weight": 15
+      },
+      {
+        "speciesId": "wonkrab",
+        "minLevel": 18,
+        "maxLevel": 20,
+        "weight": 15
+      },
+      {
+        "speciesId": "sirenowl",
+        "minLevel": 18,
+        "maxLevel": 21,
+        "weight": 15
+      },
+      {
+        "speciesId": "chillem",
+        "minLevel": 18,
+        "maxLevel": 20,
+        "weight": 15
+      },
+      {
+        "speciesId": "neighbula",
+        "minLevel": 19,
+        "maxLevel": 21,
+        "weight": 10
+      }
+    ],
+    "nightTable": [
+      {
+        "speciesId": "sirenowl",
+        "minLevel": 19,
+        "maxLevel": 21,
+        "weight": 30
+      },
+      {
+        "speciesId": "duvetghast",
+        "minLevel": 18,
+        "maxLevel": 21,
+        "weight": 25
+      },
+      {
+        "speciesId": "neighbula",
+        "minLevel": 19,
+        "maxLevel": 21,
+        "weight": 25
+      },
+      {
+        "speciesId": "lobsterlad",
+        "minLevel": 18,
+        "maxLevel": 21,
+        "weight": 20
+      }
+    ],
+    "water": [
+      {
+        "speciesId": "lobsterlad",
+        "minLevel": 19,
+        "maxLevel": 22,
+        "weight": 50
+      },
+      {
+        "speciesId": "wonkrab",
+        "minLevel": 19,
+        "maxLevel": 21,
+        "weight": 50
+      }
+    ]
+  },
+  "fx": [
+    {
+      "kind": "smoke",
+      "at": [
+        [
+          24,
+          17
+        ]
+      ]
+    }
+  ]
+}

@@ -7,6 +7,7 @@
 //   { ifCaught: n, goto }     jumps when the Trip Journal has at least n species bagged
 //   { ifCond: cond, goto }    jumps when a quest condition holds (see src/core/quests.js)
 //   { rupees: n }             the player receives n Rupees
+//   { waitTide: true }        time passes until the tide is out (the zone's tide: Fishermen's Cove)
 //   { clock: minutes }        sets the festival clock (time passes while you wait)
 //   { set / clear: flag } { give: item, n } { take: item, n } { giveMon: species, level } { pay: n, else: label }
 //   { heal, respawn? } { water: true } (Hydration only) { stash: true } { shop: id } { battle: trainerId } { wild: species, level } { wristband: id }
@@ -32,7 +33,7 @@
 import { check } from './quests.js';
 import { restUntilSet, clockText, sets, minutesUntil } from './timetable.js';
 import { statsOf } from './mons.js';
-import { pathFor } from './OverworldEngine.js';
+import { pathFor, hoursToLowTide } from './OverworldEngine.js';
 
 export function startScript(ctx, steps, mode = 'DIALOGUE') {
   ctx.state.script = { steps, pc: 0 };
@@ -121,7 +122,7 @@ export function runScript(ctx) {
     if (st.scene !== undefined) { s.scene = st.scene ? { id: st.scene, ...(st.show ? { show: st.show } : {}), ...(st.phase ? { phase: st.phase } : {}), ...(st.who ? { who: st.who } : {}), ...(st.by ? { by: st.by } : {}), ...(st.card ? { card: true } : {}) } : null; continue; }
     // which set to sleep until: one answer per set on the timetable (soonest first), then Get up (goes to cancel)
     if (st.pickSet) {
-      const list = sets(ctx.data).slice().sort((x, y) => (minutesUntil(ctx.data, s, x) || 1440) - (minutesUntil(ctx.data, s, y) || 1440));
+      const list = sets(ctx.data, s).slice().sort((x, y) => (minutesUntil(ctx.data, s, x) || 1440) - (minutesUntil(ctx.data, s, y) || 1440));
       sc.setPick = list.map((x) => x.id).concat(null); sc.setCancel = st.cancel;
       const where = (x) => (x.zone === s.zoneId ? 'here' : ctx.data.zones[x.zone].name.replace(/^The /, ''));
       return say(ctx, st.s, st.t, st.style, list.map((x) => `${clockText(x.from)} ${x.name}, ${where(x)}`).concat('Get up'));
@@ -136,6 +137,11 @@ export function runScript(ctx) {
       return say(ctx, '', `You got ${n > 1 ? n + ' x ' : ''}${item?.name || st.give}!`);
     }
     if (st.clock !== undefined) { s.clock = ((st.clock % 1440) + 1440) % 1440; continue; }
+    if (st.waitTide) {                                                  // sit on a rock until the tide is out (Fishermen's Cove)
+      const hrs = hoursToLowTide(ctx);
+      if (hrs > 0) { s.clock = (Math.floor(s.clock / 60) + hrs) % 24 * 60; s.clockSteps = 0; ctx.emit({ type: 'CLOCK_SET', clock: s.clock }); }
+      continue;
+    }
     if (st.rupees) {
       s.rupees += st.rupees;
       ctx.emit({ type: 'RUPEES_CHANGED', rupees: s.rupees });

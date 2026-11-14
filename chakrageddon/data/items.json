@@ -376,5 +376,55 @@
     "price": 0,
     "effect": {},
     "desc": "A lump of cold blue clay from the back of the Sea Grotto. It takes the heat out of anything. It also turns it blue."
+  },
+  {
+    "id": "shell_sand",
+    "name": "Shell Sand",
+    "category": "KEY",
+    "price": 0,
+    "effect": {},
+    "desc": "Sea shell ground fine and white as sugar, scooped off Driftwood Beach at first light. For the mandala in the Sadhu Cave."
+  },
+  {
+    "id": "kumkum",
+    "name": "Kumkum",
+    "category": "KEY",
+    "price": 0,
+    "effect": {},
+    "desc": "A twist of paper full of the pujari's red powder, the red of the dot on Lakshmi's forehead. For the mandala in the Sadhu Cave."
+  },
+  {
+    "id": "turmeric",
+    "name": "Turmeric",
+    "category": "KEY",
+    "price": 0,
+    "effect": {},
+    "desc": "A spoonful of Raju's mother's turmeric, stolen by a cook who made you promise not to tell. For the mandala in the Sadhu Cave."
+  },
+  {
+    "id": "uv_powder",
+    "name": "UV Powder",
+    "category": "KEY",
+    "price": 0,
+    "effect": {},
+    "desc": "A jam jar of powder that blazes purple under a blacklight, or in the right state of mind. Otherwise it is grey. For the mandala in the Sadhu Cave."
+  },
+  {
+    "id": "sand_mala",
+    "name": "Sand Mala",
+    "category": "HELD",
+    "price": 1200,
+    "effect": {
+      "held": true
+    },
+    "desc": "To hold. Beads rolled from the swept mandala sand, on a string. Its holder keeps a clear head: no Thought Loops, no K-holes."
+  },
+  {
+    "id": "jerrycan",
+    "name": "Jerrycan",
+    "category": "KEY",
+    "price": 0,
+    "effect": {},
+    "desc": "A jerrycan of diesel from the lighting store, with POWER written on it in marker. One of the generators on the Load-In Road is thirsty."
   }
 ]

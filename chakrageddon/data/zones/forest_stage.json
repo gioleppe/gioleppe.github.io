@@ -151,6 +151,39 @@
         "set": "darkpsy"
       },
       "script": "uv_painter"
+    },
+    {
+      "id": "uv_jar",
+      "x": 12,
+      "y": 12,
+      "tile": "uvjar",
+      "script": "uv_jar",
+      "showWhen": {
+        "all": [
+          {
+            "flag": "mandala_asked"
+          },
+          {
+            "intox": 0.6
+          }
+        ]
+      },
+      "hideWhen": {
+        "any": [
+          {
+            "has": "uv_powder"
+          },
+          {
+            "flag": "mandala_laid"
+          },
+          {
+            "flag": "met_mandalord"
+          },
+          {
+            "caughtSpecies": "mandalord"
+          }
+        ]
+      }
     }
   ],
   "pickups": [

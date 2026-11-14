@@ -10,6 +10,8 @@
 //   ticks { rect }                   lights ticking along the walls on the hi-hat
 //   notes { rect }                   notes of the melody drifting up           grand { rect }   gold light and banners
 //   glow { at, color }               a soft light round glowing things          flash { }   a strobe flash on every beat
+//   festoon { lines: [[x0, y0, x1, y1]] }  strings of bulbs between posts, swinging a little, brightest at night
+// any entry can have needs: flag (it only shows once that flag is set)
 // Reduced motion and grounded mode keep everything, held still.
 const TS = 16;
 const COLS = ['#FF4FA8', '#3FD8E8', '#FFE066', '#4FE88A', '#C86BFF'];
@@ -23,6 +25,7 @@ export function stageFx(view, game, g, cx, cy, layer) {
   const X = (x) => x * TS - cx, Y = (y) => y * TS - cy;
   const a0 = g.globalAlpha;
   for (const f of list) {
+    if (f.needs && !s.flags[f.needs]) continue;                       // only once a story flag is set (the Generator Disco lights)
     if (layer === 'ground') {
       if (f.kind === 'led') {
         const [x0, y0, x1, y1] = f.rect;
@@ -108,6 +111,20 @@ export function stageFx(view, game, g, cx, cy, layer) {
         const k = still ? (i + 1) / 7 : ((t * 0.3 + i / 6) % 1), x = X(x0 + ((i * 5) % (x1 - x0 + 1))) + 6, y = Y(y1) + 8 - k * ((y1 - y0 + 1) * TS + 10);
         g.globalAlpha = Math.sin(k * Math.PI); g.fillStyle = COLS[i % COLS.length];
         g.fillRect(x, y, 3, 2); g.fillRect(x + 2, y - 5, 1, 5); g.fillRect(x + 2, y - 5, 3, 1);
+      }
+    } else if (f.kind === 'festoon') {
+      // a string of bulbs sagging between two posts; they swing a little and blink in turn on the beat
+      for (const [x0, y0, x1, y1] of f.lines) {
+        const ax = X(x0) + 8, ay = Y(y0) - 18, bx = X(x1) + 8, by = Y(y1) - 18, n = Math.max(3, Math.round(Math.hypot(bx - ax, by - ay) / 7));
+        const sway = still ? 0 : Math.sin(t * 1.3 + x0) * 1.5;
+        g.globalAlpha = 0.8; g.fillStyle = '#2A2A32';
+        for (let i = 0; i <= n * 2; i++) { const k = i / (n * 2), sag = Math.sin(k * Math.PI) * (6 + sway); g.fillRect(Math.round(ax + (bx - ax) * k), Math.round(ay + (by - ay) * k + sag), 1, 1); }
+        for (let i = 1; i < n; i++) {
+          const k = i / n, sag = Math.sin(k * Math.PI) * (6 + sway), on = still || (Math.floor(beats) + i) % 4 !== 0;
+          g.globalAlpha = on ? 1 : 0.5; g.fillStyle = on ? COLS[(i + x0) % COLS.length] : '#5A5A68';
+          g.fillRect(Math.round(ax + (bx - ax) * k) - 1, Math.round(ay + (by - ay) * k + sag) + 1, 2, 2);
+          if (on) { g.globalAlpha = 0.18; g.beginPath(); g.arc(Math.round(ax + (bx - ax) * k), Math.round(ay + (by - ay) * k + sag) + 2, 5, 0, Math.PI * 2); g.fill(); }
+        }
       }
     }
   }

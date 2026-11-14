@@ -1,6 +1,50 @@
 {
-  "_comment": "Zone maps are rows of characters. id = logic tile from the spec legend (0 floor, 1 solid, 2 encounter, 3 water, 4 cordon, 5 fairy lights, 6 pushable, 7 padlock, 8 roots, 9 chai tent). sprite '@x' reads zone.x. prop = tall sprite anchored bottom-centre on the tile. 'D' draws a whole 3x2 shack; put 'rrr' above 'HDH' for its solid footprint. 'E' is a walkable shack doorway (put a warp on it). 'X' wall, 'Q' roof and 'G' door build a house front; interiors use 'K' walls and 'a' as the exit mat. Routes (1.0.40): 0 bonfire, 1 log, 2+3 a sacred cow lying across two tiles, 4 roadside shrine, 5 plank bridge (walk east-west), 6 plank bridge (walk north-south), 7 cables on concrete, 8 dry-ice fogger, 9 coconuts, : dune, ; surfboard. '=' fences draw as vertical posts in a north-south run. Poi Pit (1.0.45): & a packed dancefloor (encounters; a dancer on every tile), < stage banner, > a strobe on the stage, | the stage's front lip, _ steps up onto it. Ego gone (1.0.46): egoFloor tiles can be walked on at Ego gone only (the sacred cow walks off; under = what shows instead), and ł/Ł are stairs of light over shallow and deep water. Bosses' stages (1.0.48): ° a cushion on a mat, § a velvet rope, ¢ a table with cash, ç Keta's captain's chair (on the stage), µ Raju's menu board, ¤ Chloe's ring light (on the stage).",
+  "_comment": "Zone maps are rows of characters. id = logic tile from the spec legend (0 floor, 1 solid, 2 encounter, 3 water, 4 cordon, 5 fairy lights, 6 pushable, 7 padlock, 8 roots, 9 chai tent). sprite '@x' reads zone.x. prop = tall sprite anchored bottom-centre on the tile. 'D' draws a whole 3x2 shack; put 'rrr' above 'HDH' for its solid footprint. 'E' is a walkable shack doorway (put a warp on it). 'X' wall, 'Q' roof and 'G' door build a house front; interiors use 'K' walls and 'a' as the exit mat. Routes (1.0.40): 0 bonfire, 1 log, 2+3 a sacred cow lying across two tiles, 4 roadside shrine, 5 plank bridge (walk east-west), 6 plank bridge (walk north-south), 7 cables on concrete, 8 dry-ice fogger, 9 coconuts, : dune, ; surfboard. '=' fences draw as vertical posts in a north-south run. Poi Pit (1.0.45): & a packed dancefloor (encounters; a dancer on every tile), < stage banner, > a strobe on the stage, | the stage's front lip, _ steps up onto it. Ego gone (1.0.46): egoFloor tiles can be walked on at Ego gone only (the sacred cow walks off; under = what shows instead), and ł/Ł are stairs of light over shallow and deep water. Bosses' stages (1.0.48): ° a cushion on a mat, § a velvet rope, ¢ a table with cash, ç Keta's captain's chair (on the stage), µ Raju's menu board, ¤ Chloe's ring light (on the stage). 1.2.5: ť tidal flat (tide: sand at low tide, surf the rest of the time; zone.tide), ƀɓ a fishing boat (stern, bow), ñ drying nets, Ø a sea cave's mouth, Ŧŧ a lorry (cab, box), » « the Last Dancefloor's lanes (lane: the dancers move along the row with each step you take; zone.lanes), ǁ a crowd barrier, ž a ziggurat terrace's stone face, ƒ a brazier. ø the drop beside a ziggurat terrace (the night, far below).",
   "legend": {
+    "0": {
+      "id": 1,
+      "sprite": "bonfire"
+    },
+    "1": {
+      "id": 1,
+      "sprite": "log"
+    },
+    "2": {
+      "id": 1,
+      "sprite": "cow_l",
+      "egoFloor": true,
+      "under": "@ground2"
+    },
+    "3": {
+      "id": 1,
+      "sprite": "cow_r",
+      "egoFloor": true,
+      "under": "@ground2"
+    },
+    "4": {
+      "id": 1,
+      "sprite": "shrine"
+    },
+    "5": {
+      "id": 0,
+      "sprite": "bridge"
+    },
+    "6": {
+      "id": 0,
+      "sprite": "bridge_v"
+    },
+    "7": {
+      "id": 0,
+      "sprite": "cable"
+    },
+    "8": {
+      "id": 1,
+      "sprite": "fogger"
+    },
+    "9": {
+      "id": 1,
+      "sprite": "coconuts"
+    },
     ".": {
       "id": 0,
       "sprite": "@ground"
@@ -148,7 +192,12 @@
       "prop": "scooter",
       "propSpan": 2,
       "tint": "scooter",
-      "footprint": [[1, 0]]
+      "footprint": [
+        [
+          1,
+          0
+        ]
+      ]
     },
     "u": {
       "id": 1,
@@ -156,7 +205,20 @@
       "prop": "tuktuk",
       "propSpan": 2,
       "tint": "tuktuk",
-      "footprint": [[1, 0], [0, -1], [1, -1]]
+      "footprint": [
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          1,
+          -1
+        ]
+      ]
     },
     "h": {
       "id": 1,
@@ -268,50 +330,6 @@
       "id": 1,
       "sprite": "wheat"
     },
-    "0": {
-      "id": 1,
-      "sprite": "bonfire"
-    },
-    "1": {
-      "id": 1,
-      "sprite": "log"
-    },
-    "2": {
-      "id": 1,
-      "sprite": "cow_l",
-      "egoFloor": true,
-      "under": "@ground2"
-    },
-    "3": {
-      "id": 1,
-      "sprite": "cow_r",
-      "egoFloor": true,
-      "under": "@ground2"
-    },
-    "4": {
-      "id": 1,
-      "sprite": "shrine"
-    },
-    "5": {
-      "id": 0,
-      "sprite": "bridge"
-    },
-    "6": {
-      "id": 0,
-      "sprite": "bridge_v"
-    },
-    "7": {
-      "id": 0,
-      "sprite": "cable"
-    },
-    "8": {
-      "id": 1,
-      "sprite": "fogger"
-    },
-    "9": {
-      "id": 1,
-      "sprite": "coconuts"
-    },
     ":": {
       "id": 1,
       "sprite": "dune"
@@ -381,6 +399,61 @@
       "id": 1,
       "sprite": "stage",
       "prop": "ringlight"
+    },
+    "ť": {
+      "id": 0,
+      "sprite": "tideflat",
+      "tide": true
+    },
+    "ƀ": {
+      "id": 1,
+      "sprite": "boat_l"
+    },
+    "ɓ": {
+      "id": 1,
+      "sprite": "boat_r"
+    },
+    "ñ": {
+      "id": 1,
+      "sprite": "nets"
+    },
+    "Ø": {
+      "id": 0,
+      "sprite": "cavemouth"
+    },
+    "Ŧ": {
+      "id": 1,
+      "sprite": "truck_cab"
+    },
+    "ŧ": {
+      "id": 1,
+      "sprite": "truck_box"
+    },
+    "»": {
+      "id": 0,
+      "sprite": "dancefloor",
+      "lane": 1
+    },
+    "«": {
+      "id": 0,
+      "sprite": "dancefloor",
+      "lane": -1
+    },
+    "ǁ": {
+      "id": 1,
+      "sprite": "barrier"
+    },
+    "ž": {
+      "id": 1,
+      "sprite": "zig_face"
+    },
+    "ƒ": {
+      "id": 1,
+      "sprite": "brazier"
+    },
+    "ø": {
+      "id": 1,
+      "sprite": "void"
     }
   }
 }

@@ -13,7 +13,7 @@ export const TRAIL_SPRITES = new Set(['raver', 'firespinner', 'juggler', 'dj']);
 // light sources: colour and where the light sits, in pixels from the top of its tile
 const GLOW_PROPS = { lamp: ['#FFE066', -11], strobe: ['#F4F8FF', -9], mushroom: ['#4FE88A', -2], totem: ['#C86BFF', -11], chai: ['#FFB347', -6] };
 const GLOW_TILES = { bonfire: ['#FF8A3A', 6], fairy: ['#FF4FA8', 8], dancefloor: null };
-const GLOW_NPCS = { glowcap: ['#4FE88A', 8], ufo: ['#5FF4FF', 6], glyph: ['#C86BFF', 8] };
+const GLOW_NPCS = { glowcap: ['#4FE88A', 8], ufo: ['#5FF4FF', 6], glyph: ['#C86BFF', 8], uvjar: ['#C86BFF', 7] };
 const RAINBOW = ['#FF4FA8', '#FF9A2A', '#FFE066', '#4FE88A', '#5FF4FF', '#C86BFF'];
 
 const hash = (a, b = 0) => { let h = (a * 374761393 + b * 668265263) >>> 0; h = ((h ^ (h >>> 13)) * 1274126177) >>> 0; return (h ^ (h >>> 16)) >>> 0; };

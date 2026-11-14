@@ -1,11 +1,13 @@
 // Overworld: tiles, characters, camera, smooth steps. Reads engine state, never decides rules.
 import { W, H } from './CanvasRenderer.js';
 import { drawText, textWidth, wrap, panel, C } from './ui.js';
-import { charAt, logicAt, T, npcVisible, npcPos, isNight, nightLevel, facing } from '../core/OverworldEngine.js';
+import { charAt, logicAt, T, npcVisible, npcPos, isNight, nightLevel, facing, danceAt, tideHigh } from '../core/OverworldEngine.js';
 import { bandOf, bandIndex, egoGone } from '../core/intox.js';
 import { highWorld, TRAIL_SPRITES } from './highWorld.js';
 import { liveSet } from '../core/timetable.js';
 import { stageFx, shakeOf } from './stageFx.js';
+import { drawRide, RIDE, RIDE_STILL } from './tuktukRide.js';
+const MOTES = { glowcap: ['#4FE88A', '#C8FFE0'], ufo: ['#4FE88A', '#C8FFE0'], uvjar: ['#C86BFF', '#E0A8FF'], shellsand: ['#FFFFFF', '#FFF4B0'] };
 const ARRIVAL = 1.8;
 const BOX_CLEAR = H - 50 - 3 - 9 - 4;   // the dialogue box with its speaker tab starts here; feet stay above it   // seconds the camera spends on a boss before their cutscene
 import { routeHint } from '../core/goals.js';
@@ -50,7 +52,7 @@ export const WALL_TOPS = {
 };
 /** solid tiles that may stack in a column as they are: crates and containers pile up, cliffs and dunes terrace, fences and
  *  cables have an upright piece, water is water. Any other solid tile in a column must be a wall top (tests/walls). */
-export const STACKS_FINE = ['container', 'crate', 'stall', 'deep', 'fence', 'wall', 'cliff', 'sand', 'dune', 'wheat', 'bush'];   // a hedge of bushes stacks fine
+export const STACKS_FINE = ['container', 'crate', 'stall', 'deep', 'fence', 'wall', 'cliff', 'sand', 'dune', 'wheat', 'bush', 'void', 'barrier'];   // a hedge of bushes stacks fine
 const isWall = (cls, sp) => cls === sp || cls === 'out';
 const VERTICAL = { fence: 'fence_v', cable: 'cable_v' };
 /** the top of a wall at dx, dy; open[i] (up, right, down, left) says that side faces the room and gets a rim */
@@ -177,6 +179,8 @@ export const overworldView = {
     else if (e.type === 'BUMP') { this.bumpT = 0.18; game.audio?.sfx('bump'); }
     else if (e.type === 'PLAYER_PLACED') this.anim = null;
     if (e.type === 'UNSTUCK') this.startTrans(game, 'iris');
+    // a tuk-tuk ride: the road plays over everything, then the new place opens round you (the zone change follows this event)
+    if (e.type === 'FIELD_TECHNIQUE' && e.techniqueId === 'share_taxi_tuktuk') { this.ride = { t: 0 }; game.audio?.sfx('horn'); }
     if (e.type === 'CLOCK_SET' && e.setId) this.sleep = { t: 0, from: e.from ?? e.clock, to: e.clock, setId: e.setId, here: !!e.here };
     // an astral visitor (Banyan's projection, six wristbands): floats down out of the sky, and folds into a point of light when they go
     if (e.type === 'VISITOR' && e.fx === 'astral') this.astral = e.sprite ? { t: 0, out: false } : { t: 0, out: true, sprite: this.astral?.sprite || 'banyan', x: e.x, y: e.y };
@@ -218,6 +222,8 @@ export const overworldView = {
     else if (night !== this.wasNight) { this.wasNight = night; this.sky = { icon: night ? 'moon' : 'sun', t: 0 }; }
     if (this.sky && (this.sky.t += dt) > SKY_T) this.sky = null;
     if (this.trans && (this.trans.t += dt) >= T_OUT + T_IN) this.trans = null;
+    { const n = game.engine.state.steps || 0; if (n !== this.crowdSteps) { this.crowdSteps = n; this.crowdT = 0; } else this.crowdT = (this.crowdT ?? 1) + dt; }   // the dancing lanes slide on each beat
+    if (this.ride && (this.ride.t += dt) >= (game.settings.reducedMotion ? RIDE_STILL : RIDE)) { this.ride = null; this.arrive(); this.bannerT = 3.2; }
     if (this.bannerT > 0) this.bannerT -= dt;
     if (this.alert) { this.alert.t -= dt; if (this.alert.t <= 0) this.alert = null; }
     if (this.bumpT > 0) this.bumpT -= dt;
@@ -354,7 +360,7 @@ export const overworldView = {
       if (cx + half < W) g.fillRect(cx + half, y, W - cx - half, 4);
     }
   },
-  walking() { return Object.values(this.npcAnim || {}).some((a) => a.walkUp) || this.arriving() || this.changing() || this.floatingIn() || this.sleeping(); },
+  walking() { return !!this.ride || Object.values(this.npcAnim || {}).some((a) => a.walkUp) || this.arriving() || this.changing() || this.floatingIn() || this.sleeping(); },
   sleeping() { return !!this.sleep || !!this.peek; },
   /** the floor around a tile, if three of its four neighbours are the same floor (not the zone's ground), else null */
   floorUnder(game, ctx, zone, x, y) {
@@ -485,6 +491,7 @@ export const overworldView = {
         if (def.id !== 0 && def.id !== 2) { const fl = this.floorUnder(game, ctx, zone, x, y); if (fl) this.tile(game, g, fl, dx, dy); }
         const ego = egoGone(game.data.rules, s.intox);
         if (def.egoFloor && ego && def.under) sp = resolve(def.under);                 // the sacred cow has walked off
+        if (def.tide && tideHigh(ctx, zone)) sp = 'water';                               // the flats are under the surf
         if (sp === 'water' && wave) sp = 'water_b';
         if (sp === 'cordon' && zone.cordonFlag && s.flags[zone.cordonFlag]) sp = zone.ground2 || zone.ground;   // taken down once it opens
         // fences and cable runs: a north-south run gets its own upright piece, not a ladder of east-west segments
@@ -535,6 +542,16 @@ export const overworldView = {
       const def = legend[charAt(ctx, x, y, zone)];
       if (def?.prop) ents.push({ y: y - 0.01, prop: def.prop, x, span: def.propSpan || 1, tint: def.tint });
       // dancers: on every crowd tile, every few dancefloor tiles; none where you or someone else is standing
+      // the Last Dancefloor's lanes: whoever is dancing there now, sliding over from the tile they were on a beat ago
+      if (def?.lane) {
+        if (danceAt(ctx, x, y, zone) && !(x === s.player.x && y === s.player.y)) {
+          const L = zone.lanes || {}, row = L.rows?.[y] || {}, every = row.every || L.every || 1, dir = row.dir ?? def.lane, n = s.steps || 0;
+          const moved = Math.floor(n / every) !== Math.floor((n - 1) / every) ? 1 : 0, k = Math.min(1, (this.crowdT ?? 1) / 0.16);
+          // each dancer keeps their look as they move along (who they are is where they started)
+          ents.push({ y: y - 0.02, dancer: true, x: x - dir * (1 - k) * (game.settings.reducedMotion ? 0 : moved), ty: y, who: x - dir * Math.floor(n / every) + 600 });
+        }
+        continue;
+      }
       if (def && (def.crowd || (resolve(def.sprite) === 'dancefloor' && (x * 7 + y * 3) % 5 === 0)) && !taken.has(`${x},${y}`)) ents.push({ y: y - 0.02, dancer: true, x, ty: y });
       // people who are always there (zone.crowd: the omelette queue, Chloe's fans)
       else if (def && (def.id === 0 || def.id === 2) && !taken.has(`${x},${y}`) && (zone.crowd || []).some((c) => x >= c.rect[0] && x <= c.rect[2] && y >= c.rect[1] && y <= c.rect[3] && (x * 5 + y * 3) % (c.every || 2) === 0)) {
@@ -546,7 +563,9 @@ export const overworldView = {
         ents.push({ y: y - 0.02, dancer: true, x, ty: y, pose: set.pose === 'back' ? game.atlas.dancers?.back : set.pose === 'still' ? game.atlas.dancers?.still : null });
       }
     }
-    for (const n of zone.npcs || []) if (npcVisible(ctx, n) && !n.invisible && !(s.visitor && s.visitorFx !== 'astral' && n.sprite === s.visitor)) {   // the visitor came over: not in two places (an astral body can be)
+    // someone who walks over to stand somewhere else (the Four, beaten: npc.arrives) shows there once they get there
+    const onTheWay = (n) => n.arrives && (this.leaving || []).some((l) => l.id === n.arrives || l.id.startsWith(n.arrives + '_'));
+    for (const n of zone.npcs || []) if (npcVisible(ctx, n) && !n.invisible && !onTheWay(n) && !(s.visitor && s.visitorFx !== 'astral' && n.sprite === s.visitor)) {   // the visitor came over: not in two places (an astral body can be)
       const p = npcPos(ctx, n, zone), a = this.npcAnim?.[n.id];
       const fx = a ? a.from[0] + (a.to[0] - a.from[0]) * a.t : p.x, fy = a ? a.from[1] + (a.to[1] - a.from[1]) * a.t : p.y;
       ents.push({ y: fy, npc: n, nx: fx, ny: fy, walking: !!a });
@@ -567,7 +586,7 @@ export const overworldView = {
     const shadow = (x, y) => { g.fillStyle = 'rgba(20,10,40,0.27)'; g.fillRect(x + 3, y + 21, 10, 3); g.fillRect(x + 4, y + 20, 8, 5); };
     for (const e of ents) {
       if (e.draw) { e.draw(); continue; }
-      if (e.dancer) { this.dancer(game, g, e.x * TS - cx, e.ty * TS - cy, e.x, e.ty, e.pose ?? null); continue; }
+      if (e.dancer) { this.dancer(game, g, Math.round(e.x * TS - cx), e.ty * TS - cy, e.who ?? e.x, e.ty, e.pose ?? null); continue; }
       if (e.prop) {
         const pr = game.atlas.props[e.prop], ty = Math.round(e.y + 0.01), mid = (e.span || 1) * TS / 2;   // a wide prop (a tuk-tuk) is centred on its span
         let img = game.images[`prop:${e.prop}`];
@@ -600,11 +619,12 @@ export const overworldView = {
         const n = e.npc, dx = Math.round(e.nx * TS - cx), dy = Math.round(e.ny * TS - cy);
         if (n.tile) {
           this.tile(game, g, n.tile, dx + shakeOf(this, game, n.id), dy);
-          // a Glowing Cap (or the saucer) gives off motes of green light, so it can be spotted from across the zone
-          if ((n.tile === 'glowcap' || n.tile === 'ufo') && !game.settings.reducedMotion) {
+          // a Glowing Cap (or the saucer, the UV jar, the sunrise shell sand) gives off motes of light, so it can be spotted from across the zone
+          const motes = MOTES[n.tile];
+          if (motes && !game.settings.reducedMotion) {
             for (let i = 0; i < 4; i++) {
               const k = (this.t * 0.7 + i / 4) % 1;
-              g.globalAlpha = 1 - k; g.fillStyle = i % 2 ? '#C8FFE0' : '#4FE88A';
+              g.globalAlpha = 1 - k; g.fillStyle = motes[i % 2];
               g.fillRect(dx + 3 + ((i * 5) % 11), Math.round(dy + 10 - k * 18), 1, 1);
             }
             g.globalAlpha = 1;
@@ -691,6 +711,7 @@ export const overworldView = {
     }
     this.drawTrans(game, g, px - cx, py - cy);
     this.drawSleep(game, g);
+    if (this.ride) drawRide(g, this.ride.t, !!game.settings.reducedMotion);
   },
 
   /** the night going by: dark, a clock running from when you lay down to the set, a few Zs */

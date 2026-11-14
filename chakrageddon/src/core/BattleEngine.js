@@ -169,6 +169,7 @@ export function applyStatus(ctx, side, status) {
   const b = B(ctx), R = ctx.data.rules.battle, mon = active(ctx, side), sd = b.side[side];
   if (mon.hp <= 0) return false;
   if (abilityOf(ctx, mon) === 'CLEAR_HEAD' && (status === 'THOUGHT_LOOP' || status === 'K_HOLED')) { msg(ctx, `${label(ctx, side)}'s Clear Head keeps it together.`); return false; }
+  if (holds(mon, 'sand_mala') && (status === 'THOUGHT_LOOP' || status === 'K_HOLED')) { msg(ctx, `${label(ctx, side)}'s Sand Mala keeps it together.`); return false; }   // the Unfinished Mandala's reward
   if (status === 'THOUGHT_LOOP') {
     if (sd.loop > 0) { msg(ctx, `${label(ctx, side)} is already going in circles.`); return false; }
     sd.loop = ctx.rng.int(R.thoughtLoopTurns[0], R.thoughtLoopTurns[1]) + 1;
@@ -617,6 +618,9 @@ function whiteout(ctx) {
   s.battle = null; s.script = null; s.scriptMode = null; s.intox = 0;
   ctx.emit({ type: 'INTOXICATION_CHANGED', oldLevel: b.intox, newLevel: 0 });
   enterZone(ctx, s.lastTent.zone, s.lastTent.x, s.lastTent.y, 'DOWN');
+  // the tent's music, once the battle screen has closed (the zone's own cue above lands in the battle queue, which the outro drops)
+  const tent = ctx.data.zones[s.zoneId];
+  ctx.emit({ type: 'AUDIO_CUE', trackBpm: tent.baseBpm, lowPassFilterHz: 20000, mood: tent.paletteId, after: true });
   s.dialogue = { speaker: '', text: `You white out. ${R.whiteoutHours} hours later you wake at ${s.lastTent.place || 'the Chai Tent'}${loss ? `, Rs ${loss} lighter` : ''}. Somebody has tucked you in.${lostOutfit ? ` Your ${lostOutfit.name} is gone.` : ''}${runLost ? ' The Four are back at their posts: the climb starts over.' : ''}`, style: 'DOWNER', choices: null };
   ctx.emit({ type: 'RUPEES_CHANGED', rupees: s.rupees });
   setMode(ctx, 'K_HOLE_WHITEOUT', 'WHITEOUT');

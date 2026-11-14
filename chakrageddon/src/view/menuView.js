@@ -642,7 +642,7 @@ export const menuView = {
 
   // ---- Sets: the festival timetable Banyan brought you. What plays where and when, what is on now, what is next.
   sets(game, g, X, Y, CW, active, back) {
-    const s = game.engine.state, d = game.data, cur = this.cur, list0 = [...allSets(d)].sort((a, b) => a.from - b.from);
+    const s = game.engine.state, d = game.data, cur = this.cur, list0 = [...allSets(d, s)].sort((a, b) => a.from - b.from);
     drawText(g, `Festival clock ${clockText(s.clock)}`, X, Y, { color: C.purple });
     const rows = list0.map((x) => {
       const live = liveSet(d, s, x.zone)?.id === x.id, wait = minutesUntil(d, s, x);

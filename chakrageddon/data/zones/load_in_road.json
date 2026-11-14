@@ -1,0 +1,478 @@
+{
+  "zoneId": "load_in_road",
+  "name": "The Load-In Road",
+  "paletteId": "BAD_TRIP",
+  "baseBpm": 134,
+  "ground": "concrete",
+  "ground2": "path",
+  "wall": "container",
+  "encounter": "incense",
+  "rows": [
+    "^ccccccccccccccccccccccccccccccccccccccccccccccc",
+    "^...........xx.x..~~~~....................cccc.c",
+    "^...........x.....~~~~.xx.........k.......cccc.c",
+    "^.T...ŧŧŧŦ........~~~~.x.....ŧŧŧŦ...~~~~~.cc...c",
+    "^.............k........xx...........~~~~~.cc...c",
+    "^.o............................................c",
+    "^................ŧŧŧŦ..........................c",
+    "^T....x.x...........................ŧŧŦ........c",
+    "^.....xxx.8................x..x................c",
+    "^...~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c",
+    "^..T~b~~~~rrr~~~~~~~~~b~~~~~~~b~~~~~~~b~~~~~~~~c",
+    "^.....L...HDHv8.L.........L.........L.......L..c",
+    "^,,,,,,,,7,,,,,,,,,,7,,,,,,,,,,7,,,,,,,,,7,,,,,c",
+    ",,,,,,,,,7,,,,,,,,,,7,,,,,,,,,,7,,,,,,,,,7,,,,,,",
+    ",,,,,,,,,7,,,,,,,,,,7,,,,,,,,,,7,,,,,,,,,7,,,,,,",
+    "^,,,,,,,,7,,,,,,,,,,7,,,,,,,,,,7,,,,,,,,,7,,,,,c",
+    "^,,,,,,,,7,,,,,,,,,,7,,,,,,,,,,7,,,,,,,,,7,,,,,c",
+    "^~~~~~L~~~~~~~...................~~~L~~~~~~~L~~c",
+    "^~~~~~~~~~~~~~........j..........~~~~~~~~~~~~~~c",
+    "^.T.xxxxxxx.xx.=======7,=========..............c",
+    "^...x.....x..x.====...77777=xxx.=...ŧŦ....m....c",
+    "^o..x.xxx.x.xx.==.=...7....=x...=..............c",
+    "^...x.x...x..x.==.=...7....====.=.............Lc",
+    "^T..x.x.xxxx.x.=.S....7.........=..q.q.q.......c",
+    "^...x.x....x.x.=......777.......=...........xx.c",
+    "^...x.xxxx.x.x.=...xx...7.......=..q.q.q....x..c",
+    "^..Tx....x...x.=o.......7.......=......~~~~~...c",
+    "^...xxxx.xxx.x.=................=T.....~~~~~...c",
+    "^.......,....x.==================..............c",
+    "^ccccccccccccccccccccccccccccccccccccccccccccccc"
+  ],
+  "warps": [
+    {
+      "x": 0,
+      "y": 13,
+      "to": "sunset_cliff",
+      "tx": 19,
+      "ty": 5,
+      "dir": "LEFT"
+    },
+    {
+      "x": 0,
+      "y": 14,
+      "to": "sunset_cliff",
+      "tx": 19,
+      "ty": 6,
+      "dir": "LEFT"
+    },
+    {
+      "x": 47,
+      "y": 13,
+      "to": "backstage",
+      "tx": 1,
+      "ty": 6,
+      "dir": "RIGHT"
+    },
+    {
+      "x": 47,
+      "y": 14,
+      "to": "backstage",
+      "tx": 1,
+      "ty": 7,
+      "dir": "RIGHT"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "deepak",
+      "x": 22,
+      "y": 17,
+      "sprite": "dj",
+      "dir": "DOWN",
+      "script": "deepak"
+    },
+    {
+      "id": "gen1",
+      "x": 17,
+      "y": 21,
+      "tile": "generator",
+      "script": "gen1",
+      "hideWhen": {
+        "flag": "gen1_on"
+      }
+    },
+    {
+      "id": "gen1_on",
+      "x": 17,
+      "y": 21,
+      "tile": "generator_on",
+      "script": "gen_running",
+      "showWhen": {
+        "flag": "gen1_on"
+      }
+    },
+    {
+      "id": "gen2",
+      "x": 29,
+      "y": 21,
+      "tile": "generator",
+      "script": "gen2",
+      "hideWhen": {
+        "flag": "gen2_on"
+      }
+    },
+    {
+      "id": "gen2_on",
+      "x": 29,
+      "y": 21,
+      "tile": "generator_on",
+      "script": "gen_running",
+      "showWhen": {
+        "flag": "gen2_on"
+      }
+    },
+    {
+      "id": "gen3",
+      "x": 23,
+      "y": 26,
+      "tile": "generator",
+      "script": "gen3",
+      "hideWhen": {
+        "flag": "gen3_on"
+      }
+    },
+    {
+      "id": "gen3_on",
+      "x": 23,
+      "y": 26,
+      "tile": "generator_on",
+      "script": "gen_running",
+      "showWhen": {
+        "flag": "gen3_on"
+      }
+    },
+    {
+      "id": "catering_chef",
+      "x": 42,
+      "y": 21,
+      "sprite": "chef",
+      "dir": "DOWN",
+      "script": "catering_chef"
+    },
+    {
+      "id": "crew_eating",
+      "x": 36,
+      "y": 24,
+      "sprite": "raver",
+      "dir": "DOWN",
+      "script": "crew_eating"
+    },
+    {
+      "id": "crew_asleep",
+      "x": 13,
+      "y": 3,
+      "sprite": "wook",
+      "dir": "DOWN",
+      "script": "crew_asleep"
+    },
+    {
+      "id": "checkpoint_guard",
+      "x": 12,
+      "y": 12,
+      "sprite": "guard",
+      "dir": "DOWN",
+      "script": "checkpoint_guard"
+    },
+    {
+      "id": "load_sign",
+      "x": 4,
+      "y": 11,
+      "tile": "sign",
+      "script": "load_sign"
+    },
+    {
+      "id": "disco_dj",
+      "x": 27,
+      "y": 5,
+      "sprite": "dj",
+      "dir": "DOWN",
+      "script": "disco_dj",
+      "showWhen": {
+        "set": "generator_disco"
+      }
+    },
+    {
+      "id": "load_rigger",
+      "x": 11,
+      "y": 5,
+      "sprite": "guard",
+      "dir": "RIGHT",
+      "trainer": "load_rigger",
+      "sight": 4,
+      "look": [
+        "RIGHT",
+        "DOWN"
+      ],
+      "lookEvery": 4
+    },
+    {
+      "id": "load_lights",
+      "x": 25,
+      "y": 6,
+      "sprite": "raver",
+      "dir": "LEFT",
+      "trainer": "load_lights",
+      "sight": 4
+    },
+    {
+      "id": "load_forklift",
+      "x": 34,
+      "y": 5,
+      "sprite": "local",
+      "dir": "DOWN",
+      "trainer": "load_forklift",
+      "sight": 3,
+      "look": [
+        "DOWN",
+        "LEFT",
+        "DOWN",
+        "RIGHT"
+      ],
+      "lookEvery": 3
+    },
+    {
+      "id": "load_roadie",
+      "x": 18,
+      "y": 15,
+      "sprite": "wook",
+      "dir": "UP",
+      "trainer": "load_roadie",
+      "sight": 3
+    },
+    {
+      "id": "load_runner",
+      "x": 37,
+      "y": 13,
+      "sprite": "tourist",
+      "dir": "LEFT",
+      "trainer": "load_runner",
+      "sight": 5,
+      "look": [
+        "LEFT",
+        "DOWN",
+        "LEFT",
+        "UP"
+      ],
+      "lookEvery": 4
+    },
+    {
+      "id": "load_security",
+      "x": 8,
+      "y": 16,
+      "sprite": "guard",
+      "dir": "UP",
+      "trainer": "load_security",
+      "sight": 4
+    },
+    {
+      "id": "load_cater",
+      "x": 39,
+      "y": 22,
+      "sprite": "chef",
+      "dir": "LEFT",
+      "trainer": "load_cater",
+      "sight": 3
+    },
+    {
+      "id": "load_bottler",
+      "x": 20,
+      "y": 26,
+      "sprite": "guard",
+      "dir": "RIGHT",
+      "trainer": "load_bottler",
+      "sight": 2
+    }
+  ],
+  "pickups": [
+    {
+      "id": "load_jerrycan",
+      "x": 8,
+      "y": 24,
+      "item": "jerrycan",
+      "n": 1
+    },
+    {
+      "id": "load_vial",
+      "x": 45,
+      "y": 3,
+      "item": "amber_vial",
+      "n": 2
+    },
+    {
+      "id": "load_balm",
+      "x": 5,
+      "y": 20,
+      "item": "tiger_balm",
+      "n": 2
+    },
+    {
+      "id": "load_blanket",
+      "x": 30,
+      "y": 27,
+      "item": "weighted_blanket",
+      "n": 1
+    },
+    {
+      "id": "load_sachets",
+      "x": 46,
+      "y": 27,
+      "item": "electrolyte_sachet",
+      "n": 2,
+      "hidden": true
+    },
+    {
+      "id": "load_lassi",
+      "x": 7,
+      "y": 7,
+      "item": "banana_lassi",
+      "n": 1
+    }
+  ],
+  "encounters": {
+    "encounterRate": 0.13,
+    "table": [
+      {
+        "speciesId": "selfiend",
+        "minLevel": 27,
+        "maxLevel": 30,
+        "weight": 20
+      },
+      {
+        "speciesId": "bribe_asaurus",
+        "minLevel": 27,
+        "maxLevel": 30,
+        "weight": 15
+      },
+      {
+        "speciesId": "dengoth",
+        "minLevel": 27,
+        "maxLevel": 30,
+        "weight": 15
+      },
+      {
+        "speciesId": "nitroxide",
+        "minLevel": 27,
+        "maxLevel": 29,
+        "weight": 10
+      },
+      {
+        "speciesId": "bongo_bishop",
+        "minLevel": 27,
+        "maxLevel": 30,
+        "weight": 15
+      },
+      {
+        "speciesId": "shadowcop",
+        "minLevel": 28,
+        "maxLevel": 30,
+        "weight": 15
+      },
+      {
+        "speciesId": "mozzquito",
+        "minLevel": 27,
+        "maxLevel": 29,
+        "weight": 10
+      },
+      {
+        "speciesId": "glowkid",
+        "minLevel": 28,
+        "maxLevel": 31,
+        "weight": 25,
+        "set": "generator_disco"
+      }
+    ]
+  },
+  "fx": [
+    {
+      "kind": "smoke",
+      "at": [
+        [
+          14,
+          11
+        ]
+      ]
+    },
+    {
+      "kind": "festoon",
+      "needs": "power_back",
+      "lines": [
+        [
+          6,
+          11,
+          16,
+          11
+        ],
+        [
+          16,
+          11,
+          26,
+          11
+        ],
+        [
+          26,
+          11,
+          36,
+          11
+        ],
+        [
+          36,
+          11,
+          44,
+          11
+        ],
+        [
+          6,
+          17,
+          16,
+          17
+        ],
+        [
+          16,
+          17,
+          26,
+          17
+        ],
+        [
+          26,
+          17,
+          36,
+          17
+        ],
+        [
+          36,
+          17,
+          44,
+          17
+        ]
+      ]
+    },
+    {
+      "kind": "lasers",
+      "needs": "power_back",
+      "at": [
+        [
+          14,
+          4
+        ],
+        [
+          34,
+          2
+        ]
+      ],
+      "colors": [
+        "#4FE88A",
+        "#FF4FA8"
+      ]
+    },
+    {
+      "kind": "steam",
+      "at": [
+        [
+          37,
+          20
+        ]
+      ]
+    }
+  ]
+}

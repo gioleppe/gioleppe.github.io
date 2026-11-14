@@ -1,0 +1,137 @@
+{
+  "zoneId": "cove_cave",
+  "name": "The Sea Cave",
+  "paletteId": "CHAI_TENT_WARMTH",
+  "baseBpm": 96,
+  "ground": "cave",
+  "ground2": "path",
+  "wall": "cave_wall",
+  "encounter": "incense",
+  "indoor": true,
+  "interior": true,
+  "parent": "fishermens_cove",
+  "noFly": true,
+  "rows": [
+    "zzzzzzzz..zzzzzzzz",
+    "zzz.....,,.....zzz",
+    "z.ww....,,..o...wz",
+    "z.ww..o.,,......wz",
+    "z.......,.~~~...zz",
+    "zw....~~~~~~~...wz",
+    "zww...~~~~~~~....z",
+    "z.....~~~ƀɓ~.....z",
+    "z..o...~~~~~..o..z",
+    "zw..........wwww.z",
+    "zwww.....o..wwwwwz",
+    "zzwwww......wwwwzz",
+    "zzzzzzzzzzzzzzzzzz"
+  ],
+  "warps": [
+    {
+      "x": 8,
+      "y": 0,
+      "to": "fishermens_cove",
+      "tx": 34,
+      "ty": 26,
+      "dir": "UP"
+    },
+    {
+      "x": 9,
+      "y": 0,
+      "to": "fishermens_cove",
+      "tx": 34,
+      "ty": 26,
+      "dir": "UP"
+    }
+  ],
+  "flagTiles": [
+    {
+      "flag": "boat_home",
+      "tiles": {
+        "9,7": "~",
+        "10,7": "~"
+      }
+    }
+  ],
+  "npcs": [
+    {
+      "id": "big_one",
+      "x": 9,
+      "y": 7,
+      "invisible": true,
+      "script": "big_one",
+      "hideWhen": {
+        "flag": "boat_home"
+      }
+    }
+  ],
+  "pickups": [
+    {
+      "id": "cave_powder2",
+      "x": 16,
+      "y": 8,
+      "item": "mystery_powder",
+      "n": 1
+    },
+    {
+      "id": "cave_chai2",
+      "x": 3,
+      "y": 4,
+      "item": "masala_chai",
+      "n": 1
+    }
+  ],
+  "encounters": {
+    "encounterRate": 0.12,
+    "table": [
+      {
+        "speciesId": "wonkrab",
+        "minLevel": 21,
+        "maxLevel": 24,
+        "weight": 30
+      },
+      {
+        "speciesId": "lobsterlad",
+        "minLevel": 21,
+        "maxLevel": 24,
+        "weight": 30
+      },
+      {
+        "speciesId": "sirenowl",
+        "minLevel": 21,
+        "maxLevel": 23,
+        "weight": 20
+      },
+      {
+        "speciesId": "duvetghast",
+        "minLevel": 21,
+        "maxLevel": 23,
+        "weight": 20
+      }
+    ],
+    "water": [
+      {
+        "speciesId": "lobsterlad",
+        "minLevel": 22,
+        "maxLevel": 24,
+        "weight": 100
+      }
+    ]
+  },
+  "fx": [
+    {
+      "kind": "glow",
+      "at": [
+        [
+          9,
+          7
+        ],
+        [
+          10,
+          7
+        ]
+      ],
+      "color": "#5FF4FF"
+    }
+  ]
+}

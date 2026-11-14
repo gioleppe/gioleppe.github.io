@@ -229,6 +229,36 @@
         "electrolyte_sachet",
         "glow_jacket"
       ]
+    },
+    "toddy": {
+      "name": "Toddy Shack",
+      "items": [
+        "coconut_water",
+        "watermelon_slice",
+        "water_bottle",
+        "electrolyte_sachet"
+      ]
+    },
+    "catering": {
+      "name": "Crew Catering",
+      "items": [
+        "masala_chai",
+        "banana_lassi",
+        "watermelon_slice",
+        "coconut_water",
+        "water_bottle"
+      ]
+    },
+    "merch": {
+      "name": "Merch Stall",
+      "items": [
+        "amber_vial",
+        "rizla_paper",
+        "weighted_blanket",
+        "electrolyte_sachet",
+        "glow_jacket",
+        "sequin_vest"
+      ]
     }
   },
   "encounters": {
@@ -482,6 +512,23 @@
           5
         ],
         "pose": "back"
+      },
+      {
+        "id": "generator_disco",
+        "zone": "load_in_road",
+        "from": 1260,
+        "to": 180,
+        "name": "Generator Disco",
+        "what": "The crew throw their own party in the truck park, on the three generators you got running. Roadies dance like nobody is paying them, because nobody is. A Glowkid comes out to dance.",
+        "mood": "UV_BLACKLIGHT",
+        "bpm": 128,
+        "crowd": [
+          16,
+          4,
+          34,
+          9
+        ],
+        "needs": "power_back"
       }
     ]
   },
