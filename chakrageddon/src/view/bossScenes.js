@@ -5,6 +5,7 @@
 // its last key frame; grounded mode (and reduced motion) keeps effects calm: no strobing, no big moves.
 import { W, H } from './CanvasRenderer.js';
 import { drawText, textWidth } from './font.js';
+import { tl } from '../core/i18n.js';
 
 const VIEW = H - 53;                                   // the dialogue box covers the rest
 const CARD_AT = 1.4, BEAT3 = 2.6;
@@ -58,20 +59,21 @@ function talking(game) {
 function titleCard(g, b, t, still) {
   const at = b.cardAt ?? CARD_AT;
   if (t < at) return;
-  const big = textWidth(b.name) * 2 <= 196, nameW = textWidth(b.name) * (big ? 2 : 1);
-  const w = Math.min(W - 8, Math.max(nameW, textWidth(b.line), textWidth(b.tag)) + 18);
+  const tag = tl(b.tag), name = tl(b.name), line = tl(b.line);
+  const big = textWidth(name) * 2 <= 196, nameW = textWidth(name) * (big ? 2 : 1);
+  const w = Math.min(W - 8, Math.max(nameW, textWidth(line), textWidth(tag)) + 18);
   const k = still || b.cardStamp ? 1 : ease((t - at) / (b.cardIn ?? 0.35));
   let x = R(-w - 4 + (w + 4) * k), y = 6;
   if (b.cardWave && !still) y += R(Math.sin((t - at) * 5) * 4 * Math.max(0, 1 - (t - at) / 1.6));   // it rides in on the swell
   const parts = b.cardStamp && !still ? Math.min(3, 1 + Math.floor((t - at) / 0.14)) : 3;               // three quick stamps
   g.fillStyle = 'rgba(11,3,20,0.88)'; g.fillRect(x, y, w, 40);
   g.fillStyle = b.accent; g.fillRect(x, y + 38, w, 2); g.fillRect(x + w - 2, y, 2, 40);
-  drawText(g, b.tag, x + 8, y + 4, { color: b.accent });
+  drawText(g, tag, x + 8, y + 4, { color: b.accent });
   if (parts >= 2) {
     g.save(); g.translate(x + 8, y + (big ? 13 : 16)); if (big) g.scale(2, 2);
-    drawText(g, b.name, 0, 0, { color: '#F4F0E8', shadow: '#3A1A5A' }); g.restore();
+    drawText(g, name, 0, 0, { color: '#F4F0E8', shadow: '#3A1A5A' }); g.restore();
   }
-  if (parts >= 3) drawText(g, b.line, x + 8, y + 29, { color: '#E8D8F4' });
+  if (parts >= 3) drawText(g, line, x + 8, y + 29, { color: '#E8D8F4' });
 }
 
 /** the short card for a rematch: their colour, their portrait, the card */
@@ -315,7 +317,7 @@ function baksheesh(g, c) {
   const nk = (t - 0.6) / 0.6;
   if (nk > 0 && nk < 1 && !still) { g.fillStyle = '#4FA85A'; g.fillRect(R(lerp(290, 304, nk)), R(lerp(104, 80, nk)), 10, 5); }  // into the pocket
   if (t >= CARD_AT && t < BEAT3) { const y = R(lerp(104, 64, ease((t - CARD_AT) / 0.5))); g.fillStyle = 'rgba(79,232,138,0.3)'; g.beginPath(); g.arc(292, y + 6, 10, 0, 7); g.fill(); g.fillStyle = '#4FE88A'; g.fillRect(288, y, 8, 14); g.fillStyle = '#C8FFE0'; g.fillRect(290, y + 2, 1, 8); g.fillStyle = '#3A3A46'; g.fillRect(290, y - 3, 4, 3); }
-  if (t >= BEAT3) { g.fillStyle = '#F4F0E8'; g.fillRect(206, 64, 54, 34); g.fillStyle = '#C8C0B0'; g.fillRect(206, 96, 54, 2); drawText(g, 'PERMIT', 213, 68, { color: INK }); drawText(g, 'YES', 222, 82, { color: '#E0303C' }); }
+  if (t >= BEAT3) { g.fillStyle = '#F4F0E8'; g.fillRect(206, 64, 54, 34); g.fillStyle = '#C8C0B0'; g.fillRect(206, 96, 54, 2); drawText(g, tl('PERMIT'), 213, 68, { color: INK }); drawText(g, tl('YES'), 222, 82, { color: '#E0303C' }); }
 }
 
 // ---------------------------------------------------------------- 7. Influencer Chloe (full body): live, a "?", the phone at you
@@ -342,9 +344,9 @@ function chloe(g, c) {
   // what her phone sees: the recording frame, REC, the live likes, hearts
   g.strokeStyle = 'rgba(255,255,255,0.7)'; g.lineWidth = 1; g.strokeRect(4.5, 4.5, W - 9, VIEW - 9);
   if (still || Math.floor(t * 2) % 2) { g.fillStyle = '#E0303C'; g.fillRect(10, 112, 4, 4); }
-  drawText(g, 'REC', 17, 111, { color: '#F4F0E8', shadow: INK });
+  drawText(g, tl('REC'), 17, 111, { color: '#F4F0E8', shadow: INK });
   const likes = 12480 + R((stopped ? CARD_AT : t) * 137);
-  drawText(g, `${likes.toLocaleString('en')} likes`, 210, 111, { color: '#F4F0E8', shadow: INK });
+  drawText(g, tl('{0} likes', likes.toLocaleString('en')), 210, 111, { color: '#F4F0E8', shadow: INK });
   if (!stopped && !calm) for (let i = 0; i < 6; i++) { const k = (t * 0.5 + i / 6) % 1; heart(g, 296 + Math.sin(t * 2 + i) * 5, 104 - k * 80, ['#FF4FA8', '#FF8FB8', '#E0303C'][i % 3]); }
   if (stopped) { g.fillStyle = '#FFFFFF'; g.fillRect(270, 4, 16, 14); g.fillRect(274, 18, 3, 3); drawText(g, '?', 275, 7, { color: INK }); }
   if (atYou) { g.fillStyle = INK; g.fillRect(168, 54, 24, 40); g.fillStyle = '#3A3A46'; g.fillRect(170, 56, 20, 36); g.fillStyle = '#5FF4FF'; g.beginPath(); g.arc(180, 62, 3, 0, 7); g.fill(); g.fillStyle = '#F4F0E8'; g.fillRect(179, 61, 1, 1); }
@@ -395,7 +397,7 @@ function baba(g, c) {
   // the title, written in smoke: BOSS 7 / BABA SMOKE / ...
   if (t > 2.1 || still) {
     const a = still ? 1 : clamp01((t - 2.1) * 2);
-    drawText(g, 'BOSS 7', 12, 10, { color: c.b.accent });
+    drawText(g, tl('BOSS 7'), 12, 10, { color: c.b.accent });
     let x = 12;
     for (const ch of 'BABA SMOKE') { puffs(g, LETTERS[ch], x, 22, 3, SM, t, a); x += 12; }
     puffs(g, ['.....', '.....', '.....', '.....', '#.#.#'], 12, 40, 3, SM, t, a);

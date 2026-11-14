@@ -8,9 +8,11 @@ import { drawText, panel, list, wrap, textWidth, C } from './ui.js';
 import { overworldView, SLEEP_OUT, SLEEP_NIGHT } from './overworldView.js';
 import { dialogueView } from './dialogueView.js';
 import { CUES, CUE_SECONDS } from './WebGLPostProcess.js';
+import { saveLanguage } from './assets.js';
+import { tl } from '../core/i18n.js';
 
 const SAVE_KEY = 'chakrageddon.save.v1', SETTINGS_KEY = 'chakrageddon.settings.v1';
-export const VERSION = '1.3.0';   // keep in step with package.json (tests/scenarios.test.mjs checks)
+export const VERSION = '1.4.1';   // keep in step with package.json (tests/scenarios.test.mjs checks)
 
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
@@ -19,7 +21,8 @@ const store = {
 };
 
 export class Game {
-  constructor({ assets, input, renderer, audio }) {
+  constructor({ assets, input, renderer, audio, langs, lang }) {
+    this.langs = langs || [{ code: 'en', name: 'English' }]; this.lang = lang || 'en';   // the languages the game ships with, and the one in use
     this.data = assets.data; this.atlas = assets.atlas; this.images = assets.images;
     this.input = input; this.renderer = renderer; this.audio = audio;
     queueMicrotask?.(() => this.applyPictureSize());
@@ -34,6 +37,19 @@ export class Game {
     this.dialogue = dialogueView;
     this.overlays = [];
     this.log = [];            // the last lines of dialogue, battle messages and notices, newest last
+  }
+
+  /** the name of the language in use, in that language */
+  langName() { return this.langs.find((l) => l.code === this.lang)?.name || 'English'; }
+  /** Options and the title: next/previous language. The data is translated as it loads, so this saves and reloads the page. */
+  cycleLanguage(dir = 1) {
+    const n = this.langs.length;
+    if (n < 2) return;
+    const i = Math.max(0, this.langs.findIndex((l) => l.code === this.lang));
+    saveLanguage(this.langs[(i + dir + n) % n].code);
+    this.saveSettings();
+    if (this.engine) this.save(false);
+    if (typeof location !== 'undefined') location.reload();
   }
 
   register(name, view) { this.extra[name] = view; this.views.push(view); }
@@ -57,7 +73,7 @@ export class Game {
       for (const v of this.views) v.reset?.(this);
       this.startZoneAudio();
       return true;
-    } catch (e) { console.error(e); this.say('That save could not be read.'); return false; }
+    } catch (e) { console.error(e); this.say(tl('That save could not be read.')); return false; }
   }
   /** Debug: load a named scenario save from tests/fixtures/scenarios (dev server only). Never saves over the real game. */
   async loadScenario(name, version) {
@@ -77,7 +93,7 @@ export class Game {
     const s = this.engine?.state;
     if (!s || s.mode !== 'OVERWORLD' && s.mode !== 'FANNY_PACK_MENU') return false;
     const ok = store.set(SAVE_KEY, this.engine.serialize());
-    if (manual) this.say(ok ? 'Game saved.' : 'Saving failed (storage blocked).');
+    if (manual) this.say(ok ? tl('Game saved.') : tl('Saving failed (storage blocked).'));
     return ok;
   }
   /** a music cue from the engine (AUDIO_CUE with trackBpm); fade: seconds to fade the old song out first */
@@ -144,13 +160,13 @@ export class Game {
 
   exportSave() {
     const raw = this.rawSave();
-    if (!raw) return this.say('Nothing saved yet.');
+    if (!raw) return this.say(tl('Nothing saved yet.'));
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([raw], { type: 'application/json' }));
     a.download = 'chakrageddon-save.json';
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-    this.say('Save file downloaded.');
+    this.say(tl('Save file downloaded.'));
   }
   importSave() {
     const inp = document.createElement('input');
@@ -162,9 +178,9 @@ export class Game {
         const text = await f.text();
         GameEngine.load(this.data, text);          // validates before anything is overwritten
         store.set(SAVE_KEY, text);
-        this.say('Save imported. Choose Continue.');
+        this.say(tl('Save imported. Choose Continue.'));
         this.screen = 'title'; this.engine = null; this.titleCursor = 0;
-      } catch (e) { console.error(e); this.say('That file is not a valid save.'); }
+      } catch (e) { console.error(e); this.say(tl('That file is not a valid save.')); }
     };
     inp.click();
   }
@@ -252,20 +268,22 @@ export class Game {
       g.restore();
     }
     drawText(g, this.data.manifest.subtitle || '', W / 2, 66, { color: C.yellow, align: 'center', shadow: C.void });
-    const items = [{ label: 'New trip' }];
-    if (this.hasSave()) items.unshift({ label: 'Continue' });
-    for (const [name, v] of Object.entries(this.extra)) if (v.titleEntry) items.push({ label: v.titleEntry, screen: name });
+    const items = [{ label: tl('New trip'), id: 'new' }];
+    if (this.hasSave()) items.unshift({ label: tl('Continue'), id: 'continue' });
+    for (const [name, v] of Object.entries(this.extra)) if (v.titleEntry) items.push({ label: tl(v.titleEntry), screen: name });
+    if (this.langs.length > 1) items.push({ label: tl('Language: {0}', this.langName()), id: 'lang' });
     panel(g, 100, 88, 120, items.length * 16 + 8, { bg: C.cream, accent: C.magenta });
     const r = list(this, g, items, 104, 92, 112, this.titleCursor, { rowH: 16 });
     this.titleCursor = r.cursor;
     if (r.chosen >= 0) {
       const it = items[r.chosen];
-      if (it.label === 'Continue') this.loadGame();
+      if (it.id === 'continue') this.loadGame();
+      else if (it.id === 'lang') this.cycleLanguage(1);
       else if (it.screen) { this.screen = it.screen; this.extra[it.screen].open?.(this, 'title'); }
-      else if (this.hasSave() && !this.confirmNew) { this.confirmNew = true; this.say('Press again to overwrite your save.'); }
+      else if (this.hasSave() && !this.confirmNew) { this.confirmNew = true; this.say(tl('Press again to overwrite your save.')); }
       else { this.confirmNew = false; this.newGame(); }
     }
     drawText(g, `v${VERSION}`, W - 4, H - 10, { color: C.chai, align: 'right' });
-    drawText(g, 'A satire. Hydrate. Look after each other.', 4, H - 10, { color: C.chai });
+    drawText(g, tl('A satire. Hydrate. Look after each other.'), 4, H - 10, { color: C.chai });
   }
 }

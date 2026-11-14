@@ -215,6 +215,9 @@ export class SynthAudio {
       case 'technique': T('sawtooth', 200, 0.3, 0.12, 0, { to: 900, cutoff: 3000 }); this.hiss(now + 0.05, 0.2, 0.12, 3000, o); break;
       case 'push': T('sine', 90, 0.16, 0.35, 0, { to: 45 }); break;
       case 'throw': T('sine', 400, 0.35, 0.12, 0, { to: 1200 }); break;
+      case 'summon': T('sine', 500, 0.24, 0.1, 0, { to: 1500 }); [784, 1047, 1319].forEach((f, i) => T('triangle', f, 0.12, 0.09, 0.24 + i * 0.05)); this.hiss(now + 0.24, 0.18, 0.08, 4000, o); break;   // a point of light flies in and bursts
+      case 'recall': T('sine', 1400, 0.3, 0.09, 0, { to: 300 }); this.hiss(now, 0.25, 0.05, 5000, o); break;                         // folded back into light
+      case 'manifest': [523, 659, 784, 988].forEach((f, i) => T('sine', f, 0.3, 0.05, i * 0.08, { detune: 9 })); this.hiss(now, 0.5, 0.05, 2500, o); break;   // a wild one firms up out of the haze
       case 'zip': this.hiss(now, 0.14, 0.12, 2500, o); T('sawtooth', 300, 0.14, 0.04, 0, { to: 900 }); break;
       case 'gong': T('sine', 110, 2.6, 0.35, 0, { attack: 0.01 }); T('sine', 166, 2.2, 0.16, 0.01, { detune: 7 }); T('triangle', 262, 1.4, 0.06, 0.02); break;   // Svetlana
       case 'horn': [[440, 0], [349, 0.18], [440, 0.42], [349, 0.6]].forEach(([f, at]) => T('square', f, 0.15, 0.08, at, { cutoff: 1800 })); break;            // scooter horns

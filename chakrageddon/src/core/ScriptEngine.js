@@ -30,6 +30,7 @@
 // Text may contain {player}, replaced by the player's name, and {price}: a tarot reading (rules.tarot.price).
 // The interpreter runs until it has something to show, then waits for ADVANCE_DIALOGUE.
 
+import { tl } from './i18n.js';
 import { check } from './quests.js';
 import { restUntilSet, clockText, sets, minutesUntil } from './timetable.js';
 import { statsOf } from './mons.js';
@@ -48,14 +49,14 @@ function jump(sc, label) {
   sc.pc = i;
 }
 
-const fill = (s, text, data) => String(text ?? '').replace(/\{player\}/g, s.playerName || 'friend').replace(/\{price\}/g, data?.rules?.tarot?.price ?? 500);
+const fill = (s, text, data) => String(text ?? '').replace(/\{player\}/g, s.playerName || tl('friend')).replace(/\{price\}/g, data?.rules?.tarot?.price ?? 500);
 
 /** zone.bossGate: the flag of the boss who runs this place. Until it is set, the Chai Tent and the shops here turn you away.
  *  Returns the boss's name while the gate is shut, otherwise null. */
 export function bossGate(ctx, zone = ctx.data.zones[ctx.state.zoneId]) {
   const flag = zone?.bossGate;
   if (!flag || ctx.state.flags[flag]) return null;
-  return Object.values(ctx.data.trainers).find((t) => t.setFlag === flag)?.name || 'the boss';
+  return Object.values(ctx.data.trainers).find((t) => t.setFlag === flag)?.name || tl('the boss');
 }
 
 /** zone.gauntlet: { trainers, reset } — a run of fights (the Four). Under way once the first is beaten and until the last is;
@@ -124,8 +125,8 @@ export function runScript(ctx) {
     if (st.pickSet) {
       const list = sets(ctx.data, s).slice().sort((x, y) => (minutesUntil(ctx.data, s, x) || 1440) - (minutesUntil(ctx.data, s, y) || 1440));
       sc.setPick = list.map((x) => x.id).concat(null); sc.setCancel = st.cancel;
-      const where = (x) => (x.zone === s.zoneId ? 'here' : ctx.data.zones[x.zone].name.replace(/^The /, ''));
-      return say(ctx, st.s, st.t, st.style, list.map((x) => `${clockText(x.from)} ${x.name}, ${where(x)}`).concat('Get up'));
+      const where = (x) => (x.zone === s.zoneId ? tl('here') : ctx.data.zones[x.zone].name.replace(/^The /, ''));
+      return say(ctx, st.s, st.t, st.style, list.map((x) => tl('{0} {1}, {2}', clockText(x.from), x.name, where(x))).concat(tl('Get up')));
     }
     if (st.choice) { sc.choiceGoto = st.goto; sc.nameChoice = st.nameChoice ? st.choice : null; return say(ctx, st.s, st.t, st.style, st.choice, st); }
     if (st.t !== undefined) return say(ctx, st.s, st.t, st.style);
@@ -134,7 +135,7 @@ export function runScript(ctx) {
       s.bag[st.give] = (s.bag[st.give] || 0) + n;
       ctx.emit({ type: 'ITEM_GAINED', itemId: st.give, n });
       ctx.emit({ type: 'AUDIO_CUE', sfxId: 'item' });
-      return say(ctx, '', `You got ${n > 1 ? n + ' x ' : ''}${item?.name || st.give}!`);
+      return say(ctx, '', n > 1 ? tl('You got {0} x {1}!', n, item?.name || st.give) : tl('You got {0}!', item?.name || st.give));
     }
     if (st.clock !== undefined) { s.clock = ((st.clock % 1440) + 1440) % 1440; continue; }
     if (st.waitTide) {                                                  // sit on a rock until the tide is out (Fishermen's Cove)
@@ -146,7 +147,7 @@ export function runScript(ctx) {
       s.rupees += st.rupees;
       ctx.emit({ type: 'RUPEES_CHANGED', rupees: s.rupees });
       ctx.emit({ type: 'AUDIO_CUE', sfxId: 'item' });
-      return say(ctx, '', `You got Rs ${st.rupees}!`);
+      return say(ctx, '', tl('You got Rs {0}!', st.rupees));
     }
     if (st.take) { s.bag[st.take] = Math.max(0, (s.bag[st.take] || 0) - (st.n || 1)); continue; }
     if (st.pay !== undefined) {
@@ -157,7 +158,7 @@ export function runScript(ctx) {
       const where = h.giveMon(ctx, st.giveMon, st.level || 5);
       const name = ctx.data.dex[st.giveMon].name;
       ctx.emit({ type: 'AUDIO_CUE', sfxId: 'fanfare' });
-      return say(ctx, '', where === 'party' ? `${name} joined your party!` : `${name} was sent to the Chai Tent stash.`);
+      return say(ctx, '', where === 'party' ? tl('{0} joined your party!', name) : tl('{0} was sent to the Chai Tent stash.', name));
     }
     if (st.water) { for (const m of s.party) m.hyd = statsOf(ctx.data, m).maxHyd; ctx.emit({ type: 'AUDIO_CUE', sfxId: 'heal' }); continue; }   // Hydration only (the temple's water jug)
     if (st.heal) { h.healParty(ctx, st.respawn !== false); ctx.emit({ type: 'PARTY_HEALED' }); ctx.emit({ type: 'AUDIO_CUE', sfxId: 'heal' }); continue; }
@@ -166,7 +167,7 @@ export function runScript(ctx) {
       const wb = ctx.data.rules.wristbands?.[st.wristband];
       ctx.emit({ type: 'WRISTBAND_GAINED', wristbandId: st.wristband });
       ctx.emit({ type: 'AUDIO_CUE', sfxId: 'fanfare' });
-      return say(ctx, '', `You received the ${wb?.name || st.wristband}!${wb?.note ? ' ' + wb.note : ''}`);
+      return say(ctx, '', tl('You received the {0}!', wb?.name || st.wristband) + (wb?.note ? ' ' + wb.note : ''));
     }
     if (st.warp) { h.warp(ctx, st.warp); continue; }
     if (st.run) { s.script = { steps: ctx.data.dialogues[st.run], pc: 0 }; continue; }
@@ -190,7 +191,7 @@ export function runScript(ctx) {
       if (boss) {
         const who = s.script.steps.slice(0, s.script.pc).reverse().find((x) => x.s)?.s || '';
         s.script.pc = s.script.steps.length;
-        return say(ctx, who, (ctx.data.dialogues.shop_closed?.[0]?.t || 'Closed until {boss} is beaten.').replace('{boss}', boss));
+        return say(ctx, who, (ctx.data.dialogues.shop_closed?.[0]?.t || tl('Closed until {boss} is beaten.')).replace('{boss}', boss));
       }
       s.script = null; s.shop = st.shop; setMode(ctx, 'SHOP'); return;
     }
@@ -206,9 +207,9 @@ export function runScript(ctx) {
       const from = s.clock, next = restUntilSet(ctx, sc.wakeFor), here = next?.zone === s.zoneId;
       sc.wakeFor = null;
       ctx.emit({ type: 'CLOCK_SET', clock: s.clock, from, setId: next?.id || null, here });
-      if (!next) return say(ctx, '', 'You doze off for a while.');
-      return say(ctx, '', here ? `You doze off on a cushion. You wake at ${clockText(next.from)} to the bass coming up through the ground: the ${next.name} is starting, right here.`
-        : `You doze off on a cushion. You wake at ${clockText(next.from)}, just as the ${next.name} starts at ${ctx.data.zones[next.zone].name}.`);
+      if (!next) return say(ctx, '', tl('You doze off for a while.'));
+      return say(ctx, '', here ? tl('You doze off on a cushion. You wake at {0} to the bass coming up through the ground: the {1} is starting, right here.', clockText(next.from), next.name)
+        : tl('You doze off on a cushion. You wake at {0}, just as the {1} starts at {2}.', clockText(next.from), next.name, ctx.data.zones[next.zone].name));
     }
     throw new Error(`unknown script step: ${JSON.stringify(st)}`);
   }

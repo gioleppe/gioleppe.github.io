@@ -2,6 +2,7 @@
 import { W, H } from './CanvasRenderer.js';
 import { soldOut } from '../core/items.js';
 import { drawText, wrap, panel, list, C } from './ui.js';
+import { tl, tln } from '../core/i18n.js';
 
 export const shopView = {
   tab: 0, cursor: 0,
@@ -15,37 +16,37 @@ export const shopView = {
     // striped awning
     for (let x = 8; x < W - 8; x += 16) { g.fillStyle = (x / 16) % 2 ? C.terracotta : C.cream; g.fillRect(x, 8, Math.min(16, W - 8 - x), 10); }
     drawText(g, shop.name, 14, 22, { color: C.chai });
-    drawText(g, `Rs ${s.rupees}`, W - 14, 22, { color: C.chai, align: 'right' });
+    drawText(g, tl('Rs {0}', s.rupees), W - 14, 22, { color: C.chai, align: 'right' });
     const tabs = ['Buy', 'Sell', 'Leave'];
     tabs.forEach((t, i) => {
       const x = 14 + i * 50;
       if (input.tapIn(x, 33, 46, 13)) { if (i === 2) return game.send({ type: 'CLOSE_SHOP' }); this.tab = i; this.cursor = 0; }
       g.fillStyle = i === this.tab ? C.magenta : '#E8D8C0'; g.fillRect(x, 33, 46, 13);
-      drawText(g, t, x + 23, 36, { color: i === this.tab ? C.white : C.chai, align: 'center' });
+      drawText(g, tl(t), x + 23, 36, { color: i === this.tab ? C.white : C.chai, align: 'center' });
     });
-    if (input.pressed('left')) { this.tab = Math.max(0, this.tab - 1); this.cursor = 0; }
-    if (input.pressed('right')) { this.tab = Math.min(2, this.tab + 1); this.cursor = 0; }
+    if (input.pressed('left')) { this.tab = (this.tab + 2) % 3; this.cursor = 0; }   // the tabs wrap round
+    if (input.pressed('right')) { this.tab = (this.tab + 1) % 3; this.cursor = 0; }
     if (this.tab === 2) {                          // Leave: A (or a tap) walks out, left goes back to the stock
-      drawText(g, 'Leave the shop?', 14, 54, { color: C.ink });
-      drawText(g, 'A: leave   Left: back to the stall', 14, 68, { color: C.grey });
+      drawText(g, tl('Leave the shop?'), 14, 54, { color: C.ink });
+      drawText(g, tl('A: leave   Left: back to the stall'), 14, 68, { color: C.grey });
       if (input.pressed('a') || input.pressed('b') || input.pressed('start') || input.anyTap()) game.send({ type: 'CLOSE_SHOP' });
       return;
     }
     const ids = this.tab === 0 ? shop.items : Object.keys(s.bag).filter((id) => s.bag[id] > 0 && d.items[id].price > 0 && d.items[id].category !== 'KEY');
-    if (!ids.length) drawText(g, 'Nothing to sell.', 14, 54, { color: C.grey });
+    if (!ids.length) drawText(g, tl('Nothing to sell.'), 14, 54, { color: C.grey });
     const items = ids.map((id) => {
       const it = d.items[id], price = this.tab === 0 ? it.price : Math.floor(it.price / 2);
-      if (this.tab === 0 && soldOut(s, it)) return { label: it.name, right: 'Sold out', disabled: true };
-      return { label: it.name, right: `${this.tab === 1 ? `x${s.bag[id]}  ` : ''}Rs ${price}`, disabled: this.tab === 0 && s.rupees < price };
+      if (this.tab === 0 && soldOut(s, it)) return { label: it.name, right: tl('Sold out'), disabled: true };
+      return { label: it.name, right: `${this.tab === 1 ? `x${s.bag[id]}  ` : ''}${tl('Rs {0}', price)}`, disabled: this.tab === 0 && s.rupees < price };
     });
     const r = list(game, g, items, 10, 50, 190, this.cursor, { rowH: 13, maxRows: 8 });
     this.cursor = r.cursor;
     const it = d.items[ids[Math.min(this.cursor, ids.length - 1)]];
     if (it) {
       wrap(it.desc, 100).slice(0, 6).forEach((ln, i) => drawText(g, ln, 208, 52 + i * 10, { color: C.chai }));
-      drawText(g, `You have ${s.bag[it.id] || 0}`, 208, 120, { color: C.purple });
+      drawText(g, tl('You have {0}', s.bag[it.id] || 0), 208, 120, { color: C.purple });
     }
-    drawText(g, 'A: one   B: leave', 14, H - 20, { color: C.grey });
+    drawText(g, tl('A: one   B: leave'), 14, H - 20, { color: C.grey });
     if (r.chosen >= 0) game.send({ type: this.tab === 0 ? 'BUY' : 'SELL', itemId: ids[r.chosen], n: 1 });
     else if (input.pressed('b') || input.pressed('start')) game.send({ type: 'CLOSE_SHOP' });
   },

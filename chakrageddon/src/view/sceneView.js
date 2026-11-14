@@ -14,6 +14,7 @@ import { drawJuniper } from './juniperScene.js';
 import { drawCrowdsurf, drawZiggurat } from './templeScenes.js';
 import { drawBoss, BOSSES } from './bossScenes.js';
 import { overworldView } from './overworldView.js';
+import { tl } from '../core/i18n.js';
 
 // the colours of the eight wristbands, in the order rules.wristbands lists them (as in the Fanny Pack)
 const BAND_COLORS = ['#C9A45A', '#C8F4FF', '#7FD6FF', '#FFD23F', '#4FE88A', '#FF4FA8', '#A8AEB6', '#F4FFF0'];
@@ -181,8 +182,8 @@ sceneView.alleyLock = function (game, g) {
   R('#4FE88A', 252, 46, 24, 26); R('#14101E', 256, 52, 16, 2); R('#14101E', 256, 58, 12, 2);        // WANTED (blank)
   R('#2A1A2E', 0, VIEW - 8, W, 8);                                                                    // the ground
   // CLANG
-  if (!still && t > 1.1 && t < 1.9) { const a = 1 - (t - 1.1) / 0.8; g.globalAlpha = a; drawText(g, 'CLANG!', 160, 18, { color: '#FFE066', align: 'center' }); g.globalAlpha = 1; }
-  else if (still) drawText(g, 'CLANG!', 160, 18, { color: '#FFE066', align: 'center' });
+  if (!still && t > 1.1 && t < 1.9) { const a = 1 - (t - 1.1) / 0.8; g.globalAlpha = a; drawText(g, tl('CLANG!'), 160, 18, { color: '#FFE066', align: 'center' }); g.globalAlpha = 1; }
+  else if (still) drawText(g, tl('CLANG!'), 160, 18, { color: '#FFE066', align: 'center' });
   // Constable Shah: the guard, in a tourist shirt, with a moustache that is not quite on straight
   const img = game.images['portrait:guard'];
   const px = 208, py = VIEW - 96 + (still ? 0 : Math.round(Math.sin(t * 2) * 1));

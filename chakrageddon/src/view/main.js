@@ -1,7 +1,8 @@
 // Browser entry point: load everything, then run the loop.
 import { CanvasRenderer, W, H } from './CanvasRenderer.js';
 import { InputAdapter } from './InputAdapter.js';
-import { loadAll } from './assets.js';
+import { loadAll, loadLanguages, chosenLanguage, loadDictionary } from './assets.js';
+import { tl } from '../core/i18n.js';
 import { Game, VERSION } from './Game.js';
 import { drawText } from './font.js';
 import { WebGLPostProcess } from './WebGLPostProcess.js';
@@ -21,11 +22,13 @@ function splash(text) {
 
 async function boot() {
   splash('Loading...');
-  const assets = await loadAll((p) => splash(`Loading ${Math.round(p * 100)}%`));
+  const langs = await loadLanguages(), lang = chosenLanguage(langs);
+  const dict = await loadDictionary(langs, lang);
+  const assets = await loadAll((p) => splash(tl('Loading {0}%', Math.round(p * 100))), dict);
   const optional = async (path) => { try { return await import(path); } catch (e) { if (!/Failed to fetch|404|not found|Cannot find|error loading/i.test(String(e))) console.error(e); return null; } };
   const audioMod = await optional('./SynthAudio.js');
   if (audioMod) audio = new audioMod.SynthAudio();
-  const game = new Game({ assets, input, renderer, audio });
+  const game = new Game({ assets, input, renderer, audio, langs, lang });
   audio?.setVolume(game.settings.volume);
   for (const mod of ['./sceneView.js', './battleView.js', './menuView.js', './shopView.js', './settingsView.js', './creditsView.js', './noticeView.js', './quickView.js', './introView.js', './endCardView.js', './tarotView.js']) {
     const m = await optional(mod);
@@ -39,7 +42,7 @@ async function boot() {
   // a lost WebGL context (common when a phone backgrounds the tab): save, then start clean
   renderer.canvas.addEventListener('webglcontextlost', () => { game.save(false); setTimeout(() => location.reload(), 300); });
   // error hook: keep the last error for bug reports and tell the player their progress is safe
-  const report = (msg) => { try { localStorage.setItem('chakrageddon.lastError', JSON.stringify({ msg: String(msg).slice(0, 500), at: new Date().toISOString(), v: VERSION })); } catch { /* storage blocked */ } game.say('Something went wrong. Your last autosave is safe.'); };
+  const report = (msg) => { try { localStorage.setItem('chakrageddon.lastError', JSON.stringify({ msg: String(msg).slice(0, 500), at: new Date().toISOString(), v: VERSION })); } catch { /* storage blocked */ } game.say(tl('Something went wrong. Your last autosave is safe.')); };
   addEventListener('error', (e) => report(e.message));
   addEventListener('unhandledrejection', (e) => report(e.reason));
 
@@ -59,7 +62,7 @@ async function boot() {
   document.addEventListener('visibilitychange', () => { last = performance.now(); if (document.hidden) audio?.suspend(); else { audio?.resume(); input.relock?.(); } });
 }
 
-boot().catch((e) => { console.error(e); splash('Could not start: ' + e.message); });
+boot().catch((e) => { console.error(e); splash(tl('Could not start: {0}', e.message)); });
 
 // offline support: on https, or on localhost with ?sw for testing (otherwise dev edits would be served stale)
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || new URLSearchParams(location.search).has('sw'))) {

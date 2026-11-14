@@ -8,6 +8,7 @@ import { drawText, textWidth } from './font.js';
 import { C } from './ui.js';
 import { drawBackdrop, SPOT } from './battleFx.js';
 import { drawMoveFx, lookOf, durationOf } from './moveFx.js';
+import { tl } from '../core/i18n.js';
 
 export const SCENES = [
   { id: 'logo', dur: 3.6 },
@@ -73,8 +74,8 @@ export const introView = {
     // every cut is a fade through black (no white flashes before the content notice)
     const f = Math.max(0, Math.min(1, sc.t / FADE, (sc.dur - sc.t) / FADE));
     if (f < 1 && !(sc.id === 'title' && sc.t > FADE)) { g.globalAlpha = 1 - f; g.fillStyle = C.void; g.fillRect(0, 0, W, H); g.globalAlpha = 1; }
-    if (this.muted) drawText(g, 'Tap or press a key for sound', W - 4, H - 10, { color: C.yellow, align: 'right', shadow: C.void });
-    else drawText(g, 'A: skip', W - 4, H - 10, { color: '#8C7A9A', align: 'right' });
+    if (this.muted) drawText(g, tl('Tap or press a key for sound'), W - 4, H - 10, { color: C.yellow, align: 'right', shadow: C.void });
+    else drawText(g, tl('A: skip'), W - 4, H - 10, { color: '#8C7A9A', align: 'right' });
   },
 };
 
@@ -130,7 +131,7 @@ const DRAW = {
       g.translate(wx, wy); g.scale(2, 2); drawText(g, word, 0, 0, { color: '#FFFFFF' });
       g.restore();
     }
-    if (still || t > 2.3) drawText(g, 'presents', W / 2, 104, { color: C.yellow, align: 'center' });
+    if (still || t > 2.3) drawText(g, tl('presents'), W / 2, 104, { color: C.yellow, align: 'center' });
   },
 
   // a night beach: moon, stars, rolling waves, palms; a Wooklet bounces along the sand, a Crabcake scuttles past
@@ -197,7 +198,7 @@ const DRAW = {
     if (e > 0 && e < dur) drawMoveFx(g, { kind: 'strike', fx, from: 'p', to: 'e', t: e, dur, hit: 1 }, { still, calm: true });
     g.fillStyle = C.cream; g.fillRect(0, 132, W, H - 132);
     g.fillStyle = C.terracotta; g.fillRect(0, 132, W, 2);
-    const line = t < hitAt ? 'A wild Crabcake drifts out of the incense!' : 'Jawling used Strobe Rush!';
+    const line = t < hitAt ? tl('A wild Crabcake drifts out of the incense!') : tl('Jawling used Strobe Rush!');
     drawText(g, line, 12, 146, { color: C.ink });
   },
 
@@ -211,7 +212,7 @@ const DRAW = {
     g.fillStyle = glow; g.fillRect(0, 0, W, H);
     const frame = still ? 0 : t > 3.6 && t < 3.75 ? 5 : Math.floor(t * 2) % 2 ? 6 : 0;   // rays turn, then it blinks at you
     creature(g, mon(game, 'mandalord'), frame, W / 2, y, S);
-    if (t > 2.8) drawText(g, 'Something is watching the festival.', W / 2, 160, { color: C.yellow, align: 'center' });
+    if (t > 2.8) drawText(g, tl('Something is watching the festival.'), W / 2, 160, { color: C.yellow, align: 'center' });
   },
 
   // the title drops in over the kaleidoscope, exactly where the title screen keeps it

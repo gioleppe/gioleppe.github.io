@@ -1,6 +1,7 @@
 // End credits: a slow scroll over the kaleidoscope. Shown when the engine emits CREDITS.
 import { W, H } from './CanvasRenderer.js';
 import { drawText, C } from './ui.js';
+import { tl } from '../core/i18n.js';
 
 const LINES = [
   ['CHAKRA-GEDDON', C.yellow], ['The Infinite 7-Day Festival', C.cream], '', '',
@@ -40,9 +41,9 @@ export const creditsView = {
       const y = Math.round(H + i * 13 - this.y);
       if (y < -10 || y > H) return;
       const [text, color] = Array.isArray(ln) ? ln : [ln, C.sand];
-      drawText(g, text, W / 2, y, { color, align: 'center', shadow: C.void });
+      drawText(g, tl(text), W / 2, y, { color, align: 'center', shadow: C.void });
     });
-    drawText(g, 'hold A to hurry', W - 4, H - 10, { color: '#4A3A80', align: 'right' });
+    drawText(g, tl('hold A to hurry'), W - 4, H - 10, { color: '#4A3A80', align: 'right' });
   },
 };
 

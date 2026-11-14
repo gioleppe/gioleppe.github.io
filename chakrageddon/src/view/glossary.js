@@ -6,6 +6,7 @@
 export const TERM_COLORS = { key: '#C2185B', item: '#A8551A', astral: '#00796B', place: '#6A1B9A', rule: '#1565C0' };
 export const TERM_KINDS = Object.keys(TERM_COLORS);
 
+// terms are matched as whole words, unicode-aware so accented Italian terms (città, Perché...) are found and not cut mid-word
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 let built = null, builtFor = null;
 const memo = new Map();
@@ -20,7 +21,7 @@ function matcher(data) {
   for (const z of Object.values(data.zones || {})) add(z.name.replace(/^The /, ''), 'place');   // "Poi Pit", not "the Poi Pit"
   const terms = [...kinds.keys()].sort((a, b) => b.length - a.length).map(esc);
   // whole words only, with an optional plural; longest first so "Wristbands of Enlightenment" beats "Wristband"
-  built = { kinds, re: terms.length ? new RegExp(`(?<![A-Za-z])(${terms.join('|')})(?:s|es)?(?![A-Za-z])`, 'gi') : null };
+  built = { kinds, re: terms.length ? new RegExp(`(?<!\\p{L})(${terms.join('|')})(?:s|es)?(?!\\p{L})`, 'giu') : null };
   builtFor = data; memo.clear();
   return built;
 }

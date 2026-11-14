@@ -2,6 +2,8 @@
 // at night, during a set, only when high, on the water), anyone who gives one or sends one at you in a script, and
 // its line (what it evolves from and into). Pure: data in, plain records out.
 
+import { tl } from './i18n.js';
+
 /** the zone an NPC with this script stands in, or null */
 function zoneOfScript(data, scriptId) {
   for (const z of Object.values(data.zones)) if ((z.npcs || []).some((n) => n.script === scriptId)) return z.zoneId;
@@ -36,8 +38,8 @@ export function whereToFind(data, speciesId) {
 /** the same, as short lines for the Journal (an evolution you have not seen yet stays ?????) */
 export function whereLines(data, s, speciesId) {
   const w = whereToFind(data, speciesId), out = [];
-  const place = (zone) => (zone ? data.zones[zone].name.replace(/^The /, '') : 'somewhere');
-  const band = (m) => [...(data.rules.intox?.bands || [])].reverse().find((b) => m >= b.min)?.name || 'high';
+  const place = (zone) => (zone ? data.zones[zone].name.replace(/^The /, '') : tl('somewhere'));
+  const band = (m) => [...(data.rules.intox?.bands || [])].reverse().find((b) => m >= b.min)?.name || tl('high');
   const setName = (id) => data.rules.timetable?.sets?.find((x) => x.id === id)?.name || id;
   // one line per place and time: on land and on the water together when both
   const rows = [];
@@ -47,15 +49,15 @@ export function whereLines(data, s, speciesId) {
     else rows.push({ ...x, land: !x.water });
   }
   for (const x of rows) {
-    const when = [x.water ? (x.land ? 'land and water' : 'on the water') : null, x.night ? 'at night' : null, x.set ? `during the ${setName(x.set)}` : null, x.minIntox > 0 ? `from ${band(x.minIntox)}` : null].filter(Boolean);
-    out.push(`${place(x.zone)}: Lv ${x.minLevel}${x.maxLevel !== x.minLevel ? `-${x.maxLevel}` : ''}${when.length ? `, ${when.join(', ')}` : ''}`);
+    const when = [x.water ? (x.land ? tl('land and water') : tl('on the water')) : null, x.night ? tl('at night') : null, x.set ? tl('during the {0}', setName(x.set)) : null, x.minIntox > 0 ? tl('from {0}', band(x.minIntox)) : null].filter(Boolean);
+    out.push(tl('{0}: Lv {1}', place(x.zone), x.maxLevel !== x.minLevel ? `${x.minLevel}-${x.maxLevel}` : x.minLevel) + (when.length ? `, ${when.join(', ')}` : ''));
   }
-  for (const x of w.scripted) out.push(`${place(x.zone)}: one of a kind, Lv ${x.level}`);
-  for (const x of w.gifts) out.push(x.starter ? 'Banyan\'s first gift: a starter' : `A gift at ${place(x.zone)}`);
-  const how = (x) => (x.level ? `at Lv ${x.level}` : `with a ${data.items[x.itemId]?.name || x.itemId}`);
+  for (const x of w.scripted) out.push(tl('{0}: one of a kind, Lv {1}', place(x.zone), x.level));
+  for (const x of w.gifts) out.push(x.starter ? tl('Banyan\'s first gift: a starter') : tl('A gift at {0}', place(x.zone)));
+  const how = (x) => (x.level ? tl('at Lv {0}', x.level) : tl('with a {0}', data.items[x.itemId]?.name || x.itemId));
   const name = (id) => (s.dex?.seen?.[id] ? data.dex[id]?.name || id : '?????');
-  for (const x of w.from) out.push(`Grows from ${name(x.speciesId)} ${how(x)}`);
-  for (const x of w.into) out.push(`Grows into ${name(x.speciesId)} ${how(x)}`);
-  if (!w.wild.length && !w.scripted.length && !w.gifts.length && !w.from.length) out.unshift('Not seen in the wild.');
+  for (const x of w.from) out.push(tl('Grows from {0} {1}', name(x.speciesId), how(x)));
+  for (const x of w.into) out.push(tl('Grows into {0} {1}', name(x.speciesId), how(x)));
+  if (!w.wild.length && !w.scripted.length && !w.gifts.length && !w.from.length) out.unshift(tl('Not seen in the wild.'));
   return out;
 }

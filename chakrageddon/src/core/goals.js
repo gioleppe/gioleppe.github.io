@@ -2,6 +2,7 @@
 // first one not yet done, and the route hint walks the zone graph (warps) towards it.
 //   goal: { id, zone, trainer?, text?, done: { flag } | { defeated } }
 
+import { tl } from './i18n.js';
 import { canUse, passable } from './OverworldEngine.js';
 
 /** a zone name in the middle of a sentence: "The Poi Pit" -> "the Poi Pit" */
@@ -24,9 +25,9 @@ export function goalText(data, g) {
   const t = g.trainer && data.trainers[g.trainer];
   if (t) {
     const band = data.rules.wristbands?.[t.wristband];
-    return `Beat ${t.name} in ${midName(data.zones[g.zone].name)}${band ? ` for the ${band.name}` : ''}.`;
+    return band ? tl('Beat {0} in {1} for the {2}.', t.name, midName(data.zones[g.zone].name), band.name) : tl('Beat {0} in {1}.', t.name, midName(data.zones[g.zone].name));
   }
-  return `Go to ${midName(data.zones[g.zone]?.name || 'the next place')}.`;
+  return tl('Go to {0}.', midName(data.zones[g.zone]?.name || tl('the next place')));
 }
 
 /** which edge of a zone a warp sits on */
@@ -114,6 +115,20 @@ function compass(dx, dy) {
   return ns && ew ? `${ns}-${ew}` : ns || ew || 'right here';
 }
 
+/** the "who is where" and "head there" sentences, one whole sentence each so a translation can bend them */
+const IS_AT = {
+  'right here': (w) => tl('{0} is right here.', w),
+  north: (w) => tl('{0} is to the north.', w), south: (w) => tl('{0} is to the south.', w),
+  west: (w) => tl('{0} is to the west.', w), east: (w) => tl('{0} is to the east.', w),
+  'north-west': (w) => tl('{0} is to the north-west.', w), 'north-east': (w) => tl('{0} is to the north-east.', w),
+  'south-west': (w) => tl('{0} is to the south-west.', w), 'south-east': (w) => tl('{0} is to the south-east.', w),
+};
+const HEAD_TO = {
+  'through the door': (p) => tl('Next: go through the door to {0}.', p),
+  north: (p) => tl('Next: head north to {0}.', p), south: (p) => tl('Next: head south to {0}.', p),
+  west: (p) => tl('Next: head west to {0}.', p), east: (p) => tl('Next: head east to {0}.', p),
+};
+
 /** a short line telling the player which way to go for the current goal */
 export function routeHint(data, s, goal = currentGoal(data, s)) {
   if (!goal || !goal.zone) return null;
@@ -121,14 +136,14 @@ export function routeHint(data, s, goal = currentGoal(data, s)) {
   if (s.zoneId === goal.zone) {
     const npcId = goal.npc || (goal.trainer && (here.npcs || []).find((n) => n.trainer === goal.trainer)?.id);
     const n = npcId && (here.npcs || []).find((x) => x.id === npcId);
-    if (!n) return { text: 'It is somewhere in this area.', zone: goal.zone };
-    const who = goal.who || (goal.trainer ? data.trainers[goal.trainer].name : 'Your goal'), where = compass(n.x - s.player.x, n.y - s.player.y);
-    return { text: `${who} ${where === 'right here' ? 'is right here' : `is to the ${where}`}.`, zone: goal.zone };
+    if (!n) return { text: tl('It is somewhere in this area.'), zone: goal.zone };
+    const who = goal.who || (goal.trainer ? data.trainers[goal.trainer].name : tl('Your goal')), where = compass(n.x - s.player.x, n.y - s.player.y);
+    return { text: IS_AT[where](who), zone: goal.zone };
   }
   const nz = nextZone(data, s.zoneId, goal.zone, s);
-  if (!nz) return { text: `Find a way to ${midName(data.zones[goal.zone].name)}.`, zone: goal.zone };
-  if (here.interior && nz === here.parent) return { text: `Next: go back outside to ${midName(data.zones[nz].name)}.`, zone: goal.zone, next: nz, side: 'out' };
+  if (!nz) return { text: tl('Find a way to {0}.', midName(data.zones[goal.zone].name)), zone: goal.zone };
+  if (here.interior && nz === here.parent) return { text: tl('Next: go back outside to {0}.', midName(data.zones[nz].name)), zone: goal.zone, next: nz, side: 'out' };
   const w = routeWarp(data, s, goal.zone)?.warp || (here.warps || []).find((x) => x.to === nz);
   const side = w ? (data.zones[nz].interior ? 'through the door' : warpSide(here, w)) : '';
-  return { text: `Next: ${side === 'through the door' ? 'go through the door' : `head ${side}`} to ${midName(data.zones[nz].name)}.`, zone: goal.zone, next: nz, side };
+  return { text: HEAD_TO[side || 'through the door'](midName(data.zones[nz].name)), zone: goal.zone, next: nz, side };
 }

@@ -13,6 +13,7 @@ import { lookOf, durationOf, drawMoveFx, MARK_SECONDS, WINDUP } from './moveFx.j
 import { tinted } from './anim.js';
 import { termRuns } from './glossary.js';
 import { moveFacts, drawNote } from './moveInfo.js';
+import { tl } from '../core/i18n.js';
 
 const EVOLVE_SECONDS = 2.6;
 
@@ -22,17 +23,27 @@ const MAIN = ['FIGHT', 'BAG', 'ASTRALS', 'RUN'];
 const ctxOf = (game) => ({ data: game.data, state: game.engine.state });
 /** per-side pose timers, all counting down to 0 (faint counts up): lunge (recoil as it fires), hit, dash (into the
  *  target, dashLen long), crouch (winding up), knock (knocked back), shrug, flip (upside down), ghost (afterimages), gest (a hop) */
-const POSE = () => ({ lunge: 0, hit: 0, faint: 0, dash: 0, dashLen: 0.3, crouch: 0, knock: 0, shrug: 0, flip: 0, ghost: 0, gest: 0 });
-const TIMERS = ['dash', 'crouch', 'knock', 'shrug', 'flip', 'ghost', 'gest'];
+const POSE = () => ({ lunge: 0, hit: 0, faint: 0, dash: 0, dashLen: 0.3, crouch: 0, knock: 0, shrug: 0, flip: 0, ghost: 0, gest: 0, summon: 0, owned: true, recall: 0 });
+const TIMERS = ['dash', 'crouch', 'knock', 'shrug', 'flip', 'ghost', 'gest', 'summon'];
+// coming in and going back: an Astral someone calls (yours, a trainer's) arrives as a point of light from its owner's
+// side that bursts open, the creature growing out of it white and taking its colours; a wild one shimmers out of the
+// haze. Called back, it goes white, folds into a point and streaks back to its owner. (seconds; summon counts down,
+// recall is how far along it is, 0 to 1)
+export const SUMMON = 0.7, RECALL = 0.5;
+const ORB = 0.35;                                                          // the share of a summon the point of light flies
+const ORIGIN = { p: { x: -12, y: 150 }, e: { x: W + 12, y: -12 } };       // where each side's owner stands, off screen
+const GLOW = { p: '#5FF4FF', e: '#FF4FA8' };
+const ease = (k) => 1 - (1 - Math.max(0, Math.min(1, k))) ** 2;
+const quarter = (k) => Math.ceil(Math.max(0, Math.min(1, k)) * 4) / 4;   // white silhouettes in four steps (cached copies)
 const KNOCK = 0.4, SHRUG = 0.5, CHART_FLIP = 0.9;
 
 export const battleView = {
   on: false, queue: [], cur: null, disp: { p: null, e: null }, t: 0, intro: 0, outro: 0,
   menu: 'main', cursor: { main: 0, moves: 0, bag: 0, party: 0, learn: 0, shift: 0 }, pendingItem: null, learn: null,
-  fx: { p: POSE(), e: POSE() }, shake: 0, flash: 0, capture: null, info: null, loop: { p: false, e: false },
+  fx: { p: POSE(), e: POSE() }, hidden: { p: false, e: false }, opening: null, shake: 0, flash: 0, capture: null, info: null, loop: { p: false, e: false },
 
   effects: [], portrait: 0, move: null, pending: null, chartFlip: 0,
-  reset() { this.on = false; this.queue = []; this.cur = null; this.effects = []; this.portrait = 0; this.move = null; this.pending = null; this.chartFlip = 0; },
+  reset() { this.hidden = { p: false, e: false }; this.opening = null; this.on = false; this.queue = []; this.cur = null; this.effects = []; this.portrait = 0; this.move = null; this.pending = null; this.chartFlip = 0; },
   busy() { return this.on; },
 
   onEvent(game, e) {
@@ -44,13 +55,39 @@ export const battleView = {
       this.fx = { p: POSE(), e: POSE() }; this.move = null; this.pending = null; this.chartFlip = 0;
       this.loop = { p: false, e: false };
       this.moment = null; this.momentShown = false;
+      // nobody is on the field yet: the foe comes in with its first line ("A wild X drifts out", "Y manifests X"), yours
+      // with "Go, X!", the last line of the opening
+      this.hidden = { p: true, e: true };
+      this.opening = { n: 0, enemyAt: e.kind === 'wild' ? 0 : 1, last: e.kind === 'wild' ? 1 : 2 };
       game.audio?.sfx('encounter');
       const tr = game.engine.state.battle?.trainerId && game.data.trainers[game.engine.state.battle.trainerId];
       if (tr?.stage === 'yurt') game.audio?.sfx('gong');                       // Svetlana's battles start with a gong
       return;
     }
     if (this.on && e.type === 'AUDIO_CUE' && e.after) { this.worldTrack = e; return; }   // the world's music: kept for the end of the screen
-    if (this.on) this.queue.push(e);
+    if (!this.on) return;
+    const o = this.opening;
+    if (o && e.type === 'MESSAGE') {
+      if (o.n === o.enemyAt) this.queue.push({ type: 'ENTER', side: 'e', owned: this.info?.kind !== 'wild' });
+      if (o.n === o.last) { this.queue.push({ type: 'ENTER', side: 'p', owned: true }); this.opening = null; }
+      o.n++;
+    }
+    this.queue.push(e);
+  },
+
+  /** an Astral comes onto the field (it plays alongside the line that names it) */
+  summon(game, side, owned) {
+    this.hidden[side] = false;
+    const f = this.fx[side];
+    f.owned = owned; f.recall = 0; f.summon = game.settings.reducedMotion ? 0 : SUMMON;
+    game.audio?.sfx(owned ? 'summon' : 'manifest');
+  },
+
+  /** the Astral on that side is swapped: the new one is called in (after the old one has gone back, see recall) */
+  switchIn(game, side, mon) {
+    this.disp[side] = { ...mon }; this.fx[side] = POSE(); this.loop[side] = false;
+    this.summon(game, side, true);
+    this.cur = { type: 'wait', t: game.settings.reducedMotion ? 0.25 : SUMMON * 0.7 };
   },
 
   /** the battle is over on screen: its music fades out as the screen goes dark, and the world's comes in after */
@@ -87,7 +124,16 @@ export const battleView = {
       case 'MOVE_HIT': this.hitMove(game, e); break;
       case 'STAT_STAGE': this.mark('arrow', { side: e.targetId, delta: e.delta ?? 0 }); this.next(game); break;
       case 'FIELD_EFFECT': if (e.effect === 'INVERT_TYPE_CHART') this.chartFlip = e.turns > 0 ? CHART_FLIP : CHART_FLIP * 0.6; this.next(game); break;
-      case 'SWITCH_IN': d[e.side] = { ...e.mon }; this.fx[e.side] = POSE(); this.loop[e.side] = false; this.cur = { type: 'wait', t: 0.25 }; break;
+      case 'SWITCH_IN': {
+        // one still standing goes back first; one that fainted is already gone
+        const gone = !d[e.side] || this.fx[e.side].faint > 0 || this.hidden?.[e.side];
+        if (!gone && !game.settings.reducedMotion) { this.cur = { type: 'recall', side: e.side, t: 0, mon: e.mon }; this.fx[e.side].recall = 0.001; game.audio?.sfx('recall'); }
+        else this.switchIn(game, e.side, e.mon);
+        break;
+      }
+      case 'ENTER':                                            // the opening: the trainer's portrait goes before their Astral
+        if (e.side === 'e' && this.portrait > 0.5) { this.queue.unshift(e); this.cur = { type: 'wait', t: 0.05 }; break; }
+        this.summon(game, e.side, e.owned); this.next(game); break;
       case 'SYNC': d[e.side] = { ...d[e.side], ...e.mon }; this.next(game); break;
       case 'STATUS_APPLIED': this.mark('status', { side: e.targetId, status: e.status }); if (e.status === 'THOUGHT_LOOP') this.loop[e.targetId] = true; else d[e.targetId].status = e.status; game.audio?.sfx('status'); this.next(game); break;
       case 'STATUS_CLEARED': if (e.status === 'THOUGHT_LOOP') this.loop[e.targetId] = false; else d[e.targetId].status = null; this.next(game); break;
@@ -200,6 +246,11 @@ export const battleView = {
       c.t += dt * (press ? 3 : 1);
       if (c.t >= EVOLVE_SECONDS) { this.disp.p.speciesId = c.to; this.disp.p.name = c.name; this.flash = 0.7; game.audio?.sfx('evolve'); this.cur = null; }
     }
+    else if (c.type === 'recall') {
+      c.t += dt * (press ? 3 : 1);
+      this.fx[c.side].recall = Math.min(1, c.t / RECALL);
+      if (c.t >= RECALL) this.switchIn(game, c.side, c.mon);
+    }
     else if (c.type === 'capture') {
       this.capture.t += dt * (press ? 3 : 1);
       if (this.capture.t > 0.6 + this.capture.shakes * 0.55 + 0.3) { if (!this.capture.success) this.capture = null; this.cur = null; }
@@ -246,7 +297,7 @@ export const battleView = {
 
   sprite(game, g, side, x, y) {
     const d = this.disp[side], f = this.fx[side];
-    if (!d) return;
+    if (!d || this.hidden?.[side]) return;
     const img = game.images[`mon:${d.speciesId}`];
     if (!img) return;
     if (f.faint >= 1) return;
@@ -266,6 +317,20 @@ export const battleView = {
       return;
     }
     const { ox, oy, sy, lean, flip } = this.pose(game, side);
+    // coming in or going back: how big, how white, how solid, how much it shimmers
+    let sc = 1, white = 0, alpha = 1, haze = 0;
+    if (f.summon > 0 && !still) {
+      const k = 1 - f.summon / SUMMON;
+      if (f.owned) {
+        if (k < ORB) return;                                  // still a point of light on its way (entranceFx)
+        sc = 0.15 + 0.85 * ease((k - ORB) / 0.4); white = quarter(1 - (k - 0.75) / 0.25);
+      } else { alpha = Math.min(1, k / 0.6); haze = (1 - k) * 7; }
+    }
+    if (f.recall > 0 && !still) {
+      const k = f.recall;
+      if (k >= 0.8) return;                                   // gone: a streak of light home (entranceFx)
+      white = quarter(k / 0.3); sc = k < 0.3 ? 1 : 1 - ease((k - 0.3) / 0.5) * 0.95;
+    }
     // afterimages: two faded copies either side (Sidestep)
     if (f.ghost > 0 && !still) {
       g.save(); g.globalAlpha = 0.35 * Math.min(1, f.ghost * 3);
@@ -273,15 +338,53 @@ export const battleView = {
       g.restore();
     }
     const hurt = f.hit > 0, fainting = f.faint > 0;
-    const src = hurt ? tinted(img, frame * 64, 0, 64, 64, '#FF3040', 0.45) : fainting ? tinted(img, frame * 64, 0, 64, 64, '#6C6A78', 0.55) : null;
+    const src = white > 0 ? tinted(img, frame * 64, 0, 64, 64, '#FFFFFF', white) : hurt ? tinted(img, frame * 64, 0, 64, 64, '#FF3040', 0.45) : fainting ? tinted(img, frame * 64, 0, 64, 64, '#6C6A78', 0.55) : null;
     g.save();
     g.translate(x + ox + size / 2, y + oy + size);
+    if (sc !== 1) { g.translate(0, -size / 2); g.scale(sc, sc); g.translate(0, size / 2); }   // grows from (folds to) its middle
+    if (alpha < 1) g.globalAlpha = alpha;
     if (lean) g.transform(1, 0, -lean, 1, 0, 0);
     if (sy !== 1) g.scale(1, sy);
     if (flip) { g.translate(0, -size / 2); g.scale(1, -1); g.translate(0, size / 2); }
-    if (src) g.drawImage(src, 0, 0, 64, 64 - (side === 'p' ? 0 : sink), -size / 2, -size + sink, size, size - sink);
+    if (haze > 0) for (let r = 0; r < 64; r += 4) g.drawImage(img, frame * 64, r, 64, 4, -size / 2 + Math.round(Math.sin(r * 0.4 + this.t * 20) * haze), -size + r, size, 4);   // out of the haze, line by line
+    else if (src) g.drawImage(src, 0, 0, 64, 64 - (side === 'p' ? 0 : sink), -size / 2, -size + sink, size, size - sink);
     else g.drawImage(img, frame * 64, 0, 64, 64 - (side === 'p' ? 0 : sink), -size / 2, -size + sink * (size / 64), size, size - sink * (size / 64));
     g.restore();
+  },
+
+  /** the light of an Astral coming in or going back: the point of light flying in from its owner and bursting open,
+   *  the haze a wild one comes out of, sparks folding in and the streak home when it is called back */
+  entranceFx(game, g, side) {
+    const f = this.fx[side], at = SPOT[side], from = ORIGIN[side], col = GLOW[side];
+    if (game.settings.reducedMotion || this.hidden?.[side] || !(f.summon > 0 || f.recall > 0)) return;
+    const dot = (x, y, r, c, a) => { g.globalAlpha = Math.max(0, Math.min(1, a)); g.fillStyle = c; g.fillRect(Math.round(x - r), Math.round(y - r), r * 2, r * 2); };
+    const arc = (p, a, b) => ({ x: a.x + (b.x - a.x) * p, y: a.y + (b.y - a.y) * p - Math.sin(p * Math.PI) * 30 });
+    const orb = (p, a, b) => {
+      for (let i = 4; i >= 1; i--) { const q = arc(Math.max(0, p - i * 0.07), a, b); dot(q.x, q.y, 1, i % 2 ? col : '#FFFFFF', 0.7 - i * 0.12); }   // its trail
+      const q = arc(p, a, b);
+      g.globalAlpha = 0.35; g.fillStyle = col; g.beginPath(); g.ellipse(q.x, q.y, 6, 6, 0, 0, 7); g.fill();
+      dot(q.x, q.y, 2, '#FFFFFF', 1);
+    };
+    if (f.summon > 0) {
+      const k = 1 - f.summon / SUMMON;
+      if (f.owned) {
+        if (k < ORB) orb(ease(k / ORB), from, at);
+        else if (k < ORB + 0.4) {                             // it bursts open: a ring and eight sparks
+          const h = (k - ORB) / 0.4;
+          g.globalAlpha = 1 - h; g.strokeStyle = col; g.lineWidth = 2; g.beginPath(); g.ellipse(at.x, at.y, 4 + h * 34, 3 + h * 24, 0, 0, 7); g.stroke();
+          for (let i = 0; i < 8; i++) { const a = (i / 8) * Math.PI * 2; dot(at.x + Math.cos(a) * h * 30, at.y + Math.sin(a) * h * 22, 1, i % 2 ? '#FFFFFF' : col, 1 - h); }
+        }
+      } else for (let i = 0; i < 8; i++) {                    // a wild one: motes of haze rising round it as it firms up
+        const p = (k * 1.4 + i / 8) % 1;
+        dot(at.x - 26 + ((i * 23) % 52), at.y + 24 - p * 44, 1, i % 2 ? '#EADDFB' : col, (1 - k) * (1 - p));
+      }
+    }
+    if (f.recall > 0) {
+      const k = f.recall;
+      if (k > 0.25 && k < 0.85) { const h = (k - 0.25) / 0.6; for (let i = 0; i < 8; i++) { const a = (i / 8) * Math.PI * 2 + h * 2; dot(at.x + Math.cos(a) * (1 - h) * 30, at.y + Math.sin(a) * (1 - h) * 22, 1, i % 2 ? '#FFFFFF' : col, h); } }
+      if (k >= 0.7) orb(ease((k - 0.7) / 0.3), at, from);
+    }
+    g.globalAlpha = 1;
   },
 
   hud(game, g, side, x, y) {
@@ -290,11 +393,11 @@ export const battleView = {
     const w = 128, h = side === 'p' ? 38 : 30;
     panel(g, x, y, w, h, { bg: C.cream, accent: side === 'p' ? C.cyan : C.magenta });
     drawText(g, d.name, x + 6, y + 5, { color: C.ink });
-    drawText(g, `Lv${d.level}`, x + w - 6, y + 5, { color: C.ink, align: 'right' });
+    drawText(g, tl('Lv{0}', d.level), x + w - 6, y + 5, { color: C.ink, align: 'right' });
     // serotonin "lava lamp": a bar with slow blobs
     const ratio = d.maxHp ? d.hp / d.maxHp : 0;
     const col = ratio > 0.5 ? '#FF4FA8' : ratio > 0.2 ? '#FF9A2A' : '#E0303C';
-    drawText(g, 'SER', x + 6, y + 16, { color: C.grey });
+    drawText(g, tl('SER'), x + 6, y + 16, { color: C.grey });
     bar(g, x + 26, y + 15, w - 34, 8, ratio, col);
     const fill = Math.round((w - 36) * Math.max(0, Math.min(1, ratio)));
     if (!game.settings.reducedMotion) for (let i = 0; i < 3; i++) {
@@ -317,9 +420,9 @@ export const battleView = {
     const sy = side === 'p' ? ty : y + h;
     for (const tg of [tag, this.loop[side] ? STATUS_TAG.THOUGHT_LOOP : null]) {
       if (!tg) continue;
-      const tw = textWidth(tg[0]) + 6;
+      const tag0 = tl(tg[0]), tw = textWidth(tag0) + 6;
       g.fillStyle = C.ink; g.fillRect(sx, sy, tw, 10); g.fillStyle = tg[1]; g.fillRect(sx + 1, sy + 1, tw - 2, 8);
-      drawText(g, tg[0], sx + 3, sy + 1, { color: C.ink });
+      drawText(g, tag0, sx + 3, sy + 1, { color: C.ink });
       sx += tw + 2;
     }
   },
@@ -357,7 +460,7 @@ export const battleView = {
       g.beginPath(); g.moveTo(W / 2, 60); g.lineTo(W / 2 + Math.cos(a0) * 300, 60 + Math.sin(a0) * 300); g.lineTo(W / 2 + Math.cos(a1) * 300, 60 + Math.sin(a1) * 300); g.fill();
     }
     g.restore();
-    if (b && b.invert > 0) { g.fillStyle = 'rgba(255,255,255,0.10)'; g.fillRect(0, 0, W, BOX_Y); drawText(g, 'CHART INVERTED', W / 2, 3, { color: C.yellow, align: 'center', shadow: C.ink }); }
+    if (b && b.invert > 0) { g.fillStyle = 'rgba(255,255,255,0.10)'; g.fillRect(0, 0, W, BOX_Y); drawText(g, tl('CHART INVERTED'), W / 2, 3, { color: C.yellow, align: 'center', shadow: C.ink }); }
     // platforms
     const plat = (x, y, rx, ry) => { g.fillStyle = night ? '#2E1750' : '#C9A878'; g.beginPath(); g.ellipse(x, y, rx, ry, 0, 0, 7); g.fill(); g.fillStyle = night ? '#4A2A7A' : '#E0C494'; g.beginPath(); g.ellipse(x, y - 2, rx - 3, ry - 2, 0, 0, 7); g.fill(); };
     plat(232, 80, 46, 10); plat(84, 132, 62, 12);
@@ -374,12 +477,13 @@ export const battleView = {
     this.background(game, g);
     if (this.portrait <= 0.5) this.sprite(game, g, 'e', 200, 20);
     this.sprite(game, g, 'p', 52, 70);
+    this.entranceFx(game, g, 'e'); this.entranceFx(game, g, 'p');
     this.drawPortrait(game, g);
     // the boss's moment: one word, big, over the field
     if (this.moment) {
       const k = this.moment.t, a = Math.max(0, Math.min(1, k * 6, (1.6 - k) * 3)), rise = fxo.still ? 0 : Math.round(Math.max(0, 0.25 - k) * 24);
       g.save(); g.globalAlpha = a; g.scale(2, 2);
-      drawText(g, this.moment.word, W / 4, 10 + rise, { color: C.yellow, align: 'center', shadow: C.magenta });
+      drawText(g, tl(this.moment.word), W / 4, 10 + rise, { color: C.yellow, align: 'center', shadow: C.magenta });
       g.restore();
     }
     for (const f of this.effects) drawMoveFx(g, f, fxo);
@@ -397,7 +501,7 @@ export const battleView = {
       c.lines.slice(0, 3).forEach((line, i) => { drawText(g, line.slice(0, Math.max(0, left)), 12, BOX_Y + 7 + i * 12, { color: C.ink, scramble: game.fxLevel() > 0.9 ? 0.1 : 0, t: this.t, runs: termRuns(line, game.data) }); left -= line.length; });
       // waiting for A: a blinking arrow, as in the dialogue box
       if (c.read && c.shown >= c.lines.join('').length && Math.floor(this.t * 2.5) % 2 === 0) { g.fillStyle = C.magenta; g.fillRect(W - 18, BOX_Y + 36, 7, 2); g.fillRect(W - 17, BOX_Y + 38, 5, 1); g.fillRect(W - 16, BOX_Y + 39, 3, 1); g.fillRect(W - 15, BOX_Y + 40, 1, 1); }
-    } else if (!c && b && this.intro <= 0) this.menus(game, g, b);
+    } else if (!c && b && this.intro <= 0) { if (!this.queue.length) this.hidden = { p: false, e: false }; this.menus(game, g, b); }
 
     if (this.intro > 0) {   // iris-style bars in
       const k = this.intro; g.fillStyle = C.void;
@@ -412,7 +516,7 @@ export const battleView = {
   drawLog(game, g) {
     const lines = game.log.flatMap((l) => wrap(l, W - 28)).slice(-10);
     panel(g, 4, 4, W - 8, BOX_Y - 8, { bg: '#FFF4E4', accent: C.cyan });
-    drawText(g, 'LOG  (MENU to close)', 10, 8, { color: C.purple });
+    drawText(g, tl('LOG  (MENU to close)'), 10, 8, { color: C.purple });
     lines.forEach((ln, i) => drawText(g, ln, 10, 19 + i * 10, { color: C.ink }));
   },
 
@@ -470,11 +574,12 @@ export const battleView = {
     const d = game.data, x = 4, y = 4, w = W - 8, h = BOX_Y - 8;
     panel(g, x, y, w, h, { bg: '#FFF4E4', accent: C.purple });
     const nf = moveFacts(d, mv, mon);
-    drawText(g, 'New', x + 6, y + 5, { color: C.magenta });
-    drawNote(g, { title: nf.title, type: nf.type, numbers: nf.numbers, text: '' }, x + 6 + textWidth('New') + 6, y + 5, w - 18 - textWidth('New'));
+    const newTxt = tl('New');
+    drawText(g, newTxt, x + 6, y + 5, { color: C.magenta });
+    drawNote(g, { title: nf.title, type: nf.type, numbers: nf.numbers, text: '' }, x + 6 + textWidth(newTxt) + 6, y + 5, w - 18 - textWidth(newTxt));
     g.fillStyle = '#E8D8C0'; g.fillRect(x + 6, y + 30, w - 12, 1);
     const sf = moveFacts(d, shown, mon);
-    drawNote(g, shown === mv ? { ...sf, title: `${sf.title}: what it does` } : sf, x + 6, y + 35, w - 12, h - 37, { titleColor: shown === mv ? C.magenta : C.purple });
+    drawNote(g, shown === mv ? { ...sf, title: tl('{0}: what it does', sf.title) } : sf, x + 6, y + 35, w - 12, h - 37, { titleColor: shown === mv ? C.magenta : C.purple });
   },
 
   // ------------------------------------------------------------ menus
@@ -494,22 +599,22 @@ export const battleView = {
       // forgetting a move asks first, No by default; No goes back to the choice, until you skip or replace one
       if (this.forget !== null && this.forget !== undefined && lm.moves[this.forget]) {
         const old = d.moves[lm.moves[this.forget]];
-        let q = `Forget ${old.name} for ${mv.name}?`;
-        if (textWidth(q) > W - 24) q = `Forget ${moveName(old, 0)} for ${moveName(mv, 0)}?`;
+        let q = tl('Forget {0} for {1}?', old.name, mv.name);
+        if (textWidth(q) > W - 24) q = tl('Forget {0} for {1}?', moveName(old, 0), moveName(mv, 0));
         drawText(g, q, 12, BOX_Y + 4, { color: C.ink });
-        const c = list(game, g, [{ label: 'No, keep it' }, { label: `Yes, forget ${moveName(old, 150)}`, color: C.red }], 8, BOX_Y + 16, W - 16, cur.forget || 0, { rowH: 12 });
+        const c = list(game, g, [{ label: tl('No, keep it') }, { label: tl('Yes, forget {0}', moveName(old, 150)), color: C.red }], 8, BOX_Y + 16, W - 16, cur.forget || 0, { rowH: 12 });
         cur.forget = c.cursor;
         if (c.chosen === 1) { const slot = this.forget; this.forget = null; this.learn = null; game.send({ type: 'LEARN_MOVE', slot }); }
         else if (c.chosen === 0 || input.pressed('b')) { this.forget = null; game.audio?.sfx('back'); }
         return;
       }
-      let ask = `${L.name} can learn ${mv.name}. Forget which move?`;
-      if (textWidth(ask) > W - 24) ask = `${L.name} can learn ${moveName(mv, 0)}. Forget which?`;
-      if (textWidth(ask) > W - 24) ask = `Learn ${moveName(mv, 0)}? Forget which move?`;
+      let ask = tl('{0} can learn {1}. Forget which move?', L.name, mv.name);
+      if (textWidth(ask) > W - 24) ask = tl('{0} can learn {1}. Forget which?', L.name, moveName(mv, 0));
+      if (textWidth(ask) > W - 24) ask = tl('Learn {0}? Forget which move?', moveName(mv, 0));
       drawText(g, ask, 12, BOX_Y + 4, { color: C.ink });
       // two columns of 152 px: name, then the type on the right
-      const items = lm.moves.map((id) => ({ label: moveName(d.moves[id], 108), right: d.moves[id].type.slice(0, 4), rightColor: C.grey }))
-        .concat([{ label: `Skip ${moveName(mv, 130 - textWidth('Skip '))}`, color: C.red }]);
+      const items = lm.moves.map((id) => ({ label: moveName(d.moves[id], 108), right: tl(d.moves[id].type).slice(0, 4), rightColor: C.grey }))
+        .concat([{ label: tl('Skip {0}', moveName(mv, 130 - textWidth(tl('Skip {0}', '')))) , color: C.red }]);
       const r = list(game, g, items, 8, BOX_Y + 14, W - 16, cur.learn, { cols: 2, rowH: 10 });
       cur.learn = r.cursor;
       if (r.chosen >= 0 && r.chosen < lm.moves.length) { this.forget = r.chosen; cur.forget = 0; game.audio?.sfx('select'); }
@@ -521,11 +626,11 @@ export const battleView = {
 
     // Shift style: the trainer's next Astral is coming; swap yours for free, or keep going
     if (b.phase === 'PHASE_SHIFT_OFFER' && this.menu !== 'party') {
-      const next = b.enemy[b.nextEi], who = d.trainers[b.trainerId]?.name || 'They';
-      const lines = wrap(`${who} is about to manifest ${nameOf(d, next)}. Swap ${nameOf(d, mon)}?`, 136);
+      const next = b.enemy[b.nextEi], who = d.trainers[b.trainerId]?.name || tl('They');
+      const lines = wrap(tl('{0} is about to manifest {1}. Swap {2}?', who, nameOf(d, next), nameOf(d, mon)), 136);
       lines.slice(0, 3).forEach((ln, i) => drawText(g, ln, 12, BOX_Y + 6 + i * 11, { color: C.ink }));
       panel(g, 150, BOX_Y - 2, W - 153, BOX_H + 2, { bg: '#FFF4E4', accent: C.magenta });
-      const r = list(game, g, [{ label: 'Swap Astral' }, { label: 'Keep going' }], 154, BOX_Y + 4, W - 160, cur.shift || 0, { rowH: 18 });
+      const r = list(game, g, [{ label: tl('Swap Astral') }, { label: tl('Keep going') }], 154, BOX_Y + 4, W - 160, cur.shift || 0, { rowH: 18 });
       cur.shift = r.cursor;
       if (r.chosen === 0) { this.menu = 'party'; cur.party = s.party.findIndex((m, i) => i !== b.pi && m.hp > 0); }
       else if (r.chosen === 1 || input.pressed('b')) { cur.shift = 0; send({ type: 'BATTLE_ACTION', action: 'STAY' }); }
@@ -533,10 +638,10 @@ export const battleView = {
     }
 
     if (this.menu === 'main') {
-      drawText(g, `What will`, 12, BOX_Y + 8, { color: C.ink });
-      drawText(g, `${nameOf(d, mon)} do?`, 12, BOX_Y + 20, { color: C.ink });
+      drawText(g, tl('What will'), 12, BOX_Y + 8, { color: C.ink });
+      drawText(g, tl('{0} do?', nameOf(d, mon)), 12, BOX_Y + 20, { color: C.ink });
       panel(g, 150, BOX_Y - 2, W - 153, BOX_H + 2, { bg: '#FFF4E4', accent: C.magenta });
-      const r = list(game, g, MAIN.map((m) => ({ label: m, disabled: m === 'RUN' && b.kind !== 'wild' })), 154, BOX_Y + 4, W - 160, cur.main, { cols: 2, rowH: 18 });
+      const r = list(game, g, MAIN.map((m) => ({ label: tl(m), disabled: m === 'RUN' && b.kind !== 'wild' })), 154, BOX_Y + 4, W - 160, cur.main, { cols: 2, rowH: 18 });
       cur.main = r.cursor;
       if (r.chosen === 0) this.menu = 'moves';
       else if (r.chosen === 1) this.menu = 'bag';
@@ -552,20 +657,20 @@ export const battleView = {
       if (m) {
         panel(g, 218, BOX_Y - 2, W - 221, BOX_H + 2, { bg: '#FFF4E4', accent: TYPE_COLORS[m.type] || C.magenta });
         typeTag(g, m.type, 223, BOX_Y + 4);
-        drawText(g, m.category === 'STATUS' ? 'Status' : `Pow ${m.power}`, 223, BOX_Y + 17, { color: C.ink });
+        drawText(g, m.category === 'STATUS' ? tl('Status') : tl('Pow {0}', m.power), 223, BOX_Y + 17, { color: C.ink });
         const cost = moveCost(ctxOf(game), mon, m);
-        drawText(g, `Water ${cost}`, W - 10, BOX_Y + 17, { color: mon.hyd >= cost ? '#2A7A9A' : C.red, align: 'right' });
+        drawText(g, tl('Water {0}', cost), W - 10, BOX_Y + 17, { color: mon.hyd >= cost ? '#2A7A9A' : C.red, align: 'right' });
         const foe = d.dex[this.disp.e.speciesId];
         if (m.power > 0 && m.type !== 'NORMAL' && s.dex.seen[foe.id]) {
           let k = 1; for (const t of foe.types) { let v = d.typeChart.chart[m.type]?.[t] ?? 1; if (b.invert > 0 && v !== 1) v = 1 / v; k *= v; }
-          if (k !== 1) drawText(g, k > 1 ? 'resonates' : 'weak', 223, BOX_Y + 29, { color: k > 1 ? '#2A8A4A' : C.red });
+          if (k !== 1) drawText(g, k > 1 ? tl('resonates') : tl('weak'), 223, BOX_Y + 29, { color: k > 1 ? '#2A8A4A' : C.red });
         }
       }
       if (r.chosen >= 0) send({ type: 'BATTLE_ACTION', action: 'FIGHT', payloadId: mon.moves[r.chosen] });
       else if (input.pressed('b')) back();
     } else if (this.menu === 'bag') {
       const ids = Object.keys(s.bag).filter((id) => s.bag[id] > 0 && ['BAGGING', 'RECOVERY'].includes(d.items[id].category));
-      if (!ids.length) { drawText(g, 'Nothing useful in the Stash Tin.', 12, BOX_Y + 8, { color: C.ink }); if (input.pressed('b') || input.pressed('a') || input.anyTap()) back(); return; }
+      if (!ids.length) { drawText(g, tl('Nothing useful in the Stash Tin.'), 12, BOX_Y + 8, { color: C.ink }); if (input.pressed('b') || input.pressed('a') || input.anyTap()) back(); return; }
       const r = list(game, g, ids.map((id) => ({ label: d.items[id].name, right: `x${s.bag[id]}` })), 8, BOX_Y + 3, 150, cur.bag, { rowH: 13, maxRows: 3 });
       cur.bag = r.cursor;
       const it = d.items[ids[cur.bag]];
@@ -578,13 +683,13 @@ export const battleView = {
     } else if (this.menu === 'party') {
       const items = s.party.map((m, i) => {
         const st = statsOf(d, m);
-        return { label: `${nameOf(d, m)} Lv${m.level}`, right: m.hp > 0 ? `${m.hp}/${st.maxHp}` : 'OUT', rightColor: m.hp > 0 ? C.ink : C.red, disabled: this.pendingItem ? false : (m.hp <= 0 || i === b.pi) };
+        return { label: tl('{0} Lv{1}', nameOf(d, m), m.level), right: m.hp > 0 ? `${m.hp}/${st.maxHp}` : tl('OUT'), rightColor: m.hp > 0 ? C.ink : C.red, disabled: this.pendingItem ? false : (m.hp <= 0 || i === b.pi) };
       });
       const r = list(game, g, items, 5, BOX_Y + 3, W - 10, cur.party, { cols: 2, rowH: 14 });   // 155 px columns: longest name + Lv + HP
       cur.party = r.cursor;
       // on the left, over your Astral's back: the right side holds your Serotonin panel
-      if (forced && !this.pendingItem) drawText(g, 'Choose who goes next', 10, BOX_Y - 12, { color: C.yellow, shadow: C.ink });
-      if (b.phase === 'PHASE_SHIFT_OFFER') drawText(g, 'Swap in who?', 10, BOX_Y - 12, { color: C.yellow, shadow: C.ink });
+      if (forced && !this.pendingItem) drawText(g, tl('Choose who goes next'), 10, BOX_Y - 12, { color: C.yellow, shadow: C.ink });
+      if (b.phase === 'PHASE_SHIFT_OFFER') drawText(g, tl('Swap in who?'), 10, BOX_Y - 12, { color: C.yellow, shadow: C.ink });
       if (r.chosen >= 0) {
         if (this.pendingItem) send({ type: 'BATTLE_ACTION', action: 'BAG', payloadId: this.pendingItem, target: r.chosen });
         else send({ type: 'BATTLE_ACTION', action: 'SWITCH', payloadId: r.chosen });

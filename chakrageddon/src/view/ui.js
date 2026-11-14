@@ -1,5 +1,6 @@
 // Small immediate-mode UI helpers drawn on the 320x180 back buffer.
 import { drawText, textWidth, wrap, LINE_H, textProbe } from './font.js';
+import { tl } from '../core/i18n.js';
 
 export const C = {
   void: '#0B0314', magenta: '#FF007F', acid: '#00FF66', cyan: '#00F0FF', purple: '#8F00FF',
@@ -30,11 +31,16 @@ export function list(game, g, items, x, y, w, cursor, opts = {}) {
   if (n === 0) return { cursor: 0, chosen };
   cursor = Math.max(0, Math.min(n - 1, cursor));
   if (!opts.passive) {
-    if (input.pressed('down')) cursor = Math.min(n - 1, cursor + cols);
-    if (input.pressed('up')) cursor = Math.max(0, cursor - cols);
+    // the cursor wraps: down off the last row comes back in at the top of that column, up off the first row lands on
+    // the bottom; in a grid, left and right wrap round the row
+    const lastRow = Math.floor((n - 1) / cols), row = Math.floor(cursor / cols), col = cursor % cols;
+    const at = (r) => Math.min(n - 1, r * cols + col);
+    if (input.pressed('down')) cursor = row < lastRow ? at(row + 1) : col;
+    if (input.pressed('up')) cursor = row > 0 ? at(row - 1) : at(lastRow);
     if (cols > 1) {
-      if (input.pressed('right') && cursor % cols < cols - 1 && cursor + 1 < n) cursor++;
-      if (input.pressed('left') && cursor % cols > 0) cursor--;
+      const first = row * cols, last = Math.min(n - 1, first + cols - 1);
+      if (input.pressed('right')) cursor = cursor < last ? cursor + 1 : first;
+      if (input.pressed('left')) cursor = cursor > first ? cursor - 1 : last;
     }
     if (input.pressed('a')) chosen = cursor;
   }
@@ -81,7 +87,7 @@ export function bar(g, x, y, w, h, ratio, color, bg = '#2A1A2E') {
 }
 
 export function typeTag(g, type, x, y) {
-  const label = type.slice(0, 5);
+  const label = tl(type).slice(0, 5);
   const w = textWidth(label) + 6;
   g.fillStyle = C.ink; g.fillRect(x, y, w, 10);
   g.fillStyle = TYPE_COLORS[type] || C.cream; g.fillRect(x + 1, y + 1, w - 2, 8);
