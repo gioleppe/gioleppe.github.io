@@ -1054,23 +1054,27 @@
     "sprite": "sergeant",
     "boss": true,
     "setFlag": "beat_sergeant",
-    "reward": 1800,
+    "reward": 3400,
     "party": [
       {
         "species": "bribe_asaurus",
-        "level": 24
+        "level": 33
       },
       {
         "species": "sirenowl",
-        "level": 25
+        "level": 34
       },
       {
         "species": "dengoth",
-        "level": 25
+        "level": 34
+      },
+      {
+        "species": "shadowcop",
+        "level": 34
       },
       {
         "species": "bribe_asaurus",
-        "level": 26
+        "level": 35
       }
     ],
     "intro": [
@@ -1590,7 +1594,7 @@
       "The others move your body. I only want your mind. Hold on to it if you can."
     ],
     "defeat": [
-      "A clean resolve. The Council is beyond. But there is somebody in the doorway. He has been there a while."
+      "A clean resolve. The Council is beyond. But there is somebody on the last stair. He has been there a while."
     ],
     "after": "...",
     "cutscene": "lakshmi",
@@ -1733,7 +1737,7 @@
       },
       {
         "species": "charagolem",
-        "level": 40
+        "level": 43
       }
     ],
     "intro": [

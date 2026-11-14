@@ -147,7 +147,7 @@ export class GameEngine {
       // the first time you get high at all, say once what it means and how to come down
       if (bandAfter > 0 && !s.flags.tip_high) {
         s.flags.tip_high = 1;
-        events.push({ type: 'MESSAGE', text: 'Tip: how high you are shows in the corner. Higher means more Vibes and rarer Astrals, but clumsier hands, harder hits and costlier whiteouts. Water, chai or a nap bring you down.' });
+        events.push({ type: 'MESSAGE', text: 'Tip: how high you are shows in the corner. Higher means more Vibes and rarer Astrals, but clumsier hands, harder hits and costlier whiteouts. Water, a nap in a Chai Tent or a long walk bring you down.' });
       }
     }
     // Quick Items, explained once: on the Sandy Trail, after your first battle (right after it, if it was there)

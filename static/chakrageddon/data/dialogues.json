@@ -321,7 +321,7 @@
     },
     {
       "s": "Prof. Banyan",
-      "t": "That blotter in your fanny pack takes you up fast. Water, chai or a nap bring you down. How high to fly is your call."
+      "t": "That blotter in your fanny pack takes you up fast. Water, a nap in a Chai Tent or a long walk bring you down. How high to fly is your call."
     },
     {
       "s": "Prof. Banyan",
@@ -628,7 +628,7 @@
   "chai_tent_gauntlet": [
     {
       "s": "Chai Mama",
-      "t": "You started the climb, beta. The Four are waiting upstairs, and they do not wait warm."
+      "t": "You started the climb, beta. The Four are waiting up on their terraces, and they do not wait warm."
     },
     {
       "s": "Chai Mama",
@@ -946,7 +946,7 @@
     },
     {
       "s": "Driver",
-      "t": "Press pass! Open your Fanny Pack and choose Tuk-tuk. I take you to any Chai Tent you have rested at."
+      "t": "Press pass! Open your Fanny Pack, go to the Map and pick any Chai Tent you have rested at. I take you there."
     }
   ],
   "sign_road": [
@@ -1429,7 +1429,7 @@
   ],
   "sign_temple": [
     {
-      "t": "MAINSTAGE TEMPLE. The Four-on-the-Floor hold the four doors. Rest at the tent first. There is no tent past the first door."
+      "t": "MAINSTAGE TEMPLE. Five terraces, one stair each, and one of the Four-on-the-Floor at the top of every stair. Rest at the tent first: once the climb starts, it will not have you back until you finish."
     }
   ],
   "temple_local": [
@@ -1455,7 +1455,7 @@
     },
     {
       "s": "Shaman Council",
-      "t": "So. The barefoot one. Eight wristbands, four doors, and one very well dressed ego, all behind you."
+      "t": "So. The barefoot one. Eight wristbands, four terraces, and one very well dressed ego, all behind you."
     },
     {
       "s": "Shaman Council",
@@ -1892,7 +1892,7 @@
     },
     {
       "s": "Water Auntie",
-      "t": "Halfway up the temple and you look like a raisin. Drink. All of you."
+      "t": "Up all those steps and you look like a raisin. Drink. All of you."
     },
     {
       "heal": true,
