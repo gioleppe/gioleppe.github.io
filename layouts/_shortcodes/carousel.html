@@ -1,0 +1,83 @@
+{{- /*
+  A swipeable image carousel. One image per line of the inner content, as `path | caption`;
+  the caption is also the image's alt text. Paths are page resources (the post's own folder)
+  or, failing that, plain URLs.
+
+  {{< carousel label="Screenshots" >}}
+  images/one.png | The first image
+  images/two.png | The second image
+  {{< /carousel >}}
+*/ -}}
+{{- $slides := slice }}
+{{- range split (trim .Inner " \r\n\t") "\n" }}
+  {{- $line := trim . " \r\t" }}
+  {{- if $line }}
+    {{- $parts := split $line "|" }}
+    {{- $caption := "" }}
+    {{- if gt (len $parts) 1 }}{{ $caption = trim (delimit (after 1 $parts) "|") " \t" }}{{ end }}
+    {{- $slides = $slides | append (dict "src" (trim (index $parts 0) " \t") "caption" $caption) }}
+  {{- end }}
+{{- end }}
+{{- $n := len $slides }}
+<div class="carousel" role="region" aria-roledescription="carousel" aria-label="{{ .Get "label" | default "Image carousel" }}">
+  <div class="carousel-viewport">
+    <div class="carousel-track" tabindex="0">
+      {{- range $i, $s := $slides }}
+      <figure class="carousel-slide" role="group" aria-roledescription="slide" aria-label="{{ add $i 1 }} of {{ $n }}">
+        {{- with $.Page.Resources.GetMatch $s.src }}
+        <img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="{{ $s.caption }}" loading="lazy" decoding="async">
+        {{- else }}
+        <img src="{{ $s.src }}" alt="{{ $s.caption }}" loading="lazy" decoding="async">
+        {{- end }}
+        {{- with $s.caption }}
+        <figcaption>{{ . }}</figcaption>
+        {{- end }}
+      </figure>
+      {{- end }}
+    </div>
+    {{- if gt $n 1 }}
+    <button type="button" class="carousel-btn carousel-prev" aria-label="Previous image">&#8249;</button>
+    <button type="button" class="carousel-btn carousel-next" aria-label="Next image">&#8250;</button>
+    {{- end }}
+  </div>
+  {{- if gt $n 1 }}
+  <div class="carousel-dots">
+    {{- range $i, $_ := $slides }}
+    <button type="button" aria-label="Show image {{ add $i 1 }}"></button>
+    {{- end }}
+  </div>
+  {{- end }}
+</div>
+{{- /* One copy per carousel: it is small, and data-ready stops a carousel being wired twice.
+     (Not deduplicated through .Page.Store, which survives `hugo server` rebuilds and drops the script.) */}}
+{{- if gt $n 1 }}
+<script>
+(() => {
+  const init = () => document.querySelectorAll('.carousel:not([data-ready])').forEach((c) => {
+    c.dataset.ready = '1';
+    const track = c.querySelector('.carousel-track');
+    const count = track.children.length;
+    const prev = c.querySelector('.carousel-prev'), next = c.querySelector('.carousel-next');
+    const dots = [...c.querySelectorAll('.carousel-dots button')];
+    const current = () => Math.round(track.scrollLeft / track.clientWidth);
+    const go = (i) => track.scrollTo({ left: Math.max(0, Math.min(count - 1, i)) * track.clientWidth });
+    const update = () => {
+      const i = current();
+      dots.forEach((d, j) => d.setAttribute('aria-current', j === i ? 'true' : 'false'));
+      if (prev) prev.disabled = i === 0;
+      if (next) next.disabled = i === count - 1;
+    };
+    prev?.addEventListener('click', () => go(current() - 1));
+    next?.addEventListener('click', () => go(current() + 1));
+    dots.forEach((d, i) => d.addEventListener('click', () => go(i)));
+    track.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
+    track.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); go(current() - 1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); go(current() + 1); }
+    });
+    update();
+  });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+</script>
+{{- end }}
