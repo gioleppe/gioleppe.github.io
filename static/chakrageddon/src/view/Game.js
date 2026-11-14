@@ -12,7 +12,7 @@ import { saveLanguage } from './assets.js';
 import { tl } from '../core/i18n.js';
 
 const SAVE_KEY = 'chakrageddon.save.v1', SETTINGS_KEY = 'chakrageddon.settings.v1';
-export const VERSION = '1.4.1';   // keep in step with package.json (tests/scenarios.test.mjs checks)
+export const VERSION = '1.5.0';   // keep in step with package.json (tests/scenarios.test.mjs checks)
 
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
@@ -208,7 +208,8 @@ export class Game {
         if (e.trackBpm && (e.start || !this.extra.battle?.on)) this.playCue(e);
       }
       if (e.type === 'ZONE_CHANGED') this.autosaveSoon = true;
-      if (e.type === 'MESSAGE' && !this.extra.battle?.on) this.say(e.text, e.kind);
+      if (e.type === 'MESSAGE' && (e.kind === 'trip' || e.kind === 'intox') && this.settings.tripNotes === false) this.remember(e.text);   // Options: Trip messages off (kept in the log)
+      else if (e.type === 'MESSAGE' && !this.extra.battle?.on) this.say(e.text, e.kind);
       else if (e.type === 'MESSAGE') this.remember(e.text);
       if (e.type === 'DIALOGUE_LINE') this.remember(e.text, e.speaker);
     }
@@ -220,6 +221,8 @@ export class Game {
   update(dt) {
     if (this.engine) { this.engine.options.shift = this.settings.battleStyle !== 'set'; this.engine.options.difficulty = this.settings.difficulty || 'normal'; }   // Options: Battle style (Shift by default), Difficulty
     this.t += dt;
+    // an Astral evolving outside a battle: the scene holds everything else (and the notices wait for it)
+    if (this.evolving()) { this.extra.evolve.update(this, dt); return; }
     if (this.toast && (this.toast.t -= dt) <= 0) {
       const next = this.toasts?.shift(), n = typeof next === 'string' ? { text: next } : next;
       this.toast = n ? { text: n.text, t: 1.6 + n.text.length * 0.035, kind: n.kind } : null;
@@ -233,7 +236,11 @@ export class Game {
     if (this.autosaveSoon && mode === 'OVERWORLD' && !this.busy()) { this.autosaveSoon = false; this.save(false); }
   }
 
+  /** the evolution scene is running on its own (not inside a battle, where the battle screen draws it) */
+  evolving() { const v = this.extra.evolve; return this.screen === 'play' && !!v?.on && v.owner === 'world'; }
+
   draw(g) {
+    if (this.evolving()) { this.extra.evolve.draw(this, g); return; }
     if (this.screen === 'title') this.drawTitle(g);
     else if (this.screen !== 'play') this.extra[this.screen]?.draw(this, g);
     else {

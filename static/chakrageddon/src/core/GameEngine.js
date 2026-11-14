@@ -106,7 +106,7 @@ export class GameEngine {
           const before = s.intox;
           s.intox = Math.min(1, s.intox + (R.dose ?? 0.12));
           events.push({ type: 'INTOXICATION_CHANGED', oldLevel: before, newLevel: s.intox });
-          events.push({ type: 'MESSAGE', text: s.flags.tip_bored ? tl('Bored, you lick a corner of the blotter.') : tl('Bored, you lick a corner of the blotter. Stand around with nothing to do and your hand finds it by itself. Keep moving.') });
+          events.push({ type: 'MESSAGE', text: s.flags.tip_bored ? tl('Bored, you lick a corner of the blotter.') : tl('Bored, you lick a corner of the blotter. Stand around with nothing to do and your hand finds it by itself. Keep moving.'), kind: 'trip' });
           s.flags.tip_bored = 1;
         }
         break;

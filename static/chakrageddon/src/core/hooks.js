@@ -51,8 +51,8 @@ export function handleExtra(ctx, cmd) {
         break;
       }
       const res = applyItem(ctx, item, s.party[cmd.target], {});
-      if (res.ok) { if (item.category !== 'KEY') s.bag[item.id]--; ctx.emit({ type: 'AUDIO_CUE', sfxId: item.effect?.dose ? 'status' : 'heal' }); }
-      say(ctx, res.text);
+      if (res.ok) { if (item.category !== 'KEY') s.bag[item.id]--; if (!item.effect?.evolve) ctx.emit({ type: 'AUDIO_CUE', sfxId: item.effect?.dose ? 'status' : 'heal' }); }   // an evolution brings its own music
+      ctx.emit({ type: 'MESSAGE', text: res.text, ...(res.trip && res.ok ? { kind: 'trip' } : {}) });   // licking the blotter: a trip notice (Options can hide them)
       break;
     }
     case 'HOLD_ITEM': {     // give a HELD item to a party member, or take theirs back (itemId null)
@@ -76,8 +76,8 @@ export function handleExtra(ctx, cmd) {
       say(ctx, mon.nickname ? tl('From now on, {0} answers to {1}.', d.dex[mon.speciesId].name, mon.nickname) : tl('{0} goes by its own name again.', d.dex[mon.speciesId].name));
       break;
     }
-    case 'SWAP_PARTY': {
-      if (s.mode !== 'FANNY_PACK_MENU') break;
+    case 'SWAP_PARTY': {     // the Fanny Pack's Astrals page, or the Quick menu's team list
+      if (s.mode !== 'FANNY_PACK_MENU' && s.mode !== 'OVERWORLD') break;
       const { a, b } = cmd;
       if (s.party[a] && s.party[b] && a !== b) [s.party[a], s.party[b]] = [s.party[b], s.party[a]];
       break;

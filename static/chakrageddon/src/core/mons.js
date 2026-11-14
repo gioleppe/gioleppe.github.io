@@ -155,8 +155,7 @@ export function evolve(ctx, mon, targetId) {
   const after = statsOf(ctx.data, mon);
   if (mon.hp > 0) mon.hp += after.maxHp - before.maxHp;
   ctx.state.dex.seen[targetId] = 1; ctx.state.dex.caught[targetId] = 1;
-  ctx.emit({ type: 'EVOLVED', uid: mon.uid, from, to: targetId, oldName, newName: ctx.data.dex[targetId].name });
-  ctx.emit({ type: 'AUDIO_CUE', sfxId: 'evolve' });
+  ctx.emit({ type: 'EVOLVED', uid: mon.uid, from, to: targetId, oldName, newName: ctx.data.dex[targetId].name });   // the view plays the scene and its music
 }
 
 /** Adds a creature to the party, or to the stash when the party is full. */
@@ -164,5 +163,6 @@ export function addToCollection(ctx, mon) {
   const s = ctx.state;
   s.dex.seen[mon.speciesId] = 1; s.dex.caught[mon.speciesId] = 1;
   if (s.party.length < (ctx.data.rules.partyMax || 6)) { s.party.push(mon); return 'party'; }
+  healMon(ctx.data, mon);                                     // Chai Mama looks after the ones that go to her stash
   s.box.push(mon); return 'box';
 }

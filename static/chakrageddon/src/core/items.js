@@ -23,7 +23,7 @@ export function applyItem(ctx, item, mon, opts = {}) {
     if (opts.inBattle) return no(tl('Not in the middle of a clash.'));
     if (s.intox >= 1) return no(tl('There is no higher. There is barely a you.'));
     if (!opts.dryRun) s.intox = Math.min(1, s.intox + e.dose);
-    return { ok: true, text: tl('You lick a corner of the {0}. The festival leans in closer.', item.name) };
+    return { ok: true, trip: true, text: tl('You lick a corner of the {0}. The festival leans in closer.', item.name) };
   }
   if (e.evolve) {
     if (opts.inBattle) return no(tl('Not in the middle of a clash.'));
