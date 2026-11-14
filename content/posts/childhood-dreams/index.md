@@ -1,5 +1,5 @@
 ---
-title: "On conjuring childhood dreams and being somewhat wrong"
+title: "On Conjuring Childhood Dreams and Being Somewhat Wrong"
 date: 2026-11-14T13:24:05Z
 draft: false
 cover:
