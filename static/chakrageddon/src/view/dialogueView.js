@@ -2,6 +2,7 @@
 import { W, H } from './CanvasRenderer.js';
 import { drawText, wrap, textWidth, panel, list, typeTag, bar, C } from './ui.js';
 import { termRuns } from './glossary.js';
+import { tl } from '../core/i18n.js';
 
 const BOX_H = 50, LINES = 3, STYLE_SPEED = { STIMULANT: 110, DOWNER: 28, PSYCHEDELIC: 55, NORMAL: 60 };
 // A choice box ignores confirm for this long after it opens, so mashing through the text
@@ -91,7 +92,7 @@ export const dialogueView = {
     for (const t of sp.types) { typeTag(g, t, x + 46, ty); ty += 12; }
     [['SER', bs.serotonin], ['ATK', Math.max(bs.vibeAttack || 0, bs.spFractal || 0)], ['BPM', bs.bpmSpeed]].forEach(([label, v], i) => {
       const bx = x + 5 + i * 35;
-      drawText(g, label, bx, y + 47, { color: C.chai });
+      drawText(g, label === 'BPM' ? tl(label).slice(0, 3).toUpperCase() : tl(label), bx, y + 47, { color: C.chai });
       bar(g, bx + 19, y + 48, 13, 5, (v || 0) / 100, '#FF4FA8');
     });
   },

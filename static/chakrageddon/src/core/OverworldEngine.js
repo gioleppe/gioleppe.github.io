@@ -1,5 +1,6 @@
 // Grid movement, collision, warps, field techniques, trainer line-of-sight and wild encounter rolls.
 // Pure functions over ctx = { data, state, rng, emit }.
+import { tl } from './i18n.js';
 import { check } from './quests.js';
 import { bandOf, bandIndex, egoGone } from './intox.js';
 import { runScript, startScript, bossGate, gauntletUnderWay } from './ScriptEngine.js';
@@ -238,7 +239,7 @@ export function step(ctx, dir) {
   }
   // a way out that is closed for now (the back alley, until every undercover has had a word): closedIf, closedBy, closedText
   const shut = (zone.warps || []).find((w) => w.x === nx && w.y === ny && w.closedIf && check(s, w.closedIf, ctx.data));
-  if (shut) { bump(ctx); return startScript(ctx, [{ s: shut.closedBy || '', t: shut.closedText || 'The way is closed.' }]); }
+  if (shut) { bump(ctx); return startScript(ctx, [{ s: shut.closedBy || '', t: shut.closedText || tl('The way is closed.') }]); }
   s.player.x = nx; s.player.y = ny;
   s.steps++;
   // the festival clock: one minute every few steps, so an hour is about a minute of walking
@@ -250,7 +251,7 @@ export function step(ctx, dir) {
     if (here?.tide && tideHigh(ctx, zone)) {
       s.player.x = nx; s.player.y = ny; settle(ctx);
       ctx.emit({ type: 'PLAYER_PLACED', x: s.player.x, y: s.player.y });
-      ctx.emit({ type: 'MESSAGE', text: zone.tide.rising || 'The tide comes in round your ankles. You wade back to the rocks.' });
+      ctx.emit({ type: 'MESSAGE', text: zone.tide.rising || tl('The tide comes in round your ankles. You wade back to the rocks.') });
       return;
     }
   }
@@ -457,7 +458,7 @@ function rematchWaits(ctx, t) {
 function startRematch(ctx, t) {
   const re = ctx.data.trainers[t.rematch], st = t.textStyle;
   const steps = [
-    { s: t.name, t: re.offer || 'You again. Want to see how much I have grown?', style: st, choice: ['Bring it', 'Not now'], goto: ['go', 'no'] },
+    { s: t.name, t: re.offer || tl('You again. Want to see how much I have grown?'), style: st, choice: [tl('Bring it'), tl('Not now')], goto: ['go', 'no'] },
     { label: 'go' },
     ...(t.cutscene ? [{ scene: 'boss', who: t.cutscene, card: true }] : []),     // a rematch: the short title card
     ...(re.intro || []).map((line) => ({ s: re.name, t: line, style: st })),
@@ -506,13 +507,13 @@ export function interact(ctx) {
   const id = logicAt(ctx, x, y, zone);
   if (id === T.CHAI) {
     const boss = bossGate(ctx, zone);      // the tent by a boss's stage will not patch you up for another go at them
-    if (boss) return startScript(ctx, (ctx.data.dialogues.chai_tent_closed || [{ t: 'Closed.' }]).map((x) => (x.t ? { ...x, t: x.t.replace('{boss}', boss) } : x)));
-    if (gauntletUnderWay(ctx, zone)) return startScript(ctx, ctx.data.dialogues.chai_tent_gauntlet || [{ t: 'Not now.' }]);   // halfway up the Four: finish first
+    if (boss) return startScript(ctx, (ctx.data.dialogues.chai_tent_closed || [{ t: tl('Closed.') }]).map((x) => (x.t ? { ...x, t: x.t.replace('{boss}', boss) } : x)));
+    if (gauntletUnderWay(ctx, zone)) return startScript(ctx, ctx.data.dialogues.chai_tent_gauntlet || [{ t: tl('Not now.') }]);   // halfway up the Four: finish first
     return startScript(ctx, ctx.data.dialogues.chai_tent || [{ heal: true }], 'CHAI_TENT_RECOVERY');
   }
   if (id === T.CORDON && cordonOpen(ctx, zone)) return;
   if (useTechnique(ctx, id, x, y, s.player.dir, zone)) return;
-  if (HINTS[id] && !(TECH_FOR[id] && canUse(ctx, TECH_FOR[id]))) startScript(ctx, [{ t: (id === T.CORDON && zone.cordonText) || HINTS[id] }]);
+  if (HINTS[id] && !(TECH_FOR[id] && canUse(ctx, TECH_FOR[id]))) startScript(ctx, [{ t: (id === T.CORDON && zone.cordonText) || tl(HINTS[id]) }]);
 }
 
 export { runScript };

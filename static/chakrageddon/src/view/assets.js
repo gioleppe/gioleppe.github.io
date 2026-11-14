@@ -1,14 +1,35 @@
 // Loads the JSON data layer and the sprite sheets exported from Aseprite.
 import { DATA_FILES, assembleData } from '../core/data.js';
+import { setLanguage, localizeRaw } from '../core/i18n.js';
 
 const json = (url) => fetch(url).then((r) => { if (!r.ok) throw new Error(`${url}: ${r.status}`); return r.json(); });
 const image = (url) => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error(`image ${url}`)); i.src = url; });
 
-export async function loadAll(onProgress = () => {}) {
+const LANG_KEY = 'chakrageddon.lang';
+/** the languages the game ships with: [{ code, name, files }] (data/lang/langs.json) */
+export async function loadLanguages() { try { return await json('data/lang/langs.json'); } catch { return [{ code: 'en', name: 'English' }]; } }
+/** the chosen language: the saved choice, else the browser's, else English (only languages that exist count) */
+export function chosenLanguage(langs) {
+  let want = null;
+  try { want = localStorage.getItem(LANG_KEY); } catch { /* storage blocked */ }
+  if (!want) { const nav = (typeof navigator !== 'undefined' && (navigator.languages?.[0] || navigator.language) || 'en').slice(0, 2).toLowerCase(); want = nav; }
+  return langs.some((l) => l.code === want) ? want : 'en';
+}
+export function saveLanguage(code) { try { localStorage.setItem(LANG_KEY, code); } catch { /* storage blocked */ } }
+/** fetches and installs the dictionaries of one language; English has none (the source text is English) */
+export async function loadDictionary(langs, code) {
+  const l = langs.find((x) => x.code === code);
+  const dict = {};
+  if (l?.files) await Promise.all(l.files.map(async (f) => { Object.assign(dict, await json(`data/lang/${code}/${f}.json`).catch(() => ({}))); }));
+  setLanguage(code, dict);
+  return dict;
+}
+
+export async function loadAll(onProgress = () => {}, dict = null) {
   const raw = {};
   await Promise.all(DATA_FILES.map(async (f) => { raw[f] = await json(`data/${f}.json`).catch((e) => { if (f === 'manifest' || f === 'tiles' || f === 'rules') throw e; return undefined; }); }));
   raw.zones = await Promise.all(raw.manifest.zones.map((z) => json(`data/zones/${z}.json`)));
-  const data = assembleData(raw);
+  const data = assembleData(dict ? localizeRaw(raw, dict) : raw);
 
   const atlas = await json('assets/export/atlas.json');
   const files = { tiles: 'tiles.png' };

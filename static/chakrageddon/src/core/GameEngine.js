@@ -1,5 +1,6 @@
 // Top-level state machine and command dispatcher. Headless: no DOM, no timers, no I/O.
 // dispatch(command) mutates state deterministically and returns { state, events }.
+import { tl } from './i18n.js';
 import { makeRng } from './prng.js';
 import * as OW from './OverworldEngine.js';
 import { advance, startScript, setMode } from './ScriptEngine.js';
@@ -105,7 +106,7 @@ export class GameEngine {
           const before = s.intox;
           s.intox = Math.min(1, s.intox + (R.dose ?? 0.12));
           events.push({ type: 'INTOXICATION_CHANGED', oldLevel: before, newLevel: s.intox });
-          events.push({ type: 'MESSAGE', text: s.flags.tip_bored ? 'Bored, you lick a corner of the blotter.' : 'Bored, you lick a corner of the blotter. Stand around with nothing to do and your hand finds it by itself. Keep moving.' });
+          events.push({ type: 'MESSAGE', text: s.flags.tip_bored ? tl('Bored, you lick a corner of the blotter.') : tl('Bored, you lick a corner of the blotter. Stand around with nothing to do and your hand finds it by itself. Keep moving.') });
           s.flags.tip_bored = 1;
         }
         break;
@@ -142,31 +143,31 @@ export class GameEngine {
       // the first time your ego goes, Banyan feels it from the shack
       if (egoGone(this.data.rules, s.intox) && !s.flags.banyan_felt && s.flags.started) {
         s.flags.banyan_felt = 1;
-        events.push({ type: 'MESSAGE', text: 'A text from Banyan: "I felt that from the shack. Drink some water. Then drink some more water."' });
+        events.push({ type: 'MESSAGE', text: tl('A text from Banyan: "I felt that from the shack. Drink some water. Then drink some more water."') });
       }
       // the first time you get high at all, say once what it means and how to come down
       if (bandAfter > 0 && !s.flags.tip_high) {
         s.flags.tip_high = 1;
-        events.push({ type: 'MESSAGE', text: 'Tip: how high you are shows in the corner. Higher means more Vibes and rarer Astrals, but clumsier hands, harder hits and costlier whiteouts. Water, a nap in a Chai Tent or a long walk bring you down.' });
+        events.push({ type: 'MESSAGE', text: tl('Tip: how high you are shows in the corner. Higher means more Vibes and rarer Astrals, but clumsier hands, harder hits and costlier whiteouts. Water, a nap in a Chai Tent or a long walk bring you down.') });
       }
     }
     // Quick Items, explained once: on the Sandy Trail, after your first battle (right after it, if it was there)
     if (events.some((x) => x.type === 'BATTLE_END')) s.flags.fought = 1;
     if (!s.flags.tip_quick && s.flags.fought && s.zoneId === 'sandy_trail' && s.mode === 'OVERWORLD' && !s.dialogue && !s.battle) {
       s.flags.tip_quick = 1;
-      events.push({ type: 'MESSAGE', text: 'Tip: Quick Items. Press Q (or ITEMS on the touch pad) to give snacks and water to any Astral without opening the Fanny Pack. Everything that heals or hydrates shows up there by itself.' });
+      events.push({ type: 'MESSAGE', text: tl('Tip: Quick Items. Press Q (or ITEMS on the touch pad) to give snacks and water to any Astral without opening the Fanny Pack. Everything that heals or hydrates shows up there by itself.') });
     }
     // side quests that start or finish
     for (const q of questLog(this.data, s)) {
       if (q.state === questsBefore[q.id]) continue;
-      if (q.state === 'active' && questsBefore[q.id] === 'hidden') { events.push({ type: 'QUEST', questId: q.id, state: 'active' }); events.push({ type: 'MESSAGE', text: `New quest: ${q.name}` }); }
-      if (q.state === 'done') { events.push({ type: 'QUEST', questId: q.id, state: 'done' }); events.push({ type: 'MESSAGE', text: `Quest complete: ${q.name}` }); }
+      if (q.state === 'active' && questsBefore[q.id] === 'hidden') { events.push({ type: 'QUEST', questId: q.id, state: 'active' }); events.push({ type: 'MESSAGE', text: tl('New quest: {0}', q.name) }); }
+      if (q.state === 'done') { events.push({ type: 'QUEST', questId: q.id, state: 'done' }); events.push({ type: 'MESSAGE', text: tl('Quest complete: {0}', q.name) }); }
     }
     // and when the story moves on
     const goal = currentGoal(this.data, s);
     if (goal && goal.id !== goalBefore && s.flags.started && cmd.type !== 'BEGIN') {
       events.push({ type: 'GOAL_CHANGED', goalId: goal.id, text: goal.text });
-      events.push({ type: 'MESSAGE', text: `New goal: ${goal.text}` });
+      events.push({ type: 'MESSAGE', text: tl('New goal: {0}', goal.text) });
     }
     return { state: s, events };
   }

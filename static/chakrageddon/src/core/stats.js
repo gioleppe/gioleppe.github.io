@@ -1,5 +1,6 @@
 // The numbers on the end card (IMPROVEMENTS.md point 6): your festival, in a few lines. Pure.
 import { bandOf } from './intox.js';
+import { tl, tln } from './i18n.js';
 import { questLog } from './quests.js';
 
 export function festivalStats(data, s) {
@@ -8,7 +9,7 @@ export function festivalStats(data, s) {
   const rematches = trainers.filter((t) => /_rematch$/.test(t.id));
   const minutes = s.elapsed || 0;
   return {
-    name: s.playerName || 'You',
+    name: s.playerName || tl('You'),
     days: Math.floor(minutes / 1440), hours: Math.floor((minutes % 1440) / 60), minutes,
     km: (s.steps || 0) / 1000,                                       // a tile is about a metre
     peak: bandOf(data.rules, s.peakIntox || s.intox || 0).name,
@@ -21,6 +22,6 @@ export function festivalStats(data, s) {
 }
 /** the festival time as words: "3 days, 4 hours" */
 export function festivalTime(st) {
-  const d = st.days ? `${st.days} day${st.days === 1 ? '' : 's'}` : '', h = `${st.hours} hour${st.hours === 1 ? '' : 's'}`;
+  const d = st.days ? tln(st.days, '{0} day', '{0} days') : '', h = tln(st.hours, '{0} hour', '{0} hours');
   return d ? `${d}, ${h}` : h;
 }

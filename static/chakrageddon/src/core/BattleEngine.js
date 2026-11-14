@@ -4,6 +4,7 @@
 //   PHASE_SHIFT_OFFER: a trainer's Astral fainted; before the next comes out you may swap yours for free
 //   (only with ctx.options.shift, the "Shift" battle style; SWITCH or STAY answers it)
 import { bandOf } from './intox.js';
+import { tl, tln } from './i18n.js';
 import { statsOf, snapshot, nameOf, gainXp, evolutionTarget, evolve, createMon, addToCollection, healMon } from './mons.js';
 import { selectAction } from './AIController.js';
 import { setMode, runScript, gauntletReset } from './ScriptEngine.js';
@@ -20,7 +21,7 @@ const say = (ctx, text) => ctx.emit({ type: 'MESSAGE', text, read: true });
 export function active(ctx, side) { const b = B(ctx); return side === 'p' ? ctx.state.party[b.pi] : b.enemy[b.ei]; }
 function label(ctx, side) {
   const n = nameOf(ctx.data, active(ctx, side));
-  return side === 'p' ? n : B(ctx).kind === 'wild' ? `Wild ${n}` : B(ctx).kind === 'mirror' ? `Mirror ${n}` : `Foe ${n}`;
+  return side === 'p' ? n : B(ctx).kind === 'wild' ? tl('Wild {0}', n) : B(ctx).kind === 'mirror' ? tl('Mirror {0}', n) : tl('Foe {0}', n);
 }
 const newSide = () => ({ stages: {}, loop: 0, trap: 0, trapHeal: 0, last: null, turnsOut: 0, maxHp: 1 });
 function refreshSide(ctx, side) { B(ctx).side[side].maxHp = statsOf(ctx.data, active(ctx, side)).maxHp; }
@@ -56,14 +57,14 @@ export function startBattle(ctx, { kind, enemy, trainerId, scripted, restore }) 
   b.intox = clamp01(s.intox + ((wP + wE) / 2) * 0.5);
   const trainer = trainerId ? ctx.data.trainers[trainerId] : null;
   const mirror = kind === 'mirror';
-  ctx.emit({ type: 'BATTLE_START', kind, trainerName: mirror ? 'You' : trainer?.name || null, trainerSprite: mirror ? s.outfit || 'player' : trainer?.sprite || null, boss: !!trainer?.boss, player: snapshot(ctx.data, s.party[pi]), enemy: snapshot(ctx.data, enemy[0]), enemyCount: enemy.length, paletteId: zone.paletteId });
+  ctx.emit({ type: 'BATTLE_START', kind, trainerName: mirror ? tl('You') : trainer?.name || null, trainerSprite: mirror ? s.outfit || 'player' : trainer?.sprite || null, boss: !!trainer?.boss, player: snapshot(ctx.data, s.party[pi]), enemy: snapshot(ctx.data, enemy[0]), enemyCount: enemy.length, paletteId: zone.paletteId });
   ctx.emit({ type: 'INTOXICATION_CHANGED', oldLevel: s.intox, newLevel: b.intox });
   ctx.emit({ type: 'AUDIO_CUE', start: true, trackBpm: (zone.baseBpm || 140) + (trainer?.boss ? 12 : 6), lowPassFilterHz: 20000 - b.intox * 12000, mood: trainer?.boss ? 'BOSS' : 'BATTLE', ...(trainer?.boss ? { theme: `boss:${trainer.cutscene || trainer.id.replace(/_rematch$/, '')}` } : {}) });   // every boss has a theme of their own
   s.dex.seen[enemy[0].speciesId] = 1;
-  if (kind === 'wild') msg(ctx, `A wild ${nameOf(ctx.data, enemy[0])} drifts out of the haze!`);
-  else if (mirror) { msg(ctx, 'Your reflection wants an astral clash!'); msg(ctx, `Your reflection manifests ${nameOf(ctx.data, enemy[0])}!`); }
-  else { msg(ctx, `${trainer.name} wants an astral clash!`); msg(ctx, `${trainer.name} manifests ${nameOf(ctx.data, enemy[0])}!`); }
-  msg(ctx, `Go, ${nameOf(ctx.data, s.party[pi])}!`);
+  if (kind === 'wild') msg(ctx, tl('A wild {0} drifts out of the haze!', nameOf(ctx.data, enemy[0])));
+  else if (mirror) { msg(ctx, tl('Your reflection wants an astral clash!')); msg(ctx, tl('Your reflection manifests {0}!', nameOf(ctx.data, enemy[0]))); }
+  else { msg(ctx, tl('{0} wants an astral clash!', trainer.name)); msg(ctx, tl('{0} manifests {1}!', trainer.name, nameOf(ctx.data, enemy[0]))); }
+  msg(ctx, tl('Go, {0}!', nameOf(ctx.data, s.party[pi])));
   b.phase = 'PHASE_AWAIT_COMMAND';
   return true;
 }
@@ -162,36 +163,36 @@ function setIntox(ctx, v) {
 }
 
 const STATUS_TEXT = {
-  COTTONMOUTH: 'has cottonmouth!', K_HOLED: 'fell into a K-hole!', THOUGHT_LOOP: 'is caught in a thought loop!',
-  EGO_DEATH: 'dissolves into ego death!', JAW_LOCK: 'has its jaw locked!',
+  COTTONMOUTH: (w) => tl('{0} has cottonmouth!', w), K_HOLED: (w) => tl('{0} fell into a K-hole!', w), THOUGHT_LOOP: (w) => tl('{0} is caught in a thought loop!', w),
+  EGO_DEATH: (w) => tl('{0} dissolves into ego death!', w), JAW_LOCK: (w) => tl('{0} has its jaw locked!', w),
 };
 export function applyStatus(ctx, side, status) {
   const b = B(ctx), R = ctx.data.rules.battle, mon = active(ctx, side), sd = b.side[side];
   if (mon.hp <= 0) return false;
-  if (abilityOf(ctx, mon) === 'CLEAR_HEAD' && (status === 'THOUGHT_LOOP' || status === 'K_HOLED')) { msg(ctx, `${label(ctx, side)}'s Clear Head keeps it together.`); return false; }
-  if (holds(mon, 'sand_mala') && (status === 'THOUGHT_LOOP' || status === 'K_HOLED')) { msg(ctx, `${label(ctx, side)}'s Sand Mala keeps it together.`); return false; }   // the Unfinished Mandala's reward
+  if (abilityOf(ctx, mon) === 'CLEAR_HEAD' && (status === 'THOUGHT_LOOP' || status === 'K_HOLED')) { msg(ctx, tl("{0}'s Clear Head keeps it together.", label(ctx, side))); return false; }
+  if (holds(mon, 'sand_mala') && (status === 'THOUGHT_LOOP' || status === 'K_HOLED')) { msg(ctx, tl("{0}'s Sand Mala keeps it together.", label(ctx, side))); return false; }   // the Unfinished Mandala's reward
   if (status === 'THOUGHT_LOOP') {
-    if (sd.loop > 0) { msg(ctx, `${label(ctx, side)} is already going in circles.`); return false; }
+    if (sd.loop > 0) { msg(ctx, tl('{0} is already going in circles.', label(ctx, side))); return false; }
     sd.loop = ctx.rng.int(R.thoughtLoopTurns[0], R.thoughtLoopTurns[1]) + 1;
     if (side === 'p' && (ctx.state.bag.earplugs || 0) > 0) sd.loop = Math.max(2, sd.loop - 1);
   } else {
-    if (mon.status) { msg(ctx, `${label(ctx, side)} is already ${mon.status.id.toLowerCase().replace('_', ' ')}.`); return false; }
+    if (mon.status) { msg(ctx, tl('{0} is already {1}.', label(ctx, side), tl(mon.status.id.toLowerCase().replace('_', ' ')))); return false; }
     mon.status = { id: status };
     if (status === 'EGO_DEATH') mon.status.turns = R.egoDeathTurns;
     if (status === 'K_HOLED') mon.status.turns = ctx.rng.int(R.kHoleTurns[0], R.kHoleTurns[1]) + 1;
     if (status === 'JAW_LOCK') mon.status.n = 0;
   }
   ctx.emit({ type: 'STATUS_APPLIED', targetId: side, status });
-  msg(ctx, `${label(ctx, side)} ${STATUS_TEXT[status]}`);
+  msg(ctx, STATUS_TEXT[status](label(ctx, side)));
   return true;
 }
 const STAT_NAMES = { vibeAttack: 'Vibe Attack', egoDefense: 'Ego Defense', spFractal: 'Fractal power', spGrounded: 'Groundedness', bpmSpeed: 'BPM' };
 function stage(ctx, side, stat, n) {
   const st = B(ctx).side[side].stages, cur = st[stat] || 0, next = Math.max(-6, Math.min(6, cur + n));
-  if (next === cur) { msg(ctx, `${label(ctx, side)}'s ${STAT_NAMES[stat]} cannot go any ${n > 0 ? 'higher' : 'lower'}.`); return; }
+  if (next === cur) { msg(ctx, n > 0 ? tl("{0}'s {1} cannot go any higher.", label(ctx, side), tl(STAT_NAMES[stat])) : tl("{0}'s {1} cannot go any lower.", label(ctx, side), tl(STAT_NAMES[stat]))); return; }
   st[stat] = next;
   ctx.emit({ type: 'STAT_STAGE', targetId: side, stat, stages: next, delta: next - cur });
-  msg(ctx, `${label(ctx, side)}'s ${STAT_NAMES[stat]} ${n > 0 ? (n > 1 ? 'rose sharply!' : 'rose!') : (n < -1 ? 'dropped hard!' : 'dropped!')}`);
+  { const lb = label(ctx, side), sn = tl(STAT_NAMES[stat]); msg(ctx, n > 0 ? (n > 1 ? tl("{0}'s {1} rose sharply!", lb, sn) : tl("{0}'s {1} rose!", lb, sn)) : (n < -1 ? tl("{0}'s {1} dropped hard!", lb, sn) : tl("{0}'s {1} dropped!", lb, sn))); };
 }
 
 // ---------------------------------------------------------------- one move
@@ -203,22 +204,22 @@ function executeMove(ctx, side, moveId) {
 
   // pre-move status gates
   if (mon.status?.id === 'EGO_DEATH') {
-    if (mon.status.turns > 0) { mon.status.turns--; msg(ctx, `${who} is deep in an ego death.`); return; }
+    if (mon.status.turns > 0) { mon.status.turns--; msg(ctx, tl('{0} is deep in an ego death.', who)); return; }
     mon.status = null; ctx.emit({ type: 'STATUS_CLEARED', targetId: side, status: 'EGO_DEATH' });
-    msg(ctx, `${who} comes back, a little wiser.`); stage(ctx, side, 'spGrounded', 2);
+    msg(ctx, tl('{0} comes back, a little wiser.', who)); stage(ctx, side, 'spGrounded', 2);
   }
   if (mon.status?.id === 'K_HOLED') {
     mon.status.turns--;
-    if (mon.status.turns <= 0) { mon.status = null; ctx.emit({ type: 'STATUS_CLEARED', targetId: side, status: 'K_HOLED' }); msg(ctx, `${who} climbs out of the K-hole.`); }
-    else if (ctx.rng.chance(R.kHoleSkip)) { msg(ctx, `${who} has forgotten what limbs are.`); return; }
+    if (mon.status.turns <= 0) { mon.status = null; ctx.emit({ type: 'STATUS_CLEARED', targetId: side, status: 'K_HOLED' }); msg(ctx, tl('{0} climbs out of the K-hole.', who)); }
+    else if (ctx.rng.chance(R.kHoleSkip)) { msg(ctx, tl('{0} has forgotten what limbs are.', who)); return; }
   }
   if (sd.loop > 0) {
     sd.loop--;
-    if (sd.loop === 0) { ctx.emit({ type: 'STATUS_CLEARED', targetId: side, status: 'THOUGHT_LOOP' }); msg(ctx, `${who} snaps out of the thought loop.`); }
+    if (sd.loop === 0) { ctx.emit({ type: 'STATUS_CLEARED', targetId: side, status: 'THOUGHT_LOOP' }); msg(ctx, tl('{0} snaps out of the thought loop.', who)); }
     else if (ctx.rng.chance(R.thoughtLoopChance)) {
-      if (sd.last && ctx.rng.chance(0.5)) { msg(ctx, `${who} is looping and repeats itself!`); moveId = sd.last; }
+      if (sd.last && ctx.rng.chance(0.5)) { msg(ctx, tl('{0} is looping and repeats itself!', who)); moveId = sd.last; }
       else {
-        msg(ctx, `${who} wonders why hands have fingers, and hits itself.`);
+        msg(ctx, tl('{0} wonders why hands have fingers, and hits itself.', who));
         const st = statsOf(ctx.data, mon);
         hurt(ctx, side, Math.max(1, Math.floor((((2 * mon.level) / 5 + 2) * R.selfHitPower * (st.vibeAttack / st.egoDefense)) / 50 + 2)));
         return;
@@ -227,16 +228,16 @@ function executeMove(ctx, side, moveId) {
   }
 
   let move = ctx.data.moves[moveId];
-  if (mon.hyd < moveCost(ctx, mon, move)) { msg(ctx, `${who} is too parched for ${move.name}!`); move = ctx.data.moves.dry_heave; }
+  if (mon.hyd < moveCost(ctx, mon, move)) { msg(ctx, tl('{0} is too parched for {1}!', who, move.name)); move = ctx.data.moves.dry_heave; }
   else if (move.id !== 'dry_heave') sd.last = move.id;
   if (moveCost(ctx, mon, move) > 0) hydrate(ctx, side, -moveCost(ctx, mon, move));
   ctx.emit({ type: 'BATTLE_MOVE_USED', actorId: side, moveId: move.id, shaderCue: move.shaderCue || 'NONE', moveType: move.type, category: move.category });
-  msg(ctx, `${who} used ${move.name}!`);
+  msg(ctx, tl('{0} used {1}!', who, move.name));
 
   const effects = move.effects || [];
   const selfOnly = move.power === 0 && effects.length > 0 && effects.every((e) => e.target === 'self' || ['HEAL', 'HYDRATE'].includes(e.effectType));
-  if (!selfOnly && move.accuracy > 0 && !ctx.rng.chance(move.accuracy / 100)) { msg(ctx, 'It drifts wide.'); return; }
-  if (!selfOnly && move.power > 0 && abilityOf(ctx, active(ctx, foeSide)) === 'DREAMER' && ctx.rng.chance(1 / 7)) { msg(ctx, `${label(ctx, foeSide)} drifts somewhere else for a moment. It misses.`); return; }
+  if (!selfOnly && move.accuracy > 0 && !ctx.rng.chance(move.accuracy / 100)) { msg(ctx, tl('It drifts wide.')); return; }
+  if (!selfOnly && move.power > 0 && abilityOf(ctx, active(ctx, foeSide)) === 'DREAMER' && ctx.rng.chance(1 / 7)) { msg(ctx, tl('{0} drifts somewhere else for a moment. It misses.', label(ctx, foeSide))); return; }
 
   let total = 0;
   if (move.power > 0) {
@@ -247,11 +248,11 @@ function executeMove(ctx, side, moveId) {
       const r = calcDamage(ctx, side, move, true);
       ctx.emit({ type: 'MOVE_HIT', actorId: side, targetId: foeSide, moveId: move.id, hit: i + 1, mult: r.mult, crit: !!r.crit });   // for the view: each hit lands
       total += hurt(ctx, foeSide, r.dmg); n++; mult = r.mult;
-      if (r.crit) { ctx.emit({ type: 'CRITICAL', targetId: foeSide }); msg(ctx, 'A critical hit!'); }
+      if (r.crit) { ctx.emit({ type: 'CRITICAL', targetId: foeSide }); msg(ctx, tl('A critical hit!')); }
     }
-    if (multi) msg(ctx, `It landed ${n} time${n === 1 ? '' : 's'}!`);
+    if (multi) msg(ctx, tln(n, 'It landed {0} time!', 'It landed {0} times!'));
     afterHit(ctx, side, foeSide, move, total);
-    if (mult > 1) msg(ctx, 'It really resonates!'); else if (mult < 1) msg(ctx, 'It barely registers...');
+    if (mult > 1) msg(ctx, tl('It really resonates!')); else if (mult < 1) msg(ctx, tl('It barely registers...'));
   }
   for (const e of effects) {
     if (e.effectType === 'MULTI_HIT') continue;
@@ -259,14 +260,14 @@ function executeMove(ctx, side, moveId) {
     const target = e.target === 'self' ? side : foeSide;
     switch (e.effectType) {
       case 'APPLY_STATUS': applyStatus(ctx, target, e.status); break;
-      case 'DRAIN_SEROTONIN': if (total > 0 && mend(ctx, side, Math.max(1, total * e.drainRatio))) msg(ctx, `${who} soaks up some serotonin.`); break;
-      case 'RECOIL': if (total > 0 && mon.hp > 0) { hurt(ctx, side, Math.max(1, total * e.ratio)); msg(ctx, `${who} is shaken by the effort.`); } break;
-      case 'INVERT_TYPE_CHART': b.invert = e.durationTurns + 1; ctx.emit({ type: 'FIELD_EFFECT', effect: 'INVERT_TYPE_CHART', turns: e.durationTurns }); msg(ctx, 'Strengths and weaknesses turn inside out!'); break;
+      case 'DRAIN_SEROTONIN': if (total > 0 && mend(ctx, side, Math.max(1, total * e.drainRatio))) msg(ctx, tl('{0} soaks up some serotonin.', who)); break;
+      case 'RECOIL': if (total > 0 && mon.hp > 0) { hurt(ctx, side, Math.max(1, total * e.ratio)); msg(ctx, tl('{0} is shaken by the effort.', who)); } break;
+      case 'INVERT_TYPE_CHART': b.invert = e.durationTurns + 1; ctx.emit({ type: 'FIELD_EFFECT', effect: 'INVERT_TYPE_CHART', turns: e.durationTurns }); msg(ctx, tl('Strengths and weaknesses turn inside out!')); break;
       case 'SPIKE_INTOXICATION': setIntox(ctx, b.intox + e.delta); break;
-      case 'TRAP': if (active(ctx, foeSide).hp > 0) { const fs = b.side[foeSide]; fs.trap = e.turns; fs.trapHeal = e.healRatio; msg(ctx, `${label(ctx, foeSide)} sinks into the couch and cannot leave.`); } break;
+      case 'TRAP': if (active(ctx, foeSide).hp > 0) { const fs = b.side[foeSide]; fs.trap = e.turns; fs.trapHeal = e.healRatio; msg(ctx, tl('{0} sinks into the couch and cannot leave.', label(ctx, foeSide))); } break;
       case 'STAT_STAGE': if (active(ctx, target).hp > 0) stage(ctx, target, e.stat, e.stages); break;
-      case 'HEAL': if (mend(ctx, side, sd.maxHp * e.ratio)) msg(ctx, `${who} feels restored.`); else msg(ctx, 'Nothing happened.'); break;
-      case 'HYDRATE': hydrate(ctx, side, e.amount); msg(ctx, `${who} rehydrates.`); break;
+      case 'HEAL': if (mend(ctx, side, sd.maxHp * e.ratio)) msg(ctx, tl('{0} feels restored.', who)); else msg(ctx, tl('Nothing happened.')); break;
+      case 'HYDRATE': hydrate(ctx, side, e.amount); msg(ctx, tl('{0} rehydrates.', who)); break;
       default: throw new Error(`unknown effect ${e.effectType}`);
     }
   }
@@ -280,7 +281,7 @@ function mirrorCopy(ctx, side, move) {
   sd.mirrored = true;
   (b.mirrorMoves ||= {})[mon.uid] ||= [...mon.moves];                  // given back when the battle ends
   mon.moves = mon.moves.length < 4 ? [...mon.moves, move.id] : [...mon.moves.slice(0, 3), move.id];
-  msg(ctx, `${label(ctx, side)} watches closely, and copies ${move.name}!`);
+  msg(ctx, tl('{0} watches closely, and copies {1}!', label(ctx, side), move.name));
 }
 
 // ---------------------------------------------------------------- turn
@@ -315,27 +316,27 @@ export function battleAction(ctx, cmd) {
     const usable = usableMoves(ctx, mon);
     if (!usable.length) moveId = 'dry_heave';
     else if (!mon.moves.includes(moveId)) return;
-    else if (!usable.includes(moveId)) return msg(ctx, 'Not enough Hydration for that.');
+    else if (!usable.includes(moveId)) return msg(ctx, tl('Not enough Hydration for that.'));
     act = { action: 'FIGHT', moveId };
   } else if (cmd.action === 'SWITCH') {
     const idx = Number(cmd.payloadId);
     if (!s.party[idx] || idx === b.pi || s.party[idx].hp <= 0) return;
-    if (sd.trap > 0) return msg(ctx, `${label(ctx, 'p')} is stuck to the couch!`);
+    if (sd.trap > 0) return msg(ctx, tl('{0} is stuck to the couch!', label(ctx, 'p')));
     act = { action: 'SWITCH', idx };
   } else if (cmd.action === 'BAG') {
     const item = ctx.data.items[cmd.payloadId];
     if (!item || !(s.bag[item.id] > 0)) return;
-    if (item.category === 'BAGGING') { if (b.kind !== 'wild') return msg(ctx, 'You cannot bag somebody else\'s trip.'); act = { action: 'BAG', item }; }
+    if (item.category === 'BAGGING') { if (b.kind !== 'wild') return msg(ctx, tl("You cannot bag somebody else's trip.")); act = { action: 'BAG', item }; }
     else if (item.category === 'RECOVERY') {
       const target = s.party[cmd.target ?? b.pi];
       if (!target) return;
       const res = applyItem(ctx, item, target, { dryRun: true });
       if (!res.ok) return msg(ctx, res.text);
       act = { action: 'BAG', item, target };
-    } else return msg(ctx, 'That is no use right now.');
+    } else return msg(ctx, tl('That is no use right now.'));
   } else if (cmd.action === 'RUN') {
-    if (b.kind !== 'wild') return msg(ctx, 'There is no walking away from eye contact.');
-    if (sd.trap > 0) return msg(ctx, `${label(ctx, 'p')} is stuck to the couch!`);
+    if (b.kind !== 'wild') return msg(ctx, tl('There is no walking away from eye contact.'));
+    if (sd.trap > 0) return msg(ctx, tl('{0} is stuck to the couch!', label(ctx, 'p')));
     act = { action: 'RUN' };
   } else return;
   resolveTurn(ctx, act);
@@ -349,7 +350,7 @@ function switchIn(ctx, side, idx) {
   refreshSide(ctx, side);
   b.side[other(side)].trap = 0;
   ctx.emit({ type: 'SWITCH_IN', side, mon: snapshot(ctx.data, active(ctx, side)) });
-  msg(ctx, side === 'p' ? `Go, ${nameOf(ctx.data, active(ctx, 'p'))}!` : `${b.kind === 'mirror' ? 'Your reflection' : ctx.data.trainers[b.trainerId].name} manifests ${nameOf(ctx.data, active(ctx, 'e'))}!`);
+  msg(ctx, side === 'p' ? tl('Go, {0}!', nameOf(ctx.data, active(ctx, 'p'))) : tl('{0} manifests {1}!', b.kind === 'mirror' ? tl('Your reflection') : ctx.data.trainers[b.trainerId].name, nameOf(ctx.data, active(ctx, 'e'))));
 }
 
 function resolveTurn(ctx, pAct) {
@@ -359,10 +360,10 @@ function resolveTurn(ctx, pAct) {
 
   if (pAct.action === 'RUN') {
     const chance = 0.5 + 0.2 * b.runTries++ + (effStat(ctx, 'p', 'bpmSpeed') >= effStat(ctx, 'e', 'bpmSpeed') ? 0.3 : 0);
-    if (ctx.rng.chance(chance)) { msg(ctx, 'You slip away into the crowd.'); return finish(ctx, 'RAN'); }
-    msg(ctx, 'You cannot get away!');
+    if (ctx.rng.chance(chance)) { msg(ctx, tl('You slip away into the crowd.')); return finish(ctx, 'RAN'); }
+    msg(ctx, tl('You cannot get away!'));
   } else if (pAct.action === 'SWITCH') {
-    msg(ctx, `${nameOf(ctx.data, active(ctx, 'p'))}, come back!`);
+    msg(ctx, tl('{0}, come back!', nameOf(ctx.data, active(ctx, 'p'))));
     switchIn(ctx, 'p', pAct.idx);
   } else if (pAct.action === 'BAG') {
     s.bag[pAct.item.id]--;
@@ -400,12 +401,12 @@ function bossMoment(ctx) {
   if (!(now > 0 && now <= max / 2)) return;
   b.moment = true;
   ctx.emit({ type: 'BOSS_MOMENT', trainerId: t.id, name: t.name, line: m.line, fx: m.fx || null });
-  say(ctx, `${t.name}: "${m.line}"`);
+  say(ctx, tl('{0}: "{1}"', t.name, m.line));
   for (const e of m.effects || []) {
     if (e.type === 'STAT' && active(ctx, e.target || 'e').hp > 0) stage(ctx, e.target || 'e', e.stat, e.stages);
-    else if (e.type === 'INVERT') { b.invert = e.turns + 1; ctx.emit({ type: 'FIELD_EFFECT', effect: 'INVERT_TYPE_CHART', turns: e.turns }); msg(ctx, 'Strengths and weaknesses turn inside out!'); }
+    else if (e.type === 'INVERT') { b.invert = e.turns + 1; ctx.emit({ type: 'FIELD_EFFECT', effect: 'INVERT_TYPE_CHART', turns: e.turns }); msg(ctx, tl('Strengths and weaknesses turn inside out!')); }
     else if (e.type === 'INTOX') setIntox(ctx, b.intox + e.delta);
-    else if (e.type === 'HEAL' && mend(ctx, 'e', b.side.e.maxHp * e.ratio)) msg(ctx, `${label(ctx, 'e')} feels restored.`);
+    else if (e.type === 'HEAL' && mend(ctx, 'e', b.side.e.maxHp * e.ratio)) msg(ctx, tl('{0} feels restored.', label(ctx, 'e')));
   }
   if (m.bpm) ctx.emit({ type: 'AUDIO_CUE', trackBpm: m.bpm, mood: 'BOSS', theme: `boss:${t.cutscene || t.id.replace(/_rematch$/, '')}` });
 }
@@ -417,10 +418,10 @@ function syncActive(ctx) { ctx.emit({ type: 'SYNC', side: 'p', mon: snapshot(ctx
 function afterHit(ctx, side, foeSide, move, total) {
   const b = B(ctx), foe = active(ctx, foeSide), fs = b.side[foeSide], ab = abilityOf(ctx, foe);
   if (total > 0 && foe.hp > 0 && ab === 'SECOND_WIND' && !fs.secondWind && foe.hp < statsOf(ctx.data, foe).maxHp / 3) {
-    fs.secondWind = true; msg(ctx, `${label(ctx, foeSide)} catches its Second Wind!`); mend(ctx, foeSide, statsOf(ctx.data, foe).maxHp / 4);
+    fs.secondWind = true; msg(ctx, tl('{0} catches its Second Wind!', label(ctx, foeSide))); mend(ctx, foeSide, statsOf(ctx.data, foe).maxHp / 4);
   }
   if (total > 0 && ab === 'STATIC_CLING' && move.category === 'PHYSICAL' && active(ctx, side).hp > 0 && !active(ctx, side).status && ctx.rng.chance(0.25)) {
-    msg(ctx, `${label(ctx, foeSide)}'s Static Cling leaves a bad taste.`); applyStatus(ctx, side, 'COTTONMOUTH');
+    msg(ctx, tl("{0}'s Static Cling leaves a bad taste.", label(ctx, foeSide))); applyStatus(ctx, side, 'COTTONMOUTH');
   }
 }
 
@@ -432,18 +433,18 @@ function endOfTurn(ctx) {
     if (mon.status?.id === 'JAW_LOCK') {
       mon.status.n++;
       hurt(ctx, side, Math.max(1, Math.floor((sd.maxHp * mon.status.n) / 16)));
-      msg(ctx, `${label(ctx, side)} grinds its teeth.`);
+      msg(ctx, tl('{0} grinds its teeth.', label(ctx, side)));
     }
     if (mon.status?.id === 'COTTONMOUTH' && mon.hyd > 0) hydrate(ctx, side, -R.cottonmouthDrain);
     if (sd.trap > 0 && mon.hp > 0 && active(ctx, other(side)).hp > 0) {
       mend(ctx, other(side), b.side[other(side)].maxHp * sd.trapHeal);
-      if (--sd.trap === 0) msg(ctx, `${label(ctx, side)} peels itself off the couch.`);
+      if (--sd.trap === 0) msg(ctx, tl('{0} peels itself off the couch.', label(ctx, side)));
     }
-    if (holds(mon, 'friendship_band') && mon.hp > 0 && mend(ctx, side, sd.maxHp / 16)) msg(ctx, `${label(ctx, side)}'s Friendship Band keeps it going.`);
+    if (holds(mon, 'friendship_band') && mon.hp > 0 && mend(ctx, side, sd.maxHp / 16)) msg(ctx, tl("{0}'s Friendship Band keeps it going.", label(ctx, side)));
     sd.turnsOut++;
-    if (abilityOf(ctx, mon) === 'BURST' && sd.turnsOut >= 2 && mon.hp > 0) { msg(ctx, `${label(ctx, side)} is completely spent. Pop.`); hurt(ctx, side, mon.hp); }
+    if (abilityOf(ctx, mon) === 'BURST' && sd.turnsOut >= 2 && mon.hp > 0) { msg(ctx, tl('{0} is completely spent. Pop.', label(ctx, side))); hurt(ctx, side, mon.hp); }
   }
-  if (b.invert > 0 && --b.invert === 0) { ctx.emit({ type: 'FIELD_EFFECT', effect: 'INVERT_TYPE_CHART', turns: 0 }); msg(ctx, 'Strengths and weaknesses settle back.'); }
+  if (b.invert > 0 && --b.invert === 0) { ctx.emit({ type: 'FIELD_EFFECT', effect: 'INVERT_TYPE_CHART', turns: 0 }); msg(ctx, tl('Strengths and weaknesses settle back.')); }
 }
 
 function faintCheck(ctx) {
@@ -452,16 +453,16 @@ function faintCheck(ctx) {
   let enemyOut = false;
   if (e.hp <= 0) {
     ctx.emit({ type: 'FAINT', side: 'e' }); ctx.emit({ type: 'AUDIO_CUE', sfxId: 'faint' });
-    msg(ctx, `${label(ctx, 'e')} fades out.`);
+    msg(ctx, tl('{0} fades out.', label(ctx, 'e')));
     e.status = null;
     if (b.kind !== 'mirror') awardXp(ctx, e);                       // nothing to learn from yourself
     enemyOut = !b.enemy.some((m) => m.hp > 0);
   }
   if (p.hp <= 0) {
     ctx.emit({ type: 'FAINT', side: 'p' }); ctx.emit({ type: 'AUDIO_CUE', sfxId: 'faint' });
-    msg(ctx, `${nameOf(ctx.data, p)} fades out.`);
+    msg(ctx, tl('{0} fades out.', nameOf(ctx.data, p)));
     p.status = null;
-    if (!s.party.some((m) => m.hp > 0)) return b.kind === 'mirror' ? (b.phase = 'PHASE_VICTORY', say(ctx, 'Your reflection wins. It does not seem to mind.'), finish(ctx, 'LOST')) : whiteout(ctx);
+    if (!s.party.some((m) => m.hp > 0)) return b.kind === 'mirror' ? (b.phase = 'PHASE_VICTORY', say(ctx, tl('Your reflection wins. It does not seem to mind.')), finish(ctx, 'LOST')) : whiteout(ctx);
   }
   if (enemyOut) return victory(ctx);
   if (e.hp <= 0) {
@@ -470,7 +471,7 @@ function faintCheck(ctx) {
     if (ctx.options?.shift && b.kind === 'trainer' && p.hp > 0 && s.party.some((m, i) => i !== b.pi && m.hp > 0)) {
       b.nextEi = next; b.phase = 'PHASE_SHIFT_OFFER';
       ctx.emit({ type: 'SHIFT_OFFER', next: snapshot(ctx.data, b.enemy[next]) });
-      msg(ctx, `${ctx.data.trainers[b.trainerId].name} is about to manifest ${nameOf(ctx.data, b.enemy[next])}.`);
+      msg(ctx, tl('{0} is about to manifest {1}.', ctx.data.trainers[b.trainerId].name, nameOf(ctx.data, b.enemy[next])));
       return;
     }
     switchIn(ctx, 'e', next);
@@ -487,10 +488,10 @@ function awardXp(ctx, fallen) {
     const xpMult = bandOf(ctx.data.rules, b.startIntox ?? 0).xp ?? 1;   // the higher you went into it, the more you learn
     const each = Math.max(1, Math.floor((((bst / 4) * fallen.level * (b.kind === 'trainer' ? R.trainerXpMult : 1)) / R.xpDivisor / takers.length) * xpMult));
     for (const m of takers) {
-      msg(ctx, `${nameOf(ctx.data, m)} gained ${each} Vibes.`);
+      msg(ctx, tl('{0} gained {1} Vibes.', nameOf(ctx.data, m), each));
       const before = m.level;
       const wants = gainXp(ctx, m, each);
-      if (m.level > before) msg(ctx, `${nameOf(ctx.data, m)} peaked to level ${m.level}!`);
+      if (m.level > before) msg(ctx, tl('{0} peaked to level {1}!', nameOf(ctx.data, m), m.level));
       b.pending.push(...wants);
       if (m === active(ctx, 'p')) refreshSide(ctx, 'p');
     }
@@ -503,22 +504,22 @@ function tryCapture(ctx, item) {
   const max = statsOf(ctx.data, mon).maxHp;
   const band = bandOf(ctx.data.rules, b.startIntox ?? 0);
   if (band.fumble && ctx.rng.chance(band.fumble)) {
-    msg(ctx, `You open a ${item.name}...`);
+    msg(ctx, tl('You open a {0}...', item.name));
     ctx.emit({ type: 'CAPTURE_THROW', itemId: item.id, shakes: 0, success: false, fumble: true });
-    msg(ctx, 'Your hands are not your hands. The bag flutters off into the night.');
+    msg(ctx, tl('Your hands are not your hands. The bag flutters off into the night.'));
     return false;
   }
   const a = ((3 * max - 2 * mon.hp) / (3 * max)) * sp.catchRate * item.effect.catch * (mon.status ? ctx.data.rules.capture.statusBonus : 1) * (band.catch ?? 1);
   const p = Math.min(1, a / 255);
   const success = ctx.rng.chance(p);
   const shakes = success ? 3 : ctx.rng.int(0, 2);
-  msg(ctx, `You open a ${item.name}...`);
+  msg(ctx, tl('You open a {0}...', item.name));
   ctx.emit({ type: 'CAPTURE_THROW', itemId: item.id, shakes, success });
-  if (!success) { msg(ctx, shakes === 2 ? 'So close! It wriggles free.' : 'It slips straight out.'); return false; }
+  if (!success) { msg(ctx, shakes === 2 ? tl('So close! It wriggles free.') : tl('It slips straight out.')); return false; }
   const where = addToCollection(ctx, mon);
   ctx.emit({ type: 'AUDIO_CUE', sfxId: 'fanfare' });
-  msg(ctx, `Bagged! ${sp.name} is stabilised.`);
-  if (where === 'box') msg(ctx, 'Your party is full, so it went to the Chai Tent stash.');
+  msg(ctx, tl('Bagged! {0} is stabilised.', sp.name));
+  if (where === 'box') msg(ctx, tl('Your party is full, so it went to the Chai Tent stash.'));
   b.enemy = [];
   finish(ctx, 'CAUGHT');
   return true;
@@ -531,9 +532,9 @@ function victory(ctx) {
     const t = ctx.data.trainers[b.trainerId];
     s.defeated[t.id] = 1;
     s.rupees += t.reward || 0;
-    msg(ctx, `You out-vibed ${t.name}!`);
-    if (t.reward) { msg(ctx, `You got Rs ${t.reward}.`); ctx.emit({ type: 'RUPEES_CHANGED', rupees: s.rupees }); }
-  } else if (b.kind === 'mirror') say(ctx, 'You out-vibed yourself. Nobody else saw.');
+    msg(ctx, tl('You out-vibed {0}!', t.name));
+    if (t.reward) { msg(ctx, tl('You got Rs {0}.', t.reward)); ctx.emit({ type: 'RUPEES_CHANGED', rupees: s.rupees }); }
+  } else if (b.kind === 'mirror') say(ctx, tl('You out-vibed yourself. Nobody else saw.'));
   else wildDrop(ctx);
   finish(ctx, 'WON');
 }
@@ -546,7 +547,7 @@ function wildDrop(ctx) {
   let roll = ctx.rng.next() * table.reduce((a, [, w]) => a + w, 0), id = table[0][0];
   for (const [k, w] of table) { roll -= w; if (roll <= 0) { id = k; break; } }
   s.bag[id] = (s.bag[id] || 0) + 1;
-  msg(ctx, `The wild ${nameOf(ctx.data, B(ctx).enemy[0])} left something behind: a ${ctx.data.items[id].name}!`);
+  msg(ctx, tl('The wild {0} left something behind: a {1}!', nameOf(ctx.data, B(ctx).enemy[0]), ctx.data.items[id].name));
   ctx.emit({ type: 'ITEM_FOUND', itemId: id, n: 1 });
   ctx.emit({ type: 'AUDIO_CUE', sfxId: 'item' });
 }
@@ -570,9 +571,9 @@ export function learnMove(ctx, slot) {
   if (mon && slot >= 0 && slot < mon.moves.length) {
     const old = ctx.data.moves[mon.moves[slot]].name;
     mon.moves[slot] = p.moveId;
-    msg(ctx, `${nameOf(ctx.data, mon)} forgot ${old} and learned ${mv.name}!`);
+    msg(ctx, tl('{0} forgot {1} and learned {2}!', nameOf(ctx.data, mon), old, mv.name));
     ctx.emit({ type: 'MOVE_LEARNED', uid: mon.uid, name: nameOf(ctx.data, mon), moveId: p.moveId });
-  } else msg(ctx, `${mon ? nameOf(ctx.data, mon) : 'It'} did not learn ${mv.name}.`);
+  } else msg(ctx, tl('{0} did not learn {1}.', mon ? nameOf(ctx.data, mon) : tl('It'), mv.name));
   if (b.pending.length) promptLearn(ctx); else finalize(ctx);
 }
 
@@ -584,7 +585,7 @@ function finalize(ctx) {
   if ((result === 'WON' || result === 'CAUGHT') && b.kind !== 'mirror') {
     for (const m of s.party) {
       const target = m.hp > 0 ? evolutionTarget(ctx.data, m) : null;
-      if (target) { const old = nameOf(ctx.data, m); evolve(ctx, m, target); msg(ctx, `What? ${old} is changing... it became ${ctx.data.dex[target].name}!`); }
+      if (target) { const old = nameOf(ctx.data, m); evolve(ctx, m, target); msg(ctx, tl('What? {0} is changing... it became {1}!', old, ctx.data.dex[target].name)); }
     }
   }
   const old = s.intox;
@@ -610,7 +611,7 @@ function whiteout(ctx) {
     if (s.outfit === lostOutfit.effect.outfit && !(s.bag[lostOutfit.id] > 0)) s.outfit = null;
   }
   s.rupees -= loss;
-  msg(ctx, 'You have nobody left standing. Everything goes white...');
+  msg(ctx, tl('You have nobody left standing. Everything goes white...'));
   ctx.emit({ type: 'BATTLE_END', result: 'LOST' });
   for (const m of [...s.party, ...s.box]) healMon(ctx.data, m);
   const runLost = gauntletReset(ctx);                                  // lost halfway up the Four: the climb starts over
@@ -621,7 +622,7 @@ function whiteout(ctx) {
   // the tent's music, once the battle screen has closed (the zone's own cue above lands in the battle queue, which the outro drops)
   const tent = ctx.data.zones[s.zoneId];
   ctx.emit({ type: 'AUDIO_CUE', trackBpm: tent.baseBpm, lowPassFilterHz: 20000, mood: tent.paletteId, after: true });
-  s.dialogue = { speaker: '', text: `You white out. ${R.whiteoutHours} hours later you wake at ${s.lastTent.place || 'the Chai Tent'}${loss ? `, Rs ${loss} lighter` : ''}. Somebody has tucked you in.${lostOutfit ? ` Your ${lostOutfit.name} is gone.` : ''}${runLost ? ' The Four are back at their posts: the climb starts over.' : ''}`, style: 'DOWNER', choices: null };
+  s.dialogue = { speaker: '', text: tl('You white out. {0} hours later you wake at {1}{2}. Somebody has tucked you in.', R.whiteoutHours, s.lastTent.place || tl('the Chai Tent'), loss ? tl(', Rs {0} lighter', loss) : '') + (lostOutfit ? tl(' Your {0} is gone.', lostOutfit.name) : '') + (runLost ? tl(' The Four are back at their posts: the climb starts over.') : ''), style: 'DOWNER', choices: null };
   ctx.emit({ type: 'RUPEES_CHANGED', rupees: s.rupees });
   setMode(ctx, 'K_HOLE_WHITEOUT', 'WHITEOUT');
 }

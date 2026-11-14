@@ -13,6 +13,24 @@ const GLYPHS = F.map((h, i) => {
   while (cols.length && cols[cols.length - 1] === 0) cols.pop();
   return { cols, w: cols.length };
 });
+
+// Accented lower-case letters (Italian: a e i o u). The 5x7 letters sit in rows 2-6, so rows 0-1 are free for the
+// accent. Capitals fill all seven rows: write E' for the capital accented E, as plain Italian type always did.
+const ACCENTED = { 'à': ['a', 'g'], 'è': ['e', 'g'], 'é': ['e', 'a'], 'ì': ['i', 'g'], 'ò': ['o', 'g'], 'ù': ['u', 'g'] };
+const ACCENT_CHARS = Object.keys(ACCENTED);
+ACCENT_CHARS.forEach((ch) => {
+  const [base, kind] = ACCENTED[ch];
+  const bytes = []; const h = F[base.charCodeAt(0) - 32];
+  for (let c = 0; c < 5; c++) bytes.push(parseInt(h.substr(c * 2, 2), 16) || 0);
+  if (base === 'i') bytes[2] &= ~1;                       // the dot gives way to the accent
+  if (kind === 'g') { bytes[1] |= 1; bytes[2] |= 2; } else { bytes[3] |= 1; bytes[2] |= 2; }
+  const cols = bytes.slice();
+  while (cols.length && cols[0] === 0) cols.shift();
+  while (cols.length && cols[cols.length - 1] === 0) cols.pop();
+  GLYPHS.push({ cols, w: cols.length });
+});
+/** the glyph index of a character: ASCII 32..126, then the accented letters, else '?' */
+const gindex = (ch) => { const c = ch.charCodeAt(0); if (c >= 32 && c < 127) return c - 32; const k = ACCENT_CHARS.indexOf(ch); return k >= 0 ? 95 + k : 31; };
 export const LINE_H = 10;
 /** Test hook: when log is an array, every drawText call records { text, x, y, w, h } (after alignment). */
 export const textProbe = { log: null };
@@ -27,7 +45,7 @@ function atlas(color) {
   atlases.set(color, a);
   return a;
 }
-const glyphOf = (ch) => GLYPHS[ch.charCodeAt(0) - 32] || GLYPHS[31];
+const glyphOf = (ch) => GLYPHS[gindex(ch)];
 
 export function textWidth(text) {
   let w = 0;
@@ -57,8 +75,8 @@ export function drawText(g, text, x, y, opts = {}) {
       }
       let ch = text[i];
       if (opts.scramble && ch !== ' ' && ((i * 7919 + Math.floor((opts.t || 0) * 6)) % 100) < opts.scramble * 100) ch = String.fromCharCode(33 + ((i * 31 + Math.floor((opts.t || 0) * 9)) % 90));
-      const idx = ch.charCodeAt(0) - 32, gl = GLYPHS[idx] || GLYPHS[31];
-      if (gl.w && idx > 0) g.drawImage(a2, (GLYPHS[idx] ? idx : 31) * 6, 0, gl.w, 8, cx + ox, y + oy, gl.w, 8);
+      const idx = gindex(ch), gl = GLYPHS[idx];
+      if (gl.w && idx > 0) g.drawImage(a2, idx * 6, 0, gl.w, 8, cx + ox, y + oy, gl.w, 8);
       cx += gl.w + 1;
     }
   }

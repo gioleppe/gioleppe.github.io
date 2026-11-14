@@ -2,6 +2,7 @@
 // Move animations live in moveFx.js. Nothing here touches game state.
 import { W } from './CanvasRenderer.js';
 import { drawText } from './ui.js';
+import { tl } from '../core/i18n.js';
 
 export const SPOT = { e: { x: 232, y: 52 }, p: { x: 84, y: 102 } };   // centres of the two creatures
 
@@ -122,8 +123,8 @@ export function drawStage(g, stage, bottom, t, still, k = 1, moment = false, bpm
     g.fillStyle = '#3A3A46'; g.fillRect(20, 62, 90, 6); g.fillStyle = '#5A5A68'; g.fillRect(20, 60, 90, 2);
     for (let i = 0; i < 5; i++) { const kk = still ? i / 5 : (t * 0.7 + i / 5) % 1; g.globalAlpha = (1 - kk) * 0.5; g.fillStyle = '#F4F8FF'; g.beginPath(); g.arc(30 + i * 18, 58 - kk * 30, 3 + kk * 5, 0, 7); g.fill(); }
     g.globalAlpha = 1; g.fillStyle = '#2A1A0E'; g.fillRect(W - 96, 14, 70, 44); g.fillStyle = '#5A3418'; g.fillRect(W - 98, 12, 74, 3);
-    drawText(g, moment ? 'SPECIAL!!' : 'OMELETTE', W - 61, 22, { color: moment ? '#FF4FA8' : '#F4F0E8', align: 'center' });
-    drawText(g, moment ? '2nd helping' : 'Rs 40', W - 61, 36, { color: '#FFE066', align: 'center' });
+    drawText(g, moment ? tl('SPECIAL!!') : tl('OMELETTE'), W - 61, 22, { color: moment ? '#FF4FA8' : '#F4F0E8', align: 'center' });
+    drawText(g, moment ? tl('2nd helping') : tl('Rs 40'), W - 61, 36, { color: '#FFE066', align: 'center' });
   } else if (stage === 'forest') {
     g.globalAlpha = 0.18; g.fillStyle = '#6A2AE0'; g.fillRect(0, 0, W, bottom);
     for (let i = 0; i < 4; i++) { const kk = still ? i / 4 : (t * 0.06 + i / 4) % 1; g.globalAlpha = 0.18; g.fillStyle = '#D8D0F0'; g.beginPath(); g.ellipse(kk * W, 66 + (i % 2) * 6, 50, 6, 0, 0, 7); g.fill(); }
@@ -132,7 +133,7 @@ export function drawStage(g, stage, bottom, t, still, k = 1, moment = false, bpm
   } else if (stage === 'cliff') {
     g.strokeStyle = '#FFFFFF'; g.lineWidth = 3; g.globalAlpha = 0.9; g.beginPath(); g.arc(W - 50, 34, 18, 0, 7); g.stroke();
     g.lineWidth = 1; g.globalAlpha = 0.25; g.fillStyle = '#FFFFFF'; g.beginPath(); g.arc(W - 50, 34, 26, 0, 7); g.fill();
-    g.globalAlpha = 1; g.fillStyle = '#E0303C'; g.fillRect(8, 8, 32, 11); drawText(g, 'LIVE', 24, 10, { color: '#FFFFFF', align: 'center' });
+    g.globalAlpha = 1; g.fillStyle = '#E0303C'; g.fillRect(8, 8, 32, 11); drawText(g, tl('LIVE'), 24, 10, { color: '#FFFFFF', align: 'center' });
     drawText(g, `${(2 + k * 38).toFixed(1)}K`, 46, 10, { color: '#FFFFFF', shadow: '#14101E' });
     for (let i = 0; i < 9; i++) { const x = 16 + i * 34, up = still ? 0 : Math.round(Math.sin(t * 2 + i)); g.fillStyle = '#14101E'; g.fillRect(x, 64 + up, 5, 8); g.fillStyle = '#C8F4FF'; g.fillRect(x + 1, 65 + up, 3, 6); }
   } else if (stage === 'cave') {

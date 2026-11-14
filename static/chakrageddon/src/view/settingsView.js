@@ -1,6 +1,7 @@
 // Options screen, reachable from the title and from the Fanny Pack.
 import { W, H } from './CanvasRenderer.js';
 import { drawText, wrap, panel, list, C } from './ui.js';
+import { tl } from '../core/i18n.js';
 
 const SPEED = ['Slow', 'Normal', 'Fast'];
 const BATTLE_SPEED = ['Normal', 'Fast', 'Very fast'];
@@ -17,22 +18,23 @@ export const settingsView = {
     panel(g, 20, 8, W - 40, H - 16, { bg: '#FFF4E4', accent: C.cyan });
     if (this.remap) return this.drawRemap(game, g);
     if (this.juke) return this.drawJukebox(game, g);
-    drawText(g, 'OPTIONS', W / 2, 15, { color: C.purple, align: 'center' });
+    drawText(g, tl('OPTIONS'), W / 2, 15, { color: C.purple, align: 'center' });
     const rows = [
-      { id: 'difficulty', label: 'Difficulty', right: DIFFICULTY[st.difficulty] || 'Normal', help: { easy: 'Easy: your Astrals hit 20% harder and take 20% less.', hard: 'Hard: your Astrals hit 20% softer and take 20% more.' }[st.difficulty] || 'Normal: everyone hits as hard as they hit.' },
-      { id: 'grounded', label: 'Grounded mode', right: st.grounded ? 'ON' : 'off', help: 'Caps the trippy screen effects at their mildest level. Recommended if you are sensitive to motion or flashing.' },
-      { id: 'reducedMotion', label: 'Reduced motion', right: st.reducedMotion ? 'ON' : 'off', help: 'Stops screen shake, flashes and spinning backgrounds.' },
-      { id: 'textSpeed', label: 'Text speed', right: SPEED[st.textSpeed], help: 'How fast dialogue types out.' },
-      { id: 'battleSpeed', label: 'Battle speed', right: BATTLE_SPEED[st.battleSpeed || 0], help: 'How fast battles play out. Holding B also fast-forwards.' },
-      { id: 'battleStyle', label: 'Battle style', right: st.battleStyle === 'set' ? 'Set' : 'Shift', help: st.battleStyle === 'set' ? 'Set: a trainer sends their next Astral straight in.' : 'Shift: when you knock out an Astral of a trainer, you may swap yours before the next one comes out.' },
-      { id: 'pictureSize', label: 'Picture size', right: PICTURE[st.pictureSize || 0], help: pictureHelp(game) },
-      { id: 'volume', label: 'Volume', right: `${Math.round(st.volume * 100)}%`, help: 'Music and sound. 0% is mute.' },
-      { id: 'jukebox', label: 'Sound test', right: '', help: 'Listen to the music of every zone, battles and bosses.' },
-      { id: 'keys', label: 'Remap keyboard', right: '', help: 'Choose your own keys. Arrow keys, Enter and Esc always keep working.' },
-      { id: 'export', label: 'Export save to file', right: '', help: 'Downloads your save so you can move it to another device.', disabled: !game.hasSave() },
-      { id: 'import', label: 'Import save from file', right: '', help: 'Loads a save file. This replaces the save on this device.' },
-      { id: 'back', label: 'Back', right: '', help: '' },
+      { id: 'difficulty', label: tl('Difficulty'), right: tl(DIFFICULTY[st.difficulty] || 'Normal'), help: tl({ easy: 'Easy: your Astrals hit 20% harder and take 20% less.', hard: 'Hard: your Astrals hit 20% softer and take 20% more.' }[st.difficulty] || 'Normal: everyone hits as hard as they hit.') },
+      { id: 'grounded', label: tl('Grounded mode'), right: st.grounded ? tl('ON') : tl('off'), help: tl('Caps the trippy screen effects at their mildest level. Recommended if you are sensitive to motion or flashing.') },
+      { id: 'reducedMotion', label: tl('Reduced motion'), right: st.reducedMotion ? tl('ON') : tl('off'), help: tl('Stops screen shake, flashes and spinning backgrounds.') },
+      { id: 'textSpeed', label: tl('Text speed'), right: tl(SPEED[st.textSpeed]), help: tl('How fast dialogue types out.') },
+      { id: 'battleSpeed', label: tl('Battle speed'), right: tl(BATTLE_SPEED[st.battleSpeed || 0]), help: tl('How fast battles play out. Holding B also fast-forwards.') },
+      { id: 'battleStyle', label: tl('Battle style'), right: st.battleStyle === 'set' ? tl('Set') : tl('Shift'), help: st.battleStyle === 'set' ? tl('Set: a trainer sends their next Astral straight in.') : tl('Shift: when you knock out an Astral of a trainer, you may swap yours before the next one comes out.') },
+      { id: 'pictureSize', label: tl('Picture size'), right: tl(PICTURE[st.pictureSize || 0]), help: pictureHelp(game) },
+      { id: 'volume', label: tl('Volume'), right: `${Math.round(st.volume * 100)}%`, help: tl('Music and sound. 0% is mute.') },
+      { id: 'jukebox', label: tl('Sound test'), right: '', help: tl('Listen to the music of every zone, battles and bosses.') },
+      { id: 'keys', label: tl('Remap keyboard'), right: '', help: tl('Choose your own keys. Arrow keys, Enter and Esc always keep working.') },
+      { id: 'export', label: tl('Export save to file'), right: '', help: tl('Downloads your save so you can move it to another device.'), disabled: !game.hasSave() },
+      { id: 'import', label: tl('Import save from file'), right: '', help: tl('Loads a save file. This replaces the save on this device.') },
+      { id: 'back', label: tl('Back'), right: '', help: '' },
     ];
+    if (game.langs?.length > 1) rows.unshift({ id: 'language', label: tl('Language'), right: game.langName(), help: tl('The language of the whole game. Changing it restarts the page (your progress is saved first).') });
     const r = list(game, g, rows, 28, 25, W - 56, this.cursor, { rowH: 11, maxRows: 10 });   // scrolls: 10 rows above the help text
     this.cursor = r.cursor;
     const row = rows[this.cursor];
@@ -41,7 +43,8 @@ export const settingsView = {
     const act = r.chosen >= 0 ? 1 : side;
     if (act) {
       const id = r.chosen >= 0 ? rows[r.chosen].id : row.id;
-      if (id === 'difficulty') { const k = ['easy', 'normal', 'hard'], i = k.indexOf(st.difficulty || 'normal'); st.difficulty = k[(i + (act > 0 ? 1 : 2)) % 3]; }
+      if (id === 'language') { game.cycleLanguage(act > 0 ? 1 : -1); return; }
+      else if (id === 'difficulty') { const k = ['easy', 'normal', 'hard'], i = k.indexOf(st.difficulty || 'normal'); st.difficulty = k[(i + (act > 0 ? 1 : 2)) % 3]; }
       else if (id === 'grounded') st.grounded = !st.grounded;
       else if (id === 'reducedMotion') st.reducedMotion = !st.reducedMotion;
       else if (id === 'textSpeed') st.textSpeed = (st.textSpeed + (act > 0 ? 1 : 2)) % 3;
@@ -61,10 +64,10 @@ export const settingsView = {
   drawRemap(game, g) {
     const st = game.settings, input = game.input, R = this.remap;
     const ACTIONS = [['up', 'Up'], ['down', 'Down'], ['left', 'Left'], ['right', 'Right'], ['a', 'Confirm (A)'], ['b', 'Back / run (B)'], ['start', 'Menu'], ['item', 'Quick items'], ['lick', 'Lick the blotter']];
-    drawText(g, 'REMAP KEYBOARD', W / 2, 15, { color: C.purple, align: 'center' });
+    drawText(g, tl('REMAP KEYBOARD'), W / 2, 15, { color: C.purple, align: 'center' });
     st.keys ||= {};
     const nameOf = (btn) => st.keys[btn] || Object.keys(input.keys).find((k) => input.keys[k] === btn && !k.startsWith('Arrow') && k !== 'Enter' && k !== 'Escape') || '-';
-    const rows = ACTIONS.map(([btn, label]) => ({ label, right: R.waiting === btn ? 'press a key...' : nameOf(btn).replace('Key', '') })).concat([{ label: 'Reset to defaults' }, { label: 'Done' }]);
+    const rows = ACTIONS.map(([btn, label]) => ({ label: tl(label), right: R.waiting === btn ? tl('press a key...') : nameOf(btn).replace('Key', '') })).concat([{ label: tl('Reset to defaults') }, { label: tl('Done') }]);
     const r = list(game, g, rows, 28, 28, W - 56, R.i, { rowH: 14, passive: !!R.waiting });
     R.i = r.cursor;
     if (R.waiting) return;
@@ -78,13 +81,13 @@ export const settingsView = {
   /** Sound test: every zone's track, plus battle, boss and title music */
   drawJukebox(game, g) {
     const J = this.juke, input = game.input, d = game.data;
-    drawText(g, 'SOUND TEST', W / 2, 15, { color: C.purple, align: 'center' });
+    drawText(g, tl('SOUND TEST'), W / 2, 15, { color: C.purple, align: 'center' });
     const tracks = Object.values(d.zones).map((z) => ({ label: z.name, bpm: z.baseBpm, mood: z.paletteId, zone: z.zoneId }))
-      .concat([{ label: 'Battle (wild)', bpm: 146, mood: 'BATTLE', zone: 'sandy_trail' }, { label: 'Battle (boss)', bpm: 152, mood: 'BOSS', zone: 'forest_stage' }, { label: 'Title', bpm: 140, mood: 'TITLE', zone: '' }]);
-    const rows = tracks.map((t, k) => ({ label: t.label, right: J.playing === k ? 'playing' : `${t.bpm}` })).concat([{ label: 'Back' }]);
+      .concat([{ label: tl('Battle (wild)'), bpm: 146, mood: 'BATTLE', zone: 'sandy_trail' }, { label: tl('Battle (boss)'), bpm: 152, mood: 'BOSS', zone: 'forest_stage' }, { label: tl('Title'), bpm: 140, mood: 'TITLE', zone: '' }]);
+    const rows = tracks.map((t, k) => ({ label: t.label, right: J.playing === k ? tl('playing') : `${t.bpm}` })).concat([{ label: tl('Back') }]);
     const r = list(game, g, rows, 28, 26, W - 56, J.i, { rowH: 13, maxRows: 9 });
     J.i = r.cursor;
-    wrap(game.audio?.ctx ? 'A plays a track. B goes back.' : 'Press any button first so the browser lets sound play.', W - 64).forEach((ln, k) => drawText(g, ln, 32, 150 + k * 10, { color: C.chai }));
+    wrap(game.audio?.ctx ? tl('A plays a track. B goes back.') : tl('Press any button first so the browser lets sound play.'), W - 64).forEach((ln, k) => drawText(g, ln, 32, 150 + k * 10, { color: C.chai }));
     if (r.chosen >= 0 && r.chosen < tracks.length) {
       const t = tracks[r.chosen]; J.playing = r.chosen;
       game.audio?.unlock?.(); game.audio?.setTrack({ bpm: t.bpm, mood: t.mood, zone: t.zone, lowPass: 12000 });
@@ -100,7 +103,7 @@ export function install(game) { game.register('settings', settingsView); }
 
 /** what Picture size gives on this screen: the size in pixels, and whether it can go any smaller */
 function pictureHelp(game) {
-  const r = game.renderer, now = r?.cssW ? ` Now ${r.cssW}x${r.cssH}.` : '';
+  const r = game.renderer, now = r?.cssW ? tl(' Now {0}x{1}.', r.cssW, r.cssH) : '';
   const floor = r && r.scale === 1 && (game.settings.pictureSize || 0) > 0 && r.fit - (game.settings.pictureSize || 0) < 1;
-  return `Smaller picture in sharp whole steps, centred on black.${now}${floor ? ' (As small as it goes.)' : ''}`;
+  return tl('Smaller picture in sharp whole steps, centred on black.') + now + (floor ? tl(' (As small as it goes.)') : '');
 }

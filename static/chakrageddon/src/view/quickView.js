@@ -5,6 +5,7 @@
 import { W, H } from './CanvasRenderer.js';
 import { drawText, wrap, panel, list, C } from './ui.js';
 import { statsOf, nameOf } from '../core/mons.js';
+import { tl } from '../core/i18n.js';
 
 const PX = 8, PY = 8, PW = W - 16, PH = H - 16, ROW = 17;   // room for a full team of six
 
@@ -37,10 +38,10 @@ export const quickView = {
     const s = game.engine.state, d = game.data, input = game.input;
     g.fillStyle = 'rgba(11,3,20,0.45)'; g.fillRect(0, 0, W, H);
     panel(g, PX, PY, PW, PH, { bg: '#FFF4E4', accent: C.acid });
-    drawText(g, 'QUICK ITEMS', PX + 8, PY + 5, { color: C.purple });
+    drawText(g, tl('QUICK ITEMS'), PX + 8, PY + 5, { color: C.purple });
     const ids = this.items(game);
     if (!ids.length) {
-      wrap('Nothing to use. Stalls sell snacks and water, and beaten wild Astrals sometimes leave some behind.', PW - 20).forEach((ln, i) => drawText(g, ln, PX + 8, PY + 22 + i * 11, { color: C.ink }));
+      wrap(tl('Nothing to use. Stalls sell snacks and water, and beaten wild Astrals sometimes leave some behind.'), PW - 20).forEach((ln, i) => drawText(g, ln, PX + 8, PY + 22 + i * 11, { color: C.ink }));
       if (input.pressed('a') || input.pressed('b') || input.anyTap()) this.close(game);
       return;
     }
@@ -48,14 +49,14 @@ export const quickView = {
     const pick = this.step === 'item';
 
     // left: what you have
-    const ir = list(game, g, ids.map((id) => ({ label: id === 'glowing_blotter' ? 'Lick the blotter' : d.items[id].name, right: id === 'glowing_blotter' ? '' : `x${s.bag[id]}`, color: !pick && id === this.itemId ? C.magenta : undefined })), PX + 4, PY + 18, 136, Math.min(this.cursor.item, ids.length - 1), { rowH: 14, maxRows: 6, passive: !pick });
+    const ir = list(game, g, ids.map((id) => ({ label: id === 'glowing_blotter' ? tl('Lick the blotter') : d.items[id].name, right: id === 'glowing_blotter' ? '' : `x${s.bag[id]}`, color: !pick && id === this.itemId ? C.magenta : undefined })), PX + 4, PY + 18, 136, Math.min(this.cursor.item, ids.length - 1), { rowH: 14, maxRows: 6, passive: !pick });
     if (pick) this.cursor.item = ir.cursor;
     const shown = d.items[ids[Math.min(this.cursor.item, ids.length - 1)]];
 
     // right: your team, with Serotonin and Hydration
     const rows = s.party.map((m) => {
       const st = statsOf(d, m);
-      return { label: `${nameOf(d, m)}`, right: m.hp > 0 ? `${m.hp}/${st.maxHp}` : 'OUT', rightColor: m.hp > 0 ? C.ink : C.red };
+      return { label: `${nameOf(d, m)}`, right: m.hp > 0 ? `${m.hp}/${st.maxHp}` : tl('OUT'), rightColor: m.hp > 0 ? C.ink : C.red };
     });
     const mx = PX + 146, mw = PW - 150;
     const mr = list(game, g, rows, mx, PY + 18, mw, this.cursor.mon, { rowH: ROW, passive: pick });
@@ -69,7 +70,7 @@ export const quickView = {
     if (!pick) this.cursor.mon = mr.cursor;
 
     // the line at the bottom: what the item does, or what to do next
-    const help = pick ? shown.desc : `Give the ${d.items[this.itemId].name} to whom? (x${s.bag[this.itemId]} left)`;
+    const help = pick ? shown.desc : tl('Give the {0} to whom? (x{1} left)', d.items[this.itemId].name, s.bag[this.itemId]);
     wrap(help, PW - 20).slice(0, 2).forEach((ln, i) => drawText(g, ln, PX + 8, PY + PH - 24 + i * 10, { color: C.chai }));
 
     if (pick) {

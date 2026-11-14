@@ -2,6 +2,7 @@
 // B (or a tap on the right) goes back to the festival.
 import { W, H } from './CanvasRenderer.js';
 import { drawText, panel, C } from './ui.js';
+import { tl } from '../core/i18n.js';
 import { festivalStats, festivalTime } from '../core/stats.js';
 
 const COLS = ['#FF4FA8', '#9A4FE0', '#3FD8E8', '#4FE88A', '#FFE066'];
@@ -23,19 +24,19 @@ export function drawCard(game, g, t = 0, prompt = true) {
   g.fillStyle = 'rgba(11,3,20,0.4)'; g.fillRect(28, 110, 36, 4);
   drawText(g, st.name, 46, 122, { color: C.cream, align: 'center' });
   // the title
-  g.save(); g.scale(2, 2); drawText(g, 'MY FESTIVAL', W / 4 + 20, 9, { color: C.yellow, align: 'center', shadow: C.magenta }); g.restore();
+  g.save(); g.scale(2, 2); drawText(g, tl('MY FESTIVAL'), W / 4 + 20, 9, { color: C.yellow, align: 'center', shadow: C.magenta }); g.restore();
   const rows = [
-    ['At the festival', festivalTime(st)],
-    ['Walked', `${st.km.toFixed(1)} km`],
-    ['Highest high', st.peak],
-    ['Astrals bagged', `${st.caught} / ${st.species}`],
-    ['Wristbands', `${st.bosses} / ${st.bossTotal}`],
-    ['Rematches won', `${st.rematches} / ${st.rematchTotal}`],
-    ['Side quests', `${st.quests} / ${st.questTotal}`],
+    [tl('At the festival'), festivalTime(st)],
+    [tl('Walked'), `${st.km.toFixed(1)} km`],
+    [tl('Highest high'), st.peak],
+    [tl('Astrals bagged'), `${st.caught} / ${st.species}`],
+    [tl('Wristbands'), `${st.bosses} / ${st.bossTotal}`],
+    [tl('Rematches won'), `${st.rematches} / ${st.rematchTotal}`],
+    [tl('Side quests'), `${st.quests} / ${st.questTotal}`],
   ];
   rows.forEach(([k, v], i) => { drawText(g, k, 92, 42 + i * 13, { color: C.sand }); drawText(g, v, W - 20, 42 + i * 13, { color: COLS[i % COLS.length], align: 'right' }); });
   drawText(g, 'CHAKRA-GEDDON   gioleppe.github.io/chakrageddon', W / 2, H - 26, { color: '#7A6AA0', align: 'center' });
-  if (prompt) drawText(g, 'A: save picture    B: back to the festival', W / 2, H - 13, { color: C.cream, align: 'center' });
+  if (prompt) drawText(g, tl('A: save picture    B: back to the festival'), W / 2, H - 13, { color: C.cream, align: 'center' });
 }
 
 export const endCardView = {
@@ -48,7 +49,7 @@ export const endCardView = {
   },
   draw(game, g) {
     drawCard(game, g, this.t, true);
-    if (this.saved > 0) drawText(g, 'Saved!', W / 2, 26, { color: C.acid, align: 'center' });
+    if (this.saved > 0) drawText(g, tl('Saved!'), W / 2, 26, { color: C.acid, align: 'center' });
   },
   /** the card at three times the size, without the prompt, as a PNG download */
   save(game) {

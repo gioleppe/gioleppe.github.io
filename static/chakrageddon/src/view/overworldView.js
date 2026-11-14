@@ -9,10 +9,19 @@ import { stageFx, shakeOf } from './stageFx.js';
 import { drawRide, RIDE, RIDE_STILL } from './tuktukRide.js';
 const MOTES = { glowcap: ['#4FE88A', '#C8FFE0'], ufo: ['#4FE88A', '#C8FFE0'], uvjar: ['#C86BFF', '#E0A8FF'], shellsand: ['#FFFFFF', '#FFF4B0'] };
 const ARRIVAL = 1.8;
+// encounter tiles you wade through, like tall grass: stepping in stirs them (the cloud billows, the bush shakes), and
+// while you stand in one it covers your feet. puff: the colours of the billow; skirt: what covers the feet
+// ('cloud' drawn soft, 'tile' the lower rows of the tile itself)
+export const RUSTLE = 0.45;
+const WADE = {
+  incense: { puff: ['#EADDFB', '#FFFFFF', '#C9B2EE'], skirt: 'cloud' },
+  darkbush: { puff: ['#2A5A3A', '#1E4A2E', '#FFE066'], skirt: 'tile' },
+};
 const BOX_CLEAR = H - 50 - 3 - 9 - 4;   // the dialogue box with its speaker tab starts here; feet stay above it   // seconds the camera spends on a boss before their cutscene
 import { routeHint } from '../core/goals.js';
 import { hashOf } from './anim.js';
 import { questMarker } from '../core/quests.js';
+import { tl } from '../core/i18n.js';
 
 const BAND_COLORS = ['#00FF66', '#FFD23F', '#FF4FA8', '#C86BFF'];
 // quest markers as little pixel icons: K outline, Y fill, W highlight
@@ -167,7 +176,7 @@ function drawSky(g, sky, still) {
     }
   }
   g.restore(); g.save(); g.globalAlpha = a;
-  drawText(g, moon ? 'Night falls' : 'The sun comes up', W / 2, BAND_Y + BAND_H - 11, { color: moon ? '#F4F0E8' : '#FFF6C8', align: 'center', shadow: moon ? '#3A1A5A' : '#1E5A70' });
+  drawText(g, moon ? tl('Night falls') : tl('The sun comes up'), W / 2, BAND_Y + BAND_H - 11, { color: moon ? '#F4F0E8' : '#FFF6C8', align: 'center', shadow: moon ? '#3A1A5A' : '#1E5A70' });
   g.restore();
 }
 
@@ -175,7 +184,10 @@ export const overworldView = {
   anim: null, bumpT: 0, trans: null, banner: null, bannerT: 0, alert: null, npcDir: {}, t: 0, walkFlip: 0,
 
   onEvent(game, e) {
-    if (e.type === 'ENTITY_MOVED' && e.entityId === 'player') { this.anim = { from: e.from, to: e.to, t: 0, dur: this.running(game) ? RUN : WALK }; this.walkFlip ^= 1; }
+    if (e.type === 'ENTITY_MOVED' && e.entityId === 'player') {
+      this.anim = { from: e.from, to: e.to, t: 0, dur: this.running(game) ? RUN : WALK }; this.walkFlip ^= 1;
+      if (this.wadeAt(game, e.to[0], e.to[1])) (this.rustles ||= []).push({ x: e.to[0], y: e.to[1], t: 0 });   // you wade in: it stirs
+    }
     else if (e.type === 'BUMP') { this.bumpT = 0.18; game.audio?.sfx('bump'); }
     else if (e.type === 'PLAYER_PLACED') this.anim = null;
     if (e.type === 'UNSTUCK') this.startTrans(game, 'iris');
@@ -192,7 +204,7 @@ export const overworldView = {
       highWorld.crowd = { start: this.t, end: this.t + ARRIVAL };
     } else if (e.type === 'BATTLE_END' && e.boss && e.result === 'WON') { this.cheer = 3; game.audio?.sfx('cheer'); }                      // set down somewhere else (coming down off the stairs of light)
     else if (e.type === 'FX' && e.fx === 'rainbow_burst') highWorld.burst(game, e);
-    else if (e.type === 'ZONE_CHANGED') { highWorld.reset(); this.anim = null; this.startTrans(game, this.transKind(game, e)); this.banner = e.name; this.bannerT = 3.2; this.npcDir = {}; this.npcAnim = {}; this.leaving = []; this.astral = null; this.peek = null; this.hint = routeHint(game.data, game.engine.state)?.text || null; }
+    else if (e.type === 'ZONE_CHANGED') { highWorld.reset(); this.anim = null; this.rustles = []; this.startTrans(game, this.transKind(game, e)); this.banner = e.name; this.bannerT = 3.2; this.npcDir = {}; this.npcAnim = {}; this.leaving = []; this.astral = null; this.peek = null; this.hint = routeHint(game.data, game.engine.state)?.text || null; }
     else if (e.type === 'EYE_CONTACT') { this.alert = { x: e.x, y: e.y, t: 0.8 }; }
     else if (e.type === 'NPC_FACE') this.npcDir[e.npcId] = e.dir;
     else if (e.type === 'NPC_WALK_OFF') (this.leaving ||= []).push({ id: e.npcId, sprite: e.sprite, path: e.path, t: 0 });   // beaten, they walk away
@@ -215,7 +227,7 @@ export const overworldView = {
     if (this.cheer > 0) this.cheer -= dt;
     // a set starting where you are (or you arriving during one): say what is on
     const st0 = game.engine.state, live = st0.mode === 'OVERWORLD' ? liveSet(game.data, st0) : null, key = live ? `${st0.zoneId}:${live.id}` : '';
-    if (key !== this.liveKey) { if (key && this.liveKey !== undefined) game.say(`Live now: ${live.name}`); this.liveKey = key; }
+    if (key !== this.liveKey) { if (key && this.liveKey !== undefined) game.say(tl('Live now: {0}', live.name)); this.liveKey = key; }
     // when the day turns (half way through dusk or dawn), a sun or a moon sweeps across the top of the screen
     const night = isNight(game.engine.state);
     if (this.dayFor !== game.engine) { this.dayFor = game.engine; this.wasNight = night; this.sky = null; }
@@ -228,6 +240,7 @@ export const overworldView = {
     if (this.alert) { this.alert.t -= dt; if (this.alert.t <= 0) this.alert = null; }
     if (this.bumpT > 0) this.bumpT -= dt;
     if (this.anim) { this.anim.t += dt / (this.anim.dur || WALK); if (this.anim.t >= 1) this.anim = null; }
+    if (this.rustles?.length) { for (const r of this.rustles) r.t += dt; this.rustles = this.rustles.filter((r) => r.t < RUSTLE); }
     // someone walking off (Astra-Zero after your second fight): a tile at a walking pace, gone at the end of the path
     for (const l of this.leaving || []) l.t += dt / (STEP * 1.6);
     if (this.leaving) this.leaving = this.leaving.filter((l) => l.t < l.path.length - 1);
@@ -431,6 +444,54 @@ export const overworldView = {
     return Math.max(0, py - cy + 14 - BOX_CLEAR);
   },
 
+  /** the tile at x, y is one you wade through (incense, a dark bush): its look (WADE), or null */
+  wadeAt(game, x, y) {
+    const s = game.engine.state, zone = game.data.zones[s.zoneId], ch = charAt({ data: game.data, state: s }, x, y, zone);
+    const def = ch === null ? null : game.data.legend[ch];
+    if (!def || def.id !== 2 || def.crowd) return null;
+    const sp = def.sprite === '@encounter' ? zone.encounter || 'incense' : def.sprite;
+    return WADE[sp] ? { ...WADE[sp], sprite: sp } : null;
+  },
+
+  /** how far a wade tile is shaking this frame (stirred a moment ago), in pixels */
+  rustleOf(game, x, y) {
+    if (game.settings.reducedMotion) return 0;
+    const r = (this.rustles || []).find((q) => q.x === x && q.y === y);
+    if (!r) return 0;
+    const k = r.t / RUSTLE;
+    return Math.round(Math.sin(r.t * 42) * 2 * (1 - k));
+  },
+
+  /** the front of a wade tile, over whoever stands in it (feet hidden, as in tall grass), and the billow when it was
+   *  just stirred. dx, dy: the tile's top-left on screen */
+  wadeFront(game, g, w, x, y, dx, dy) {
+    const still = game.settings.reducedMotion, t = this.t, j = this.rustleOf(game, x, y);
+    if (w.skirt === 'tile') {
+      const i = game.atlas.tiles[w.sprite];
+      if (i !== undefined) g.drawImage(game.images.tiles, (i % game.atlas.tileCols) * TS, Math.floor(i / game.atlas.tileCols) * TS + 9, TS, TS - 9, dx + j, dy + 9, TS, TS - 9);
+    } else {
+      // a soft bank of smoke across the lower part of the tile, drifting a little
+      for (let i = 0; i < 5; i++) {
+        const drift = still ? 0 : Math.sin(t * 1.6 + i * 1.9 + x) * 1.2;
+        g.globalAlpha = i % 2 ? 0.7 : 0.85; g.fillStyle = w.puff[i % 3];
+        g.beginPath(); g.ellipse(dx + 1 + i * 3.5 + drift + j, dy + 13 + (i % 2), 4, 3, 0, 0, 7); g.fill();
+      }
+      g.globalAlpha = 1;
+    }
+    const r = still ? null : (this.rustles || []).find((q) => q.x === x && q.y === y);
+    if (!r) return;
+    // the billow: puffs pushed out to either side and up, fading
+    const k = r.t / RUSTLE;
+    for (let i = 0; i < 6; i++) {
+      const side = i % 2 ? 1 : -1, reach = 3 + (i >> 1) * 3;
+      g.globalAlpha = (1 - k) * 0.95; g.fillStyle = w.puff[i % 3];
+      const px = dx + 8 + side * (reach * (0.4 + k)), py = dy + 13 - k * (4 + (i >> 1) * 4);
+      if (w.skirt === 'tile') g.fillRect(Math.round(px), Math.round(py), 1, 1);   // a leaf or two flying
+      else { g.beginPath(); g.ellipse(px, py, 2 + k * 3, 1.5 + k * 2, 0, 0, 7); g.fill(); }
+    }
+    g.globalAlpha = 1;
+  },
+
   tile(game, g, name, x, y) {
     const i = game.atlas.tiles[name];
     if (i === undefined) return;
@@ -498,7 +559,7 @@ export const overworldView = {
         if (VERTICAL[sp]) { const f = (fx, fy) => classOf(fx, fy) === sp; if ((f(x, y - 1) || f(x, y + 1)) && !f(x - 1, y) && !f(x + 1, y)) sp = VERTICAL[sp]; }
         const top = WALL_TOPS[sp];
         if (top && isWall(classOf(x, y + 1), sp)) wallTop(g, top, dx, dy, [classOf(x, y - 1), classOf(x + 1, y), classOf(x, y + 1), classOf(x - 1, y)].map((c) => !isWall(c, sp)));
-        else if (sp !== zone.ground) this.tile(game, g, sp, dx, dy);
+        else if (sp !== zone.ground) this.tile(game, g, sp, dx + (def.id === 2 ? this.rustleOf(game, x, y) : 0), dy);
         if (def.light && ego) highWorld.lightStep(this, game, g, dx, dy, x, y);
         if (sp === 'bonfire' && !game.settings.reducedMotion) for (let i = 0; i < 3; i++) {   // sparks rising off the fire
           const k = (this.t * 0.9 + i / 3 + x * 0.17) % 1;
@@ -615,6 +676,10 @@ export const overworldView = {
         const dancing = !game.settings.reducedMotion && !onWater && (this.idleT || 0) > IDLE_DANCE;
         const beats = this.t * (zone.baseBpm || 140) / 60, hop = dancing && beats % 1 < 0.3 ? 1 : 0;
         this.char(game, g, s.outfit || 'player', dancing ? 'DOWN' : s.player.dir, dancing ? Math.floor(beats / 2) % 2 : this.anim ? this.walkFlip : 0, px - cx, py - cy - 10 - (onWater ? 4 : 0) - hop);
+        for (const [wx, wy] of this.anim ? [this.anim.from, this.anim.to] : [[s.player.x, s.player.y]]) {
+          const w = this.wadeAt(game, wx, wy);
+          if (w) this.wadeFront(game, g, w, wx, wy, wx * TS - cx, wy * TS - cy);
+        }
       } else if (e.npc) {
         const n = e.npc, dx = Math.round(e.nx * TS - cx), dy = Math.round(e.ny * TS - cy);
         if (n.tile) {
@@ -651,7 +716,11 @@ export const overworldView = {
             }
           }
           if (n.ghost) highWorld.ghost(this, game, g, (jx, jy) => this.char(game, g, sprite, dir, step, dx + jx, dy - 10 + jy));
-          else { shadow(dx, dy - 10); this.char(game, g, sprite, dir, step, dx, dy - 10 + nod - hop); }
+          else {
+            shadow(dx, dy - 10); this.char(game, g, sprite, dir, step, dx, dy - 10 + nod - hop);
+            const w = !e.walking && this.wadeAt(game, e.nx, e.ny);
+            if (w) this.wadeFront(game, g, w, e.nx, e.ny, dx, dy);
+          }
           if (!still && !n.ghost) this.trick(g, n.sprite, dx, dy - 10, this.t + (h % 13), bpm);
         }
         // a quest to pick up (!) or a step to hand in (?)
@@ -726,7 +795,7 @@ export const overworldView = {
     const clock = `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
     drawText(g, clock, W / 2, H / 2 - 8, { color: C.cream, align: 'center' });
     const set = (game.data.rules.timetable?.sets || []).find((x) => x.id === z.setId);
-    if (set) drawText(g, `until the ${set.name}`, W / 2, H / 2 + 6, { color: '#9A8AB8', align: 'center' });
+    if (set) drawText(g, tl('until the {0}', set.name), W / 2, H / 2 + 6, { color: '#9A8AB8', align: 'center' });
     if (!game.settings.reducedMotion) for (let i = 0; i < 3; i++) { const p = (this.t * 0.6 + i / 3) % 1; g.globalAlpha = 1 - p; drawText(g, 'z', W / 2 + 24 + i * 6 + p * 10, H / 2 - 18 - p * 22, { color: '#C86BFF' }); g.globalAlpha = 1; }
   },
 };
