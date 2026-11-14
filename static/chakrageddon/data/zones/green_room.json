@@ -26,9 +26,9 @@
       "x": 8,
       "y": 8,
       "to": "backstage",
-      "tx": 3,
-      "ty": 12,
-      "dir": "UP"
+      "tx": 6,
+      "ty": 1,
+      "dir": "DOWN"
     }
   ],
   "npcs": [

@@ -215,6 +215,17 @@
       "dir": "UP",
       "script": "blue_dave",
       "showIf": "burn_done"
+    },
+    {
+      "id": "rosa_shallows",
+      "x": 3,
+      "y": 25,
+      "sprite": "vendor",
+      "dir": "UP",
+      "script": "rosa_shallows",
+      "showWhen": {
+        "flag": "boat_home"
+      }
     }
   ],
   "pickups": [

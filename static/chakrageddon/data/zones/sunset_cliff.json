@@ -44,17 +44,17 @@
     {
       "x": 21,
       "y": 5,
-      "to": "backstage",
+      "to": "load_in_road",
       "tx": 1,
-      "ty": 6,
+      "ty": 13,
       "dir": "RIGHT"
     },
     {
       "x": 21,
       "y": 6,
-      "to": "backstage",
+      "to": "load_in_road",
       "tx": 1,
-      "ty": 7,
+      "ty": 14,
       "dir": "RIGHT"
     },
     {
@@ -68,10 +68,10 @@
     {
       "x": 0,
       "y": 11,
-      "to": "driftwood_beach",
-      "tx": 22,
-      "ty": 9,
-      "dir": "LEFT"
+      "to": "fishermens_cove",
+      "tx": 40,
+      "ty": 8,
+      "dir": "DOWN"
     }
   ],
   "npcs": [
@@ -101,7 +101,10 @@
       "dir": "LEFT",
       "trainer": "cliff_sergeant",
       "sight": 6,
-      "hideIf": "beat_sergeant"
+      "hideIf": "beat_sergeant",
+      "showWhen": {
+        "flag": "exposed_undercover"
+      }
     },
     {
       "id": "cliff_sign",

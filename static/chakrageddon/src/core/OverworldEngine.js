@@ -28,7 +28,36 @@ export function logicAt(ctx, x, y, zone = zoneOf(ctx)) {
   const ch = charAt(ctx, x, y, zone);
   if (ch === null) return T.SOLID;
   const def = ctx.data.legend[ch];
-  return def ? def.id : T.SOLID;
+  if (!def) return T.SOLID;
+  if (def.tide && tideHigh(ctx, zone)) return T.SOLID;                       // the flats are under the surf
+  if (def.lane && danceAt(ctx, x, y, zone) && !(ctx.state.zoneId === zone.zoneId && ctx.state.player?.x === x && ctx.state.player?.y === y)) return T.SOLID;   // someone is dancing there (never on you: they dance round you)
+  return def.id;
+}
+
+/** the tide (zone.tide: { low: [[fromHour, toHour], ...] } on the festival clock): legend tiles with tide: true are wet
+ *  sand at low tide and surf, which nobody can cross, the rest of the time */
+export function tideHigh(ctx, zone = zoneOf(ctx)) {
+  if (!zone?.tide) return false;
+  const h = Math.floor((((ctx.state.clock || 0) % 1440) + 1440) % 1440 / 60);
+  return !zone.tide.low.some(([a, b]) => (a <= b ? h >= a && h < b : h >= a || h < b));
+}
+/** hours until the next low tide starts (0 while it is out) */
+export function hoursToLowTide(ctx, zone = zoneOf(ctx)) {
+  if (!tideHigh(ctx, zone)) return 0;
+  const h = Math.floor((((ctx.state.clock || 0) % 1440) + 1440) % 1440 / 60);
+  return Math.min(...zone.tide.low.map(([a]) => (a - h + 24) % 24 || 24));
+}
+/** The dancing crowd (the Last Dancefloor): on a lane tile (legend lane: 1 or -1, the way its row moves) the dancers move
+ *  one tile along the row with every step you take, in groups of width with gaps between (zone.lanes: { period, width,
+ *  every, rows: { y: { period, width, every, offset, dir } } }). Deterministic, so a route can be planned. */
+export function danceAt(ctx, x, y, zone = zoneOf(ctx), steps = ctx.state.steps || 0) {
+  const def = ctx.data.legend[charAt(ctx, x, y, zone)];
+  if (!def?.lane) return false;
+  const L = zone.lanes || {}, row = L.rows?.[y] || {};
+  const p = row.period || L.period || 4, w = row.width || L.width || 2, every = row.every || L.every || 1;
+  const dir = row.dir ?? def.lane, off = row.offset ?? (y * 7);
+  const moved = Math.floor(steps / every);
+  return ((((x - dir * moved - off) % p) + p) % p) < w;
 }
 
 export function npcVisible(ctx, npc) {
@@ -73,7 +102,7 @@ export function canUse(ctx, techId) {
 }
 const TECH_FOR = { [T.WATER]: 'pink_flamingo_float', [T.FAIRY]: 'machete_hack', [T.PUSH]: 'bass_drop_shove', [T.PADLOCK]: 'jaw_grind', [T.ROOTS]: 'banyan_root_climb' };
 /** walkable, or in the way only until you use a field technique you have (a knot of lights, a subwoofer, a padlock): for route hints */
-export function passable(ctx, x, y, zone) { if (walkable(ctx, x, y, zone)) return true; const t = TECH_FOR[logicAt(ctx, x, y, zone)]; return !!t && canUse(ctx, t); }
+export function passable(ctx, x, y, zone) { if (walkable(ctx, x, y, zone)) return true; if (ctx.data.legend[charAt(ctx, x, y, zone)]?.lane) return true; const t = TECH_FOR[logicAt(ctx, x, y, zone)]; return !!t && canUse(ctx, t); }
 
 function cordonOpen(ctx, zone) { return !!(zone.cordonFlag && ctx.state.flags[zone.cordonFlag]); }
 
@@ -203,6 +232,8 @@ export function step(ctx, dir) {
   if (!walkable(ctx, nx, ny, zone)) {
     const id = logicAt(ctx, nx, ny, zone);
     if (useTechnique(ctx, id, nx, ny, dir, zone)) return;
+    // walking into the dancing crowd: you wait a beat for a gap, and the crowd moves on (so nobody is ever boxed in)
+    if (ctx.data.legend[charAt(ctx, nx, ny, zone)]?.lane) { s.steps++; ctx.emit({ type: 'CROWD_SHIFT' }); checkTrainerSight(ctx, zone); return; }
     return bump(ctx);
   }
   // a way out that is closed for now (the back alley, until every undercover has had a word): closedIf, closedBy, closedText
@@ -212,14 +243,30 @@ export function step(ctx, dir) {
   s.steps++;
   // the festival clock: one minute every few steps, so an hour is about a minute of walking
   s.clockSteps = (s.clockSteps || 0) + 1;
-  if (s.clockSteps >= (ctx.data.rules.stepsPerMinute || 1)) { s.clockSteps = 0; s.clock = (s.clock + 1) % 1440; }
+  if (s.clockSteps >= (ctx.data.rules.stepsPerMinute || 1)) {
+    s.clockSteps = 0; s.clock = (s.clock + 1) % 1440;
+    // the tide came in while you were out on the flats: you wade back to the nearest dry rock
+    const here = ctx.data.legend[charAt(ctx, nx, ny, zone)];
+    if (here?.tide && tideHigh(ctx, zone)) {
+      s.player.x = nx; s.player.y = ny; settle(ctx);
+      ctx.emit({ type: 'PLAYER_PLACED', x: s.player.x, y: s.player.y });
+      ctx.emit({ type: 'MESSAGE', text: zone.tide.rising || 'The tide comes in round your ankles. You wade back to the rocks.' });
+      return;
+    }
+  }
   s.intox = Math.max(0, s.intox - (ctx.data.rules.intoxStepDecay ?? 0.002));
   if (s.repel > 0) s.repel--;
   const id = logicAt(ctx, nx, ny, zone);
   ctx.emit({ type: 'ENTITY_MOVED', entityId: 'player', from, to: [nx, ny], floating: id === T.WATER });
 
   const warp = (zone.warps || []).find((w) => w.x === nx && w.y === ny);
-  if (warp) { enterZone(ctx, warp.to, warp.tx, warp.ty, warp.dir); return; }
+  if (warp) {
+    // a way through that plays a scene first (the crowd lifting you onto the temple): script the first time (and until
+    // its once flag is set), againScript after that; either ends with its own warp
+    const sc = warp.script && (!warp.once || !s.flags[warp.once] ? warp.script : warp.againScript);
+    if (sc && ctx.data.dialogues[sc]) return startScript(ctx, ctx.data.dialogues[sc]);
+    enterZone(ctx, warp.to, warp.tx, warp.ty, warp.dir); return;
+  }
 
   if (checkTrainerSight(ctx, zone)) return;
   wander(ctx, zone);
@@ -354,17 +401,17 @@ export function checkTrainerSight(ctx, zone) {
 export function startTrainerFlow(ctx, npc, mode = 'DIALOGUE') {
   const t = ctx.data.trainers[npc.trainer];
   const steps = [];
-  // a boss's cutscene: in full the first time, the short title card after that (a retry after a whiteout)
+  // a boss's cutscene: in full until you beat them (a retry after a whiteout plays it all again), the short card after that
+  const seen = t.cutscene && ctx.state.flags[`cutscene_${t.cutscene}`];
   if (t.cutscene) {
-    const seen = ctx.state.flags[`cutscene_${t.cutscene}`];
-    // the first time, the arrival: the music drops, the crowd turns, the camera goes to them (the view holds the rest)
+    // the arrival: the music drops, the crowd turns, the camera goes to them (the view holds the rest)
     if (!seen && t.boss) ctx.emit({ type: 'BOSS_ARRIVAL', npcId: npc.id, x: npc.x, y: npc.y });
     steps.push({ scene: 'boss', who: t.cutscene, ...(seen ? { card: true } : {}) });
-    if (!seen) steps.push({ set: `cutscene_${t.cutscene}` });
   }
   for (const line of t.intro || []) steps.push({ s: t.name, t: line, style: t.textStyle });
   if (t.cutscene) steps.push({ scene: null });
   steps.push({ battle: t.id });
+  if (t.cutscene && !seen) steps.push({ set: `cutscene_${t.cutscene}` });   // only a win gets here: a whiteout drops the script
   for (const line of t.defeat || []) steps.push({ s: t.name, t: line, style: t.textStyle });
   if (t.wristband) steps.push({ scene: 'wristband', who: t.wristband, by: t.sprite }, { wristband: t.wristband }, { scene: null });   // a short ceremony
   if (t.gives) steps.push({ give: t.gives, n: 1 });

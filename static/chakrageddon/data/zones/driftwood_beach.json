@@ -17,7 +17,7 @@
     "T..........,,...,..x....T",
     "T..o...h...,,.m.,.......T",
     "T.......o..,,...,...C...T",
-    "T.x..T.....,,...,,,,,..R,",
+    "T.x..T.....,,...,,,,,..,,",
     "T.....................o.T",
     "T..x.......T.....o......T",
     "wwwwwwwwwwwwwwwwwwwwwwwww",
@@ -51,11 +51,17 @@
     {
       "x": 24,
       "y": 9,
-      "to": "sunset_cliff",
+      "to": "fishermens_cove",
       "tx": 1,
-      "ty": 11,
+      "ty": 19,
       "dir": "RIGHT",
-      "needs": "banyan_root_climb"
+      "closedIf": {
+        "not": {
+          "bands": 4
+        }
+      },
+      "closedBy": "Lifeguard",
+      "closedText": "A lifeguard waves you back from the rocks. \"Fishermen's Cove is round there, but the rocks are slippery and the Astrals bite. Come back with four wristbands.\""
     }
   ],
   "npcs": [
@@ -146,6 +152,42 @@
         "set": "sunrise"
       },
       "script": "banyan_sunrise"
+    },
+    {
+      "id": "shell_sand",
+      "x": 7,
+      "y": 11,
+      "tile": "shellsand",
+      "script": "shell_sand",
+      "showWhen": {
+        "all": [
+          {
+            "flag": "mandala_asked"
+          },
+          {
+            "hour": [
+              5,
+              7
+            ]
+          }
+        ]
+      },
+      "hideWhen": {
+        "any": [
+          {
+            "has": "shell_sand"
+          },
+          {
+            "flag": "mandala_laid"
+          },
+          {
+            "flag": "met_mandalord"
+          },
+          {
+            "caughtSpecies": "mandalord"
+          }
+        ]
+      }
     }
   ],
   "pickups": [

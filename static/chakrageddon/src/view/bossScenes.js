@@ -1,7 +1,7 @@
 // Boss cutscenes (CUTSCENES.md): one full-screen pixel scene per boss, the Four-on-the-Floor, the rival's last stand
 // and the VIP Shaman Council, behind the dialogue box. Three beats each: 1. the character in their setting doing the
 // thing that defines them; 2. the title card (who, and a one-line epithet) at CARD_AT; 3. a closing gesture at BEAT3.
-// A rematch (or a retry after a whiteout) shows only the short card: `card`. With reduced motion every scene holds
+// A rematch shows only the short card: `card` (a retry after a whiteout plays the whole scene again). With reduced motion every scene holds
 // its last key frame; grounded mode (and reduced motion) keeps effects calm: no strobing, no big moves.
 import { W, H } from './CanvasRenderer.js';
 import { drawText, textWidth } from './font.js';
@@ -32,7 +32,7 @@ export const BOSSES = {
 };
 export const BOSS_IDS = Object.keys(BOSSES);
 
-/** draw a boss scene at t seconds; card: the short title card only (a rematch or a retry) */
+/** draw a boss scene at t seconds; card: the short title card only (a rematch) */
 export function drawBoss(game, g, who, t0, card = false) {
   const b = BOSSES[who];
   if (!b) return;

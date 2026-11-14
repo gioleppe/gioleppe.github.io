@@ -1,0 +1,500 @@
+{
+  "zoneId": "last_dancefloor",
+  "name": "The Last Dancefloor",
+  "paletteId": "UV_BLACKLIGHT",
+  "baseBpm": 140,
+  "ground": "sand",
+  "ground2": "path",
+  "wall": "container",
+  "encounter": "incense",
+  "lanes": {
+    "period": 6,
+    "width": 2,
+    "rows": {
+      "29": {
+        "period": 5,
+        "width": 2
+      },
+      "30": {
+        "period": 5,
+        "width": 3
+      },
+      "31": {
+        "period": 5,
+        "width": 2
+      },
+      "33": {
+        "period": 5,
+        "width": 2
+      },
+      "34": {
+        "period": 5,
+        "width": 3
+      },
+      "35": {
+        "period": 5,
+        "width": 2
+      },
+      "49": {
+        "period": 5,
+        "width": 3
+      },
+      "50": {
+        "period": 4,
+        "width": 2,
+        "every": 2
+      },
+      "51": {
+        "period": 5,
+        "width": 3
+      },
+      "52": {
+        "period": 4,
+        "width": 2,
+        "every": 2
+      },
+      "54": {
+        "period": 6,
+        "width": 3
+      }
+    }
+  },
+  "rows": [
+    "ǁǁǁǁǁǁǁǁǁǁǁǁǁǁǁ,,ǁǁǁǁǁǁǁǁǁǁǁǁǁǁǁ",
+    "ǁ..............,,..............ǁ",
+    "ǁ..............,,.......m.m....ǁ",
+    "ǁ..C.......L...,,..L...........ǁ",
+    "ǁ..............,,.......q.q....ǁ",
+    "ǁ..............,,..............ǁ",
+    "ǁ.......1.1....,,.........cc...ǁ",
+    "ǁ.&&&&&........,,...&&&&..cc...ǁ",
+    "ǁ.&&&&&........,,...&&&&.......ǁ",
+    "ǁ..............,,..............ǁ",
+    "ǁǁǁǁ..ǁǁǁǁǁǁǁǁǁ..ǁǁǁǁǁǁǁǁǁ..ǁǁǁǁ",
+    "ǁ»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»ǁ",
+    "ǁ..............................ǁ",
+    "ǁ««««««««««««««««««««««««««««««ǁ",
+    "ǁ..............................ǁ",
+    "ǁ»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»ǁ",
+    "ǁ..............................ǁ",
+    "ǁǁ..ǁǁǁǁǁǁǁǁǁǁ....ǁǁǁǁǁǁǁǁǁǁ..ǁǁ",
+    "ǁ..............................ǁ",
+    "ǁ.&&&&&&&&............&&&&&&...ǁ",
+    "ǁ.&&&&&&&&..ǁǁǁǁǁǁǁǁ..&&&&&&...ǁ",
+    "ǁ.&&...&&&..ǁ.jjjj.ǁ..&&&&&&&&.ǁ",
+    "ǁ.&&...&&&..ǁ......ǁ..&&&...&&.ǁ",
+    "ǁ.&&&&&&&&..ǁǁǁ..ǁǁǁ..&&&...&&.ǁ",
+    "ǁ.&&&&&&&&............&&&&&&&&.ǁ",
+    "ǁ...&&&&&&............&&&&&&&&.ǁ",
+    "ǁ...&&&&&&.L........L.&&&&&&&&.ǁ",
+    "ǁ..............................ǁ",
+    "ǁǁǁǁǁǁǁǁ..ǁǁǁǁǁǁǁǁǁǁǁǁ..ǁǁǁǁǁǁǁǁ",
+    "ǁ««««««««««««««««««««««««««««««ǁ",
+    "ǁ»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»ǁ",
+    "ǁ««««««««««««««««««««««««««««««ǁ",
+    "ǁ..............................ǁ",
+    "ǁ»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»ǁ",
+    "ǁ««««««««««««««««««««««««««««««ǁ",
+    "ǁ»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»ǁ",
+    "ǁ..............................ǁ",
+    "ǁǁǁǁǁ..ǁǁǁǁǁǁǁǁ..ǁǁǁǁǁǁǁǁ..ǁǁǁǁǁ",
+    "ǁ..............................ǁ",
+    "ǁ......&&&&&&&....&&&&&&&......ǁ",
+    "ǁ...L..&&&&&&&....&&&&&&&..L...ǁ",
+    "ǁ......&&&&&&&.kk.&&&&&&&......ǁ",
+    "ǁ......&&&&&&&....&&&&&&&......ǁ",
+    "ǁ..............................ǁ",
+    "ǁ.&&&&&&..L..........L..&&&&&&.ǁ",
+    "ǁ.&&&&&&................&&&&&&.ǁ",
+    "ǁ.&&&&&&................&&&&&&.ǁ",
+    "ǁ..............................ǁ",
+    "ǁǁǁ..ǁǁǁǁǁǁǁǁǁǁ..ǁǁǁǁǁǁǁǁǁǁ..ǁǁǁ",
+    "ǁ»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»ǁ",
+    "ǁ««««««««««««««««««««««««««««««ǁ",
+    "ǁ»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»ǁ",
+    "ǁ««««««««««««««««««««««««««««««ǁ",
+    "ǁ..............................ǁ",
+    "ǁ»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»ǁ",
+    "ǁ..............................ǁ",
+    "ǁ..............................ǁ",
+    "ǁ.&&&&......ǁǁǁ.ǁ.........&&&&.ǁ",
+    "ǁ.&&&&......ǁ...ǁǁǁ.......&&&&.ǁ",
+    "ǁ.....ǁ..>..ǁǁǁ...ǁ...>........ǁ",
+    "ǁ.ǁ...ǁ....k..ǁ.ǁǁǁ.k..........ǁ",
+    "ǁǁǁǁǁǁǁǁǁǁǁǁǁǁǁ.ǁǁǁǁǁǁǁǁǁǁǁǁǁǁǁǁ",
+    "ǁ||||||||||||||||||||||||||||||ǁ",
+    "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+  ],
+  "warps": [
+    {
+      "x": 15,
+      "y": 0,
+      "to": "backstage",
+      "tx": 10,
+      "ty": 14,
+      "dir": "UP"
+    },
+    {
+      "x": 16,
+      "y": 0,
+      "to": "backstage",
+      "tx": 11,
+      "ty": 14,
+      "dir": "UP"
+    },
+    {
+      "x": 15,
+      "y": 61,
+      "to": "mainstage_temple",
+      "tx": 15,
+      "ty": 43,
+      "dir": "UP",
+      "script": "crowdsurf",
+      "once": "temple_entered",
+      "againScript": "crowdsurf_again",
+      "closedIf": {
+        "not": {
+          "all": [
+            {
+              "defeated": "front_left"
+            },
+            {
+              "defeated": "front_right"
+            }
+          ]
+        }
+      },
+      "closedBy": "The crowd",
+      "closedText": "Hands go up all round you, but nobody lifts you. The Front Row are still watching you, arms folded. The crowd takes its cue from them."
+    }
+  ],
+  "npcs": [
+    {
+      "id": "floor_sign",
+      "x": 13,
+      "y": 2,
+      "tile": "sign",
+      "script": "floor_sign"
+    },
+    {
+      "id": "merch_seller",
+      "x": 25,
+      "y": 3,
+      "sprite": "vendor",
+      "dir": "DOWN",
+      "script": "merch_seller"
+    },
+    {
+      "id": "ziggy",
+      "x": 5,
+      "y": 4,
+      "sprite": "raver",
+      "dir": "LEFT",
+      "script": "ziggy"
+    },
+    {
+      "id": "noor",
+      "x": 28,
+      "y": 43,
+      "sprite": "hippie",
+      "dir": "DOWN",
+      "script": "noor",
+      "hideIf": "noor_found"
+    },
+    {
+      "id": "noor_back",
+      "x": 6,
+      "y": 4,
+      "sprite": "hippie",
+      "dir": "LEFT",
+      "script": "noor_back",
+      "showIf": "noor_found"
+    },
+    {
+      "id": "marta",
+      "x": 16,
+      "y": 22,
+      "sprite": "dj",
+      "dir": "DOWN",
+      "script": "marta"
+    },
+    {
+      "id": "side_security",
+      "x": 3,
+      "y": 59,
+      "sprite": "guard",
+      "dir": "RIGHT",
+      "script": "side_security"
+    },
+    {
+      "id": "sf_diabolo",
+      "x": 21,
+      "y": 5,
+      "sprite": "firespinner",
+      "dir": "LEFT",
+      "trainer": "sf_diabolo",
+      "sight": 4
+    },
+    {
+      "id": "sf_svetlana",
+      "x": 2,
+      "y": 16,
+      "sprite": "yogi",
+      "dir": "RIGHT",
+      "trainer": "sf_svetlana",
+      "sight": 5
+    },
+    {
+      "id": "sf_keta",
+      "x": 29,
+      "y": 16,
+      "sprite": "captain",
+      "dir": "LEFT",
+      "trainer": "sf_keta",
+      "sight": 5
+    },
+    {
+      "id": "sf_raju",
+      "x": 5,
+      "y": 21,
+      "sprite": "chef",
+      "dir": "DOWN",
+      "trainer": "sf_raju",
+      "sight": 2
+    },
+    {
+      "id": "sf_darkpsy",
+      "x": 26,
+      "y": 23,
+      "sprite": "shaman",
+      "dir": "LEFT",
+      "trainer": "sf_darkpsy",
+      "sight": 3
+    },
+    {
+      "id": "sf_chloe",
+      "x": 15,
+      "y": 38,
+      "sprite": "influencer",
+      "dir": "DOWN",
+      "trainer": "sf_chloe",
+      "sight": 2,
+      "look": [
+        "DOWN",
+        "LEFT",
+        "DOWN",
+        "RIGHT"
+      ],
+      "lookEvery": 3
+    },
+    {
+      "id": "sf_baba",
+      "x": 2,
+      "y": 43,
+      "sprite": "guru",
+      "dir": "RIGHT",
+      "trainer": "sf_baba",
+      "sight": 5
+    },
+    {
+      "id": "sf_promoter",
+      "x": 29,
+      "y": 47,
+      "sprite": "promoter",
+      "dir": "LEFT",
+      "trainer": "sf_promoter",
+      "sight": 6
+    },
+    {
+      "id": "front_left",
+      "x": 13,
+      "y": 58,
+      "sprite": "raver",
+      "dir": "RIGHT",
+      "trainer": "front_left",
+      "sight": 2
+    },
+    {
+      "id": "front_right",
+      "x": 17,
+      "y": 59,
+      "sprite": "dealer",
+      "dir": "LEFT",
+      "trainer": "front_right",
+      "sight": 2
+    }
+  ],
+  "pickups": [
+    {
+      "id": "floor_water",
+      "x": 28,
+      "y": 19,
+      "item": "water_bottle",
+      "n": 3
+    },
+    {
+      "id": "floor_vial",
+      "x": 1,
+      "y": 26,
+      "item": "amber_vial",
+      "n": 2
+    },
+    {
+      "id": "floor_chai",
+      "x": 26,
+      "y": 23,
+      "item": "masala_chai",
+      "n": 1,
+      "hidden": true
+    },
+    {
+      "id": "floor_blanket",
+      "x": 1,
+      "y": 39,
+      "item": "weighted_blanket",
+      "n": 2
+    },
+    {
+      "id": "floor_sachet",
+      "x": 28,
+      "y": 42,
+      "item": "electrolyte_sachet",
+      "n": 2
+    },
+    {
+      "id": "floor_balm",
+      "x": 30,
+      "y": 56,
+      "item": "tiger_balm",
+      "n": 2
+    },
+    {
+      "id": "floor_kingfisher",
+      "x": 4,
+      "y": 22,
+      "item": "warm_kingfisher",
+      "n": 1
+    }
+  ],
+  "encounters": {
+    "encounterRate": 0.14,
+    "table": [
+      {
+        "speciesId": "ravelord",
+        "minLevel": 35,
+        "maxLevel": 38,
+        "weight": 20
+      },
+      {
+        "speciesId": "amphetadragon",
+        "minLevel": 36,
+        "maxLevel": 38,
+        "weight": 10
+      },
+      {
+        "speciesId": "omnihound",
+        "minLevel": 35,
+        "maxLevel": 38,
+        "weight": 15
+      },
+      {
+        "speciesId": "grand_wook",
+        "minLevel": 35,
+        "maxLevel": 38,
+        "weight": 15
+      },
+      {
+        "speciesId": "charagolem",
+        "minLevel": 36,
+        "maxLevel": 38,
+        "weight": 10
+      },
+      {
+        "speciesId": "dengoth",
+        "minLevel": 35,
+        "maxLevel": 37,
+        "weight": 15
+      },
+      {
+        "speciesId": "selfiend",
+        "minLevel": 35,
+        "maxLevel": 38,
+        "weight": 15
+      }
+    ]
+  },
+  "fx": [
+    {
+      "kind": "lasers",
+      "at": [
+        [
+          1,
+          61
+        ],
+        [
+          30,
+          61
+        ],
+        [
+          1,
+          37
+        ],
+        [
+          30,
+          37
+        ]
+      ],
+      "colors": [
+        "#FF4FA8",
+        "#3FD8E8",
+        "#FFE066"
+      ]
+    },
+    {
+      "kind": "led",
+      "rect": [
+        1,
+        63,
+        30,
+        63
+      ]
+    },
+    {
+      "kind": "phones",
+      "rect": [
+        2,
+        19,
+        9,
+        26
+      ]
+    },
+    {
+      "kind": "phones",
+      "rect": [
+        22,
+        19,
+        29,
+        26
+      ]
+    },
+    {
+      "kind": "pulse",
+      "rect": [
+        1,
+        56,
+        30,
+        60
+      ],
+      "color": "#FF4FA8"
+    },
+    {
+      "kind": "fog",
+      "rect": [
+        1,
+        49,
+        30,
+        55
+      ]
+    }
+  ]
+}

@@ -35,7 +35,11 @@
     "sunset_villa",
     "green_room",
     "vicchio_circle",
-    "inner_room"
+    "inner_room",
+    "fishermens_cove",
+    "cove_cave",
+    "load_in_road",
+    "last_dancefloor"
   ],
   "goals": [
     {
@@ -238,6 +242,21 @@
       0,
       1,
       "Grotto"
+    ],
+    "fishermens_cove": [
+      1,
+      7,
+      "Cove"
+    ],
+    "load_in_road": [
+      3,
+      6,
+      "Load-In"
+    ],
+    "last_dancefloor": [
+      3,
+      7,
+      "Floor"
     ]
   },
   "quests": [
@@ -371,6 +390,16 @@
           "npc": {
             "zone": "flea_market",
             "id": "market_hippie"
+          }
+        },
+        {
+          "text": "Sergeant Baksheesh, their head of security, has come to the Sunset Cliff to settle things. Settle them.",
+          "done": {
+            "defeated": "cliff_sergeant"
+          },
+          "npc": {
+            "zone": "sunset_cliff",
+            "id": "cliff_sergeant"
           }
         }
       ]
@@ -600,33 +629,41 @@
     },
     {
       "id": "watcher_cave",
-      "name": "The Watcher in the Cave",
+      "name": "The Unfinished Mandala",
       "giver": {
         "zone": "sadhu_cave",
-        "npc": "cave_sign"
+        "npc": "baba"
       },
-      "offer": false,
+      "available": {
+        "defeated": "boss_baba"
+      },
       "start": {
         "any": [
           {
-            "flag": "read_carving"
+            "flag": "mandala_asked"
           },
           {
-            "flag": "read_banyan_diary"
-          },
-          {
-            "flag": "finished"
+            "flag": "mandala_laid"
           },
           {
             "flag": "met_mandalord"
+          },
+          {
+            "caughtSpecies": "mandalord"
           }
         ]
       },
       "steps": [
         {
-          "text": "Find the turning pattern on the east wall of the Sadhu Cave.",
+          "text": "White: Baba's smoke drew a seashell and the sun coming up out of the sea. Driftwood Beach, at sunrise (5 to 7 AM).",
           "done": {
             "any": [
+              {
+                "has": "shell_sand"
+              },
+              {
+                "flag": "mandala_laid"
+              },
               {
                 "flag": "met_mandalord"
               },
@@ -634,6 +671,119 @@
                 "caughtSpecies": "mandalord"
               }
             ]
+          }
+        },
+        {
+          "text": "Red: a cow in the road and a red dot. Pujari Mohan at the Roadside Shrine has kumkum, once Lakshmi is off the road.",
+          "done": {
+            "any": [
+              {
+                "has": "kumkum"
+              },
+              {
+                "flag": "mandala_laid"
+              },
+              {
+                "flag": "met_mandalord"
+              },
+              {
+                "caughtSpecies": "mandalord"
+              }
+            ]
+          },
+          "ready": {
+            "flag": "lakshmi_moved"
+          },
+          "npc": {
+            "zone": "roadside_shrine",
+            "id": "shrine_pujari"
+          }
+        },
+        {
+          "text": "Yellow: a frying pan and two fists. A cook on his break behind the Omelette Stall guards Raju's turmeric.",
+          "done": {
+            "any": [
+              {
+                "has": "turmeric"
+              },
+              {
+                "flag": "mandala_laid"
+              },
+              {
+                "flag": "met_mandalord"
+              },
+              {
+                "caughtSpecies": "mandalord"
+              }
+            ]
+          },
+          "npc": {
+            "zone": "omelette_stall",
+            "id": "stall_cook"
+          }
+        },
+        {
+          "text": "Glow: a jar shining in the dark, and an eye opened wide. Somewhere at the Forest Stage, while you are Peaking.",
+          "done": {
+            "any": [
+              {
+                "has": "uv_powder"
+              },
+              {
+                "flag": "mandala_laid"
+              },
+              {
+                "flag": "met_mandalord"
+              },
+              {
+                "caughtSpecies": "mandalord"
+              }
+            ]
+          }
+        },
+        {
+          "text": "Lay the mandala on the east wall of the Sadhu Cave, with a clear head (Microdose, nothing higher).",
+          "done": {
+            "any": [
+              {
+                "flag": "mandala_laid"
+              },
+              {
+                "flag": "met_mandalord"
+              },
+              {
+                "caughtSpecies": "mandalord"
+              }
+            ]
+          },
+          "ready": {
+            "all": [
+              {
+                "all": [
+                  {
+                    "has": "shell_sand"
+                  },
+                  {
+                    "has": "kumkum"
+                  },
+                  {
+                    "has": "turmeric"
+                  },
+                  {
+                    "has": "uv_powder"
+                  }
+                ]
+              },
+              {
+                "not": {
+                  "intox": 0.25
+                }
+              }
+            ]
+          },
+          "npc": {
+            "zone": "sadhu_cave",
+            "id": "cave_mandala"
           }
         },
         {
@@ -1201,6 +1351,190 @@
           }
         }
       ]
+    },
+    {
+      "id": "low_tide",
+      "name": "Low Tide",
+      "giver": {
+        "zone": "fishermens_cove",
+        "npc": "rosa"
+      },
+      "start": {
+        "any": [
+          {
+            "flag": "lowtide_asked"
+          },
+          {
+            "flag": "boat_found"
+          }
+        ]
+      },
+      "steps": [
+        {
+          "text": "Rosa's grandfather's boat was dragged into the cave on the islet. Cross the flats at low tide (4 to 10, morning or night) and look inside.",
+          "done": {
+            "any": [
+              {
+                "flag": "boat_found"
+              },
+              {
+                "flag": "boat_home"
+              }
+            ]
+          }
+        },
+        {
+          "text": "Tell Rosa the Maria da Graça is in the sea cave, and the thing that took her is gone.",
+          "done": {
+            "flag": "boat_home"
+          },
+          "ready": {
+            "flag": "boat_found"
+          },
+          "npc": {
+            "zone": "fishermens_cove",
+            "id": "rosa"
+          }
+        }
+      ]
+    },
+    {
+      "id": "power_cut",
+      "name": "Power Cut",
+      "giver": {
+        "zone": "load_in_road",
+        "npc": "deepak"
+      },
+      "start": {
+        "any": [
+          {
+            "flag": "power_asked"
+          },
+          {
+            "flag": "gen1_on"
+          },
+          {
+            "flag": "gen2_on"
+          },
+          {
+            "flag": "gen3_on"
+          }
+        ]
+      },
+      "steps": [
+        {
+          "text": "Generator one: plug its cable back in. A cable drum is in the way (a Bass Drop Shove would move it).",
+          "done": {
+            "any": [
+              {
+                "flag": "gen1_on"
+              },
+              {
+                "flag": "power_back"
+              }
+            ]
+          }
+        },
+        {
+          "text": "Generator two is dry. Find a jerrycan in the lighting store maze, south-west of the road.",
+          "done": {
+            "any": [
+              {
+                "flag": "gen2_on"
+              },
+              {
+                "flag": "power_back"
+              }
+            ]
+          }
+        },
+        {
+          "text": "Generator three: deal with the \"maintenance man\" in the clean uniform, then start it.",
+          "done": {
+            "any": [
+              {
+                "flag": "gen3_on"
+              },
+              {
+                "flag": "power_back"
+              }
+            ]
+          }
+        },
+        {
+          "text": "Tell Deepak at the yard gate that the power is back.",
+          "done": {
+            "flag": "power_back"
+          },
+          "ready": {
+            "all": [
+              {
+                "flag": "gen1_on"
+              },
+              {
+                "flag": "gen2_on"
+              },
+              {
+                "flag": "gen3_on"
+              }
+            ]
+          },
+          "npc": {
+            "zone": "load_in_road",
+            "id": "deepak"
+          }
+        }
+      ]
+    },
+    {
+      "id": "lost_in_crowd",
+      "name": "Lost in the Crowd",
+      "giver": {
+        "zone": "last_dancefloor",
+        "npc": "ziggy"
+      },
+      "start": {
+        "any": [
+          {
+            "flag": "lost_asked"
+          },
+          {
+            "flag": "noor_found"
+          }
+        ]
+      },
+      "steps": [
+        {
+          "text": "Ziggy lost Noor in the crowd: flowery shirt, round sunglasses, dances like a windmill. Last seen by the light towers past the second lanes.",
+          "done": {
+            "any": [
+              {
+                "flag": "noor_found"
+              },
+              {
+                "flag": "noor_thanked"
+              }
+            ]
+          },
+          "npc": {
+            "zone": "last_dancefloor",
+            "id": "noor"
+          }
+        },
+        {
+          "text": "Back to Ziggy at the welfare tent.",
+          "done": {
+            "flag": "noor_thanked"
+          },
+          "ready": {
+            "flag": "noor_found"
+          },
+          "npc": {
+            "zone": "last_dancefloor",
+            "id": "ziggy"
+          }
+        }
+      ]
     }
   ],
   "worldmap": {
@@ -1314,6 +1648,18 @@
       "sea_grotto": [
         12,
         2
+      ],
+      "fishermens_cove": [
+        7,
+        13
+      ],
+      "load_in_road": [
+        15,
+        12
+      ],
+      "last_dancefloor": [
+        20,
+        12
       ]
     }
   },

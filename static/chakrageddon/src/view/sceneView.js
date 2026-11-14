@@ -3,9 +3,15 @@
 // your eyelids open slowly, and an Astral can drift in beside him.
 // 'crab_rave': the payoff of The Crab Rave. The four crabs dance on the night beach under lasers.
 // 'mantequilla', 'vicchio_landing': the Aliens of Vicchio (vicchioScenes.js); the landing follows the script's phase.
+// 'mandala': the Unfinished Mandala in the Sadhu Cave (mandalaScenes.js), also by phase.
+// 'juniper': meeting Juniper the tarot reader, the first time (juniperScene.js).
+// 'crowdsurf', 'ziggurat': the crowd lifting you onto the Mainstage Temple, and the temple revealed (templeScenes.js), by phase.
 import { W, H } from './CanvasRenderer.js';
 import { drawText } from './ui.js';
 import { drawForage, drawLanding } from './vicchioScenes.js';
+import { drawMandala } from './mandalaScenes.js';
+import { drawJuniper } from './juniperScene.js';
+import { drawCrowdsurf, drawZiggurat } from './templeScenes.js';
 import { drawBoss, BOSSES } from './bossScenes.js';
 import { overworldView } from './overworldView.js';
 
@@ -47,7 +53,7 @@ function drawCeremony(game, g, who, by, t, still) {
 }
 
 // 'boss': a boss's cutscene (bossScenes.js), who = which one; card = the short title card of a rematch
-export const SCENES = ['dream', 'crab_rave', 'mantequilla', 'vicchio_landing', 'boss', 'wristband', 'alley_lock'];
+export const SCENES = ['dream', 'crab_rave', 'mantequilla', 'vicchio_landing', 'boss', 'wristband', 'alley_lock', 'mandala', 'juniper', 'crowdsurf', 'ziggurat'];
 const CRABS = ['crabcake', 'lobsterlad', 'ketacrab', 'wonkrab'];
 
 export const sceneView = {
@@ -79,6 +85,10 @@ export const sceneView = {
     if (sc?.id === 'boss') return drawBoss(game, g, sc.who, this.t, !!sc.card);
     if (sc?.id === 'mantequilla') return drawForage(game, g, this.t);
     if (sc?.id === 'vicchio_landing') return drawLanding(game, g, this.t, this.phase, this.phaseT);
+    if (sc?.id === 'mandala') return drawMandala(game, g, this.t, this.phase, this.phaseT);
+    if (sc?.id === 'juniper') return drawJuniper(game, g, this.t);
+    if (sc?.id === 'crowdsurf') return drawCrowdsurf(game, g, this.t, this.phase, this.phaseT);
+    if (sc?.id === 'ziggurat') return drawZiggurat(game, g, this.t, this.phase, this.phaseT);
     if (!sc || sc.id !== 'dream') return;
     const still = game.settings.reducedMotion, t = still ? 2 : this.t;
     // sky: deep violet at the edges, warm in the middle where the sun is

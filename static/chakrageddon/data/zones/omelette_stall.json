@@ -212,6 +212,19 @@
         "set": "rush"
       },
       "script": "queue_raver"
+    },
+    {
+      "id": "stall_cook",
+      "x": 18,
+      "y": 12,
+      "sprite": "local",
+      "dir": "LEFT",
+      "trainer": "stall_cook",
+      "sight": 2,
+      "script": "stall_cook_after",
+      "showWhen": {
+        "flag": "mandala_asked"
+      }
     }
   ],
   "pickups": [

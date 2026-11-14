@@ -84,7 +84,23 @@
   "cable_v": 79,
   "fogger": 80,
   "coconuts": 81,
-  "dune": 82
+  "dune": 82,
+  "glyph_faded": 83,
+  "shellsand": 84,
+  "uvjar": 85,
+  "tideflat": 86,
+  "boat_l": 87,
+  "boat_r": 88,
+  "nets": 89,
+  "cavemouth": 90,
+  "truck_cab": 91,
+  "truck_box": 92,
+  "generator": 93,
+  "generator_on": 94,
+  "barrier": 95,
+  "zig_face": 96,
+  "brazier": 97,
+  "void": 98
  },
  "props": {
   "palm": {

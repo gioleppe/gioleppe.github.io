@@ -61,7 +61,8 @@
       "sprite": "baba",
       "dir": "DOWN",
       "trainer": "boss_baba",
-      "sight": 0
+      "sight": 0,
+      "script": "baba_mandala"
     },
     {
       "id": "cave_yogi",
@@ -92,6 +93,26 @@
       ]
     },
     {
+      "id": "cave_mandala",
+      "x": 15,
+      "y": 10,
+      "tile": "glyph_faded",
+      "script": "mandalord",
+      "hideWhen": {
+        "any": [
+          {
+            "flag": "mandala_laid"
+          },
+          {
+            "flag": "met_mandalord"
+          },
+          {
+            "caughtSpecies": "mandalord"
+          }
+        ]
+      }
+    },
+    {
       "id": "cave_glyph",
       "x": 15,
       "y": 10,
@@ -104,6 +125,16 @@
           },
           {
             "flag": "mandalord_rest"
+          }
+        ]
+      },
+      "showWhen": {
+        "any": [
+          {
+            "flag": "mandala_laid"
+          },
+          {
+            "flag": "met_mandalord"
           }
         ]
       }
