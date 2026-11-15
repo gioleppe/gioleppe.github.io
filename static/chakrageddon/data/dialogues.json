@@ -701,7 +701,7 @@
   ],
   "sign_yurt": [
     {
-      "t": "THE TANTRIC YURT. Shoes off. Ego off. East: Anjuna Flea Market."
+      "t": "THE TANTRIC YURT. Shoes off. Ego off. East: the Red Laterite Gorge, then the Anjuna Flea Market. South: the Pixie Wood."
     }
   ],
   "yurt_tourist": [
@@ -717,8 +717,43 @@
   ],
   "market_vendor": [
     {
+      "ifCond": {
+        "all": [
+          {
+            "flag": "b94_baba"
+          },
+          {
+            "not": {
+              "flag": "b94_vendor"
+            }
+          }
+        ]
+      },
+      "goto": "joni"
+    },
+    {
       "s": "Vendor",
       "t": "Everything a traveller needs! Papers, sachets, shades, catalysts. I also have a cousin who sells carpets."
+    },
+    {
+      "goto": "shop"
+    },
+    {
+      "label": "joni"
+    },
+    {
+      "s": "Vendor",
+      "t": "Joni? Joni Bracelets! English, freckles, asked a lot of questions! Of course. She had the stall next to my father's. 1995, 96, 97..."
+    },
+    {
+      "s": "Vendor",
+      "t": "She still comes every season. Never sells any more, just walks. Every morning she eats at the 5 AM Omelette Stall, in the rush, before it gets light. Same spot in the queue for thirty years."
+    },
+    {
+      "set": "b94_vendor"
+    },
+    {
+      "label": "shop"
     },
     {
       "shop": "flea_market"
@@ -741,7 +776,7 @@
     },
     {
       "s": "Security",
-      "t": "Road north is closed. Guru Svetlana decides who passes. Her yurt is west."
+      "t": "Road north is closed. Guru Svetlana decides who passes. Her yurt is west, through the gorge."
     },
     {
       "end": true
@@ -1687,6 +1722,10 @@
   ],
   "shack_diary": [
     {
+      "if": "b94_done",
+      "goto": "b94"
+    },
+    {
       "ifIntox": 0.9,
       "goto": "ego"
     },
@@ -1743,6 +1782,15 @@
     {
       "t": "You blink, and the page is gone. The diary goes straight from Day 3 to Day 9000.",
       "style": "PSYCHEDELIC"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "b94"
+    },
+    {
+      "t": "The newest page, in two hands. His: 'Day 11,000-something. She came back before the last track.' Hers, underneath: 'Technically.'"
     }
   ],
   "guest_host": [
@@ -3289,12 +3337,105 @@
   ],
   "banyan_sunrise": [
     {
+      "if": "b94_done",
+      "goto": "after"
+    },
+    {
+      "if": "b94_joni",
+      "goto": "reunion"
+    },
+    {
       "s": "Prof. Banyan",
       "t": "Shh. Look at it. Thirty years, and it is still the best set of the day."
     },
     {
       "s": "Prof. Banyan",
       "t": "Somebody once told me to wait for them at the sunrise set. So here I am. It is a nice place to wait."
+    },
+    {
+      "run": "banyan"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "reunion"
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Shh. Look at it. Thirty years, and it is still the best set of the... who is your friend?"
+    },
+    {
+      "t": "The old woman beside you takes off her glasses, puts them back on, and takes them off again."
+    },
+    {
+      "s": "Joni",
+      "t": "Hello, Banyan. Sorry I am late."
+    },
+    {
+      "t": "For a long moment nobody says anything at all. The sun comes up over the water. The DJ, who has no idea, plays the last track."
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Joni."
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "You said before the last track."
+    },
+    {
+      "s": "Joni",
+      "t": "I said before the last track. I never said which day."
+    },
+    {
+      "t": "Banyan laughs. It turns into something else halfway, and then back into laughing. Joni holds on to his arm like she is afraid the tide will take him."
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "{player}. You did this. Of course you did. You wash up on my beach, you go off to collect wristbands, and you come back with 1994."
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Here. My backpack from that year, and the vest. I will not be needing to look like a man who is waiting for somebody any more."
+    },
+    {
+      "give": "traveller_kit",
+      "n": 1
+    },
+    {
+      "rupees": 1994
+    },
+    {
+      "set": "b94_done"
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Now go away, please. We have thirty years of small talk to get through, and I would like to start with the weather."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "after"
+    },
+    {
+      "ifHas": "traveller_kit",
+      "goto": "after_kept"
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "You lost the backpack? It survived 1994, and you lost it in a week. Joni had another one in her room. Of course she did."
+    },
+    {
+      "give": "traveller_kit",
+      "n": 1
+    },
+    {
+      "label": "after_kept"
+    },
+    {
+      "s": "Prof. Banyan",
+      "t": "Every morning she says it is the best set of the day. Every morning she is right. I had forgotten how annoying that is."
     },
     {
       "run": "banyan"
@@ -5503,6 +5644,426 @@
         "y": 43,
         "dir": "UP"
       }
+    }
+  ],
+  "sign_pixie_wood": [
+    {
+      "t": "THE PIXIE WOOD. North: the Tantric Yurt. Mind the rings. Do not cut the lights unless you mean it."
+    }
+  ],
+  "mush_tourist": [
+    {
+      "s": "Tourist",
+      "t": "I ate a mushroom off that ring over there. A white one. Is that bad? I feel fine. I feel extremely fine. The trees are very polite here."
+    },
+    {
+      "s": "Tourist",
+      "t": "A girl with wings told me the rings take you places. I stepped in one and ended up in a hole full of ferns with a man in it. He was also fine."
+    }
+  ],
+  "pixie_vendor": [
+    {
+      "s": "Pixie Vendor",
+      "t": "Supplies for the Wood! Baggies, water, balm for the bites. Pixie prices: same as the beach, plus glitter."
+    },
+    {
+      "shop": "beach_stall"
+    }
+  ],
+  "fern_hermit": [
+    {
+      "if": "met_hermit",
+      "goto": "again"
+    },
+    {
+      "s": "Fern Hermit",
+      "t": "Oh! A visitor. Nobody comes to the hollow. Nobody can. Only the ring comes here, and the ring is very picky."
+    },
+    {
+      "s": "Fern Hermit",
+      "t": "I stepped in it in 2003 to get away from a conversation about crypto. I have been here ever since. The ferns do not talk about crypto."
+    },
+    {
+      "set": "met_hermit"
+    },
+    {
+      "label": "again"
+    },
+    {
+      "s": "Fern Hermit",
+      "t": "Back through the ring is out. You can take the band from the stump, I have no wrists for it any more. Spiritually."
+    }
+  ],
+  "treehugger": [
+    {
+      "s": "Tree Hugger",
+      "t": "This tree has been through three festivals and a monsoon. I am giving it a hug. It has been about four hours."
+    },
+    {
+      "s": "Tree Hugger",
+      "t": "The grove past the lights is too dark to hug anything. I tried. I hugged a pixie. She was not into it."
+    }
+  ],
+  "titania": [
+    {
+      "if": "wings_back",
+      "goto": "done"
+    },
+    {
+      "ifHas": "lost_wings",
+      "goto": "give"
+    },
+    {
+      "if": "met_titania",
+      "goto": "waiting"
+    },
+    {
+      "s": "Titania",
+      "t": "A mortal! In my court! Kneel. Or do not, I am not your mother. Welcome to the Pixie Wood.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "s": "Titania",
+      "t": "I am Titania, Queen of the Wood since the summer of 1999, when I came to a party here and decided not to leave."
+    },
+    {
+      "s": "Titania",
+      "t": "Last full moon I danced in the Moon Glade until the sun came up, and when I looked round, my wings were gone. A queen without wings is just a woman in a nightie."
+    },
+    {
+      "s": "Titania",
+      "t": "The only way into the glade is the moon ring, deep in the dark grove east of here. It sleeps by day. At night it opens. Or if you are... flying, darling."
+    },
+    {
+      "set": "met_titania"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "waiting"
+    },
+    {
+      "s": "Titania",
+      "t": "The moon ring. In the dark grove, past the lights. At night, or flying. Bring me my wings and the Wood will owe you a favour. The Wood is terrible at favours, but I am not."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "give"
+    },
+    {
+      "s": "Titania",
+      "t": "My WINGS! A little bent. A little sat on, by the look. Still glittering. Like me.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "take": "lost_wings",
+      "n": 1
+    },
+    {
+      "s": "Titania",
+      "t": "A favour, as promised. My spare pair. Every queen keeps a spare. Wear them and the pixies will think you are one of us. They are not very bright."
+    },
+    {
+      "give": "pixie_wings",
+      "n": 1
+    },
+    {
+      "set": "wings_back"
+    },
+    {
+      "s": "Titania",
+      "t": "Now go. The Guru is up the path, and she is jealous of anyone with better accessories."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "done"
+    },
+    {
+      "ifHas": "pixie_wings",
+      "goto": "done_kept"
+    },
+    {
+      "s": "Titania",
+      "t": "Lost my wings again? No, yours. Somebody at a whiteout walked off with them, I suppose. Here. A queen always has one more spare."
+    },
+    {
+      "give": "pixie_wings",
+      "n": 1
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "done_kept"
+    },
+    {
+      "s": "Titania",
+      "t": "The Wood is grateful, mortal. The Wood has a funny way of showing it. It mostly grows back the lights."
+    }
+  ],
+  "sign_gorge": [
+    {
+      "t": "RED LATERITE GORGE. East: the Anjuna Flea Market. Keep walking. Then keep walking."
+    }
+  ],
+  "gorge_acolyte": [
+    {
+      "if": "beat_svetlana",
+      "goto": "clear"
+    },
+    {
+      "s": "Acolyte Prem",
+      "t": "Rockslide, I am afraid. The Guru has us clearing it as karma yoga. One stone at a time, with intention."
+    },
+    {
+      "s": "Acolyte Prem",
+      "t": "She says the gorge will open for whoever is ready for it. That usually means whoever beats her. Her yurt is just back there."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "clear"
+    },
+    {
+      "s": "Acolyte Prem",
+      "t": "Cleared! The Guru said you would come. My back says a lot of other things."
+    },
+    {
+      "s": "Acolyte Prem",
+      "t": "It is a long gorge. A lot of people with opinions and motorbikes. Halfway, there is a man called Uncle Sunny. Do what he says."
+    }
+  ],
+  "uncle_sunny": [
+    {
+      "s": "Uncle Sunny",
+      "t": "Long walk, beta? You look like a long walk. Here. Drink this. Do not ask what is in it. Ginger, mostly. Mostly ginger."
+    },
+    {
+      "s": "Uncle Sunny",
+      "t": "Now lie down on the mattress. No arguing. Uncle Sunny has seen everybody come up this gorge for forty years, and everybody needs a lie-down.",
+      "choice": [
+        "Lie down",
+        "Not now"
+      ],
+      "goto": [
+        "rest",
+        "bye"
+      ]
+    },
+    {
+      "label": "rest"
+    },
+    {
+      "t": "You drink the ginger something and lie down on the mattress. The rock is still warm from the sun. Uncle Sunny hums an old film song the whole time, slightly off."
+    },
+    {
+      "heal": true
+    },
+    {
+      "s": "Uncle Sunny",
+      "t": "There. Up you get. If anything happens to you up ahead, you come back here and lie down again. That is the rule."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "bye"
+    },
+    {
+      "s": "Uncle Sunny",
+      "t": "You will be back. Everybody comes back to the mattress."
+    }
+  ],
+  "pinnacle_baba": [
+    {
+      "if": "b94_baba",
+      "goto": "again"
+    },
+    {
+      "if": "b94_echo",
+      "goto": "tell"
+    },
+    {
+      "s": "Baba",
+      "t": "Sit, if you like. The rock is free. The view is free. The chai is Sunny's, and not free."
+    },
+    {
+      "s": "Baba",
+      "t": "That wall up there remembers what people shout at it. Most people shout their own name. The gorge is very bored of names."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "tell"
+    },
+    {
+      "s": "Baba",
+      "t": "You heard her, then. The girl in the wall. Joni."
+    },
+    {
+      "s": "Baba",
+      "t": "I was there. Day four, 1994. Six of us sadhus walking north to the cave, to find the room behind the pattern, and one English girl with a bag of bracelets who would not stop asking questions."
+    },
+    {
+      "s": "Baba",
+      "t": "A long-haired boy walked her this far and turned back. She shouted after him from right here. Wait for me at the sunrise set. Then she cut those letters with a stone, and on we went."
+    },
+    {
+      "s": "Baba",
+      "t": "She found the room. It took her longer than one sunrise. Much longer. When she came out, the festival was over, and she thought the boy had gone home. Two weeks, he had said. Everybody says two weeks."
+    },
+    {
+      "s": "Baba",
+      "t": "She stayed. She sold bracelets at the market for years. Ask there. Market people remember everything that was ever for sale."
+    },
+    {
+      "set": "b94_baba"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "again"
+    },
+    {
+      "s": "Baba",
+      "t": "Joni. Bracelets. The market. Go on. Some things wait thirty years. Not much waits thirty-one."
+    }
+  ],
+  "echo_wall": [
+    {
+      "if": "b94_echo",
+      "goto": "again"
+    },
+    {
+      "t": "The rock here is covered in paintings: spirals, hand prints, a dancing figure in yellow. The gorge is so quiet you can hear the paint."
+    },
+    {
+      "t": "You could shout something.",
+      "choice": [
+        "Shout HELLO",
+        "Leave it"
+      ],
+      "goto": [
+        "shout",
+        "bye"
+      ]
+    },
+    {
+      "label": "shout"
+    },
+    {
+      "t": "HELLO... hello... llo... lo..."
+    },
+    {
+      "t": "And then, out of the wall, a voice that is not yours. A young woman, laughing, thirty years away:",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "s": "???",
+      "t": "BANYAN! WAIT FOR ME AT THE SUNRISE SET! I WILL BE BACK BEFORE THE LAST TRACK!",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "...last track... track... ack...",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "Under the yellow dancer, scratched into the stone with something sharp: J + B. DAY 4. 1994."
+    },
+    {
+      "set": "b94_echo"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "bye"
+    },
+    {
+      "t": "You leave the wall alone. The wall leaves you alone. Fair."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "again"
+    },
+    {
+      "t": "J + B. DAY 4. 1994. If you listen hard, the wall is still laughing."
+    }
+  ],
+  "joni_stall": [
+    {
+      "if": "b94_joni",
+      "goto": "again"
+    },
+    {
+      "s": "Old Woman",
+      "t": "Do you mind? This is my spot in the queue. Thirty years, same spot. Raju knows. Raju has the egg ready."
+    },
+    {
+      "s": "Old Woman",
+      "t": "Banyan? ... Say that again."
+    },
+    {
+      "s": "Joni",
+      "t": "He waited? At the sunrise set? Every morning? For THIRTY YEARS?"
+    },
+    {
+      "s": "Joni",
+      "t": "I came out of that cave in the spring of 1995. The festival was gone. The beach was empty. I asked for him and they said the long-haired one went home, they all go home. So I stayed up here, north of the gorge. I never went back south. I could not look at that beach."
+    },
+    {
+      "s": "Joni",
+      "t": "And he was there. Every sunrise. An hour's walk away. While I ate omelettes."
+    },
+    {
+      "t": "She is quiet for a while. Raju puts an omelette in front of her. She does not touch it."
+    },
+    {
+      "s": "Joni",
+      "t": "Do not tell him. Do not you dare. I am going to walk down there myself, the way I should have. Tomorrow. At the sunrise set. Before the last track."
+    },
+    {
+      "set": "b94_joni"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "again"
+    },
+    {
+      "s": "Joni",
+      "t": "The sunrise set. On the beach. I know, I know. I have been practising what to say for an hour. It is all rubbish."
+    }
+  ],
+  "joni_sunrise": [
+    {
+      "if": "b94_done",
+      "goto": "after"
+    },
+    {
+      "s": "Joni",
+      "t": "I have not said anything yet. He thinks I am a tourist. Go on. You found me. You do it."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "after"
+    },
+    {
+      "s": "Joni",
+      "t": "We are going to try two weeks again. See how it goes."
     }
   ]
 }

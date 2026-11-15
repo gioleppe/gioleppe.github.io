@@ -1,5 +1,5 @@
 {
-  "_comment": "Zone maps are rows of characters. id = logic tile from the spec legend (0 floor, 1 solid, 2 encounter, 3 water, 4 cordon, 5 fairy lights, 6 pushable, 7 padlock, 8 roots, 9 chai tent). sprite '@x' reads zone.x. prop = tall sprite anchored bottom-centre on the tile. 'D' draws a whole 3x2 shack; put 'rrr' above 'HDH' for its solid footprint. 'E' is a walkable shack doorway (put a warp on it). 'X' wall, 'Q' roof and 'G' door build a house front; interiors use 'K' walls and 'a' as the exit mat. Routes (1.0.40): 0 bonfire, 1 log, 2+3 a sacred cow lying across two tiles, 4 roadside shrine, 5 plank bridge (walk east-west), 6 plank bridge (walk north-south), 7 cables on concrete, 8 dry-ice fogger, 9 coconuts, : dune, ; surfboard. '=' fences draw as vertical posts in a north-south run. Poi Pit (1.0.45): & a packed dancefloor (encounters; a dancer on every tile), < stage banner, > a strobe on the stage, | the stage's front lip, _ steps up onto it. Ego gone (1.0.46): egoFloor tiles can be walked on at Ego gone only (the sacred cow walks off; under = what shows instead), and ł/Ł are stairs of light over shallow and deep water. Bosses' stages (1.0.48): ° a cushion on a mat, § a velvet rope, ¢ a table with cash, ç Keta's captain's chair (on the stage), µ Raju's menu board, ¤ Chloe's ring light (on the stage). 1.2.5: ť tidal flat (tide: sand at low tide, surf the rest of the time; zone.tide), ƀɓ a fishing boat (stern, bow), ñ drying nets, Ø a sea cave's mouth, Ŧŧ a lorry (cab, box), » « the Last Dancefloor's lanes (lane: the dancers move along the row with each step you take; zone.lanes), ǁ a crowd barrier, ž a ziggurat terrace's stone face, ƒ a brazier. ø the drop beside a ziggurat terrace (the night, far below).",
+  "_comment": "Zone maps are rows of characters. id = logic tile from the spec legend (0 floor, 1 solid, 2 encounter, 3 water, 4 cordon, 5 fairy lights, 6 pushable, 7 padlock, 8 roots, 9 chai tent). sprite '@x' reads zone.x. prop = tall sprite anchored bottom-centre on the tile. 'D' draws a whole 3x2 shack; put 'rrr' above 'HDH' for its solid footprint. 'E' is a walkable shack doorway (put a warp on it). 'X' wall, 'Q' roof and 'G' door build a house front; interiors use 'K' walls and 'a' as the exit mat. Routes (1.0.40): 0 bonfire, 1 log, 2+3 a sacred cow lying across two tiles, 4 roadside shrine, 5 plank bridge (walk east-west), 6 plank bridge (walk north-south), 7 cables on concrete, 8 dry-ice fogger, 9 coconuts, : dune, ; surfboard. '=' fences draw as vertical posts in a north-south run. Poi Pit (1.0.45): & a packed dancefloor (encounters; a dancer on every tile), < stage banner, > a strobe on the stage, | the stage's front lip, _ steps up onto it. Ego gone (1.0.46): egoFloor tiles can be walked on at Ego gone only (the sacred cow walks off; under = what shows instead), and ł/Ł are stairs of light over shallow and deep water. Bosses' stages (1.0.48): ° a cushion on a mat, § a velvet rope, ¢ a table with cash, ç Keta's captain's chair (on the stage), µ Raju's menu board, ¤ Chloe's ring light (on the stage). 1.2.5: ť tidal flat (tide: sand at low tide, surf the rest of the time; zone.tide), ƀɓ a fishing boat (stern, bow), ñ drying nets, Ø a sea cave's mouth, Ŧŧ a lorry (cab, box), » « the Last Dancefloor's lanes (lane: the dancers move along the row with each step you take; zone.lanes), ǁ a crowd barrier, ž a ziggurat terrace's stone face, ƒ a brazier. ø the drop beside a ziggurat terrace (the night, far below). 1.6.0: ö a fairy ring (a warp to its twin in the same zone), ţ a tree wound with fairy lights, ĉ a canyon wall (laterite; drawn as a top unless floor lies below) and Ĉ the same face painted, ľ ŀ Ŀ ledges you hop down facing down, right and left (legend ledge: a wall from every other side), ħ the gorge's drop and Ħ its lip, ŕ Ŕ a rope bridge over it (walk east-west, north-south), ɱ a mattress.",
   "legend": {
     "0": {
       "id": 1,
@@ -454,6 +454,58 @@
     "ø": {
       "id": 1,
       "sprite": "void"
+    },
+    "ö": {
+      "id": 0,
+      "sprite": "ring"
+    },
+    "ţ": {
+      "id": 1,
+      "sprite": "@ground",
+      "prop": "lighttree"
+    },
+    "ĉ": {
+      "id": 1,
+      "sprite": "canyon"
+    },
+    "Ĉ": {
+      "id": 1,
+      "sprite": "cliff_art"
+    },
+    "ľ": {
+      "id": 1,
+      "sprite": "ledge_s",
+      "ledge": "DOWN"
+    },
+    "ŀ": {
+      "id": 1,
+      "sprite": "ledge_e",
+      "ledge": "RIGHT"
+    },
+    "Ŀ": {
+      "id": 1,
+      "sprite": "ledge_w",
+      "ledge": "LEFT"
+    },
+    "ħ": {
+      "id": 1,
+      "sprite": "chasm"
+    },
+    "Ħ": {
+      "id": 1,
+      "sprite": "chasm_top"
+    },
+    "ŕ": {
+      "id": 0,
+      "sprite": "ropebridge"
+    },
+    "Ŕ": {
+      "id": 0,
+      "sprite": "ropebridge_v"
+    },
+    "ɱ": {
+      "id": 1,
+      "sprite": "mattress"
     }
   }
 }

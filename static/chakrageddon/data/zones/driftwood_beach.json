@@ -188,6 +188,24 @@
           }
         ]
       }
+    },
+    {
+      "id": "joni_sunrise",
+      "x": 13,
+      "y": 11,
+      "sprite": "joni",
+      "dir": "DOWN",
+      "script": "joni_sunrise",
+      "showWhen": {
+        "all": [
+          {
+            "flag": "b94_joni"
+          },
+          {
+            "set": "sunrise"
+          }
+        ]
+      }
     }
   ],
   "pickups": [

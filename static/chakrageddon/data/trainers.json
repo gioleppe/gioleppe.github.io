@@ -190,7 +190,7 @@
       "...The record skipped. Nobody has made my record skip since 2011.",
       "Take the Hemp String Wristband. Your Organic and Stimulant Astrals can hack through fairy lights with it."
     ],
-    "after": "The road north to the Tantric Yurt is choked with fairy lights. Not for you, now.",
+    "after": "The road north through the Pixie Wood is choked with fairy lights. Not for you, now.",
     "rematch": "boss_diabolo_rematch",
     "rematchBands": 3,
     "cutscene": "diabolo",
@@ -316,9 +316,9 @@
     ],
     "defeat": [
       "The wristband wants... you. How embarrassing for me.",
-      "Take the Quartz Wristband. A Psychedelic Astral can now light up dark places. The road north of the market is very dark."
+      "Take the Quartz Wristband. A Psychedelic Astral can now light up dark places. The gorge to the market has a slot that is very dark."
     ],
-    "after": "I told security at the market to let you through. Captain Keta is north. He is somewhere near his body, usually.",
+    "after": "My acolytes have cleared the rockslide in the gorge. Karma yoga. They hated it. The market is on the other side, and security there will let you north to Captain Keta.",
     "rematch": "boss_svetlana_rematch",
     "rematchBands": 4,
     "cutscene": "svetlana",
@@ -1906,7 +1906,7 @@
     "defeat": [
       "Fine. You really are that good. Come back when you want to feel something."
     ],
-    "after": "The road north to the Tantric Yurt is choked with fairy lights. Not for you, now.",
+    "after": "The road north through the Pixie Wood is choked with fairy lights. Not for you, now.",
     "stage": "pit",
     "moment": {
       "line": "Wait wait wait. You think THAT was the drop? THIS is the drop!",
@@ -3596,5 +3596,498 @@
       "Mind changed. Hands up, everybody, we have one for the stage."
     ],
     "after": "Once you are up there, you are up there. There is no coming back down the front. Only the back stairs."
+  },
+  {
+    "id": "pixie_bea",
+    "name": "Pixie Bea",
+    "sprite": "pixie",
+    "textStyle": "PSYCHEDELIC",
+    "party": [
+      {
+        "species": "glowkid",
+        "level": 8
+      },
+      {
+        "species": "shroomba",
+        "level": 8
+      }
+    ],
+    "reward": 170,
+    "intro": [
+      "You cut the lights! Those lights were a gift from a festival in 2003! Nobody has seen it since. Fight me for the lights!"
+    ],
+    "defeat": [
+      "Fine. They grow back. Mostly."
+    ],
+    "after": "The rings in the moss go places. Step in one and see. Not that one. That one is a frisbee."
+  },
+  {
+    "id": "lost_kai",
+    "name": "Lost Raver Kai",
+    "sprite": "raver",
+    "textStyle": "STIMULANT",
+    "party": [
+      {
+        "species": "djembe_monk",
+        "level": 9
+      },
+      {
+        "species": "glowkid",
+        "level": 9
+      }
+    ],
+    "reward": 180,
+    "intro": [
+      "Is this the Poi Pit? It is not, is it. I have been looking for the Poi Pit since Thursday. Battle me, I need the company."
+    ],
+    "defeat": [
+      "South, you say? Through the lights? I cut those yesterday. They grew back."
+    ],
+    "after": "I stepped in the ring by the bushes and came out by the pond. Then I stepped in again. It was a long afternoon."
+  },
+  {
+    "id": "herbalist_ines",
+    "name": "Herbalist Ines",
+    "sprite": "local",
+    "textStyle": "ORGANIC",
+    "party": [
+      {
+        "species": "ganjapod",
+        "level": 9
+      },
+      {
+        "species": "snoozel",
+        "level": 9
+      }
+    ],
+    "reward": 190,
+    "intro": [
+      "Mind the ferns! These are medicinal. That one is for headaches. That one GIVES headaches. Defend yourself!"
+    ],
+    "defeat": [
+      "Take a leaf. No, the other leaf."
+    ],
+    "after": "The ferns glow because of the minerals. Or the pixies. I have stopped asking."
+  },
+  {
+    "id": "busker_tobi",
+    "name": "Busker Tobi",
+    "sprite": "hippie",
+    "textStyle": "ORGANIC",
+    "party": [
+      {
+        "species": "djembe_monk",
+        "level": 9
+      },
+      {
+        "species": "wooklet",
+        "level": 10
+      }
+    ],
+    "reward": 200,
+    "intro": [
+      "I play to the trees. Trees are the best audience. They never leave. You are leaving? Not before a battle you are not."
+    ],
+    "defeat": [
+      "The trees clapped. I swear the trees clapped."
+    ],
+    "after": "Titania lost her wings. She keeps saying the moon ring took them. The moon ring is in the dark grove. Everything is in the dark grove."
+  },
+  {
+    "id": "pixie_moth",
+    "name": "Pixie Moth",
+    "sprite": "pixie_b",
+    "textStyle": "PSYCHEDELIC",
+    "party": [
+      {
+        "species": "blottertot",
+        "level": 10
+      },
+      {
+        "species": "mozzquito",
+        "level": 10
+      }
+    ],
+    "reward": 210,
+    "intro": [
+      "Nobody walks to the Queen without a dance-off. This is a dance-off. It looks like a battle because it is a battle."
+    ],
+    "defeat": [
+      "You may approach the Queen. Bow a bit. She likes a bit of a bow."
+    ],
+    "after": "The Queen came to a festival in 1999 and decided it was a kingdom. Nobody argued. Nobody could find the exit."
+  },
+  {
+    "id": "pixie_nyx",
+    "name": "Pixie Nyx",
+    "sprite": "pixie",
+    "textStyle": "DOWNER",
+    "party": [
+      {
+        "species": "snoozel",
+        "level": 10
+      },
+      {
+        "species": "sirenowl",
+        "level": 11
+      }
+    ],
+    "reward": 220,
+    "intro": [
+      "Shh. You will wake the grove. The grove is very grumpy when it wakes. So am I."
+    ],
+    "defeat": [
+      "The moon ring is just past me. It sleeps all day, like me. At night, or if you are flying, it opens."
+    ],
+    "after": "Bring a light, next time. A purple one. The grove has things written on the bark that only show under it."
+  },
+  {
+    "id": "pixie_wren",
+    "name": "Pixie Wren",
+    "sprite": "pixie",
+    "textStyle": "PSYCHEDELIC",
+    "party": [
+      {
+        "species": "glowkid",
+        "level": 10
+      },
+      {
+        "species": "shroomba",
+        "level": 10
+      },
+      {
+        "species": "blottertot",
+        "level": 11
+      }
+    ],
+    "reward": 260,
+    "intro": [
+      "Leaving the Wood? The Guru is up the path. She will want your shoes. I will want your Astrals first."
+    ],
+    "defeat": [
+      "Go on, then. Keep your shoes. She will not let you."
+    ],
+    "after": "The Tantric Yurt is just north. Hum on the way in. Svetlana likes it when people hum."
+  },
+  {
+    "id": "biker_vikram",
+    "name": "Biker Vikram",
+    "sprite": "biker",
+    "textStyle": "STIMULANT",
+    "party": [
+      {
+        "species": "jawling",
+        "level": 12
+      },
+      {
+        "species": "mozzquito",
+        "level": 13
+      }
+    ],
+    "reward": 280,
+    "intro": [
+      "This gorge is Enfield country, friend. Every bike in Goa comes through here. You came through here. That makes you a bike."
+    ],
+    "defeat": [
+      "Respect. You have the engine of a 350."
+    ],
+    "after": "Raj runs the gang. He waits at the far end, by the market road. Nobody passes Raj. Everybody passes Raj, actually. He is very fair."
+  },
+  {
+    "id": "biker_anu",
+    "name": "Biker Anu",
+    "sprite": "biker_f",
+    "textStyle": "STIMULANT",
+    "party": [
+      {
+        "species": "selfiend",
+        "level": 12
+      },
+      {
+        "species": "jawling",
+        "level": 13
+      }
+    ],
+    "reward": 280,
+    "intro": [
+      "Helmet on, visor down, gloves on. Okay. I cannot see anything. Battle!"
+    ],
+    "defeat": [
+      "Visor up next time."
+    ],
+    "after": "The ledges down the next stretch only go one way. Down. Like my savings."
+  },
+  {
+    "id": "climber_jo",
+    "name": "Climber Jo",
+    "sprite": "climber",
+    "textStyle": "ORGANIC",
+    "party": [
+      {
+        "species": "hashlump",
+        "level": 13
+      },
+      {
+        "species": "chillem",
+        "level": 13
+      }
+    ],
+    "reward": 290,
+    "intro": [
+      "Everyone hops the ledges. Nobody uses the little path. I use the little path. I live on the little path."
+    ],
+    "defeat": [
+      "I will be on the little path if you need me."
+    ],
+    "after": "The roots up on the top bend? They go somewhere. You need a strong grip and a stronger reason."
+  },
+  {
+    "id": "painter_sol",
+    "name": "Rock Painter Kiran",
+    "sprite": "hippie",
+    "textStyle": "PSYCHEDELIC",
+    "party": [
+      {
+        "species": "tridog",
+        "level": 13
+      },
+      {
+        "species": "blottertot",
+        "level": 13
+      }
+    ],
+    "reward": 300,
+    "intro": [
+      "Someone painted this gorge ten thousand years ago. Someone else painted it in 1994. I am painting it now. Hold still, you are in the composition."
+    ],
+    "defeat": [
+      "Hm. You have ruined the composition. It is better."
+    ],
+    "after": "There are paintings in the slot canyon that only show under a purple light. Some are very old. Some are very rude."
+  },
+  {
+    "id": "herder_babu",
+    "name": "Goatherd Babu",
+    "sprite": "local",
+    "textStyle": "ORGANIC",
+    "party": [
+      {
+        "species": "hashlump",
+        "level": 13
+      },
+      {
+        "species": "tridog",
+        "level": 14
+      }
+    ],
+    "reward": 300,
+    "intro": [
+      "Have you seen forty goats? Thirty-nine goats? One goat? Okay. Battle."
+    ],
+    "defeat": [
+      "The goats would have won."
+    ],
+    "after": "The slot canyon is very dark. The goats go in, the goats come out. I do not go in."
+  },
+  {
+    "id": "climber_mei",
+    "name": "Climber Mei",
+    "sprite": "climber",
+    "textStyle": "DISSOCIATIVE",
+    "party": [
+      {
+        "species": "chillem",
+        "level": 14
+      },
+      {
+        "species": "selfiend",
+        "level": 14
+      }
+    ],
+    "reward": 320,
+    "intro": [
+      "AH. Oh. A person. In the dark. You nearly gave me a heart attack. Let us battle about it."
+    ],
+    "defeat": [
+      "My heart. My poor heart."
+    ],
+    "after": "Keep going. The walls get closer, then they stop. There is a man with chai on the other side. He is real. I checked."
+  },
+  {
+    "id": "caver_ravi",
+    "name": "Caver Ravi",
+    "sprite": "local",
+    "textStyle": "DOWNER",
+    "party": [
+      {
+        "species": "sirenowl",
+        "level": 14
+      },
+      {
+        "species": "hashlump",
+        "level": 14
+      }
+    ],
+    "reward": 320,
+    "intro": [
+      "I came in here in 2011 to find the end of the slot. I have found it many times. It keeps moving."
+    ],
+    "defeat": [
+      "That way is out. Probably."
+    ],
+    "after": "Uncle Sunny is just through there. He will tell you to lie down. Lie down."
+  },
+  {
+    "id": "daredevil_zara",
+    "name": "Daredevil Zara",
+    "sprite": "biker_f",
+    "textStyle": "STIMULANT",
+    "party": [
+      {
+        "species": "jawling",
+        "level": 14
+      },
+      {
+        "species": "mozzquito",
+        "level": 14
+      },
+      {
+        "species": "selfiend",
+        "level": 15
+      }
+    ],
+    "reward": 360,
+    "intro": [
+      "I rode across that bridge. On the bike. Twice. The second time on purpose. You walked across it like a normal person. Disgusting. Battle!"
+    ],
+    "defeat": [
+      "Fine. Walking is also brave. Slightly."
+    ],
+    "after": "Do not look down at the drop. I looked down once. I am still looking down, a little, inside."
+  },
+  {
+    "id": "goatherd_lobo",
+    "name": "Goatherd Lobo",
+    "sprite": "local",
+    "textStyle": "ORGANIC",
+    "party": [
+      {
+        "species": "hashlump",
+        "level": 14
+      },
+      {
+        "species": "chillem",
+        "level": 15
+      }
+    ],
+    "reward": 330,
+    "intro": [
+      "You want the little path? Everyone wants the little path. Pay the toll. The toll is a battle."
+    ],
+    "defeat": [
+      "Toll paid. Mind the goats."
+    ],
+    "after": "Babu has my goats. He says they are his goats. Goats do not care whose goats they are."
+  },
+  {
+    "id": "biker_dev",
+    "name": "Biker Arjun",
+    "sprite": "biker",
+    "textStyle": "BUMMER",
+    "party": [
+      {
+        "species": "tridog",
+        "level": 15
+      },
+      {
+        "species": "selfiend",
+        "level": 15
+      }
+    ],
+    "reward": 340,
+    "intro": [
+      "I am watching the wash for Raj. Every direction. Do not try to get round me, I am very good at turning my head."
+    ],
+    "defeat": [
+      "My neck hurts. Go on."
+    ],
+    "after": "The wash drops in steps. Hop them going east. Coming back, you walk round the long way like the rest of us."
+  },
+  {
+    "id": "selfie_steph",
+    "name": "Influencer Steph",
+    "sprite": "influencer",
+    "textStyle": "BUMMER",
+    "party": [
+      {
+        "species": "selfiend",
+        "level": 15
+      },
+      {
+        "species": "jawling",
+        "level": 15
+      }
+    ],
+    "reward": 350,
+    "intro": [
+      "This ledge is my spot. The light hits the gorge at exactly this angle at exactly this time. You are in my light. Battle, but from the side."
+    ],
+    "defeat": [
+      "Okay that was actually content."
+    ],
+    "after": "Tag me if you post the gorge. Do not tag the gorge. The gorge has a bigger following."
+  },
+  {
+    "id": "enfield_raj",
+    "name": "Enfield Raj",
+    "sprite": "biker",
+    "textStyle": "STIMULANT",
+    "party": [
+      {
+        "species": "jawling",
+        "level": 15
+      },
+      {
+        "species": "hashlump",
+        "level": 15
+      },
+      {
+        "species": "selfiend",
+        "level": 16
+      }
+    ],
+    "reward": 480,
+    "intro": [
+      "So. You came up the whole gorge. Through Vikram, through Anu, through the dark, over the drop. My gang talks about you.",
+      "Nobody leaves this gorge without riding with Raj. Today we ride on the astral plane."
+    ],
+    "defeat": [
+      "Hah! You ride like a 500. With a sidecar. Full of trouble."
+    ],
+    "after": "The market is just up there. Tell them Raj sent you. They will charge you more. That is how you know it worked."
+  },
+  {
+    "id": "shortcut_sam",
+    "name": "Tourist Sam",
+    "sprite": "tourist",
+    "textStyle": "BUMMER",
+    "party": [
+      {
+        "species": "chillem",
+        "level": 15
+      },
+      {
+        "species": "mozzquito",
+        "level": 15
+      }
+    ],
+    "reward": 330,
+    "intro": [
+      "My guidebook said the gorge was a shortcut. A SHORTCUT. I have been walking since breakfast. Which breakfast, I could not tell you. Battle me, I need to hit something."
+    ],
+    "defeat": [
+      "Ten minutes, the book said."
+    ],
+    "after": "The market is through there. The book says it is a quiet local market. I have stopped trusting the book."
   }
 ]

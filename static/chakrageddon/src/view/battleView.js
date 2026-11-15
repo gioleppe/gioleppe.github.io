@@ -259,6 +259,7 @@ export const battleView = {
       this.capture.t += dt * (press ? 3 : 1);
       if (this.capture.t > 0.6 + this.capture.shakes * 0.55 + 0.3) { if (!this.capture.success) this.capture = null; this.cur = null; }
     } else if (c.type === 'outro') { c.t += dt * 2.2; this.outro = Math.min(1, c.t); if (c.t >= 1) { this.on = false; this.cur = null; this.queue = []; this.outro = 0; } }
+    if (!this.cur && this.on && this.queue.length) this.next(game);   // the next line starts this frame: the box never blinks empty between two
   },
 
   // ------------------------------------------------------------ drawing
@@ -389,7 +390,8 @@ export const battleView = {
     const w = 128, h = side === 'p' ? 38 : 30;
     panel(g, x, y, w, h, { bg: C.cream, accent: side === 'p' ? C.cyan : C.magenta });
     drawText(g, d.name, x + 6, y + 5, { color: C.ink });
-    drawText(g, tl('Lv{0}', d.level), x + w - 6, y + 5, { color: C.ink, align: 'right' });
+    const lvText = tl('Lv{0}', d.level);
+    drawText(g, lvText, x + w - 6, y + 5, { color: C.ink, align: 'right' });
     // serotonin "lava lamp": a bar with slow blobs
     const ratio = d.maxHp ? d.hp / d.maxHp : 0;
     const col = ratio > 0.5 ? '#FF4FA8' : ratio > 0.2 ? '#FF9A2A' : '#E0303C';
@@ -408,7 +410,13 @@ export const battleView = {
       g.fillStyle = '#7CC4D8'; const lv = Math.round(6 * (d.maxHyd ? d.hyd / d.maxHyd : 0)); g.fillRect(x + 7, y + 34 - lv, 4, lv);
       bar(g, x + 15, y + 28, 44, 6, d.maxHyd ? d.hyd / d.maxHyd : 0, '#3FB8D8');
       tx = x + 62;
-    } else if (game.engine.state.dex.caught[d.speciesId]) { g.fillStyle = C.magenta; g.fillRect(x + w - 30, y + 6, 4, 4); }
+    } else if (game.engine.state.dex.caught[d.speciesId]) {
+      // already in the Trip Journal: a little baggie just left of the level, clear of it whatever its width
+      const bx = x + w - 6 - textWidth(lvText) - 9;
+      g.fillStyle = C.ink; g.fillRect(bx, y + 4, 6, 8);
+      g.fillStyle = '#E8F4FA'; g.fillRect(bx + 1, y + 5, 4, 6);
+      g.fillStyle = C.magenta; g.fillRect(bx + 1, y + 5, 4, 1); g.fillRect(bx + 2, y + 8, 2, 2);
+    }
     const tag = STATUS_TAG[d.status];
     const ty = side === 'p' ? y + 26 : y + 20;
     if (side === 'e' && (tag || this.loop.e)) { /* drawn under the box */ }
@@ -497,7 +505,7 @@ export const battleView = {
       c.lines.slice(0, 3).forEach((line, i) => { drawText(g, line.slice(0, Math.max(0, left)), 12, BOX_Y + 7 + i * 12, { color: C.ink, scramble: game.fxLevel() > 0.9 ? 0.1 : 0, t: this.t, runs: termRuns(line, game.data) }); left -= line.length; });
       // waiting for A: a blinking arrow, as in the dialogue box
       if (c.read && c.shown >= c.lines.join('').length && Math.floor(this.t * 2.5) % 2 === 0) { g.fillStyle = C.magenta; g.fillRect(W - 18, BOX_Y + 36, 7, 2); g.fillRect(W - 17, BOX_Y + 38, 5, 1); g.fillRect(W - 16, BOX_Y + 39, 3, 1); g.fillRect(W - 15, BOX_Y + 40, 1, 1); }
-    } else if (!c && b && this.intro <= 0) { if (!this.queue.length) this.hidden = { p: false, e: false }; this.menus(game, g, b); }
+    } else if (!c && !this.queue.length && b && this.intro <= 0) { this.hidden = { p: false, e: false }; this.menus(game, g, b); }   // menus only once everything has played: never for a frame between two lines
 
     if (this.intro > 0) {   // iris-style bars in
       const k = this.intro; g.fillStyle = C.void;

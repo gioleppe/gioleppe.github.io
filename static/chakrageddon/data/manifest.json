@@ -11,7 +11,9 @@
     "driftwood_beach",
     "sandy_trail",
     "poi_pit",
+    "pixie_wood",
     "tantric_yurt",
+    "laterite_gorge",
     "flea_market",
     "flea_alley",
     "dirt_road",
@@ -257,6 +259,16 @@
       3,
       7,
       "Floor"
+    ],
+    "pixie_wood": [
+      0,
+      5,
+      "Pixies"
+    ],
+    "laterite_gorge": [
+      1,
+      4,
+      "Gorge"
     ]
   },
   "quests": [
@@ -1535,6 +1547,102 @@
           }
         }
       ]
+    },
+    {
+      "id": "pixie_wings",
+      "name": "The Fairy Queen's Wings",
+      "giver": {
+        "zone": "pixie_wood",
+        "npc": "titania"
+      },
+      "start": {
+        "flag": "met_titania"
+      },
+      "steps": [
+        {
+          "text": "Titania lost her wings dancing in the Moon Glade. The moon ring in the dark grove of the Pixie Wood only wakes at night (7 PM to 6 AM), or for people high enough to see it.",
+          "done": {
+            "any": [
+              {
+                "has": "lost_wings"
+              },
+              {
+                "flag": "wings_back"
+              }
+            ]
+          }
+        },
+        {
+          "text": "Bring the wings back to Titania by the pond in the Pixie Wood.",
+          "done": {
+            "flag": "wings_back"
+          },
+          "npc": {
+            "zone": "pixie_wood",
+            "id": "titania"
+          }
+        }
+      ]
+    },
+    {
+      "id": "banyan_1994",
+      "name": "Banyan's 1994",
+      "giver": {
+        "zone": "laterite_gorge",
+        "npc": "echo_wall"
+      },
+      "offer": false,
+      "start": {
+        "flag": "b94_echo"
+      },
+      "steps": [
+        {
+          "text": "The echo wall in the Red Laterite Gorge shouted back with a stranger's voice: 'Banyan! Wait for me at the sunrise set!' J + B, Day 4, 1994. The old sadhu on the rock by the pinnacle might know more.",
+          "done": {
+            "flag": "b94_baba"
+          },
+          "npc": {
+            "zone": "laterite_gorge",
+            "id": "pinnacle_baba"
+          }
+        },
+        {
+          "text": "J. is Joni, who sold bracelets at the Anjuna Flea Market. Ask the vendor there.",
+          "done": {
+            "flag": "b94_vendor"
+          },
+          "npc": {
+            "zone": "flea_market",
+            "id": "market_vendor"
+          }
+        },
+        {
+          "text": "Joni eats at the 5 AM Omelette Stall every morning in the rush. Find her in the queue during the 5 AM rush (5 to 7 AM).",
+          "done": {
+            "flag": "b94_joni"
+          },
+          "npc": {
+            "zone": "omelette_stall",
+            "id": "joni_stall"
+          },
+          "ready": {
+            "set": "rush"
+          }
+        },
+        {
+          "text": "Joni is walking down to the beach. Be at Driftwood Shack Beach for the Sunrise set (6 to 8 AM) and talk to Banyan.",
+          "done": {
+            "flag": "b94_done"
+          },
+          "npc": {
+            "zone": "driftwood_beach",
+            "id": "banyan_sunrise"
+          },
+          "ready": {
+            "set": "sunrise"
+          }
+        }
+      ]
     }
   ],
   "worldmap": {
@@ -1660,6 +1768,14 @@
       "last_dancefloor": [
         20,
         12
+      ],
+      "pixie_wood": [
+        5,
+        6
+      ],
+      "laterite_gorge": [
+        8,
+        8
       ]
     }
   },

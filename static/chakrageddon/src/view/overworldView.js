@@ -16,6 +16,8 @@ export const RUSTLE = 0.45;
 const WADE = {
   incense: { puff: ['#EADDFB', '#FFFFFF', '#C9B2EE'], skirt: 'cloud' },
   darkbush: { puff: ['#2A5A3A', '#1E4A2E', '#FFE066'], skirt: 'tile' },
+  fern: { puff: ['#4FA060', '#5FF4FF', '#FF8FB8'], skirt: 'tile' },
+  scrub: { puff: ['#D8B45A', '#C8A24A', '#F0D890'], skirt: 'tile' },
 };
 const BOX_CLEAR = H - 50 - 3 - 9 - 4;   // the dialogue box with its speaker tab starts here; feet stay above it   // seconds the camera spends on a boss before their cutscene
 import { routeHint } from '../core/goals.js';
@@ -41,7 +43,8 @@ function drawMarker(g, mark, x, y) {
 
 const TS = 16, STEP = 0.15;   // a tile at an NPC's walking pace
 // your own steps: a walk, or a run while B is held (not afloat on the flamingo)
-export const WALK = 0.18, RUN = 0.09;
+export const WALK = 0.18, RUN = 0.09, HOP = 0.32;
+export const RING_OUT = 0.28, RING_IN = 0.34;   // a fairy ring: the sparkle closes over you, then opens on its twin
 export const ASTRAL_IN = 1.4, ASTRAL_OUT = 0.8;
 // sleeping until a set at a Chai Tent: fade out, the night goes by on a clock, fade in; then, if the set is right here,
 // the camera goes over to look at the crowd and the stage, and comes back
@@ -58,16 +61,25 @@ export const WALL_TOPS = {
   yurt: { fill: '#D8C8A4', grain: '#C9B48A', rim: '#9A4FE0', line: '#7A3AB8' },
   temple_wall: { fill: '#9A7038', grain: '#8A6230', rim: '#F0CC78', line: '#6E4C24' },
   cave_wall: { fill: '#3A2E29', grain: '#2A211D', rim: '#6A5A50', line: '#1E1714' },
+  // the gorge (1.6.0): the plateau seen from above, dry grass and red pebbles on it; its faces are two tiles tall
+  canyon: { fill: '#8E8646', grain: '#7C7440', rim: '#C8B870', line: '#5A2410', speckle: ['#B0A456', '#A0944C', '#6E6836', '#B8683A', '#C8B870'], tall: 'canyon_hi' },
 };
+/** wall tiles that count as another wall when deciding top or face (a painted stretch of the gorge is still the gorge) */
+const WALL_KIN = { cliff_art: 'canyon' };
 /** solid tiles that may stack in a column as they are: crates and containers pile up, cliffs and dunes terrace, fences and
  *  cables have an upright piece, water is water. Any other solid tile in a column must be a wall top (tests/walls). */
-export const STACKS_FINE = ['container', 'crate', 'stall', 'deep', 'fence', 'wall', 'cliff', 'sand', 'dune', 'wheat', 'bush', 'void', 'barrier'];   // a hedge of bushes stacks fine
-const isWall = (cls, sp) => cls === sp || cls === 'out';
+export const STACKS_FINE = ['container', 'crate', 'stall', 'deep', 'fence', 'wall', 'cliff', 'sand', 'dune', 'wheat', 'bush', 'void', 'barrier', 'chasm', 'ledge_e', 'ledge_w'];   // a hedge of bushes stacks fine
+const isWall = (cls, sp) => cls === sp || cls === 'out' || WALL_KIN[cls] === sp;
 const VERTICAL = { fence: 'fence_v', cable: 'cable_v' };
 /** the top of a wall at dx, dy; open[i] (up, right, down, left) says that side faces the room and gets a rim */
-function wallTop(g, c, dx, dy, open) {
+function wallTop(g, c, dx, dy, open, x = 0, y = 0) {
   g.fillStyle = c.fill; g.fillRect(dx, dy, TS, TS);
-  g.fillStyle = c.grain; g.fillRect(dx, dy + 5, TS, 1); g.fillRect(dx, dy + 11, TS, 1);
+  if (c.speckle) {
+    // a ground seen from above rather than a wall: a few tufts and pebbles, placed by the tile (the same every frame)
+    let h = Math.imul(x * 73856093 ^ y * 19349663, 2654435761) >>> 0;
+    for (let i = 0; i < 4; i++) { h = Math.imul(h ^ (h >>> 15), 2246822519) >>> 0; g.fillStyle = c.speckle[h % c.speckle.length]; g.fillRect(dx + ((h >>> 4) % 15), dy + ((h >>> 9) % 15), i === 0 && h % 3 === 0 ? 2 : 1, 1); }
+    if ((h >>> 20) % 7 === 0) { g.fillStyle = c.grain; g.fillRect(dx + 3 + ((h >>> 12) % 8), dy + 4 + ((h >>> 16) % 8), 3, 2); }
+  } else { g.fillStyle = c.grain; g.fillRect(dx, dy + 5, TS, 1); g.fillRect(dx, dy + 11, TS, 1); }
   const [up, right, , left] = open;
   g.fillStyle = c.rim;
   if (up) g.fillRect(dx, dy, TS, 2);
@@ -185,11 +197,12 @@ export const overworldView = {
 
   onEvent(game, e) {
     if (e.type === 'ENTITY_MOVED' && e.entityId === 'player') {
-      this.anim = { from: e.from, to: e.to, t: 0, dur: this.running(game) ? RUN : WALK }; this.walkFlip ^= 1;
+      this.anim = e.jump ? { from: e.from, to: e.to, t: 0, dur: HOP, jump: true } : { from: e.from, to: e.to, t: 0, dur: this.running(game) ? RUN : WALK }; this.walkFlip ^= 1;
       if (this.wadeAt(game, e.to[0], e.to[1])) (this.rustles ||= []).push({ x: e.to[0], y: e.to[1], t: 0 });   // you wade in: it stirs
     }
     else if (e.type === 'BUMP') { this.bumpT = 0.18; game.audio?.sfx('bump'); }
     else if (e.type === 'PLAYER_PLACED') this.anim = null;
+    else if (e.type === 'RING_HOP') this.ringFx = { t: 0, from: e.from, to: e.to };
     if (e.type === 'UNSTUCK') this.startTrans(game, 'iris');
     // a tuk-tuk ride: the road plays over everything, then the new place opens round you (the zone change follows this event)
     if (e.type === 'FIELD_TECHNIQUE' && e.techniqueId === 'share_taxi_tuktuk') { this.ride = { t: 0 }; game.audio?.sfx('horn'); }
@@ -240,6 +253,7 @@ export const overworldView = {
     if (this.alert) { this.alert.t -= dt; if (this.alert.t <= 0) this.alert = null; }
     if (this.bumpT > 0) this.bumpT -= dt;
     if (this.anim) { this.anim.t += dt / (this.anim.dur || WALK); if (this.anim.t >= 1) this.anim = null; }
+    if (this.ringFx && (this.ringFx.t += dt) >= RING_OUT + RING_IN) this.ringFx = null;
     if (this.rustles?.length) { for (const r of this.rustles) r.t += dt; this.rustles = this.rustles.filter((r) => r.t < RUSTLE); }
     // someone walking off (Astra-Zero after your second fight): a tile at a walking pace, gone at the end of the path
     for (const l of this.leaving || []) l.t += dt / (STEP * 1.6);
@@ -259,7 +273,7 @@ export const overworldView = {
     this.boredT = this.idleT > 0 ? (this.boredT || 0) + dt : 0;
     const bored = game.data.rules.boredom?.seconds;
     if (bored && this.boredT >= bored) { this.boredT = 0; game.send({ type: 'BORED_LICK' }); }
-    if (s.mode !== 'OVERWORLD' || this.anim || this.changing() || this.seeingOff(game) || game.busy()) return;
+    if (s.mode !== 'OVERWORLD' || this.anim || this.ringFx || this.changing() || this.seeingOff(game) || game.busy()) return;
     if (input.pressed('a') || input.anyTap()) return game.send({ type: 'INTERACT_TILE' });
     if (input.pressed('start')) return game.send({ type: 'TOGGLE_MENU' });
     if (input.pressed('lick') && s.bag.glowing_blotter > 0) return game.send({ type: 'USE_ITEM', itemId: 'glowing_blotter' });   // L, Y on a pad, LICK on the phone
@@ -390,7 +404,8 @@ export const overworldView = {
       if (sp && sp !== zone.ground) count[sp] = (count[sp] || 0) + 1;
     }
     const best = Object.entries(count).sort((a, b) => b[1] - a[1])[0];
-    return best && best[1] >= 3 ? best[0] : null;
+    const need = legend[charAt(ctx, x, y, zone)]?.ledge ? 2 : 3;   // a ledge across a sandy wash sits on the sand (its run covers the other two sides)
+    return best && best[1] >= need ? best[0] : null;
   },
   /** where a set's crowd stands (the middle of its crowd rect, or of the dancefloor), in tiles */
   stageSpot(game, setId) {
@@ -417,6 +432,7 @@ export const overworldView = {
   camera(game, flat = false) {
     const s = game.engine.state, zone = game.data.zones[s.zoneId];
     let px = s.player.x * TS, py = s.player.y * TS;
+    if (this.ringFx && this.ringFx.t < RING_OUT) { px = this.ringFx.from[0] * TS; py = this.ringFx.from[1] * TS; }
     if (this.anim) {
       const a = this.anim;
       px = (a.from[0] + (a.to[0] - a.from[0]) * a.t) * TS; py = (a.from[1] + (a.to[1] - a.from[1]) * a.t) * TS;
@@ -463,9 +479,13 @@ export const overworldView = {
   },
 
   /** the front of a wade tile, over whoever stands in it (feet hidden, as in tall grass), and the billow when it was
-   *  just stirred. dx, dy: the tile's top-left on screen */
-  wadeFront(game, g, w, x, y, dx, dy) {
+   *  just stirred. dx, dy: the tile's top-left on screen. feet: the screen y of the top of the tile the walker's feet are
+   *  in right now (mid-step it lies between two tiles); the skirt only covers that band, so a bush you are stepping out
+   *  of never covers your body */
+  wadeFront(game, g, w, x, y, dx, dy, feet = dy) {
     const still = game.settings.reducedMotion, t = this.t, j = this.rustleOf(game, x, y);
+    const band = feet !== dy;
+    if (band) { g.save(); g.beginPath(); g.rect(dx - 4, Math.max(dy, feet + 9), TS + 8, Math.max(0, Math.min(dy + TS, feet + TS) - Math.max(dy, feet + 9))); g.clip(); }
     if (w.skirt === 'tile') {
       const i = game.atlas.tiles[w.sprite];
       if (i !== undefined) g.drawImage(game.images.tiles, (i % game.atlas.tileCols) * TS, Math.floor(i / game.atlas.tileCols) * TS + 9, TS, TS - 9, dx + j, dy + 9, TS, TS - 9);
@@ -478,6 +498,7 @@ export const overworldView = {
       }
       g.globalAlpha = 1;
     }
+    if (band) g.restore();
     const r = still ? null : (this.rustles || []).find((q) => q.x === x && q.y === y);
     if (!r) return;
     // the billow: puffs pushed out to either side and up, fading
@@ -558,7 +579,9 @@ export const overworldView = {
         // fences and cable runs: a north-south run gets its own upright piece, not a ladder of east-west segments
         if (VERTICAL[sp]) { const f = (fx, fy) => classOf(fx, fy) === sp; if ((f(x, y - 1) || f(x, y + 1)) && !f(x - 1, y) && !f(x + 1, y)) sp = VERTICAL[sp]; }
         const top = WALL_TOPS[sp];
-        if (top && isWall(classOf(x, y + 1), sp)) wallTop(g, top, dx, dy, [classOf(x, y - 1), classOf(x + 1, y), classOf(x, y + 1), classOf(x - 1, y)].map((c) => !isWall(c, sp)));
+        // a tall wall (the gorge): the row above its face is the upper half of the face, not a top
+        if (top?.tall && classOf(x, y + 1) !== 'out' && isWall(classOf(x, y + 1), sp) && !isWall(classOf(x, y + 2), sp)) this.tile(game, g, top.tall, dx, dy);
+        else if (top && isWall(classOf(x, y + 1), sp)) wallTop(g, top, dx, dy, [classOf(x, y - 1), classOf(x + 1, y), classOf(x, y + 1), classOf(x - 1, y)].map((c) => !isWall(c, sp)), x, y);
         else if (sp !== zone.ground) this.tile(game, g, sp, dx + (def.id === 2 ? this.rustleOf(game, x, y) : 0), dy);
         if (def.light && ego) highWorld.lightStep(this, game, g, dx, dy, x, y);
         if (sp === 'bonfire' && !game.settings.reducedMotion) for (let i = 0; i < 3; i++) {   // sparks rising off the fire
@@ -663,7 +686,11 @@ export const overworldView = {
         }
       } else if (e.player) {
         const onWater = legend[charAt(ctx, s.player.x, s.player.y, zone)]?.id === 3;
-        if (onWater) this.tile(game, g, 'flamingo', px - cx, py - cy + 2); else shadow(px - cx, py - cy - 10);
+        // hopping down a ledge: up in an arc over it, the shadow staying on the ground and shrinking a little
+        const lift = this.anim?.jump && !game.settings.reducedMotion ? Math.round(Math.sin(this.anim.t * Math.PI) * 7) : 0;
+        if (onWater) this.tile(game, g, 'flamingo', px - cx, py - cy + 2);
+        else if (lift > 3) { g.fillStyle = 'rgba(20,10,40,0.22)'; g.fillRect(px - cx + 5, py - cy + 11, 6, 2); }
+        else shadow(px - cx, py - cy - 10);
         this.camPos = { x: px, y: py };
         for (const [k, tr] of (this.trail || []).entries()) {
           const age = (this.t - tr.t) * 3; if (age > 1) continue;
@@ -675,10 +702,10 @@ export const overworldView = {
         // left standing a while, you turn round and dance to the zone's beat (a step on every other beat, a hop on each)
         const dancing = !game.settings.reducedMotion && !onWater && (this.idleT || 0) > IDLE_DANCE;
         const beats = this.t * (zone.baseBpm || 140) / 60, hop = dancing && beats % 1 < 0.3 ? 1 : 0;
-        this.char(game, g, s.outfit || 'player', dancing ? 'DOWN' : s.player.dir, dancing ? Math.floor(beats / 2) % 2 : this.anim ? this.walkFlip : 0, px - cx, py - cy - 10 - (onWater ? 4 : 0) - hop);
+        this.char(game, g, s.outfit || 'player', dancing ? 'DOWN' : s.player.dir, dancing ? Math.floor(beats / 2) % 2 : this.anim ? this.walkFlip : 0, px - cx, py - cy - 10 - (onWater ? 4 : 0) - hop - lift);
         for (const [wx, wy] of this.anim ? [this.anim.from, this.anim.to] : [[s.player.x, s.player.y]]) {
           const w = this.wadeAt(game, wx, wy);
-          if (w) this.wadeFront(game, g, w, wx, wy, wx * TS - cx, wy * TS - cy);
+          if (w) this.wadeFront(game, g, w, wx, wy, wx * TS - cx, wy * TS - cy, py - cy);
         }
       } else if (e.npc) {
         const n = e.npc, dx = Math.round(e.nx * TS - cx), dy = Math.round(e.ny * TS - cy);
@@ -747,6 +774,7 @@ export const overworldView = {
       });
     }
 
+    if (this.ringFx) this.drawRing(game, g, cx, cy);
     // light: night tint, dark zones lit only around the player
     const lit = zone.dark && !game.canFlash();
     if (lit) {
@@ -755,6 +783,7 @@ export const overworldView = {
       g.fillStyle = grd; g.fillRect(0, 0, W, H);
     } else if (zone.dark) { g.fillStyle = 'rgba(40,10,90,0.25)'; g.fillRect(0, 0, W, H); }
     else if (zone.indoor !== true) daylight(g, s.clock + (s.clockSteps || 0) / (game.data.rules.stepsPerMinute || 1));
+    if (zone.darkAreas) this.drawPockets(game, g, zone, cx, cy, px, py);
     highWorld.glow(this, game, g, cx, cy, x0, y0, x1, y1);
     if (this.sky) drawSky(g, this.sky, game.settings.reducedMotion);
 
@@ -781,6 +810,53 @@ export const overworldView = {
     this.drawTrans(game, g, px - cx, py - cy);
     this.drawSleep(game, g);
     if (this.ride) drawRide(g, this.ride.t, !!game.settings.reducedMotion);
+  },
+
+  /** a fairy ring: motes of light spiral in round you and the air turns white-violet; then it clears on the twin ring,
+   *  the motes flying out. Reduced motion: a plain fade */
+  drawRing(game, g, cx, cy) {
+    const r = this.ringFx, out = r.t < RING_OUT, k = out ? r.t / RING_OUT : Math.min(1, (r.t - RING_OUT) / RING_IN);
+    const veil = out ? k : 1 - k;
+    if (game.settings.reducedMotion) { g.fillStyle = `rgba(232,220,255,${veil * 0.9})`; g.fillRect(0, 0, W, H); return; }
+    const [tx, ty] = out ? r.from : r.to, ox = tx * TS - cx + 8, oy = ty * TS - cy + 2;
+    const cols = ['#FFE066', '#5FF4FF', '#FF8FB8', '#C8FFE0', '#FFFFFF'];
+    for (let i = 0; i < 14; i++) {
+      const a = i / 14 * Math.PI * 2 + r.t * 9, rad = out ? 22 * (1 - k) + 3 : 3 + 26 * k, rise = out ? k * 10 : (1 - k) * 6;
+      g.fillStyle = cols[i % cols.length]; g.fillRect(Math.round(ox + Math.cos(a) * rad), Math.round(oy + Math.sin(a) * rad * 0.6 - rise - (i % 3) * 3), i % 4 ? 1 : 2, i % 4 ? 1 : 2);
+    }
+    g.globalAlpha = veil * 0.85; g.fillStyle = '#EDE4FF'; g.fillRect(0, 0, W, H); g.globalAlpha = 1;
+  },
+
+  /** zone.darkAreas: [[x0, y0, x1, y1], ...], pockets of a zone that are dark (a grove under a thick canopy, a slot
+   *  canyon) the way a whole dark zone is: pitch black from outside, lit only round you inside, until the Blacklight UV
+   *  Pulse lights them for good (then a violet tint, as in a dark zone) */
+  drawPockets(game, g, zone, cx, cy, px, py) {
+    const flash = game.canFlash();
+    const rects = zone.darkAreas.map(([x0, y0, x1, y1]) => [x0 * TS - cx, y0 * TS - cy, (x1 - x0 + 1) * TS, (y1 - y0 + 1) * TS]).filter(([x, y, w, h]) => x < W && y < H && x + w > 0 && y + h > 0);
+    if (!rects.length) return;
+    if (flash) {   // lit for good: a violet tint, soft at the edges like the dark was
+      const soft = 'filter' in g; if (soft) g.filter = 'blur(6px)';
+      g.fillStyle = 'rgba(40,10,90,0.22)'; for (const [x, y, w, h] of rects) g.fillRect(x + 4, y + 4, w - 8, h - 8);
+      if (soft) g.filter = 'none';
+      return;
+    }
+    const can = typeof document !== 'undefined' && (this.pocketCan ||= document.createElement('canvas'));
+    const M = 32, pg = can && can.getContext && (can.width = W + M * 2, can.height = H + M * 2, can.getContext('2d'));   // a margin, so the blur does not fade at the screen edge
+    if (pg) pg.setTransform?.(1, 0, 0, 1, M, M);
+    const d = pg || g;
+    // a soft edge, like the shade under a canopy: the pocket drawn blurred (or, without a blur, two rings of lesser dark)
+    if (pg && 'filter' in pg) { pg.filter = 'blur(9px)'; pg.fillStyle = 'rgba(5,2,12,0.97)'; for (const [x, y, w, h] of rects) pg.fillRect(x + 6, y + 6, w - 12, h - 12); pg.filter = 'none'; }
+    else for (const [x, y, w, h] of rects) {
+      d.fillStyle = 'rgba(5,2,12,0.35)'; d.fillRect(x - 6, y - 6, w + 12, h + 12);
+      d.fillStyle = 'rgba(5,2,12,0.55)'; d.fillRect(x - 3, y - 3, w + 6, h + 6);
+      d.fillStyle = 'rgba(5,2,12,0.97)'; d.fillRect(x, y, w, h);
+    }
+    if (!pg) return;
+    // your own light: a hole round you, as in a dark zone
+    const grd = pg.createRadialGradient(px - cx + 8, py - cy + 4, 14, px - cx + 8, py - cy + 4, 46);
+    grd.addColorStop(0, 'rgba(0,0,0,1)'); grd.addColorStop(1, 'rgba(0,0,0,0)');
+    pg.globalCompositeOperation = 'destination-out'; pg.fillStyle = grd; pg.fillRect(-M, -M, W + M * 2, H + M * 2); pg.globalCompositeOperation = 'source-over';
+    g.drawImage(can, -M, -M);
   },
 
   /** the night going by: dark, a clock running from when you lay down to the set, a few Zs */

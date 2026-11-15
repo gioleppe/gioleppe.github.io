@@ -225,12 +225,24 @@ export function unstuck(ctx) {
   return true;
 }
 
+/** a ledge (legend ledge: 'DOWN' | 'LEFT' | 'RIGHT'): walking into it the way it faces, you hop over it onto the tile
+ *  beyond, if that is open; from any other side it is a wall. Returns the landing tile, or null */
+export function ledgeLanding(ctx, x, y, dir, zone = zoneOf(ctx)) {
+  const def = ctx.data.legend[charAt(ctx, x, y, zone)];
+  if (!def?.ledge || def.ledge !== dir) return null;
+  const [dx, dy] = DIRS[dir], lx = x + dx, ly = y + dy;
+  return walkable(ctx, lx, ly, zone) && !entityAt(ctx, lx, ly, zone) ? [lx, ly] : null;
+}
+
 export function step(ctx, dir) {
   const s = ctx.state, zone = zoneOf(ctx), [dx, dy] = DIRS[dir];
   s.player.dir = dir;
-  const from = [s.player.x, s.player.y], nx = from[0] + dx, ny = from[1] + dy;
+  const from = [s.player.x, s.player.y];
+  let nx = from[0] + dx, ny = from[1] + dy, jump = false;
   if (entityAt(ctx, nx, ny, zone)) return bump(ctx);
-  if (!walkable(ctx, nx, ny, zone)) {
+  const hop = !walkable(ctx, nx, ny, zone) && ledgeLanding(ctx, nx, ny, dir, zone);
+  if (hop) { [nx, ny] = hop; jump = true; }
+  else if (!walkable(ctx, nx, ny, zone)) {
     const id = logicAt(ctx, nx, ny, zone);
     if (useTechnique(ctx, id, nx, ny, dir, zone)) return;
     // walking into the dancing crowd: you wait a beat for a gap, and the crowd moves on (so nobody is ever boxed in)
@@ -238,7 +250,7 @@ export function step(ctx, dir) {
     return bump(ctx);
   }
   // a way out that is closed for now (the back alley, until every undercover has had a word): closedIf, closedBy, closedText
-  const shut = (zone.warps || []).find((w) => w.x === nx && w.y === ny && w.closedIf && check(s, w.closedIf, ctx.data));
+  const shut = (zone.warps || []).find((w) => w.x === nx && w.y === ny && w.to !== zone.zoneId && w.closedIf && check(s, w.closedIf, ctx.data));
   if (shut) { bump(ctx); return startScript(ctx, [{ s: shut.closedBy || '', t: shut.closedText || tl('The way is closed.') }]); }
   s.player.x = nx; s.player.y = ny;
   s.steps++;
@@ -258,9 +270,20 @@ export function step(ctx, dir) {
   s.intox = Math.max(0, s.intox - (ctx.data.rules.intoxStepDecay ?? 0.002));
   if (s.repel > 0) s.repel--;
   const id = logicAt(ctx, nx, ny, zone);
-  ctx.emit({ type: 'ENTITY_MOVED', entityId: 'player', from, to: [nx, ny], floating: id === T.WATER });
+  ctx.emit({ type: 'ENTITY_MOVED', entityId: 'player', from, to: [nx, ny], floating: id === T.WATER, ...(jump ? { jump: true } : {}) });
+  if (jump) ctx.emit({ type: 'AUDIO_CUE', sfxId: 'hop' });
 
   const warp = (zone.warps || []).find((w) => w.x === nx && w.y === ny);
+  if (warp && warp.to === zone.zoneId) {
+    // a way through inside the same area (a fairy ring): you step in and come out of its twin, with no change of scene.
+    // A sleeping one (closedIf) is only a ring of mushrooms: you stand in it, and closedText says why nothing happens
+    if (warp.closedIf && check(s, warp.closedIf, ctx.data)) { if (warp.closedText) startScript(ctx, [{ s: warp.closedBy || '', t: warp.closedText }]); return; }
+    s.player.x = warp.tx; s.player.y = warp.ty; if (warp.dir) s.player.dir = warp.dir;
+    ctx.emit({ type: 'RING_HOP', from: [nx, ny], to: [warp.tx, warp.ty] });
+    ctx.emit({ type: 'AUDIO_CUE', sfxId: 'ring' });
+    checkTrainerSight(ctx, zone);
+    return;
+  }
   if (warp) {
     // a way through that plays a scene first (the crowd lifting you onto the temple): script the first time (and until
     // its once flag is set), againScript after that; either ends with its own warp

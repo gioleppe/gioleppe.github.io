@@ -278,6 +278,8 @@ export class SynthAudio {
       case 'alert': T('square', 1175, 0.08, 0.12); T('square', 1175, 0.16, 0.12, 0.12); break;
       case 'technique': T('sawtooth', 200, 0.3, 0.12, 0, { to: 900, cutoff: 3000 }); this.hiss(now + 0.05, 0.2, 0.12, 3000, o); break;
       case 'push': T('sine', 90, 0.16, 0.35, 0, { to: 45 }); break;
+      case 'hop': T('square', 330, 0.08, 0.07, 0, { to: 660 }); T('sine', 140, 0.09, 0.2, 0.2, { to: 70 }); break;                     // up over a ledge, and the landing
+      case 'ring': [1568, 1319, 1760, 2093, 1568, 2637].forEach((f, i) => T('triangle', f, 0.14, 0.05, i * 0.05, { detune: 6 })); this.hiss(now, 0.4, 0.04, 6000, o); break;   // a fairy ring's twinkle
       case 'throw': T('sine', 400, 0.35, 0.12, 0, { to: 1200 }); break;
       case 'summon': T('sine', 500, 0.24, 0.1, 0, { to: 1500 }); [784, 1047, 1319].forEach((f, i) => T('triangle', f, 0.12, 0.09, 0.24 + i * 0.05)); this.hiss(now + 0.24, 0.18, 0.08, 4000, o); break;   // a point of light flies in and bursts
       case 'recall': T('sine', 1400, 0.3, 0.09, 0, { to: 300 }); this.hiss(now, 0.25, 0.05, 5000, o); break;                         // folded back into light
