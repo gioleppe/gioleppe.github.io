@@ -12,7 +12,7 @@ import { saveLanguage } from './assets.js';
 import { tl } from '../core/i18n.js';
 
 const SAVE_KEY = 'chakrageddon.save.v1', SETTINGS_KEY = 'chakrageddon.settings.v1';
-export const VERSION = '1.6.0';   // keep in step with package.json (tests/scenarios.test.mjs checks)
+export const VERSION = '1.6.1';   // keep in step with package.json (tests/scenarios.test.mjs checks)
 
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
@@ -41,14 +41,12 @@ export class Game {
 
   /** the name of the language in use, in that language */
   langName() { return this.langs.find((l) => l.code === this.lang)?.name || 'English'; }
-  /** Options and the title: next/previous language. The data is translated as it loads, so this saves and reloads the page. */
-  cycleLanguage(dir = 1) {
-    const n = this.langs.length;
-    if (n < 2) return;
-    const i = Math.max(0, this.langs.findIndex((l) => l.code === this.lang));
-    saveLanguage(this.langs[(i + dir + n) % n].code);
+  /** Data is translated as it loads, so changing language saves and reloads the page. */
+  changeLanguage(code) {
+    if (code === this.lang || !this.langs.some((l) => l.code === code)) return;
+    if (this.engine && !this.save(false)) { this.say(tl('Could not save progress. Language was not changed.')); return; }
+    if (!saveLanguage(code)) { this.say(tl('Could not save language. Language was not changed.')); return; }
     this.saveSettings();
-    if (this.engine) this.save(false);
     if (typeof location !== 'undefined') location.reload();
   }
 
@@ -275,6 +273,8 @@ export class Game {
       g.restore();
     }
     drawText(g, this.data.manifest.subtitle || '', W / 2, 66, { color: C.yellow, align: 'center', shadow: C.void });
+    if (this.audio && !this.audio.unavailable && this.settings.volume > 0 && this.audio.ctx?.state !== 'running')
+      drawText(g, tl('Tap or press a key for sound'), W / 2, 5, { color: C.yellow, align: 'center', shadow: C.void });
     const items = [{ label: tl('New trip'), id: 'new' }];
     if (this.hasSave()) items.unshift({ label: tl('Continue'), id: 'continue' });
     for (const [name, v] of Object.entries(this.extra)) if (v.titleEntry) items.push({ label: tl(v.titleEntry), screen: name });
@@ -285,7 +285,7 @@ export class Game {
     if (r.chosen >= 0) {
       const it = items[r.chosen];
       if (it.id === 'continue') this.loadGame();
-      else if (it.id === 'lang') this.cycleLanguage(1);
+      else if (it.id === 'lang') { this.screen = 'settings'; this.extra.settings.openLanguage(this, 'title'); }
       else if (it.screen) { this.screen = it.screen; this.extra[it.screen].open?.(this, 'title'); }
       else if (this.hasSave() && !this.confirmNew) { this.confirmNew = true; this.say(tl('Press again to overwrite your save.')); }
       else { this.confirmNew = false; this.newGame(); }

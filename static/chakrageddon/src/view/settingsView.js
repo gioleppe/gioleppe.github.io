@@ -10,12 +10,16 @@ const DIFFICULTY = { easy: 'Easy', normal: 'Normal', hard: 'Hard' };
 
 export const settingsView = {
   screen: true, titleEntry: 'Options', cursor: 0, from: 'title',
-  open(game, from) { this.from = from; this.cursor = 0; },
+  open(game, from) { this.from = from; this.cursor = 0; this.languageMenu = null; },
+  openLanguage(game, from) {
+    this.languageMenu = { from, cursor: Math.max(0, game.langs.findIndex((l) => l.code === game.lang)), confirm: null };
+  },
   update() {},
   draw(game, g) {
     const st = game.settings, input = game.input;
     g.fillStyle = C.void; g.fillRect(0, 0, W, H);
     panel(g, 20, 8, W - 40, H - 16, { bg: '#FFF4E4', accent: C.cyan });
+    if (this.languageMenu) return this.drawLanguage(game, g);
     if (this.remap) return this.drawRemap(game, g);
     if (this.juke) return this.drawJukebox(game, g);
     drawText(g, tl('OPTIONS'), W / 2, 15, { color: C.purple, align: 'center' });
@@ -35,7 +39,7 @@ export const settingsView = {
       { id: 'import', label: tl('Import save from file'), right: '', help: tl('Loads a save file. This replaces the save on this device.') },
       { id: 'back', label: tl('Back'), right: '', help: '' },
     ];
-    if (game.langs?.length > 1) rows.unshift({ id: 'language', label: tl('Language'), right: game.langName(), help: tl('The language of the whole game. Changing it restarts the page (your progress is saved first).') });
+    if (game.langs?.length > 1) rows.unshift({ id: 'language', label: tl('Language'), right: game.langName(), help: tl('Choose a language. You will be asked before the game reloads.') });
     const r = list(game, g, rows, 28, 25, W - 56, this.cursor, { rowH: 11, maxRows: 10 });   // scrolls: 10 rows above the help text
     this.cursor = r.cursor;
     const row = rows[this.cursor];
@@ -44,7 +48,7 @@ export const settingsView = {
     const act = r.chosen >= 0 ? 1 : side;
     if (act) {
       const id = r.chosen >= 0 ? rows[r.chosen].id : row.id;
-      if (id === 'language') { game.cycleLanguage(act > 0 ? 1 : -1); return; }
+      if (id === 'language') { this.openLanguage(game, 'settings'); return; }
       else if (id === 'difficulty') { const k = ['easy', 'normal', 'hard'], i = k.indexOf(st.difficulty || 'normal'); st.difficulty = k[(i + (act > 0 ? 1 : 2)) % 3]; }
       else if (id === 'grounded') st.grounded = !st.grounded;
       else if (id === 'tripNotes') st.tripNotes = st.tripNotes === false;
@@ -62,6 +66,33 @@ export const settingsView = {
       game.saveSettings();
     }
     if (input.pressed('b')) this.close(game);
+  },
+  drawLanguage(game, g) {
+    const menu = this.languageMenu, input = game.input;
+    drawText(g, tl('Language'), W / 2, 15, { color: C.purple, align: 'center' });
+    if (menu.confirm) {
+      const message = game.engine
+        ? tl('Change to {0}? The game will save your progress, reload and return to the title screen.', menu.confirm.name)
+        : tl('Change to {0}? The game will reload.', menu.confirm.name);
+      const lines = wrap(message, W - 64);
+      lines.forEach((line, i) => drawText(g, line, 32, 38 + i * 10, { color: C.chai }));
+      const rows = [{ label: tl('Cancel') }, { label: game.engine ? tl('Save and reload') : tl('Reload') }];
+      const r = list(game, g, rows, 32, 102, W - 64, menu.confirm.cursor, { rowH: 18 });
+      menu.confirm.cursor = r.cursor;
+      if (input.pressed('b') || r.chosen === 0) menu.confirm = null;
+      else if (r.chosen === 1) game.changeLanguage(menu.confirm.code);
+      return;
+    }
+    const rows = game.langs.map((l) => ({ label: l.name, right: l.code === game.lang ? tl('Current') : '' }))
+      .concat([{ label: tl('Back') }]);
+    const r = list(game, g, rows, 32, 34, W - 64, menu.cursor, { rowH: 18, maxRows: 6 });
+    menu.cursor = r.cursor;
+    if (input.pressed('b') || r.chosen === game.langs.length) {
+      this.languageMenu = null;
+      if (menu.from === 'title') game.screen = 'title';
+    } else if (r.chosen >= 0 && game.langs[r.chosen].code !== game.lang) {
+      menu.confirm = { ...game.langs[r.chosen], cursor: 0 };
+    }
   },
   drawRemap(game, g) {
     const st = game.settings, input = game.input, R = this.remap;

@@ -82,7 +82,7 @@ export const introView = {
 /** is the sound playing, or is there none to wait for (no Web Audio, or the volume is off)? */
 function soundOn(game) {
   const a = game.audio;
-  if (!a || !(game.settings?.volume > 0)) return true;
+  if (!a || a.unavailable || !(game.settings?.volume > 0)) return true;
   return a.ctx?.state === 'running';
 }
 

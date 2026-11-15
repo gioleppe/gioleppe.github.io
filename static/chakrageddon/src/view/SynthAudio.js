@@ -59,7 +59,7 @@ export class SynthAudio {
       return this.ctx.state === 'running';
     }
     const AC = window.AudioContext || window.webkitAudioContext;
-    if (!AC) return true;                                 // no Web Audio: nothing to wait for
+    if (!AC) { this.unavailable = true; return true; }    // no Web Audio: nothing to wait for
     const c = this.ctx = new AC();
     this.master = c.createGain(); this.master.gain.value = this.vol * 0.6;
     this.filter = c.createBiquadFilter(); this.filter.type = 'lowpass'; this.filter.frequency.value = 12000;   // a gentle top end; intoxication closes it further
