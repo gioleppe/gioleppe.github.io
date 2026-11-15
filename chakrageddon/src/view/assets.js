@@ -15,7 +15,7 @@ export function chosenLanguage(langs) {
   if (!want) { const nav = (typeof navigator !== 'undefined' && (navigator.languages?.[0] || navigator.language) || 'en').slice(0, 2).toLowerCase(); want = nav; }
   return langs.some((l) => l.code === want) ? want : 'en';
 }
-export function saveLanguage(code) { try { localStorage.setItem(LANG_KEY, code); } catch { /* storage blocked */ } }
+export function saveLanguage(code) { try { localStorage.setItem(LANG_KEY, code); return true; } catch { return false; } }
 /** fetches and installs the dictionaries of one language; English has none (the source text is English) */
 export async function loadDictionary(langs, code) {
   const l = langs.find((x) => x.code === code);
