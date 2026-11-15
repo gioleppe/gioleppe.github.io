@@ -100,7 +100,22 @@
   "barrier": 95,
   "zig_face": 96,
   "brazier": 97,
-  "void": 98
+  "void": 98,
+  "moss": 99,
+  "fern": 100,
+  "ring": 101,
+  "canyon": 102,
+  "canyon_hi": 103,
+  "cliff_art": 104,
+  "ledge_s": 105,
+  "ledge_e": 106,
+  "ledge_w": 107,
+  "chasm": 108,
+  "chasm_top": 109,
+  "ropebridge": 110,
+  "ropebridge_v": 111,
+  "mattress": 112,
+  "scrub": 113
  },
  "props": {
   "palm": {
@@ -174,6 +189,12 @@
    "w": 16,
    "h": 30,
    "frames": 1
+  },
+  "lighttree": {
+   "file": "prop_lighttree.png",
+   "w": 32,
+   "h": 44,
+   "frames": 3
   },
   "captain_chair": {
    "file": "prop_captain_chair.png",
@@ -265,7 +286,16 @@
   "brit_f": "char_brit_f.png",
   "brit_blue": "char_brit_blue.png",
   "brit_f_blue": "char_brit_f_blue.png",
-  "lifeguard": "char_lifeguard.png"
+  "lifeguard": "char_lifeguard.png",
+  "player_pixie": "char_player_pixie.png",
+  "player_traveller": "char_player_traveller.png",
+  "pixie": "char_pixie.png",
+  "pixie_b": "char_pixie_b.png",
+  "titania": "char_titania.png",
+  "biker": "char_biker.png",
+  "biker_f": "char_biker_f.png",
+  "climber": "char_climber.png",
+  "joni": "char_joni.png"
  },
  "creatures": {
   "ganjapod": "mon_ganjapod.png",
@@ -374,6 +404,15 @@
   "brit_f": "portrait_brit_f.png",
   "brit_blue": "portrait_brit_blue.png",
   "brit_f_blue": "portrait_brit_f_blue.png",
-  "lifeguard": "portrait_lifeguard.png"
+  "lifeguard": "portrait_lifeguard.png",
+  "player_pixie": "portrait_player_pixie.png",
+  "player_traveller": "portrait_player_traveller.png",
+  "pixie": "portrait_pixie.png",
+  "pixie_b": "portrait_pixie_b.png",
+  "titania": "portrait_titania.png",
+  "biker": "portrait_biker.png",
+  "biker_f": "portrait_biker_f.png",
+  "climber": "portrait_climber.png",
+  "joni": "portrait_joni.png"
  }
 }

@@ -225,6 +225,27 @@
       "showWhen": {
         "flag": "mandala_asked"
       }
+    },
+    {
+      "id": "joni_stall",
+      "x": 10,
+      "y": 6,
+      "sprite": "joni",
+      "dir": "UP",
+      "script": "joni_stall",
+      "showWhen": {
+        "all": [
+          {
+            "flag": "b94_vendor"
+          },
+          {
+            "set": "rush"
+          }
+        ]
+      },
+      "hideWhen": {
+        "flag": "b94_done"
+      }
     }
   ],
   "pickups": [

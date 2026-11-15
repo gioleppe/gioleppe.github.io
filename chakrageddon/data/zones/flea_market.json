@@ -31,9 +31,9 @@
     {
       "x": 0,
       "y": 6,
-      "to": "tantric_yurt",
-      "tx": 18,
-      "ty": 9,
+      "to": "laterite_gorge",
+      "tx": 98,
+      "ty": 8,
       "dir": "LEFT"
     },
     {

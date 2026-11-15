@@ -32,25 +32,25 @@
     {
       "x": 9,
       "y": 17,
-      "to": "poi_pit",
-      "tx": 10,
+      "to": "pixie_wood",
+      "tx": 21,
       "ty": 1,
       "dir": "DOWN"
     },
     {
       "x": 10,
       "y": 17,
-      "to": "poi_pit",
-      "tx": 11,
+      "to": "pixie_wood",
+      "tx": 22,
       "ty": 1,
       "dir": "DOWN"
     },
     {
       "x": 19,
       "y": 9,
-      "to": "flea_market",
+      "to": "laterite_gorge",
       "tx": 1,
-      "ty": 6,
+      "ty": 17,
       "dir": "RIGHT"
     }
   ],

@@ -36,17 +36,17 @@
     {
       "x": 10,
       "y": 0,
-      "to": "tantric_yurt",
-      "tx": 9,
-      "ty": 16,
+      "to": "pixie_wood",
+      "tx": 21,
+      "ty": 54,
       "dir": "UP"
     },
     {
       "x": 11,
       "y": 0,
-      "to": "tantric_yurt",
-      "tx": 10,
-      "ty": 16,
+      "to": "pixie_wood",
+      "tx": 22,
+      "ty": 54,
       "dir": "UP"
     },
     {

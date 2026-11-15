@@ -1,0 +1,560 @@
+{
+  "zoneId": "pixie_wood",
+  "name": "The Pixie Wood",
+  "paletteId": "UV_BLACKLIGHT",
+  "baseBpm": 124,
+  "ground": "moss",
+  "ground2": "path",
+  "wall": "cliff",
+  "encounter": "fern",
+  "darkAreas": [
+    [
+      27,
+      3,
+      42,
+      22
+    ]
+  ],
+  "fx": [
+    {
+      "kind": "fireflies",
+      "rect": [
+        0,
+        0,
+        43,
+        55
+      ],
+      "n": 150
+    },
+    {
+      "kind": "festoon",
+      "lines": [
+        [
+          19,
+          53,
+          24,
+          53
+        ],
+        [
+          15,
+          41,
+          20,
+          41
+        ],
+        [
+          26,
+          41,
+          31,
+          41
+        ],
+        [
+          18,
+          8,
+          25,
+          8
+        ],
+        [
+          11,
+          9,
+          15,
+          9
+        ],
+        [
+          5,
+          10,
+          8,
+          9
+        ],
+        [
+          23,
+          22,
+          27,
+          22
+        ]
+      ]
+    },
+    {
+      "kind": "glow",
+      "color": "#FFB347",
+      "at": [
+        [
+          27,
+          51
+        ]
+      ]
+    },
+    {
+      "kind": "glow",
+      "color": "#C8FFE0",
+      "at": [
+        [
+          5,
+          51
+        ],
+        [
+          5,
+          28
+        ],
+        [
+          6,
+          12
+        ],
+        [
+          38,
+          51
+        ],
+        [
+          38,
+          8
+        ],
+        [
+          5,
+          4
+        ]
+      ]
+    }
+  ],
+  "encounters": {
+    "encounterRate": 0.15,
+    "table": [
+      {
+        "speciesId": "shroomba",
+        "minLevel": 7,
+        "maxLevel": 10,
+        "weight": 25
+      },
+      {
+        "speciesId": "glowkid",
+        "minLevel": 7,
+        "maxLevel": 10,
+        "weight": 20
+      },
+      {
+        "speciesId": "wooklet",
+        "minLevel": 7,
+        "maxLevel": 9,
+        "weight": 15
+      },
+      {
+        "speciesId": "snoozel",
+        "minLevel": 8,
+        "maxLevel": 10,
+        "weight": 15
+      },
+      {
+        "speciesId": "chillem",
+        "minLevel": 8,
+        "maxLevel": 10,
+        "weight": 10
+      },
+      {
+        "speciesId": "blottertot",
+        "minLevel": 8,
+        "maxLevel": 10,
+        "weight": 8,
+        "minIntox": 0.6
+      },
+      {
+        "speciesId": "fractoad",
+        "minLevel": 9,
+        "maxLevel": 11,
+        "weight": 7,
+        "minIntox": 0.6
+      }
+    ],
+    "nightTable": [
+      {
+        "speciesId": "glowkid",
+        "minLevel": 8,
+        "maxLevel": 10,
+        "weight": 25
+      },
+      {
+        "speciesId": "sirenowl",
+        "minLevel": 8,
+        "maxLevel": 10,
+        "weight": 20
+      },
+      {
+        "speciesId": "shroomba",
+        "minLevel": 8,
+        "maxLevel": 10,
+        "weight": 20
+      },
+      {
+        "speciesId": "snoozel",
+        "minLevel": 8,
+        "maxLevel": 10,
+        "weight": 15
+      },
+      {
+        "speciesId": "blottertot",
+        "minLevel": 8,
+        "maxLevel": 11,
+        "weight": 12,
+        "minIntox": 0.6
+      },
+      {
+        "speciesId": "fractoad",
+        "minLevel": 9,
+        "maxLevel": 11,
+        "weight": 8,
+        "minIntox": 0.6
+      }
+    ]
+  },
+  "rows": [
+    "tttttttttttttţtţtţttt,,ttItttţtttţtttttţtttt",
+    "Ittttţtttţttttttttttt,,tbttttttttttttbtbţItt",
+    "tttţt.....ţţttttttt..,,..ttttttttttIbttttttt",
+    "Itt......~~.btIItţt..,,..ţtţIttttItttţIttttt",
+    "tIt..ö..~~~~ttttIb...,,...ţttbttbt..ttbţttţt",
+    "ttb.....~~~.tttttt...,,...ţţttţ..b~t~~~tttbţ",
+    "tttbt.....ţţtttttt...,,...ttţtt.t.~~~~~.bbtt",
+    "ttttttbIţttttttţtt...,,...Ittt....~~~~~.ţttt",
+    "tţbttttttt.......tbbtffttţttţb...ţtb..ö.ţttt",
+    "ttttbtb..M........Itţ,,tbIIttb...ttt.....ţIt",
+    "ttţtttb.......M.,,,,,,,btţttb....ttt...~~ttt",
+    "ttttb....www....,,,,,,,ţItttt.........~~~Itt",
+    "ttttţ.ö.ww.ww...,,..~~....f...........~~~.tt",
+    "ttttI..~wwwww...,,.~~~~...f....b......~~~ttt",
+    "ttttt.~~~www....,,.~~~~ttţtţt.ttt......~..tt",
+    "ttttb~~~~~...M..,,..~~~tttttbb.t..........tI",
+    "tItbttt~~.......,,...~ttttttt.......btt..btt",
+    "ttttttt.........,,,,,.IttttttI......tttbbbtt",
+    "bttţtţttţtt.....,,,,,ţtbtttttt......ţţIM.tţI",
+    "tttttttItttIIţtttţt,,ttttttIttb.~~~~~...ţttţ",
+    "tttttttţtIttttttttţ,,ttttttbtttt~~~~~...ţttt",
+    "ttttttţttttţtttttII,,bttttttttI..b~~~.bttttt",
+    "IţtttIţttttttttţttţ,,bţttttţItţ....ţ.Itttttt",
+    "ttttttţtttţttttţttt,,.......ţIb..bItttIttttI",
+    "bttttttttttbtţtttt.,,............t.IIttItttt",
+    "tttttbttttt........,,.ttt..........ttttttttt",
+    "tbtţ...ţttt........,,tIbt.......~~.b.ţIttttt",
+    "ttt.....ttI....M...,,,,.......~~~~~~ţtt..ttt",
+    "ttt..ö..ttt.....t..,,,,......~~~~~~~.f....tt",
+    "ttt.....btt...ttttt..,,........~~~~~.bb..ttb",
+    "ttbb...bţtt...ttttt..,,.........~~~..tbbbttt",
+    "ttttbttIttt~~~ţţttb..,,................b..tt",
+    "ttttţtţtttt~~~.......,,....ttttt.......t.ttt",
+    "ItItttttttb~~~~......,,...Iţttttt...M..tbttI",
+    "tttttIttttb~~~~..,,,,,,...ţţţţtb......ţ.tttt",
+    "ttbtttttţ~~~~~...,,,,,,~...............ttttţ",
+    "ttttbttttt.......,,~~~~~~.M...........tttttt",
+    "tttţttttttbb.....,,~~~~~~..........t.tbtttţt",
+    "tttbtbttttbbbtţ..,,.........t.tţţtttItţttttt",
+    "tttţtttttttbtttbt,,t.ţ..tt....t.tttţttbttttt",
+    "ttttttttţttIttttt,,tţtbttItt..ItttttttttIItt",
+    "tttttttttttttţţtţffttItttbtbfftttttţttţttItt",
+    "Ibttttttttttb..b.,,............tIbItttttttbt",
+    "ttttttttttb......,,.............tttttttttbtt",
+    "ttttbttţ...f.....,,........~~~~~.ţtţtttttttt",
+    "ţtţttttt...f~~...,,.......~~~~~~~..ttttţtttt",
+    "tttttttb.~~f~~~~.,,......~~~~~~~~~Ittţtttttt",
+    "ttttttttb~~~~~~~~,,.......~~~~~~~.ttţttttttt",
+    "ttttttbIţ~~~~~~~.,,........~~.~..MtbttIttttt",
+    "tţttb.M..b....~..,,......................ttt",
+    "tţtt.............,,,,,,...................tt",
+    "ttt..ö.....b.....,,,,,,...101.tbb.....ö...tI",
+    "tttt.....ţttbţ.......,,......bttb.........ţt",
+    "tItt....ţtItttţtt.ţ.b,,ţţbtţttttttb......bbt",
+    "ttttttbItbtttttttttbI,,ţtttItttItttbtţtttttt",
+    "ttItbttIttttIttIttttI,,ttţttttţtttttţttttttt"
+  ],
+  "warps": [
+    {
+      "x": 21,
+      "y": 55,
+      "to": "poi_pit",
+      "tx": 10,
+      "ty": 1,
+      "dir": "DOWN"
+    },
+    {
+      "x": 22,
+      "y": 55,
+      "to": "poi_pit",
+      "tx": 11,
+      "ty": 1,
+      "dir": "DOWN"
+    },
+    {
+      "x": 21,
+      "y": 0,
+      "to": "tantric_yurt",
+      "tx": 9,
+      "ty": 16,
+      "dir": "UP"
+    },
+    {
+      "x": 22,
+      "y": 0,
+      "to": "tantric_yurt",
+      "tx": 10,
+      "ty": 16,
+      "dir": "UP"
+    },
+    {
+      "x": 5,
+      "y": 51,
+      "to": "pixie_wood",
+      "tx": 5,
+      "ty": 29,
+      "dir": "DOWN"
+    },
+    {
+      "x": 5,
+      "y": 28,
+      "to": "pixie_wood",
+      "tx": 5,
+      "ty": 52,
+      "dir": "DOWN"
+    },
+    {
+      "x": 6,
+      "y": 12,
+      "to": "pixie_wood",
+      "tx": 38,
+      "ty": 52,
+      "dir": "DOWN"
+    },
+    {
+      "x": 38,
+      "y": 51,
+      "to": "pixie_wood",
+      "tx": 6,
+      "ty": 11,
+      "dir": "UP",
+      "closedIf": {
+        "not": {
+          "flag": "met_titania"
+        }
+      },
+      "closedText": "A ring of little white mushrooms, fast asleep. A pixie has hung a tiny sign on one: QUEEN'S GUESTS ONLY."
+    },
+    {
+      "x": 38,
+      "y": 8,
+      "to": "pixie_wood",
+      "tx": 5,
+      "ty": 5,
+      "dir": "DOWN",
+      "closedIf": {
+        "not": {
+          "any": [
+            {
+              "hour": [
+                19,
+                24
+              ]
+            },
+            {
+              "hour": [
+                0,
+                6
+              ]
+            },
+            {
+              "intox": 0.35
+            }
+          ]
+        }
+      },
+      "closedText": "A ring of little white mushrooms. In daylight it is only mushrooms. A pixie scratched a moon into the bark above it."
+    },
+    {
+      "x": 5,
+      "y": 4,
+      "to": "pixie_wood",
+      "tx": 38,
+      "ty": 9,
+      "dir": "DOWN"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "wood_sign",
+      "x": 20,
+      "y": 52,
+      "tile": "sign",
+      "script": "sign_pixie_wood"
+    },
+    {
+      "id": "mush_tourist",
+      "x": 14,
+      "y": 50,
+      "sprite": "tourist",
+      "dir": "RIGHT",
+      "script": "mush_tourist"
+    },
+    {
+      "id": "pixie_vendor",
+      "x": 32,
+      "y": 50,
+      "sprite": "pixie_b",
+      "dir": "DOWN",
+      "script": "pixie_vendor"
+    },
+    {
+      "id": "pixie_bea",
+      "x": 20,
+      "y": 44,
+      "sprite": "pixie",
+      "dir": "LEFT",
+      "trainer": "pixie_bea",
+      "sight": 2
+    },
+    {
+      "id": "lost_kai",
+      "x": 35,
+      "y": 52,
+      "sprite": "raver",
+      "dir": "LEFT",
+      "trainer": "lost_kai",
+      "sight": 2
+    },
+    {
+      "id": "herbalist_ines",
+      "x": 11,
+      "y": 36,
+      "sprite": "local",
+      "dir": "RIGHT",
+      "trainer": "herbalist_ines",
+      "sight": 3
+    },
+    {
+      "id": "busker_tobi",
+      "x": 24,
+      "y": 30,
+      "sprite": "hippie",
+      "dir": "LEFT",
+      "trainer": "busker_tobi",
+      "sight": 3,
+      "look": [
+        "LEFT",
+        "DOWN",
+        "LEFT",
+        "UP"
+      ],
+      "lookEvery": 3
+    },
+    {
+      "id": "fern_hermit",
+      "x": 4,
+      "y": 29,
+      "sprite": "wook",
+      "dir": "RIGHT",
+      "script": "fern_hermit"
+    },
+    {
+      "id": "pixie_moth",
+      "x": 19,
+      "y": 15,
+      "sprite": "pixie_b",
+      "dir": "LEFT",
+      "trainer": "pixie_moth",
+      "sight": 3
+    },
+    {
+      "id": "titania",
+      "x": 13,
+      "y": 12,
+      "sprite": "titania",
+      "dir": "DOWN",
+      "script": "titania"
+    },
+    {
+      "id": "pixie_nyx",
+      "x": 35,
+      "y": 15,
+      "sprite": "pixie",
+      "dir": "UP",
+      "trainer": "pixie_nyx",
+      "sight": 3
+    },
+    {
+      "id": "pixie_wren",
+      "x": 24,
+      "y": 5,
+      "sprite": "pixie",
+      "dir": "LEFT",
+      "trainer": "pixie_wren",
+      "sight": 2
+    },
+    {
+      "id": "treehugger",
+      "x": 34,
+      "y": 25,
+      "sprite": "hippie",
+      "dir": "UP",
+      "script": "treehugger"
+    }
+  ],
+  "pickups": [
+    {
+      "id": "pw_wings",
+      "x": 4,
+      "y": 3,
+      "item": "lost_wings",
+      "n": 1
+    },
+    {
+      "id": "pw_hollow",
+      "x": 6,
+      "y": 27,
+      "item": "friendship_band",
+      "n": 1
+    },
+    {
+      "id": "pw_nook",
+      "x": 9,
+      "y": 45,
+      "item": "rizla_paper",
+      "n": 3
+    },
+    {
+      "id": "pw_pocket",
+      "x": 39,
+      "y": 28,
+      "item": "banana_lassi",
+      "n": 1
+    },
+    {
+      "id": "pw_islet",
+      "x": 10,
+      "y": 12,
+      "item": "lucky_rupee",
+      "n": 1
+    },
+    {
+      "id": "pw_balm",
+      "x": 24,
+      "y": 49,
+      "item": "tiger_balm",
+      "n": 2
+    },
+    {
+      "id": "pw_grove1",
+      "x": 40,
+      "y": 15,
+      "item": "mystery_powder",
+      "n": 1,
+      "hidden": true
+    },
+    {
+      "id": "pw_grove2",
+      "x": 30,
+      "y": 7,
+      "item": "electrolyte_sachet",
+      "n": 2,
+      "hidden": true
+    },
+    {
+      "id": "pw_court",
+      "x": 7,
+      "y": 10,
+      "item": "watermelon_slice",
+      "n": 2
+    }
+  ]
+}

@@ -12,7 +12,7 @@ import { saveLanguage } from './assets.js';
 import { tl } from '../core/i18n.js';
 
 const SAVE_KEY = 'chakrageddon.save.v1', SETTINGS_KEY = 'chakrageddon.settings.v1';
-export const VERSION = '1.5.0';   // keep in step with package.json (tests/scenarios.test.mjs checks)
+export const VERSION = '1.6.0';   // keep in step with package.json (tests/scenarios.test.mjs checks)
 
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },

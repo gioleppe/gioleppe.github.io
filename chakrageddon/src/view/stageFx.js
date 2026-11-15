@@ -112,6 +112,19 @@ export function stageFx(view, game, g, cx, cy, layer) {
         g.globalAlpha = Math.sin(k * Math.PI); g.fillStyle = COLS[i % COLS.length];
         g.fillRect(x, y, 3, 2); g.fillRect(x + 2, y - 5, 1, 5); g.fillRect(x + 2, y - 5, 3, 1);
       }
+    } else if (f.kind === 'fireflies') {
+      // motes of light drifting over a rect (the Pixie Wood), each blinking on its own; with reduced motion they hang still
+      const [x0, y0, x1, y1] = f.rect, n = f.n || 16, w = (x1 - x0 + 1) * TS, h = (y1 - y0 + 1) * TS, cols = f.colors || ['#C8FFE0', '#FFE066', '#5FF4FF', '#FF8FB8'];
+      for (let i = 0; i < n; i++) {
+        const r = h32(i * 7 + x0, i * 3 + y0), dir = i % 2 ? 1 : -1;
+        const x = Math.round(X(x0) + ((((r % w) + t * 5 * dir + Math.sin(t * 0.7 + i) * 9) % w) + w) % w);
+        const y = Math.round(Y(y0) + (((((r >>> 9) % h) + Math.cos(t * 0.5 + i * 1.3) * 7) % h) + h) % h);
+        if (x < -4 || y < -4 || x > 324 || y > 184) continue;
+        const k = still ? 0.8 : 0.5 + 0.5 * Math.sin(t * 2.6 + i * 1.7);
+        if (k < 0.15) continue;
+        g.globalAlpha = 0.22 * k; g.fillStyle = cols[i % cols.length]; g.beginPath(); g.arc(x + 0.5, y + 0.5, 3, 0, 7); g.fill();
+        g.globalAlpha = k; g.fillRect(x, y, 1, 1);
+      }
     } else if (f.kind === 'festoon') {
       // a string of bulbs sagging between two posts; they swing a little and blink in turn on the beat
       for (const [x0, y0, x1, y1] of f.lines) {
