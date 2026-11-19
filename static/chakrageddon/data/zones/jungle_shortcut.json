@@ -46,6 +46,18 @@
         "minLevel": 13,
         "maxLevel": 15,
         "weight": 10
+      },
+      {
+        "speciesId": "didgeroo",
+        "minLevel": 14,
+        "maxLevel": 15,
+        "weight": 6
+      },
+      {
+        "speciesId": "betelbug",
+        "minLevel": 13,
+        "maxLevel": 15,
+        "weight": 10
       }
     ]
   },
@@ -53,7 +65,7 @@
     "tttbItbbtbttbttttIbbIt",
     "Itt~~~~~~~~~~~~~~~~~~b",
     "tbt~,,,,,,,,,,,,,,,,,,",
-    "tII~~~~~~~~~~~.......b",
+    "tII~~~~~~~~~~~.ę.....b",
     "bbI~,,~tttIttIbbottttt",
     "bIt~,,~ItttttttttttItt",
     "bII~,,~~....~~~~~~~btt",

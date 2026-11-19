@@ -45,6 +45,18 @@
         "minLevel": 13,
         "maxLevel": 16,
         "weight": 10
+      },
+      {
+        "speciesId": "diyaling",
+        "minLevel": 12,
+        "maxLevel": 15,
+        "weight": 20
+      },
+      {
+        "speciesId": "roadcalf",
+        "minLevel": 13,
+        "maxLevel": 15,
+        "weight": 10
       }
     ]
   },
@@ -92,8 +104,8 @@
     "bIttTTbtbn..~~~~~~~.,,.T",
     "ttt~~~~~tn..~~~~~~~.,,.b",
     ".........n..m.m.m...,,.t",
-    ",,,,,,,,,,,,,,,,,,,,,,,T",
-    "..~~~~~..n.~~~~~~~~...Lt",
+    ",,,,,,,,,,,,,,,,ą,,,,,,T",
+    "..~~~~~.ąn.~~~~~~~~...Lt",
     "TIbITtTbbntTtttbTTIttTbt"
   ],
   "warps": [

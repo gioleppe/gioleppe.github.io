@@ -468,12 +468,12 @@
           }
         },
         {
-          "text": "Bag every Astral in the Journal (41) and show Banyan.",
+          "text": "Bag every Astral in the Journal (65) and show Banyan.",
           "done": {
             "flag": "journal_36"
           },
           "ready": {
-            "caught": 41
+            "caught": 65
           },
           "npc": {
             "zone": "driftwood_beach",
@@ -1640,6 +1640,188 @@
           },
           "ready": {
             "set": "sunrise"
+          }
+        }
+      ]
+    },
+    {
+      "id": "one_cable",
+      "name": "One Cable, Two Brothers",
+      "giver": {
+        "zone": "laterite_gorge",
+        "npc": "cable_lars"
+      },
+      "start": {
+        "flag": "cable_asked"
+      },
+      "steps": [
+        {
+          "text": "Lars and Nils dance at either end of the rope bridge in the Red Laterite Gorge, and their earbud cable is in three pieces: one down in the dark slot canyon, one round Caver Ravi's waist, one in a nest on the ledges at the west end of the gorge.",
+          "done": {
+            "any": [
+              {
+                "has": "cable_piece",
+                "n": 3
+              },
+              {
+                "flag": "cable_fixed"
+              }
+            ]
+          }
+        },
+        {
+          "text": "Take the three pieces of cable to Uncle Sunny at his mattress in the gorge. He can solder. He says.",
+          "done": {
+            "flag": "cable_fixed"
+          },
+          "npc": {
+            "zone": "laterite_gorge",
+            "id": "uncle_sunny"
+          }
+        },
+        {
+          "text": "Bring the mended cable to Lars or Nils at the rope bridge.",
+          "done": {
+            "flag": "cable_done"
+          },
+          "npc": {
+            "zone": "laterite_gorge",
+            "id": "cable_lars"
+          }
+        }
+      ]
+    },
+    {
+      "id": "root_note",
+      "name": "The Root Note",
+      "giver": {
+        "zone": "laterite_gorge",
+        "npc": "echo_wall"
+      },
+      "offer": false,
+      "start": {
+        "flag": "root_wall"
+      },
+      "steps": [
+        {
+          "text": "Since the credits, the echo wall in the Red Laterite Gorge answers nothing. It is not broken: it is holding its breath. Baba Smoke in the Sadhu Cave knows about breath (he may want his rematch first).",
+          "done": {
+            "any": [
+              {
+                "flag": "root_asked"
+              },
+              {
+                "caughtSpecies": "omkara"
+              }
+            ]
+          },
+          "npc": {
+            "zone": "sadhu_cave",
+            "id": "baba"
+          }
+        },
+        {
+          "text": "The first sound: the Sunset Cliff at sunrise (5 to 8 AM), with a clear head (Microdose, nothing higher) and a SONIC or SACRED Astral at the head of your party. Talk to the watcher there.",
+          "done": {
+            "any": [
+              {
+                "flag": "root_a"
+              },
+              {
+                "caughtSpecies": "omkara"
+              }
+            ]
+          },
+          "npc": {
+            "zone": "sunset_cliff",
+            "id": "sunset_watcher"
+          },
+          "ready": {
+            "all": [
+              {
+                "hour": [
+                  5,
+                  8
+                ]
+              },
+              {
+                "not": {
+                  "intox": 0.25
+                }
+              },
+              {
+                "any": [
+                  {
+                    "leadType": "SONIC"
+                  },
+                  {
+                    "leadType": "SACRED"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "text": "The second sound: the back wall of the Sea Grotto (the clay is at the back), while the tide is in (10 AM to 4 PM, or 10 PM to 4 AM) and you are on a Come-up or higher. A SONIC or SACRED Astral at the head of your party.",
+          "done": {
+            "any": [
+              {
+                "flag": "root_u"
+              },
+              {
+                "caughtSpecies": "omkara"
+              }
+            ]
+          }
+        },
+        {
+          "text": "The third sound: the dark of the Sadhu Cave. Put a SONIC or SACRED Astral at the head of your party, then stand still. Do nothing. Keep doing it for a few seconds.",
+          "done": {
+            "any": [
+              {
+                "flag": "root_m"
+              },
+              {
+                "caughtSpecies": "omkara"
+              }
+            ]
+          }
+        },
+        {
+          "text": "The silence: get carried up onto the Mainstage Temple with Earplugs in your Fanny Pack and a SONIC or SACRED Astral at the head of your party.",
+          "done": {
+            "any": [
+              {
+                "flag": "root_s"
+              },
+              {
+                "caughtSpecies": "omkara"
+              }
+            ]
+          }
+        },
+        {
+          "text": "Three sounds and a silence. Go back to the echo wall in the Red Laterite Gorge and breathe in.",
+          "done": {
+            "any": [
+              {
+                "flag": "met_omkara"
+              },
+              {
+                "caughtSpecies": "omkara"
+              }
+            ]
+          },
+          "npc": {
+            "zone": "laterite_gorge",
+            "id": "echo_wall"
+          }
+        },
+        {
+          "text": "Bag Omkara (Lv 60). If the note fades, walk out of the gorge and come back: the wall will answer again.",
+          "done": {
+            "caughtSpecies": "omkara"
           }
         }
       ]

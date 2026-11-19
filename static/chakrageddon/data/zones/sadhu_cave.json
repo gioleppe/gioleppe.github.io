@@ -212,6 +212,24 @@
         "weight": 15
       },
       {
+        "speciesId": "aartiflame",
+        "minLevel": 29,
+        "maxLevel": 32,
+        "weight": 12
+      },
+      {
+        "speciesId": "reverbat",
+        "minLevel": 29,
+        "maxLevel": 32,
+        "weight": 10
+      },
+      {
+        "speciesId": "tulsiarch",
+        "minLevel": 29,
+        "maxLevel": 32,
+        "weight": 8
+      },
+      {
         "speciesId": "hoffmanite",
         "minLevel": 31,
         "maxLevel": 33,
@@ -221,7 +239,8 @@
     ]
   },
   "resetOnEnter": [
-    "mandalord_rest"
+    "mandalord_rest",
+    "root_m_miss"
   ],
   "fx": [
     {
@@ -257,6 +276,77 @@
           1
         ]
       ]
+    }
+  ],
+  "stillSpots": [
+    {
+      "seconds": 5,
+      "cond": {
+        "all": [
+          {
+            "flag": "root_asked"
+          },
+          {
+            "not": {
+              "flag": "root_m"
+            }
+          },
+          {
+            "not": {
+              "caughtSpecies": "omkara"
+            }
+          },
+          {
+            "any": [
+              {
+                "leadType": "SONIC"
+              },
+              {
+                "leadType": "SACRED"
+              }
+            ]
+          }
+        ]
+      },
+      "script": "root_hum"
+    },
+    {
+      "seconds": 5,
+      "cond": {
+        "all": [
+          {
+            "flag": "root_asked"
+          },
+          {
+            "not": {
+              "flag": "root_m"
+            }
+          },
+          {
+            "not": {
+              "caughtSpecies": "omkara"
+            }
+          },
+          {
+            "not": {
+              "any": [
+                {
+                  "leadType": "SONIC"
+                },
+                {
+                  "leadType": "SACRED"
+                }
+              ]
+            }
+          },
+          {
+            "not": {
+              "flag": "root_m_miss"
+            }
+          }
+        ]
+      },
+      "script": "root_hum_miss"
     }
   ]
 }

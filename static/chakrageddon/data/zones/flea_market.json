@@ -12,17 +12,17 @@
   "rows": [
     "ttttttttttt,,ttttttttttttt",
     "t.v..vQQQQ.BB..v...v..=..t",
-    "t.mmq.XXXX.,,.qmm.mmq.=..t",
+    "t.mmq.XXXX.,,.qmm.mmq.=į.t",
     "t.....XGXX.,,.........=..t",
     "t.mqm..,...,,..mm.L...=.xt",
     "t..x...,...,,.....x...=..,",
     ",,,,,,,,,,,,,,,,,,,,,,S,,,",
-    "t.L..x.....,,..mrr.L..=..,",
+    "t.L.āx.....,,.īmrr.L..=..,",
     "t.mmq.mm...,,.mmur....=..t",
     "t.....m....,,.........=..t",
     "t.~~~.m.qmm,,.~~~~.m..=..t",
     "t.~~~~...m.,,.~~~~.mm.=x.t",
-    "t..~~......,,.........=..t",
+    "t..~~....ī.,,.........=..t",
     "t..........,,.........=..t",
     "tttttttttttPPttttttttttttt",
     "ttttttttttt,,ttttttttttttt"
@@ -332,6 +332,18 @@
         "weight": 15
       },
       {
+        "speciesId": "betelbug",
+        "minLevel": 12,
+        "maxLevel": 14,
+        "weight": 15
+      },
+      {
+        "speciesId": "tulsprout",
+        "minLevel": 12,
+        "maxLevel": 14,
+        "weight": 12
+      },
+      {
         "speciesId": "bribe_asaurus",
         "minLevel": 20,
         "maxLevel": 24,
@@ -363,6 +375,18 @@
         "minLevel": 12,
         "maxLevel": 14,
         "weight": 20
+      },
+      {
+        "speciesId": "lostling",
+        "minLevel": 12,
+        "maxLevel": 14,
+        "weight": 15
+      },
+      {
+        "speciesId": "tweeterling",
+        "minLevel": 12,
+        "maxLevel": 14,
+        "weight": 10
       }
     ]
   },

@@ -10,13 +10,13 @@
   "encounter": "incense",
   "rows": [
     "^^^^^^^^^^,,^^^^^^^^^^",
-    "^.o...QQQQ,,^.^.b....^",
+    "^.o...QQQQ,,^.^.bą...^",
     "^..~~~XXXX,,^.^.~~~..^",
-    "^..~~~XXGX,,.S..~~~..^",
+    "^ō.~~~XXGX,,.S..~~~..^",
     "^.........,,.........^",
     "^.L..v....,,....v...R,",
     "^o........,,,,,,,,,,R,",
-    "^..b......,,......o..^",
+    "^..bą.....,,......o..^",
     "^...eeeeeee¤eeeeee...^",
     "^...eeeeeeeeeeeeee..b^",
     "^..C..............M..^",
@@ -246,6 +246,18 @@
       },
       {
         "speciesId": "neighbula",
+        "minLevel": 23,
+        "maxLevel": 25,
+        "weight": 10
+      },
+      {
+        "speciesId": "tulsprout",
+        "minLevel": 23,
+        "maxLevel": 25,
+        "weight": 12
+      },
+      {
+        "speciesId": "siestapir",
         "minLevel": 23,
         "maxLevel": 25,
         "weight": 10

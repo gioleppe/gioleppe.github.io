@@ -121,6 +121,21 @@
       "hideWhen": {
         "flag": "vicchio_cap3"
       }
+    },
+    {
+      "id": "dome_tent",
+      "x": 17,
+      "y": 9,
+      "tile": "dome",
+      "script": "dome_tent"
+    },
+    {
+      "id": "dome_luna",
+      "x": 16,
+      "y": 9,
+      "sprite": "yogi",
+      "dir": "DOWN",
+      "script": "chill_dome"
     }
   ],
   "pickups": [
@@ -197,6 +212,18 @@
         "minLevel": 21,
         "maxLevel": 24,
         "weight": 15
+      },
+      {
+        "speciesId": "chaisloth",
+        "minLevel": 21,
+        "maxLevel": 24,
+        "weight": 10
+      },
+      {
+        "speciesId": "moonmoth",
+        "minLevel": 28,
+        "maxLevel": 28,
+        "weight": 4
       },
       {
         "speciesId": "hashlump",

@@ -273,6 +273,11 @@ export const overworldView = {
     this.boredT = this.idleT > 0 ? (this.boredT || 0) + dt : 0;
     const bored = game.data.rules.boredom?.seconds;
     if (bored && this.boredT >= bored) { this.boredT = 0; game.send({ type: 'BORED_LICK' }); }
+    // somewhere that listens for you standing still (zone.stillSpots: the dark of the Sadhu Cave), the engine counts the
+    // seconds: it is told once a second, indoors too, and any step or key starts the count again
+    const listens = !!game.data.zones[s.zoneId]?.stillSpots?.length && s.mode === 'OVERWORLD' && !this.anim && !s.dialogue && !game.busy() && !input.dir();
+    this.stillT = listens ? (this.stillT || 0) + dt : 0;
+    if (this.stillT >= 1) { this.stillT -= 1; game.send({ type: 'STAND_STILL', seconds: 1 }); }
     if (s.mode !== 'OVERWORLD' || this.anim || this.ringFx || this.changing() || this.seeingOff(game) || game.busy()) return;
     if (input.pressed('a') || input.anyTap()) return game.send({ type: 'INTERACT_TILE' });
     if (input.pressed('start')) return game.send({ type: 'TOGGLE_MENU' });
@@ -547,9 +552,11 @@ export const overworldView = {
     else g.drawImage(img, f * 16, 0, 16, 24, x, y, 16, 24);
   },
 
-  draw(game, g) {
+  draw(game, g, opts = {}) {
     const s = game.engine.state, zone = game.data.zones[s.zoneId], ctx = { data: game.data, state: s };
-    const { cx, cy, px, py } = this.camera(game);
+    const camera = this.camera(game);
+    const { cx = camera.cx, cy = camera.cy, showPlayer = true } = opts;
+    const { px, py } = camera;
     g.fillStyle = '#0B0314'; g.fillRect(0, 0, W, H);
     const legend = game.data.legend;
     const x0 = Math.max(0, Math.floor(cx / TS)), y0 = Math.max(0, Math.floor(cy / TS));
@@ -661,7 +668,7 @@ export const overworldView = {
     }
     const flash = game.canFlash();
     for (const p of zone.pickups || []) if (!s.picked[p.id] && (!p.hidden || flash) && !(p.minIntox > s.intox)) ents.push({ y: p.y, pickup: p });
-    ents.push({ y: py / TS, player: true });
+    if (showPlayer) ents.push({ y: py / TS, player: true });
     // someone who came to find you (Banyan with the timetable) stands beside you while they talk
     if (s.visitor && s.visitorFx === 'astral') { const vx = s.player.x + (s.player.x > 1 ? -1 : 1); ents.push({ y: s.player.y + 0.5, draw: () => this.astralBody(game, g, s.visitor, vx, s.player.y, cx, cy, vx < s.player.x ? 'RIGHT' : 'LEFT') }); }
     else if (s.visitor) { const vx = s.player.x + (s.player.x > 1 ? -1 : 1); ents.push({ y: s.player.y, draw: () => { g.fillStyle = 'rgba(20,10,40,0.27)'; g.fillRect(vx * TS - cx + 4, s.player.y * TS - cy + 11, 8, 4); this.char(game, g, s.visitor, vx < s.player.x ? 'RIGHT' : 'LEFT', 0, vx * TS - cx, s.player.y * TS - cy - 10); } }); }
@@ -801,7 +808,7 @@ export const overworldView = {
     }
     // which intoxication band you are in, bottom right, from the come-up on (hidden while someone talks)
     const bi = bandIndex(game.data.rules, s.intox);
-    if (bi > 0 && !s.dialogue && s.mode === 'OVERWORLD') {
+    if (showPlayer && bi > 0 && !s.dialogue && s.mode === 'OVERWORLD') {
       const name = bandOf(game.data.rules, s.intox).name, w = textWidth(name) + 17;
       panel(g, W - w - 4, H - 17, w, 13, { bg: C.void, accent: BAND_COLORS[bi] || C.magenta, border: C.ink });
       g.fillStyle = BAND_COLORS[bi] || C.magenta; g.fillRect(W - w + 1, H - 12, 4, 4);

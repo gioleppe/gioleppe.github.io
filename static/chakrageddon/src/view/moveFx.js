@@ -28,6 +28,8 @@ export const LOOKS = {
   wave: { motion: 'ranged', impact: 0.26, dur: 0.6 },
   bubbles: { motion: 'ranged', impact: 0.3, dur: 0.7 },
   aura: { motion: 'gesture', impact: 0.3, dur: 0.75 },
+  soundwave: { motion: 'ranged', impact: 0.3, dur: 0.7, shake: 0.2 },   // Sonic: speaker rings that widen as they travel
+  halo: { motion: 'gesture', impact: 0.34, dur: 0.85 },                  // Sacred: rays come down on the target
   // signature moves
   vines: { motion: 'gesture', impact: 0.36, dur: 0.85 },
   motormouth: { motion: 'ranged', impact: 0.32, dur: 0.75 },
@@ -110,6 +112,8 @@ function burst(g, c, x, y, h) {
     case 'ORGANIC': for (let i = 0; i < n; i++) { const a = (i / n) * 6.28 + 0.4; leaf(g, x + Math.cos(a) * h * 24, y + Math.sin(a) * h * 20 + h * h * 10, cols[i % cols.length]); } break;
     case 'DOWNER': blob(g, x, y - 6, 14 + h * 8, 8 + h * 4, cols[1], 0.6 * (1 - h)); for (let i = 0; i < 3; i++) zee(g, x + 10 + i * 7, y - 16 - i * 7 - h * 10, cols[2]); break;
     case 'DISSOCIATIVE': for (let i = 0; i < n + 2; i++) { const jx = ((i * 37 + R(h * 30) * 11) % 50) - 25, jy = ((i * 23 + R(h * 30) * 7) % 40) - 20; g.globalAlpha = 0.8 * (1 - h); g.fillStyle = cols[i % cols.length]; g.fillRect(R(x + jx), R(y + jy), 6 + (i % 3) * 3, 2); } g.globalAlpha = 1; break;
+    case 'SONIC': for (let i = 0; i < 3; i++) { const r = 5 + h * 26 - i * 7; if (r > 0) { g.globalAlpha = clamp(1 - h); g.strokeStyle = cols[i % cols.length]; g.lineWidth = 2; for (const s of [0, Math.PI]) { g.beginPath(); g.arc(x, y, r, s - 0.9, s + 0.9); g.stroke(); } g.globalAlpha = 1; } } break;
+    case 'SACRED': for (let i = 0; i < n; i++) { const a = (i / n) * 6.28 - 1.57, r0 = 6 + h * 8, r1 = 12 + h * 22; line(g, x + Math.cos(a) * r0, y + Math.sin(a) * r0, x + Math.cos(a) * r1, y + Math.sin(a) * r1, cols[i % cols.length], 1, 1 - h); } sparkle(g, x, y - 4, 3, cols[2], 1 - h); break;
     case 'BUMMER': blob(g, x, y - 30, 20, 7, cols[1], 1 - h); for (let i = 0; i < n; i++) dot(g, x - 16 + i * 5, y - 24 + ((i * 9 + h * 40) % 30), 1, cols[2]); break;
     default: star(g, x, y, 6 + h * 14, cols[0], 1 - h * 0.6); star(g, x + 8, y - 6, 3 + h * 6, cols[2] || cols[0], 1 - h);
   }
@@ -249,6 +253,26 @@ const STRIKES = {
     if (shape === 'water') { for (let i = 0; i < 6; i++) { const ang = Math.PI + (i / 5) * Math.PI; dot(g, b.x + Math.cos(ang) * h * 16, b.y - 4 + Math.sin(ang) * h * 12 + h * h * 10, 2, '#C8F0FF', 1 - h); } return; }
     if (shape === 'blanket') { for (let i = 0; i < 3; i++) zee(g, b.x + 14 + i * 7, b.y - 24 - i * 7 - h * 10, '#C8D0FF'); return; }
     dust(g, b.x, b.y + 24, h); impact(g, b.x, b.y, h); burst(g, c, b.x, b.y, h);
+  },
+  soundwave(g, c) {
+    const { a, b, t, imp, h, cols } = c;
+    const ang = Math.atan2(b.y - a.y, b.x - a.x);
+    for (let i = 0; i < 4; i++) {
+      const p = clamp((t - i * imp * 0.22) / imp);
+      if (p <= 0 || p >= 1) continue;
+      g.globalAlpha = 1 - p * 0.4; g.strokeStyle = cols[i % cols.length]; g.lineWidth = i % 2 ? 1 : 2;
+      g.beginPath(); g.arc(lerp(a.x, b.x, p), lerp(a.y, b.y, p), 4 + p * 14, ang - 1.1, ang + 1.1); g.stroke();
+    }
+    g.globalAlpha = 1;
+    impact(g, b.x, b.y, h, cols[1]); burst(g, c, b.x, b.y, h);
+  },
+  halo(g, c) {
+    const { b, tr, h, cols } = c;
+    // a ring of light settles over the target and rays fall from it
+    const ry = lerp(b.y - 60, b.y - 30, tr);
+    g.globalAlpha = clamp(0.4 + tr * 0.6) * (1 - h); g.strokeStyle = cols[0]; g.lineWidth = 2; g.beginPath(); g.ellipse(b.x, ry, 14, 4, 0, 0, Math.PI * 2); g.stroke(); g.globalAlpha = 1;
+    if (tr > 0.3) for (let i = 0; i < 5; i++) line(g, b.x - 12 + i * 6, ry + 3, b.x - 16 + i * 8, ry + 3 + (tr - 0.3) * 50, cols[(i + 1) % cols.length], 1, (c.calm ? 0.35 : 0.7) * (1 - h));
+    burst(g, c, b.x, b.y, h);
   },
   wave(g, c) {
     const { a, b, t, imp, h, cols } = c;

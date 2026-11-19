@@ -74,7 +74,8 @@ function palm(g, x, y, night) {
 export const FX_COLORS = {
   PSYCHEDELIC: ['#C86BFF', '#FF4FA8', '#3FD8E8', '#FFE066'], STIMULANT: ['#FFE066', '#FFFFFF', '#FFD23F'],
   ORGANIC: ['#4FE88A', '#3E9A4E', '#B8F4A0'], DOWNER: ['#7C8CD9', '#2A2A4A', '#C8D0FF'],
-  DISSOCIATIVE: ['#7FD6FF', '#FF4FA8', '#FFFFFF'], BUMMER: ['#9A8F9F', '#5A5F6A', '#C8C0D0'], NORMAL: ['#FFFFFF', '#F2D8B0', '#FFE066'],
+  DISSOCIATIVE: ['#7FD6FF', '#FF4FA8', '#FFFFFF'], BUMMER: ['#9A8F9F', '#5A5F6A', '#C8C0D0'],
+  SONIC: ['#FF7A45', '#FFD23F', '#3FD8E8'], SACRED: ['#FFD98A', '#FF9A2A', '#FFF4D0'], NORMAL: ['#FFFFFF', '#F2D8B0', '#FFE066'],
 };
 
 // ---------------------------------------------------------------- the bosses' own stages (IMPROVEMENTS.md point 6)

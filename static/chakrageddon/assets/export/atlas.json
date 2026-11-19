@@ -115,7 +115,9 @@
   "ropebridge": 110,
   "ropebridge_v": 111,
   "mattress": 112,
-  "scrub": 113
+  "nest": 113,
+  "dome": 114,
+  "scrub": 115
  },
  "props": {
   "palm": {
@@ -195,6 +197,54 @@
    "w": 32,
    "h": 44,
    "frames": 3
+  },
+  "portaloo": {
+   "file": "prop_portaloo.png",
+   "w": 16,
+   "h": 32,
+   "frames": 1
+  },
+  "signpost": {
+   "file": "prop_signpost.png",
+   "w": 16,
+   "h": 32,
+   "frames": 1
+  },
+  "banner": {
+   "file": "prop_banner.png",
+   "w": 16,
+   "h": 36,
+   "frames": 3
+  },
+  "parasol": {
+   "file": "prop_parasol.png",
+   "w": 32,
+   "h": 34,
+   "frames": 1
+  },
+  "enfield": {
+   "file": "prop_enfield.png",
+   "w": 32,
+   "h": 22,
+   "frames": 1
+  },
+  "agave": {
+   "file": "prop_agave.png",
+   "w": 16,
+   "h": 22,
+   "frames": 1
+  },
+  "banana": {
+   "file": "prop_banana.png",
+   "w": 32,
+   "h": 42,
+   "frames": 3
+  },
+  "oildrum": {
+   "file": "prop_oildrum.png",
+   "w": 16,
+   "h": 22,
+   "frames": 1
   },
   "captain_chair": {
    "file": "prop_captain_chair.png",
@@ -338,7 +388,31 @@
   "mandalord": "mon_mandalord.png",
   "vicchiomorph": "mon_vicchiomorph.png",
   "mirrorling": "mon_mirrorling.png",
-  "lucidra": "mon_lucidra.png"
+  "lucidra": "mon_lucidra.png",
+  "betelbug": "mon_betelbug.png",
+  "paanther": "mon_paanther.png",
+  "lostling": "mon_lostling.png",
+  "wherewolf": "mon_wherewolf.png",
+  "chaisloth": "mon_chaisloth.png",
+  "hammockoon": "mon_hammockoon.png",
+  "siestapir": "mon_siestapir.png",
+  "glimmoth": "mon_glimmoth.png",
+  "moonmoth": "mon_moonmoth.png",
+  "echit": "mon_echit.png",
+  "reverbat": "mon_reverbat.png",
+  "didgeroo": "mon_didgeroo.png",
+  "omkara": "mon_omkara.png",
+  "tweeterling": "mon_tweeterling.png",
+  "woofhound": "mon_woofhound.png",
+  "subwoofang": "mon_subwoofang.png",
+  "conchlet": "mon_conchlet.png",
+  "shankhorn": "mon_shankhorn.png",
+  "diyaling": "mon_diyaling.png",
+  "aartiflame": "mon_aartiflame.png",
+  "roadcalf": "mon_roadcalf.png",
+  "gaumata": "mon_gaumata.png",
+  "tulsprout": "mon_tulsprout.png",
+  "tulsiarch": "mon_tulsiarch.png"
  },
  "icons": {
   "app": "icon.png"

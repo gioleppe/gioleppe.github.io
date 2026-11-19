@@ -483,12 +483,15 @@ function awardXp(ctx, fallen) {
   const b = B(ctx), s = ctx.state, R = ctx.data.rules.battle;
   const sp = ctx.data.dex[fallen.speciesId];
   const bst = Object.values(sp.baseStats).reduce((a, v) => a + v, 0);
-  const takers = s.party.filter((m) => b.seen.includes(m.uid) && m.hp > 0);
+  const fought = s.party.filter((m) => b.seen.includes(m.uid) && m.hp > 0);
+  // the Aux Splitter (1.7.0): its holder listens in from the bag and takes a share like anyone who fought (so the others get less)
+  const tuned = s.party.filter((m) => holds(m, 'aux_splitter') && m.hp > 0 && !fought.includes(m));
+  const takers = [...fought, ...tuned];
   if (takers.length) {
     const xpMult = bandOf(ctx.data.rules, b.startIntox ?? 0).xp ?? 1;   // the higher you went into it, the more you learn
     const each = Math.max(1, Math.floor((((bst / 4) * fallen.level * (b.kind === 'trainer' ? R.trainerXpMult : 1)) / R.xpDivisor / takers.length) * xpMult));
     for (const m of takers) {
-      msg(ctx, tl('{0} gained {1} Vibes.', nameOf(ctx.data, m), each));
+      msg(ctx, tuned.includes(m) ? tl('{0} listened in on the Aux Splitter: {1} Vibes.', nameOf(ctx.data, m), each) : tl('{0} gained {1} Vibes.', nameOf(ctx.data, m), each));
       const before = m.level;
       const wants = gainXp(ctx, m, each);
       if (m.level > before) msg(ctx, tl('{0} peaked to level {1}!', nameOf(ctx.data, m), m.level));

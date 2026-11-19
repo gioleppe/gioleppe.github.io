@@ -121,7 +121,7 @@
         "level": 6
       },
       {
-        "species": "djembe_monk",
+        "species": "tweeterling",
         "level": 6
       }
     ],
@@ -132,7 +132,7 @@
     "defeat": [
       "The drop... was inside you all along."
     ],
-    "after": "Diabolo is all Stimulant and Organic. Something Dissociative would wobble him."
+    "after": "Diabolo is Stimulant and loud. Not much rattles his Djembe-Monk, but something Psychedelic flattens his Wooklet, and a Bummer dims his Glowkid."
   },
   {
     "id": "pit_wook",
@@ -217,7 +217,7 @@
     "sprite": "yogi",
     "party": [
       {
-        "species": "snoozel",
+        "species": "diyaling",
         "level": 9
       },
       {
@@ -345,7 +345,7 @@
         "level": 13
       },
       {
-        "species": "mozzquito",
+        "species": "betelbug",
         "level": 13
       }
     ],
@@ -419,7 +419,7 @@
         "level": 15
       },
       {
-        "species": "djembe_monk",
+        "species": "betelbug",
         "level": 15
       }
     ],
@@ -542,7 +542,7 @@
         "level": 17
       },
       {
-        "species": "chillem",
+        "species": "chaisloth",
         "level": 17
       }
     ],
@@ -736,7 +736,7 @@
     "sprite": "hippie",
     "party": [
       {
-        "species": "lassiblob",
+        "species": "tulsprout",
         "level": 23
       },
       {
@@ -763,7 +763,7 @@
         "level": 23
       },
       {
-        "species": "snoozel",
+        "species": "siestapir",
         "level": 22
       },
       {
@@ -791,7 +791,7 @@
         "level": 24
       },
       {
-        "species": "mozzquito",
+        "species": "woofhound",
         "level": 24
       },
       {
@@ -902,7 +902,7 @@
         "level": 21
       },
       {
-        "species": "chillem",
+        "species": "didgeroo",
         "level": 22
       }
     ],
@@ -929,7 +929,7 @@
         "level": 22
       },
       {
-        "species": "tridog",
+        "species": "woofhound",
         "level": 22
       }
     ],
@@ -983,7 +983,7 @@
         "level": 25
       },
       {
-        "species": "mozzquito",
+        "species": "wherewolf",
         "level": 26
       }
     ],
@@ -1167,7 +1167,7 @@
         "level": 29
       },
       {
-        "species": "lassiblob",
+        "species": "aartiflame",
         "level": 29
       }
     ],
@@ -1191,7 +1191,7 @@
         "level": 30
       },
       {
-        "species": "omnihound",
+        "species": "moonmoth",
         "level": 30
       },
       {
@@ -1307,7 +1307,7 @@
         "level": 32
       },
       {
-        "species": "wonkrab",
+        "species": "reverbat",
         "level": 32
       },
       {
@@ -1465,7 +1465,7 @@
         "level": 38
       },
       {
-        "species": "grand_wook",
+        "species": "subwoofang",
         "level": 38
       },
       {
@@ -1573,7 +1573,7 @@
         "level": 39
       },
       {
-        "species": "omeletron",
+        "species": "aartiflame",
         "level": 39
       },
       {
@@ -1788,7 +1788,7 @@
         "level": 26
       },
       {
-        "species": "glowkid",
+        "species": "woofhound",
         "level": 26
       },
       {
@@ -1815,7 +1815,7 @@
         "level": 28
       },
       {
-        "species": "lobsterlad",
+        "species": "tulsiarch",
         "level": 28
       },
       {
@@ -1838,7 +1838,7 @@
     "sprite": "guard",
     "party": [
       {
-        "species": "dengoth",
+        "species": "woofhound",
         "level": 33
       },
       {
@@ -2264,7 +2264,7 @@
     "textStyle": "STIMULANT",
     "party": [
       {
-        "species": "glowkid",
+        "species": "lostling",
         "level": 24
       },
       {
@@ -2293,7 +2293,7 @@
         "level": 25
       },
       {
-        "species": "snoozel",
+        "species": "wherewolf",
         "level": 26
       },
       {
@@ -2321,7 +2321,7 @@
         "level": 15
       },
       {
-        "species": "mozzquito",
+        "species": "didgeroo",
         "level": 15
       },
       {
@@ -2348,7 +2348,7 @@
         "level": 15
       },
       {
-        "species": "snoozel",
+        "species": "diyaling",
         "level": 16
       }
     ],
@@ -2367,7 +2367,7 @@
     "sprite": "tourist",
     "party": [
       {
-        "species": "snoozel",
+        "species": "lostling",
         "level": 14
       },
       {
@@ -2393,7 +2393,7 @@
     "textStyle": "DOWNER",
     "party": [
       {
-        "species": "tridog",
+        "species": "lostling",
         "level": 14
       },
       {
@@ -2470,7 +2470,7 @@
     "sprite": "vendor",
     "party": [
       {
-        "species": "shroomba",
+        "species": "tulsprout",
         "level": 14
       },
       {
@@ -2499,7 +2499,7 @@
         "level": 15
       },
       {
-        "species": "djembe_monk",
+        "species": "diyaling",
         "level": 15
       },
       {
@@ -2530,7 +2530,7 @@
         "level": 16
       },
       {
-        "species": "ketacrab",
+        "species": "betelbug",
         "level": 16
       }
     ],
@@ -2602,7 +2602,7 @@
         "level": 20
       },
       {
-        "species": "mozzquito",
+        "species": "woofhound",
         "level": 20
       }
     ],
@@ -2622,7 +2622,7 @@
     "sprite": "baba",
     "party": [
       {
-        "species": "djembe_monk",
+        "species": "diyaling",
         "level": 20
       },
       {
@@ -2646,7 +2646,7 @@
     "sprite": "vendor",
     "party": [
       {
-        "species": "lassiblob",
+        "species": "chaisloth",
         "level": 20
       },
       {
@@ -2774,7 +2774,7 @@
         "level": 23
       },
       {
-        "species": "mozzquito",
+        "species": "siestapir",
         "level": 23
       }
     ],
@@ -2816,7 +2816,7 @@
     "sprite": "dealer",
     "party": [
       {
-        "species": "mozzquito",
+        "species": "echit",
         "level": 23
       },
       {
@@ -2885,7 +2885,7 @@
         "level": 4
       },
       {
-        "species": "tridog",
+        "species": "tweeterling",
         "level": 4
       }
     ],
@@ -2934,7 +2934,7 @@
     "sprite": "brit_f",
     "party": [
       {
-        "species": "crabcake",
+        "species": "conchlet",
         "level": 18
       },
       {
@@ -2985,7 +2985,7 @@
     "sprite": "yogi",
     "party": [
       {
-        "species": "snoozel",
+        "species": "hammockoon",
         "level": 19
       },
       {
@@ -3012,7 +3012,7 @@
     "sprite": "local",
     "party": [
       {
-        "species": "crabcake",
+        "species": "conchlet",
         "level": 19
       },
       {
@@ -3162,7 +3162,7 @@
     "sprite": "raver",
     "party": [
       {
-        "species": "glowkid",
+        "species": "reverbat",
         "level": 28
       },
       {
@@ -3189,8 +3189,8 @@
         "level": 28
       },
       {
-        "species": "bribe_asaurus",
-        "level": 29
+        "species": "gaumata",
+        "level": 30
       }
     ],
     "reward": 1060,
@@ -3208,7 +3208,7 @@
     "sprite": "wook",
     "party": [
       {
-        "species": "grand_wook",
+        "species": "woofhound",
         "level": 29
       },
       {
@@ -3236,7 +3236,7 @@
         "level": 28
       },
       {
-        "species": "mozzquito",
+        "species": "paanther",
         "level": 29
       },
       {
@@ -3290,7 +3290,7 @@
         "level": 29
       },
       {
-        "species": "shroomba",
+        "species": "chaisloth",
         "level": 30
       }
     ],
@@ -3370,7 +3370,7 @@
         "level": 37
       },
       {
-        "species": "snoozel",
+        "species": "moonmoth",
         "level": 37
       }
     ],
@@ -3473,7 +3473,7 @@
         "level": 38
       },
       {
-        "species": "mozzquito",
+        "species": "paanther",
         "level": 37
       },
       {
@@ -3551,7 +3551,7 @@
         "level": 39
       },
       {
-        "species": "fractoad",
+        "species": "subwoofang",
         "level": 39
       },
       {
@@ -3579,7 +3579,7 @@
         "level": 39
       },
       {
-        "species": "grand_wook",
+        "species": "shankhorn",
         "level": 39
       },
       {
@@ -3628,7 +3628,7 @@
     "textStyle": "STIMULANT",
     "party": [
       {
-        "species": "djembe_monk",
+        "species": "lostling",
         "level": 9
       },
       {
@@ -3704,7 +3704,7 @@
         "level": 10
       },
       {
-        "species": "mozzquito",
+        "species": "glimmoth",
         "level": 10
       }
     ],
@@ -3724,7 +3724,7 @@
     "textStyle": "DOWNER",
     "party": [
       {
-        "species": "snoozel",
+        "species": "glimmoth",
         "level": 10
       },
       {
@@ -3876,7 +3876,7 @@
         "level": 13
       },
       {
-        "species": "tridog",
+        "species": "roadcalf",
         "level": 14
       }
     ],
@@ -3900,7 +3900,7 @@
         "level": 14
       },
       {
-        "species": "selfiend",
+        "species": "echit",
         "level": 14
       }
     ],
@@ -3920,7 +3920,7 @@
     "textStyle": "DOWNER",
     "party": [
       {
-        "species": "sirenowl",
+        "species": "echit",
         "level": 14
       },
       {
@@ -3935,7 +3935,8 @@
     "defeat": [
       "That way is out. Probably."
     ],
-    "after": "Uncle Sunny is just through there. He will tell you to lie down. Lie down."
+    "after": "Uncle Sunny is just through there. He will tell you to lie down. Lie down.",
+    "then": "caver_ravi_belt"
   },
   {
     "id": "daredevil_zara",
@@ -3976,7 +3977,7 @@
         "level": 14
       },
       {
-        "species": "chillem",
+        "species": "roadcalf",
         "level": 15
       }
     ],

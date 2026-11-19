@@ -5,7 +5,8 @@
 //   { label } { goto } { if / ifNot: flag, goto } { ifHas: item, goto } { ifBands: n, goto } { ifParty: n, goto }
 //   { ifIntox: level, goto }  jumps when the player's intoxication is at least level (0..1)
 //   { ifCaught: n, goto }     jumps when the Trip Journal has at least n species bagged
-//   { ifCond: cond, goto }    jumps when a quest condition holds (see src/core/quests.js)
+//   { ifCond: cond, goto }    jumps when a quest condition holds (see src/core/quests.js: flag, has, caughtSpecies,
+//                             partyType, leadType (the Astral in front), hour, intox, set, not / any / all ...)
 //   { rupees: n }             the player receives n Rupees
 //   { waitTide: true }        time passes until the tide is out (the zone's tide: Fishermen's Cove)
 //   { clock: minutes }        sets the festival clock (time passes while you wait)
@@ -18,6 +19,11 @@
 //   { visitor: sprite | null }     someone stands next to you on the map while the script runs (Banyan with the timetable)
 //                                    astral: true: they are a projection, floating down out of the sky (Banyan, six wristbands)
 //   { tarot: true }                the tarot reader's table: an Astral remembers a forgotten move (mode TAROT)
+//   { dome: 'leave', full, alone, cancel }     the Chill-Out Dome (src/core/dome.js): which Astral to leave; the labels are
+//                                    where to go when there is no cushion free, nobody else could fight, or you change your mind
+//   { dome: 'collect', none, broke, stashed, cancel }  which one to pick up (none there / cannot pay / it went to the stash)
+//   { dome: 'learn' }              one question per move it had no room for; falls through when there are none left
+//                                    after these, text may use {astral} {level} {levels} {fee} {move}
 //   { restUntilSet: true }         rest until the set picked just before (pickSet), or the next set on the timetable
 //   { s, t, pickSet: true, cancel: label }  a question with one answer per set (soonest first) and Get up (goes to cancel)
 //   { scene: id, show?: speciesId, phase?: n }  full-screen backdrop behind the dialogue (the opening dream); { scene: null } ends it
@@ -33,8 +39,9 @@
 import { tl } from './i18n.js';
 import { check } from './quests.js';
 import { restUntilSet, clockText, sets, minutesUntil } from './timetable.js';
-import { statsOf } from './mons.js';
+import { statsOf, nameOf } from './mons.js';
 import { pathFor, hoursToLowTide } from './OverworldEngine.js';
+import { domeRules, domeBill, domeRefusal, domeLeave, domeCollect } from './dome.js';
 
 export function startScript(ctx, steps, mode = 'DIALOGUE') {
   ctx.state.script = { steps, pc: 0 };
@@ -49,7 +56,8 @@ function jump(sc, label) {
   sc.pc = i;
 }
 
-const fill = (s, text, data) => String(text ?? '').replace(/\{player\}/g, s.playerName || tl('friend')).replace(/\{price\}/g, data?.rules?.tarot?.price ?? 500);
+const fill = (s, text, data) => String(text ?? '').replace(/\{player\}/g, s.playerName || tl('friend')).replace(/\{price\}/g, data?.rules?.tarot?.price ?? 500)
+  .replace(/\{domeFee\}/g, data ? domeRules(data).feePerLevel : '').replace(/\{(astral|level|levels|fee|move)\}/g, (m, k) => s.script?.vars?.[k] ?? m);
 
 /** zone.bossGate: the flag of the boss who runs this place. Until it is set, the Chai Tent and the shops here turn you away.
  *  Returns the boss's name while the gate is shut, otherwise null. */
@@ -202,6 +210,7 @@ export function runScript(ctx) {
     if (st.fx) { ctx.emit({ type: 'FX', fx: st.fx, npcId: st.at || null }); continue; }
     if (st.visitor !== undefined) { const fx = st.visitor ? (st.astral ? 'astral' : null) : s.visitorFx || null; ctx.emit({ type: 'VISITOR', sprite: st.visitor, fx, x: s.player.x, y: s.player.y }); s.visitor = st.visitor; s.visitorFx = st.visitor ? fx : null; continue; }
     if (st.tarot) { s.script = null; setMode(ctx, 'TAROT'); return; }
+    if (st.dome) { if (domeStep(ctx, sc, st)) return; continue; }
     if (st.restUntilSet) {
       // until the set you picked (pickSet), or the next one; the view plays the night going by, and shows you the stage
       const from = s.clock, next = restUntilSet(ctx, sc.wakeFor), here = next?.zone === s.zoneId;
@@ -216,6 +225,58 @@ export function runScript(ctx) {
   throw new Error('script ran away (possible goto loop)');
 }
 
+// ---- the Chill-Out Dome's questions. sc.dome holds the question that is up; sc.vars what the next lines talk about.
+/** returns true when it has put a question up (the script waits), false to carry on */
+function domeStep(ctx, sc, st) {
+  const s = ctx.state, d = ctx.data, row = (m) => tl('{0} Lv{1}', nameOf(d, m), m.level);
+  if (st.dome === 'leave') {
+    if ((s.dome || []).length >= domeRules(d).slots) { jump(sc, st.full); return false; }
+    if (s.party.filter((m) => m.hp > 0).length < 2) { jump(sc, st.alone); return false; }
+    sc.dome = { kind: 'leave', alone: st.alone, cancel: st.cancel };
+    say(ctx, st.s, st.t ?? tl('Who stays in the Dome?'), st.style, s.party.map(row).concat(tl('Never mind')));
+    return true;
+  }
+  if (st.dome === 'collect') {
+    if (!s.dome?.length) { jump(sc, st.none); return false; }
+    sc.dome = { kind: 'collect', broke: st.broke, stashed: st.stashed, cancel: st.cancel };
+    const rows = s.dome.map((e) => { const b = domeBill(d, e); return b.levels ? tl('{0} Lv{1}, Rs {2}', nameOf(d, e.mon), b.level, b.fee) : row(e.mon); });
+    say(ctx, st.s, st.t ?? tl('Who comes with you?'), st.style, rows.concat(tl('Never mind')));
+    return true;
+  }
+  if (st.dome === 'learn') {
+    const mon = [...s.party, ...s.box].find((m) => m.uid === sc.domeMon), moveId = (sc.domeWants || [])[0];
+    if (!mon || !moveId) { sc.domeWants = null; return false; }
+    sc.pc--;                                                           // this step again, until nothing is left to ask
+    sc.dome = { kind: 'learn' };
+    say(ctx, st.s, tl('{0} picked up {1} in the Dome, and only has room for four. Which one goes?', nameOf(d, mon), d.moves[moveId].name), st.style,
+      mon.moves.map((id) => d.moves[id].name).concat(tl('None: skip {0}', d.moves[moveId].name)));
+    return true;
+  }
+  throw new Error(`unknown dome step: ${st.dome}`);
+}
+function domeAnswer(ctx, sc, i) {
+  const s = ctx.state, d = ctx.data, q = sc.dome;
+  sc.dome = null;
+  if (q.kind === 'leave') {
+    if (i >= s.party.length) return jump(sc, q.cancel);
+    if (domeRefusal(ctx, i)) return jump(sc, q.alone);
+    const mon = domeLeave(ctx, i);
+    sc.vars = { astral: nameOf(d, mon), level: mon.level };
+  } else if (q.kind === 'collect') {
+    if (i >= s.dome.length) return jump(sc, q.cancel);
+    const bill = domeBill(d, s.dome[i]), name = nameOf(d, s.dome[i].mon);
+    sc.vars = { astral: name, level: bill.level, levels: bill.levels, fee: bill.fee };
+    const got = domeCollect(ctx, i);
+    if (!got) return jump(sc, q.broke);
+    sc.domeMon = got.mon.uid; sc.domeWants = got.wants;
+    if (got.levels) ctx.emit({ type: 'AUDIO_CUE', sfxId: 'levelup' });
+    if (got.where === 'box' && q.stashed) jump(sc, q.stashed);
+  } else if (q.kind === 'learn') {
+    const mon = [...s.party, ...s.box].find((m) => m.uid === sc.domeMon), moveId = sc.domeWants.shift();
+    if (mon && i < mon.moves.length) { mon.moves[i] = moveId; ctx.emit({ type: 'MOVE_LEARNED', uid: mon.uid, name: nameOf(d, mon), moveId }); }
+  }
+}
+
 function finish(ctx) {
   const s = ctx.state;
   s.script = null; s.dialogue = null; s.scriptMode = null; s.scene = null; s.visitor = null; s.visitorFx = null;
@@ -228,6 +289,7 @@ export function advance(ctx, choiceIndex) {
     const i = Math.max(0, Math.min(s.dialogue.choices.length - 1, choiceIndex ?? s.dialogue.choiceDefault ?? 0));
     if (sc && sc.nameChoice) { s.playerName = sc.nameChoice[i]; sc.nameChoice = null; }
     if (sc && sc.choiceGoto) { jump(sc, sc.choiceGoto[i]); sc.choiceGoto = null; }
+    if (sc && sc.dome) domeAnswer(ctx, sc, i);
     if (sc && sc.setPick) { const id = sc.setPick[i]; sc.setPick = null; if (id) sc.wakeFor = id; else if (sc.setCancel) jump(sc, sc.setCancel); }
   }
   runScript(ctx);

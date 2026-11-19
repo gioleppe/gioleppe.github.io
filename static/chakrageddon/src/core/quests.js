@@ -3,9 +3,10 @@
 //   quest: { id, name, giver: { zone, npc }, offer?: false, start: cond, steps: [{ text, done: cond, ready?: cond, npc?: { zone, id } }] }
 //   offer: false means the quest starts by itself (a flag, an event), so its giver shows no "!" beforehand
 //   cond:  { flag } | { has: itemId, n? } | { defeated: trainerId } | { caught: n } | { caughtSpecies: id } | { partyType: type }
+//          | { leadType: type } (the Astral at the head of the party, party[0], has that type; partyType: anyone in it)
 //          | { bands: n } | { hour: [from, to] } (on the festival clock, to exclusive) | { intox: level }
 //          | { set: id } (a set on the festival timetable is playing)
-//          | { not: cond } | { any: [cond] } | { all: [cond] }     (partyType and set need data: check(s, c, data))
+//          | { not: cond } | { any: [cond] } | { all: [cond] }     (partyType, leadType and set need data: check(s, c, data))
 import { setOn } from './timetable.js';
 export function check(s, c, data) {
   if (!c) return true;
@@ -16,6 +17,7 @@ export function check(s, c, data) {
   if (c.has) return (s.bag[c.has] || 0) >= (c.n || 1);
   if (c.caughtSpecies) return !!s.dex.caught[c.caughtSpecies];
   if (c.partyType) return !!data && s.party.some((m) => data.dex[m.speciesId].types.includes(c.partyType));
+  if (c.leadType) return !!data && !!s.party[0] && data.dex[s.party[0].speciesId].types.includes(c.leadType);
   if (c.defeated) return !!s.defeated[c.defeated];
   if (c.caught !== undefined) return Object.keys(s.dex.caught).length >= c.caught;
   if (c.bands !== undefined) return s.wristbands.length >= c.bands;

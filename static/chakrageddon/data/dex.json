@@ -746,12 +746,12 @@
       "ORGANIC"
     ],
     "baseStats": {
-      "serotonin": 48,
-      "vibeAttack": 52,
-      "egoDefense": 55,
-      "spFractal": 35,
-      "spGrounded": 40,
-      "bpmSpeed": 38
+      "serotonin": 51,
+      "vibeAttack": 55,
+      "egoDefense": 58,
+      "spFractal": 38,
+      "spGrounded": 43,
+      "bpmSpeed": 41
     },
     "intoxicationWeight": 0.2,
     "catchRate": 190,
@@ -1163,7 +1163,8 @@
     "dexNumber": 16,
     "name": "Djembe-Monk",
     "types": [
-      "STIMULANT"
+      "STIMULANT",
+      "SONIC"
     ],
     "baseStats": {
       "serotonin": 45,
@@ -1192,6 +1193,10 @@
         "moveId": "hype_up"
       },
       {
+        "level": 7,
+        "moveId": "tinnitus_ping"
+      },
+      {
         "level": 9,
         "moveId": "jitter_jab"
       },
@@ -1200,12 +1205,20 @@
         "moveId": "wild_swing"
       },
       {
+        "level": 14,
+        "moveId": "kick_drum"
+      },
+      {
         "level": 19,
         "moveId": "strobe_rush"
       },
       {
         "level": 25,
         "moveId": "espresso_shot"
+      },
+      {
+        "level": 30,
+        "moveId": "four_on_the_floor"
       },
       {
         "level": 32,
@@ -1232,7 +1245,8 @@
     "dexNumber": 17,
     "name": "Bongo Bishop",
     "types": [
-      "STIMULANT"
+      "STIMULANT",
+      "SONIC"
     ],
     "baseStats": {
       "serotonin": 72,
@@ -1255,12 +1269,20 @@
         "moveId": "hype_up"
       },
       {
+        "level": 7,
+        "moveId": "tinnitus_ping"
+      },
+      {
         "level": 9,
         "moveId": "jitter_jab"
       },
       {
         "level": 14,
         "moveId": "wild_swing"
+      },
+      {
+        "level": 14,
+        "moveId": "kick_drum"
       },
       {
         "level": 19,
@@ -1271,12 +1293,20 @@
         "moveId": "espresso_shot"
       },
       {
+        "level": 30,
+        "moveId": "four_on_the_floor"
+      },
+      {
         "level": 32,
         "moveId": "redline"
       },
       {
         "level": 40,
         "moveId": "laser_spam"
+      },
+      {
+        "level": 42,
+        "moveId": "wall_of_sound"
       }
     ],
     "journalNotes": "Leads a drum circle that has not stopped since 2009. Nobody knows the original rhythm.",
@@ -2285,7 +2315,8 @@
     "dexNumber": 33,
     "name": "Sirenowl",
     "types": [
-      "BUMMER"
+      "BUMMER",
+      "SONIC"
     ],
     "baseStats": {
       "serotonin": 66,
@@ -2308,8 +2339,16 @@
         "moveId": "flashlight_glare"
       },
       {
+        "level": 10,
+        "moveId": "tinnitus_ping"
+      },
+      {
         "level": 15,
         "moveId": "siren_wail"
+      },
+      {
+        "level": 19,
+        "moveId": "feedback_loop"
       },
       {
         "level": 22,
@@ -2318,6 +2357,10 @@
       {
         "level": 30,
         "moveId": "comedown"
+      },
+      {
+        "level": 36,
+        "moveId": "wall_of_sound"
       },
       {
         "level": 38,
@@ -2461,7 +2504,7 @@
     "name": "Mandalord",
     "types": [
       "PSYCHEDELIC",
-      "ORGANIC"
+      "SACRED"
     ],
     "baseStats": {
       "serotonin": 100,
@@ -2484,6 +2527,10 @@
         "moveId": "puff_pass"
       },
       {
+        "level": 1,
+        "moveId": "incense_waft"
+      },
+      {
         "level": 20,
         "moveId": "sacred_geometry"
       },
@@ -2492,8 +2539,16 @@
         "moveId": "third_eye_beam"
       },
       {
+        "level": 30,
+        "moveId": "holy_smoke"
+      },
+      {
         "level": 38,
         "moveId": "compost_bomb"
+      },
+      {
+        "level": 44,
+        "moveId": "aarti_fire"
       },
       {
         "level": 46,
@@ -2502,6 +2557,10 @@
       {
         "level": 50,
         "moveId": "kaleidoscope_spit"
+      },
+      {
+        "level": 52,
+        "moveId": "instant_karma"
       }
     ],
     "journalNotes": "Sacred geometry that noticed it was being looked at. Seen once in the Sadhu Cave, if at all.",
@@ -2572,8 +2631,8 @@
     "dexNumber": 38,
     "name": "Bassilisk",
     "types": [
-      "DOWNER",
-      "BUMMER"
+      "SONIC",
+      "DOWNER"
     ],
     "baseStats": {
       "serotonin": 120,
@@ -2596,8 +2655,16 @@
         "moveId": "weighted_crush"
       },
       {
+        "level": 1,
+        "moveId": "kick_drum"
+      },
+      {
         "level": 30,
         "moveId": "comedown"
+      },
+      {
+        "level": 30,
+        "moveId": "four_on_the_floor"
       },
       {
         "level": 40,
@@ -2606,6 +2673,10 @@
       {
         "level": 45,
         "moveId": "bad_vibes"
+      },
+      {
+        "level": 50,
+        "moveId": "wall_of_sound"
       }
     ],
     "journalNotes": "The bass under the Mainstage. You do not hear it. For a moment, you are it.",
@@ -2784,6 +2855,1978 @@
       "spFractal": "late",
       "spGrounded": "steady",
       "bpmSpeed": "late"
+    }
+  },
+  {
+    "id": "betelbug",
+    "dexNumber": 42,
+    "name": "Betelbug",
+    "types": [
+      "STIMULANT",
+      "ORGANIC"
+    ],
+    "baseStats": {
+      "serotonin": 42,
+      "vibeAttack": 58,
+      "egoDefense": 50,
+      "spFractal": 35,
+      "spGrounded": 40,
+      "bpmSpeed": 65
+    },
+    "intoxicationWeight": 0.3,
+    "catchRate": 180,
+    "evolutions": [
+      {
+        "targetId": "paanther",
+        "trigger": "LEVEL",
+        "level": 24
+      }
+    ],
+    "learnset": [
+      {
+        "level": 1,
+        "moveId": "stumble"
+      },
+      {
+        "level": 1,
+        "moveId": "teeth_grind"
+      },
+      {
+        "level": 5,
+        "moveId": "puff_pass"
+      },
+      {
+        "level": 9,
+        "moveId": "jitter_jab"
+      },
+      {
+        "level": 13,
+        "moveId": "long_stare"
+      },
+      {
+        "level": 17,
+        "moveId": "munchie_bite"
+      },
+      {
+        "level": 22,
+        "moveId": "strobe_rush"
+      },
+      {
+        "level": 26,
+        "moveId": "espresso_shot"
+      },
+      {
+        "level": 31,
+        "moveId": "root_hug"
+      },
+      {
+        "level": 36,
+        "moveId": "redline"
+      },
+      {
+        "level": 42,
+        "moveId": "root_slam"
+      },
+      {
+        "level": 46,
+        "moveId": "laser_spam"
+      }
+    ],
+    "journalNotes": "A beetle that chews betel nut all day and spits red at the road. The road was grey once.",
+    "ability": "OVERDRIVE",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "early",
+      "egoDefense": "steady",
+      "spFractal": "late",
+      "spGrounded": "early",
+      "bpmSpeed": "steady"
+    }
+  },
+  {
+    "id": "paanther",
+    "dexNumber": 43,
+    "name": "Paanther",
+    "types": [
+      "STIMULANT",
+      "ORGANIC"
+    ],
+    "baseStats": {
+      "serotonin": 70,
+      "vibeAttack": 100,
+      "egoDefense": 66,
+      "spFractal": 55,
+      "spGrounded": 62,
+      "bpmSpeed": 102
+    },
+    "intoxicationWeight": 0.4,
+    "catchRate": 80,
+    "evolutions": [],
+    "learnset": [
+      {
+        "level": 1,
+        "moveId": "stumble"
+      },
+      {
+        "level": 1,
+        "moveId": "teeth_grind"
+      },
+      {
+        "level": 5,
+        "moveId": "puff_pass"
+      },
+      {
+        "level": 9,
+        "moveId": "jitter_jab"
+      },
+      {
+        "level": 13,
+        "moveId": "long_stare"
+      },
+      {
+        "level": 17,
+        "moveId": "munchie_bite"
+      },
+      {
+        "level": 22,
+        "moveId": "strobe_rush"
+      },
+      {
+        "level": 26,
+        "moveId": "espresso_shot"
+      },
+      {
+        "level": 31,
+        "moveId": "root_hug"
+      },
+      {
+        "level": 36,
+        "moveId": "redline"
+      },
+      {
+        "level": 42,
+        "moveId": "root_slam"
+      },
+      {
+        "level": 46,
+        "moveId": "laser_spam"
+      }
+    ],
+    "journalNotes": "Wrapped in a betel leaf, pinned with a clove. Its smile is red and it has not slept since the wedding.",
+    "ability": "OVERDRIVE",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "early",
+      "egoDefense": "steady",
+      "spFractal": "late",
+      "spGrounded": "early",
+      "bpmSpeed": "steady"
+    }
+  },
+  {
+    "id": "lostling",
+    "dexNumber": 44,
+    "name": "Lostling",
+    "types": [
+      "DISSOCIATIVE",
+      "BUMMER"
+    ],
+    "baseStats": {
+      "serotonin": 50,
+      "vibeAttack": 40,
+      "egoDefense": 48,
+      "spFractal": 60,
+      "spGrounded": 52,
+      "bpmSpeed": 45
+    },
+    "intoxicationWeight": 0.5,
+    "catchRate": 170,
+    "evolutions": [
+      {
+        "targetId": "wherewolf",
+        "trigger": "LEVEL",
+        "level": 26
+      }
+    ],
+    "learnset": [
+      {
+        "level": 1,
+        "moveId": "stumble"
+      },
+      {
+        "level": 1,
+        "moveId": "side_eye"
+      },
+      {
+        "level": 5,
+        "moveId": "wonky_step"
+      },
+      {
+        "level": 9,
+        "moveId": "paranoia_whisper"
+      },
+      {
+        "level": 13,
+        "moveId": "noodle_arm"
+      },
+      {
+        "level": 17,
+        "moveId": "bad_vibes"
+      },
+      {
+        "level": 22,
+        "moveId": "gravity_flip"
+      },
+      {
+        "level": 26,
+        "moveId": "sidestep"
+      },
+      {
+        "level": 30,
+        "moveId": "siren_wail"
+      },
+      {
+        "level": 34,
+        "moveId": "sideways_lunge"
+      },
+      {
+        "level": 39,
+        "moveId": "comedown"
+      },
+      {
+        "level": 45,
+        "moveId": "existential_dread"
+      }
+    ],
+    "journalNotes": "Lost its friends, its phone and one shoe, in that order. Follows any torch that looks confident.",
+    "ability": "DREAMER",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "steady",
+      "egoDefense": "late",
+      "spFractal": "early",
+      "spGrounded": "early",
+      "bpmSpeed": "steady"
+    }
+  },
+  {
+    "id": "wherewolf",
+    "dexNumber": 45,
+    "name": "Wherewolf",
+    "types": [
+      "DISSOCIATIVE",
+      "BUMMER"
+    ],
+    "baseStats": {
+      "serotonin": 80,
+      "vibeAttack": 88,
+      "egoDefense": 70,
+      "spFractal": 85,
+      "spGrounded": 72,
+      "bpmSpeed": 70
+    },
+    "intoxicationWeight": 0.6,
+    "catchRate": 70,
+    "evolutions": [],
+    "learnset": [
+      {
+        "level": 1,
+        "moveId": "stumble"
+      },
+      {
+        "level": 1,
+        "moveId": "side_eye"
+      },
+      {
+        "level": 5,
+        "moveId": "wonky_step"
+      },
+      {
+        "level": 9,
+        "moveId": "paranoia_whisper"
+      },
+      {
+        "level": 13,
+        "moveId": "noodle_arm"
+      },
+      {
+        "level": 17,
+        "moveId": "bad_vibes"
+      },
+      {
+        "level": 22,
+        "moveId": "gravity_flip"
+      },
+      {
+        "level": 26,
+        "moveId": "sidestep"
+      },
+      {
+        "level": 30,
+        "moveId": "siren_wail"
+      },
+      {
+        "level": 34,
+        "moveId": "sideways_lunge"
+      },
+      {
+        "level": 39,
+        "moveId": "comedown"
+      },
+      {
+        "level": 45,
+        "moveId": "existential_dread"
+      }
+    ],
+    "journalNotes": "Howls one question at the moon, all night: where is the camp. The moon has stopped answering.",
+    "ability": "DREAMER",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "steady",
+      "egoDefense": "late",
+      "spFractal": "early",
+      "spGrounded": "early",
+      "bpmSpeed": "steady"
+    }
+  },
+  {
+    "id": "chaisloth",
+    "dexNumber": 46,
+    "name": "Chaisloth",
+    "types": [
+      "STIMULANT",
+      "DOWNER"
+    ],
+    "baseStats": {
+      "serotonin": 88,
+      "vibeAttack": 60,
+      "egoDefense": 72,
+      "spFractal": 82,
+      "spGrounded": 78,
+      "bpmSpeed": 30
+    },
+    "intoxicationWeight": 0.3,
+    "catchRate": 100,
+    "evolutions": [],
+    "learnset": [
+      {
+        "level": 1,
+        "moveId": "stumble"
+      },
+      {
+        "level": 1,
+        "moveId": "heavy_blanket"
+      },
+      {
+        "level": 6,
+        "moveId": "teeth_grind"
+      },
+      {
+        "level": 10,
+        "moveId": "slump"
+      },
+      {
+        "level": 14,
+        "moveId": "sip_water"
+      },
+      {
+        "level": 18,
+        "moveId": "strobe_rush"
+      },
+      {
+        "level": 22,
+        "moveId": "yawn_wave"
+      },
+      {
+        "level": 26,
+        "moveId": "espresso_shot"
+      },
+      {
+        "level": 30,
+        "moveId": "power_nap"
+      },
+      {
+        "level": 34,
+        "moveId": "weighted_crush"
+      },
+      {
+        "level": 40,
+        "moveId": "laser_spam"
+      }
+    ],
+    "journalNotes": "Nine glasses of chai a day and it still takes an hour to cross the tent. Its heart is doing all the running.",
+    "ability": "STAMINA",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "steady",
+      "egoDefense": "early",
+      "spFractal": "steady",
+      "spGrounded": "steady",
+      "bpmSpeed": "early"
+    }
+  },
+  {
+    "id": "hammockoon",
+    "dexNumber": 47,
+    "name": "Hammockoon",
+    "types": [
+      "DOWNER"
+    ],
+    "baseStats": {
+      "serotonin": 58,
+      "vibeAttack": 45,
+      "egoDefense": 52,
+      "spFractal": 45,
+      "spGrounded": 58,
+      "bpmSpeed": 30
+    },
+    "intoxicationWeight": 0.2,
+    "catchRate": 180,
+    "evolutions": [
+      {
+        "targetId": "siestapir",
+        "trigger": "LEVEL",
+        "level": 22
+      }
+    ],
+    "learnset": [
+      {
+        "level": 1,
+        "moveId": "stumble"
+      },
+      {
+        "level": 1,
+        "moveId": "heavy_blanket"
+      },
+      {
+        "level": 5,
+        "moveId": "long_stare"
+      },
+      {
+        "level": 9,
+        "moveId": "slump"
+      },
+      {
+        "level": 13,
+        "moveId": "yawn_wave"
+      },
+      {
+        "level": 17,
+        "moveId": "lie_in"
+      },
+      {
+        "level": 21,
+        "moveId": "munchie_bite"
+      },
+      {
+        "level": 25,
+        "moveId": "lullaby"
+      },
+      {
+        "level": 30,
+        "moveId": "weighted_crush"
+      },
+      {
+        "level": 35,
+        "moveId": "power_nap"
+      },
+      {
+        "level": 41,
+        "moveId": "root_slam"
+      }
+    ],
+    "journalNotes": "Checked into a hammock in the dry season. The guesthouse has stopped asking when it is leaving.",
+    "ability": "GROUNDED",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "steady",
+      "egoDefense": "early",
+      "spFractal": "late",
+      "spGrounded": "steady",
+      "bpmSpeed": "steady"
+    }
+  },
+  {
+    "id": "siestapir",
+    "dexNumber": 48,
+    "name": "Siestapir",
+    "types": [
+      "DOWNER"
+    ],
+    "baseStats": {
+      "serotonin": 100,
+      "vibeAttack": 78,
+      "egoDefense": 84,
+      "spFractal": 58,
+      "spGrounded": 96,
+      "bpmSpeed": 36
+    },
+    "intoxicationWeight": 0.3,
+    "catchRate": 85,
+    "evolutions": [],
+    "learnset": [
+      {
+        "level": 1,
+        "moveId": "stumble"
+      },
+      {
+        "level": 1,
+        "moveId": "heavy_blanket"
+      },
+      {
+        "level": 5,
+        "moveId": "long_stare"
+      },
+      {
+        "level": 9,
+        "moveId": "slump"
+      },
+      {
+        "level": 13,
+        "moveId": "yawn_wave"
+      },
+      {
+        "level": 17,
+        "moveId": "lie_in"
+      },
+      {
+        "level": 21,
+        "moveId": "munchie_bite"
+      },
+      {
+        "level": 25,
+        "moveId": "lullaby"
+      },
+      {
+        "level": 30,
+        "moveId": "weighted_crush"
+      },
+      {
+        "level": 35,
+        "moveId": "power_nap"
+      },
+      {
+        "level": 41,
+        "moveId": "root_slam"
+      }
+    ],
+    "journalNotes": "Sleeps through the afternoon set on principle. The beach has been arranged around it.",
+    "ability": "GROUNDED",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "steady",
+      "egoDefense": "early",
+      "spFractal": "late",
+      "spGrounded": "steady",
+      "bpmSpeed": "steady"
+    }
+  },
+  {
+    "id": "glimmoth",
+    "dexNumber": 49,
+    "name": "Glimmoth",
+    "types": [
+      "PSYCHEDELIC",
+      "SACRED"
+    ],
+    "baseStats": {
+      "serotonin": 40,
+      "vibeAttack": 35,
+      "egoDefense": 42,
+      "spFractal": 70,
+      "spGrounded": 62,
+      "bpmSpeed": 47
+    },
+    "intoxicationWeight": 0.6,
+    "catchRate": 160,
+    "evolutions": [
+      {
+        "targetId": "moonmoth",
+        "trigger": "LEVEL",
+        "level": 28
+      }
+    ],
+    "learnset": [
+      {
+        "level": 1,
+        "moveId": "fractal_lick"
+      },
+      {
+        "level": 1,
+        "moveId": "incense_waft"
+      },
+      {
+        "level": 6,
+        "moveId": "long_stare"
+      },
+      {
+        "level": 10,
+        "moveId": "tracer_trail"
+      },
+      {
+        "level": 14,
+        "moveId": "holy_smoke"
+      },
+      {
+        "level": 18,
+        "moveId": "mind_maze"
+      },
+      {
+        "level": 22,
+        "moveId": "third_eye_beam"
+      },
+      {
+        "level": 27,
+        "moveId": "darshan"
+      },
+      {
+        "level": 31,
+        "moveId": "tab_dissolve"
+      },
+      {
+        "level": 36,
+        "moveId": "aarti_fire"
+      },
+      {
+        "level": 41,
+        "moveId": "blessing"
+      },
+      {
+        "level": 46,
+        "moveId": "ego_melt"
+      }
+    ],
+    "journalNotes": "Circles every lamp in the wood as if it were the only one. It has been wrong about that all its life and is at peace with it.",
+    "ability": "CLEAR_HEAD",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "late",
+      "egoDefense": "steady",
+      "spFractal": "early",
+      "spGrounded": "late",
+      "bpmSpeed": "early"
+    }
+  },
+  {
+    "id": "moonmoth",
+    "dexNumber": 50,
+    "name": "Moonmoth",
+    "types": [
+      "PSYCHEDELIC",
+      "SACRED"
+    ],
+    "baseStats": {
+      "serotonin": 68,
+      "vibeAttack": 48,
+      "egoDefense": 66,
+      "spFractal": 112,
+      "spGrounded": 98,
+      "bpmSpeed": 78
+    },
+    "intoxicationWeight": 0.7,
+    "catchRate": 70,
+    "evolutions": [],
+    "learnset": [
+      {
+        "level": 1,
+        "moveId": "fractal_lick"
+      },
+      {
+        "level": 1,
+        "moveId": "incense_waft"
+      },
+      {
+        "level": 6,
+        "moveId": "long_stare"
+      },
+      {
+        "level": 10,
+        "moveId": "tracer_trail"
+      },
+      {
+        "level": 14,
+        "moveId": "holy_smoke"
+      },
+      {
+        "level": 18,
+        "moveId": "mind_maze"
+      },
+      {
+        "level": 22,
+        "moveId": "third_eye_beam"
+      },
+      {
+        "level": 27,
+        "moveId": "darshan"
+      },
+      {
+        "level": 31,
+        "moveId": "tab_dissolve"
+      },
+      {
+        "level": 36,
+        "moveId": "aarti_fire"
+      },
+      {
+        "level": 41,
+        "moveId": "blessing"
+      },
+      {
+        "level": 46,
+        "moveId": "ego_melt"
+      }
+    ],
+    "journalNotes": "Stopped chasing lamps the night it found the moon. The dust from its wings makes people apologise to trees.",
+    "ability": "CLEAR_HEAD",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "late",
+      "egoDefense": "steady",
+      "spFractal": "early",
+      "spGrounded": "late",
+      "bpmSpeed": "early"
+    }
+  },
+  {
+    "id": "echit",
+    "dexNumber": 51,
+    "name": "Echit",
+    "types": [
+      "SONIC",
+      "DISSOCIATIVE"
+    ],
+    "baseStats": {
+      "serotonin": 40,
+      "vibeAttack": 45,
+      "egoDefense": 38,
+      "spFractal": 62,
+      "spGrounded": 45,
+      "bpmSpeed": 62
+    },
+    "intoxicationWeight": 0.45,
+    "catchRate": 170,
+    "evolutions": [
+      {
+        "targetId": "reverbat",
+        "trigger": "LEVEL",
+        "level": 27
+      }
+    ],
+    "learnset": [
+      {
+        "level": 1,
+        "moveId": "tinnitus_ping"
+      },
+      {
+        "level": 1,
+        "moveId": "wonky_step"
+      },
+      {
+        "level": 6,
+        "moveId": "long_stare"
+      },
+      {
+        "level": 10,
+        "moveId": "echo_chamber"
+      },
+      {
+        "level": 14,
+        "moveId": "noodle_arm"
+      },
+      {
+        "level": 18,
+        "moveId": "feedback_loop"
+      },
+      {
+        "level": 22,
+        "moveId": "sidestep"
+      },
+      {
+        "level": 26,
+        "moveId": "gravity_flip"
+      },
+      {
+        "level": 30,
+        "moveId": "white_noise"
+      },
+      {
+        "level": 33,
+        "moveId": "rewind"
+      },
+      {
+        "level": 35,
+        "moveId": "sideways_lunge"
+      },
+      {
+        "level": 40,
+        "moveId": "wall_of_sound"
+      },
+      {
+        "level": 45,
+        "moveId": "balloon_burst"
+      }
+    ],
+    "journalNotes": "Says everything twice, the second time from somewhere else. Hangs where the canyon repeats itself.",
+    "ability": "SHARP_EYES",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "steady",
+      "egoDefense": "late",
+      "spFractal": "early",
+      "spGrounded": "steady",
+      "bpmSpeed": "early"
+    }
+  },
+  {
+    "id": "reverbat",
+    "dexNumber": 52,
+    "name": "Reverbat",
+    "types": [
+      "SONIC",
+      "DISSOCIATIVE"
+    ],
+    "baseStats": {
+      "serotonin": 66,
+      "vibeAttack": 64,
+      "egoDefense": 58,
+      "spFractal": 100,
+      "spGrounded": 74,
+      "bpmSpeed": 100
+    },
+    "intoxicationWeight": 0.55,
+    "catchRate": 75,
+    "evolutions": [],
+    "learnset": [
+      {
+        "level": 1,
+        "moveId": "tinnitus_ping"
+      },
+      {
+        "level": 1,
+        "moveId": "wonky_step"
+      },
+      {
+        "level": 6,
+        "moveId": "long_stare"
+      },
+      {
+        "level": 10,
+        "moveId": "echo_chamber"
+      },
+      {
+        "level": 14,
+        "moveId": "noodle_arm"
+      },
+      {
+        "level": 18,
+        "moveId": "feedback_loop"
+      },
+      {
+        "level": 22,
+        "moveId": "sidestep"
+      },
+      {
+        "level": 26,
+        "moveId": "gravity_flip"
+      },
+      {
+        "level": 30,
+        "moveId": "white_noise"
+      },
+      {
+        "level": 33,
+        "moveId": "rewind"
+      },
+      {
+        "level": 35,
+        "moveId": "sideways_lunge"
+      },
+      {
+        "level": 40,
+        "moveId": "wall_of_sound"
+      },
+      {
+        "level": 45,
+        "moveId": "balloon_burst"
+      }
+    ],
+    "journalNotes": "Its squeak takes four bars to come back, and comes back wetter. Sound engineers leave it offerings.",
+    "ability": "SHARP_EYES",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "steady",
+      "egoDefense": "late",
+      "spFractal": "early",
+      "spGrounded": "steady",
+      "bpmSpeed": "early"
+    }
+  },
+  {
+    "id": "tweeterling",
+    "dexNumber": 53,
+    "name": "Tweeterling",
+    "types": [
+      "SONIC"
+    ],
+    "baseStats": {
+      "serotonin": 40,
+      "vibeAttack": 42,
+      "egoDefense": 36,
+      "spFractal": 56,
+      "spGrounded": 43,
+      "bpmSpeed": 66
+    },
+    "intoxicationWeight": 0.3,
+    "catchRate": 190,
+    "evolutions": [
+      {
+        "targetId": "woofhound",
+        "trigger": "LEVEL",
+        "level": 18
+      }
+    ],
+    "learnset": [
+      {
+        "level": 1,
+        "moveId": "stumble"
+      },
+      {
+        "level": 1,
+        "moveId": "tinnitus_ping"
+      },
+      {
+        "level": 5,
+        "moveId": "hype_up"
+      },
+      {
+        "level": 9,
+        "moveId": "kick_drum"
+      },
+      {
+        "level": 13,
+        "moveId": "side_eye"
+      },
+      {
+        "level": 17,
+        "moveId": "feedback_loop"
+      },
+      {
+        "level": 21,
+        "moveId": "sound_check"
+      },
+      {
+        "level": 25,
+        "moveId": "bad_vibes"
+      },
+      {
+        "level": 29,
+        "moveId": "four_on_the_floor"
+      },
+      {
+        "level": 34,
+        "moveId": "white_noise"
+      },
+      {
+        "level": 38,
+        "moveId": "comedown"
+      },
+      {
+        "level": 43,
+        "moveId": "wall_of_sound"
+      },
+      {
+        "level": 48,
+        "moveId": "existential_dread"
+      }
+    ],
+    "journalNotes": "A chick hatched in a speaker stack. It only does the high notes, and it does them at six in the morning.",
+    "ability": "STAMINA",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "early",
+      "egoDefense": "steady",
+      "spFractal": "steady",
+      "spGrounded": "steady",
+      "bpmSpeed": "late"
+    }
+  },
+  {
+    "id": "woofhound",
+    "dexNumber": 54,
+    "name": "Woofhound",
+    "types": [
+      "SONIC"
+    ],
+    "baseStats": {
+      "serotonin": 62,
+      "vibeAttack": 72,
+      "egoDefense": 58,
+      "spFractal": 62,
+      "spGrounded": 58,
+      "bpmSpeed": 73
+    },
+    "intoxicationWeight": 0.35,
+    "catchRate": 110,
+    "evolutions": [
+      {
+        "targetId": "subwoofang",
+        "trigger": "LEVEL",
+        "level": 38
+      }
+    ],
+    "learnset": [
+      {
+        "level": 1,
+        "moveId": "stumble"
+      },
+      {
+        "level": 1,
+        "moveId": "tinnitus_ping"
+      },
+      {
+        "level": 5,
+        "moveId": "hype_up"
+      },
+      {
+        "level": 9,
+        "moveId": "kick_drum"
+      },
+      {
+        "level": 13,
+        "moveId": "side_eye"
+      },
+      {
+        "level": 17,
+        "moveId": "feedback_loop"
+      },
+      {
+        "level": 21,
+        "moveId": "sound_check"
+      },
+      {
+        "level": 25,
+        "moveId": "bad_vibes"
+      },
+      {
+        "level": 29,
+        "moveId": "four_on_the_floor"
+      },
+      {
+        "level": 34,
+        "moveId": "white_noise"
+      },
+      {
+        "level": 38,
+        "moveId": "comedown"
+      },
+      {
+        "level": 43,
+        "moveId": "wall_of_sound"
+      },
+      {
+        "level": 48,
+        "moveId": "existential_dread"
+      }
+    ],
+    "journalNotes": "Barks in the mid range. Guards the cables, chews the cables, is sorry about the cables.",
+    "ability": "STAMINA",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "early",
+      "egoDefense": "steady",
+      "spFractal": "steady",
+      "spGrounded": "steady",
+      "bpmSpeed": "late"
+    }
+  },
+  {
+    "id": "subwoofang",
+    "dexNumber": 55,
+    "name": "Subwoofang",
+    "types": [
+      "SONIC",
+      "BUMMER"
+    ],
+    "baseStats": {
+      "serotonin": 92,
+      "vibeAttack": 108,
+      "egoDefense": 90,
+      "spFractal": 70,
+      "spGrounded": 80,
+      "bpmSpeed": 65
+    },
+    "intoxicationWeight": 0.4,
+    "catchRate": 45,
+    "evolutions": [],
+    "learnset": [
+      {
+        "level": 1,
+        "moveId": "stumble"
+      },
+      {
+        "level": 1,
+        "moveId": "tinnitus_ping"
+      },
+      {
+        "level": 5,
+        "moveId": "hype_up"
+      },
+      {
+        "level": 9,
+        "moveId": "kick_drum"
+      },
+      {
+        "level": 13,
+        "moveId": "side_eye"
+      },
+      {
+        "level": 17,
+        "moveId": "feedback_loop"
+      },
+      {
+        "level": 21,
+        "moveId": "sound_check"
+      },
+      {
+        "level": 25,
+        "moveId": "bad_vibes"
+      },
+      {
+        "level": 29,
+        "moveId": "four_on_the_floor"
+      },
+      {
+        "level": 34,
+        "moveId": "white_noise"
+      },
+      {
+        "level": 38,
+        "moveId": "comedown"
+      },
+      {
+        "level": 43,
+        "moveId": "wall_of_sound"
+      },
+      {
+        "level": 48,
+        "moveId": "existential_dread"
+      }
+    ],
+    "journalNotes": "You do not hear it growl, you feel it in your fillings. Three villages away, a noise complaint is being written.",
+    "ability": "STAMINA",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "early",
+      "egoDefense": "steady",
+      "spFractal": "steady",
+      "spGrounded": "steady",
+      "bpmSpeed": "late"
+    }
+  },
+  {
+    "id": "diyaling",
+    "dexNumber": 56,
+    "name": "Diyaling",
+    "types": [
+      "SACRED"
+    ],
+    "baseStats": {
+      "serotonin": 44,
+      "vibeAttack": 38,
+      "egoDefense": 45,
+      "spFractal": 66,
+      "spGrounded": 60,
+      "bpmSpeed": 37
+    },
+    "intoxicationWeight": 0.25,
+    "catchRate": 170,
+    "evolutions": [
+      {
+        "targetId": "aartiflame",
+        "trigger": "LEVEL",
+        "level": 25
+      }
+    ],
+    "learnset": [
+      {
+        "level": 1,
+        "moveId": "incense_waft"
+      },
+      {
+        "level": 1,
+        "moveId": "long_stare"
+      },
+      {
+        "level": 5,
+        "moveId": "bell_ring"
+      },
+      {
+        "level": 9,
+        "moveId": "deep_breath"
+      },
+      {
+        "level": 13,
+        "moveId": "holy_smoke"
+      },
+      {
+        "level": 17,
+        "moveId": "namaste"
+      },
+      {
+        "level": 21,
+        "moveId": "mala_beads"
+      },
+      {
+        "level": 25,
+        "moveId": "darshan"
+      },
+      {
+        "level": 29,
+        "moveId": "tilak_stamp"
+      },
+      {
+        "level": 33,
+        "moveId": "blessing"
+      },
+      {
+        "level": 37,
+        "moveId": "aarti_fire"
+      },
+      {
+        "level": 44,
+        "moveId": "instant_karma"
+      }
+    ],
+    "journalNotes": "A clay lamp somebody lit and forgot. It has kept itself going on ghee and stubbornness.",
+    "ability": "SECOND_WIND",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "late",
+      "egoDefense": "steady",
+      "spFractal": "early",
+      "spGrounded": "late",
+      "bpmSpeed": "steady"
+    }
+  },
+  {
+    "id": "aartiflame",
+    "dexNumber": 57,
+    "name": "Aartiflame",
+    "types": [
+      "SACRED"
+    ],
+    "baseStats": {
+      "serotonin": 70,
+      "vibeAttack": 55,
+      "egoDefense": 68,
+      "spFractal": 105,
+      "spGrounded": 92,
+      "bpmSpeed": 66
+    },
+    "intoxicationWeight": 0.35,
+    "catchRate": 80,
+    "evolutions": [],
+    "learnset": [
+      {
+        "level": 1,
+        "moveId": "incense_waft"
+      },
+      {
+        "level": 1,
+        "moveId": "long_stare"
+      },
+      {
+        "level": 5,
+        "moveId": "bell_ring"
+      },
+      {
+        "level": 9,
+        "moveId": "deep_breath"
+      },
+      {
+        "level": 13,
+        "moveId": "holy_smoke"
+      },
+      {
+        "level": 17,
+        "moveId": "namaste"
+      },
+      {
+        "level": 21,
+        "moveId": "mala_beads"
+      },
+      {
+        "level": 25,
+        "moveId": "darshan"
+      },
+      {
+        "level": 29,
+        "moveId": "tilak_stamp"
+      },
+      {
+        "level": 33,
+        "moveId": "blessing"
+      },
+      {
+        "level": 37,
+        "moveId": "aarti_fire"
+      },
+      {
+        "level": 44,
+        "moveId": "instant_karma"
+      }
+    ],
+    "journalNotes": "Five flames on one brass plate, turning clockwise. Wave a hand over it and take the warmth, it does not mind.",
+    "ability": "SECOND_WIND",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "late",
+      "egoDefense": "steady",
+      "spFractal": "early",
+      "spGrounded": "late",
+      "bpmSpeed": "steady"
+    }
+  },
+  {
+    "id": "roadcalf",
+    "dexNumber": 58,
+    "name": "Roadcalf",
+    "types": [
+      "SACRED",
+      "DOWNER"
+    ],
+    "baseStats": {
+      "serotonin": 62,
+      "vibeAttack": 48,
+      "egoDefense": 56,
+      "spFractal": 40,
+      "spGrounded": 60,
+      "bpmSpeed": 34
+    },
+    "intoxicationWeight": 0.2,
+    "catchRate": 160,
+    "evolutions": [
+      {
+        "targetId": "gaumata",
+        "trigger": "LEVEL",
+        "level": 30
+      }
+    ],
+    "learnset": [
+      {
+        "level": 1,
+        "moveId": "stumble"
+      },
+      {
+        "level": 1,
+        "moveId": "heavy_blanket"
+      },
+      {
+        "level": 5,
+        "moveId": "incense_waft"
+      },
+      {
+        "level": 9,
+        "moveId": "slump"
+      },
+      {
+        "level": 13,
+        "moveId": "bell_ring"
+      },
+      {
+        "level": 17,
+        "moveId": "namaste"
+      },
+      {
+        "level": 21,
+        "moveId": "yawn_wave"
+      },
+      {
+        "level": 25,
+        "moveId": "tilak_stamp"
+      },
+      {
+        "level": 29,
+        "moveId": "lie_in"
+      },
+      {
+        "level": 33,
+        "moveId": "weighted_crush"
+      },
+      {
+        "level": 38,
+        "moveId": "blessing"
+      },
+      {
+        "level": 44,
+        "moveId": "instant_karma"
+      }
+    ],
+    "journalNotes": "Sits down wherever the tarmac is warmest. Scooters go round it. Buses go round it. It is learning.",
+    "ability": "THICK_SKIN",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "steady",
+      "egoDefense": "steady",
+      "spFractal": "late",
+      "spGrounded": "steady",
+      "bpmSpeed": "early"
+    }
+  },
+  {
+    "id": "gaumata",
+    "dexNumber": 59,
+    "name": "Gaumata",
+    "types": [
+      "SACRED",
+      "DOWNER"
+    ],
+    "baseStats": {
+      "serotonin": 110,
+      "vibeAttack": 82,
+      "egoDefense": 100,
+      "spFractal": 60,
+      "spGrounded": 100,
+      "bpmSpeed": 38
+    },
+    "intoxicationWeight": 0.3,
+    "catchRate": 60,
+    "evolutions": [],
+    "learnset": [
+      {
+        "level": 1,
+        "moveId": "stumble"
+      },
+      {
+        "level": 1,
+        "moveId": "heavy_blanket"
+      },
+      {
+        "level": 5,
+        "moveId": "incense_waft"
+      },
+      {
+        "level": 9,
+        "moveId": "slump"
+      },
+      {
+        "level": 13,
+        "moveId": "bell_ring"
+      },
+      {
+        "level": 17,
+        "moveId": "namaste"
+      },
+      {
+        "level": 21,
+        "moveId": "yawn_wave"
+      },
+      {
+        "level": 25,
+        "moveId": "tilak_stamp"
+      },
+      {
+        "level": 29,
+        "moveId": "lie_in"
+      },
+      {
+        "level": 33,
+        "moveId": "weighted_crush"
+      },
+      {
+        "level": 38,
+        "moveId": "blessing"
+      },
+      {
+        "level": 44,
+        "moveId": "instant_karma"
+      }
+    ],
+    "journalNotes": "The cow that blocks the road. Nobody honks. The traffic behind it is in its second generation.",
+    "ability": "THICK_SKIN",
+    "growth": {
+      "serotonin": "late",
+      "vibeAttack": "steady",
+      "egoDefense": "steady",
+      "spFractal": "late",
+      "spGrounded": "steady",
+      "bpmSpeed": "early"
+    }
+  },
+  {
+    "id": "didgeroo",
+    "dexNumber": 60,
+    "name": "Didgeroo",
+    "types": [
+      "SONIC",
+      "ORGANIC"
+    ],
+    "baseStats": {
+      "serotonin": 72,
+      "vibeAttack": 84,
+      "egoDefense": 66,
+      "spFractal": 78,
+      "spGrounded": 64,
+      "bpmSpeed": 56
+    },
+    "intoxicationWeight": 0.4,
+    "catchRate": 100,
+    "evolutions": [],
+    "learnset": [
+      {
+        "level": 1,
+        "moveId": "puff_pass"
+      },
+      {
+        "level": 1,
+        "moveId": "tinnitus_ping"
+      },
+      {
+        "level": 6,
+        "moveId": "hype_up"
+      },
+      {
+        "level": 10,
+        "moveId": "kick_drum"
+      },
+      {
+        "level": 14,
+        "moveId": "chillum_cloud"
+      },
+      {
+        "level": 18,
+        "moveId": "feedback_loop"
+      },
+      {
+        "level": 22,
+        "moveId": "munchie_bite"
+      },
+      {
+        "level": 26,
+        "moveId": "sound_check"
+      },
+      {
+        "level": 28,
+        "moveId": "rewind"
+      },
+      {
+        "level": 30,
+        "moveId": "four_on_the_floor"
+      },
+      {
+        "level": 34,
+        "moveId": "root_hug"
+      },
+      {
+        "level": 39,
+        "moveId": "wall_of_sound"
+      },
+      {
+        "level": 44,
+        "moveId": "compost_bomb"
+      }
+    ],
+    "journalNotes": "A hollow bamboo that learned to breathe in circles. It came for one season and never stopped the one note.",
+    "ability": "SECOND_WIND",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "early",
+      "egoDefense": "steady",
+      "spFractal": "early",
+      "spGrounded": "late",
+      "bpmSpeed": "steady"
+    }
+  },
+  {
+    "id": "tulsprout",
+    "dexNumber": 61,
+    "name": "Tulsprout",
+    "types": [
+      "SACRED",
+      "ORGANIC"
+    ],
+    "baseStats": {
+      "serotonin": 52,
+      "vibeAttack": 36,
+      "egoDefense": 56,
+      "spFractal": 58,
+      "spGrounded": 64,
+      "bpmSpeed": 32
+    },
+    "intoxicationWeight": 0.25,
+    "catchRate": 170,
+    "evolutions": [
+      {
+        "targetId": "tulsiarch",
+        "trigger": "LEVEL",
+        "level": 26
+      }
+    ],
+    "learnset": [
+      {
+        "level": 1,
+        "moveId": "puff_pass"
+      },
+      {
+        "level": 1,
+        "moveId": "incense_waft"
+      },
+      {
+        "level": 5,
+        "moveId": "deep_breath"
+      },
+      {
+        "level": 9,
+        "moveId": "bell_ring"
+      },
+      {
+        "level": 13,
+        "moveId": "chillum_cloud"
+      },
+      {
+        "level": 17,
+        "moveId": "namaste"
+      },
+      {
+        "level": 21,
+        "moveId": "holy_smoke"
+      },
+      {
+        "level": 25,
+        "moveId": "herbal_tea"
+      },
+      {
+        "level": 29,
+        "moveId": "root_hug"
+      },
+      {
+        "level": 33,
+        "moveId": "tilak_stamp"
+      },
+      {
+        "level": 38,
+        "moveId": "aarti_fire"
+      },
+      {
+        "level": 44,
+        "moveId": "compost_bomb"
+      }
+    ],
+    "journalNotes": "A sprig of holy basil in a clay pot. It gets watered before anybody in the house gets tea.",
+    "ability": "CLEAR_HEAD",
+    "growth": {
+      "serotonin": "early",
+      "vibeAttack": "steady",
+      "egoDefense": "late",
+      "spFractal": "steady",
+      "spGrounded": "late",
+      "bpmSpeed": "steady"
+    }
+  },
+  {
+    "id": "tulsiarch",
+    "dexNumber": 62,
+    "name": "Tulsiarch",
+    "types": [
+      "SACRED",
+      "ORGANIC"
+    ],
+    "baseStats": {
+      "serotonin": 86,
+      "vibeAttack": 54,
+      "egoDefense": 92,
+      "spFractal": 90,
+      "spGrounded": 104,
+      "bpmSpeed": 42
+    },
+    "intoxicationWeight": 0.35,
+    "catchRate": 70,
+    "evolutions": [],
+    "learnset": [
+      {
+        "level": 1,
+        "moveId": "puff_pass"
+      },
+      {
+        "level": 1,
+        "moveId": "incense_waft"
+      },
+      {
+        "level": 5,
+        "moveId": "deep_breath"
+      },
+      {
+        "level": 9,
+        "moveId": "bell_ring"
+      },
+      {
+        "level": 13,
+        "moveId": "chillum_cloud"
+      },
+      {
+        "level": 17,
+        "moveId": "namaste"
+      },
+      {
+        "level": 21,
+        "moveId": "holy_smoke"
+      },
+      {
+        "level": 25,
+        "moveId": "herbal_tea"
+      },
+      {
+        "level": 29,
+        "moveId": "root_hug"
+      },
+      {
+        "level": 33,
+        "moveId": "tilak_stamp"
+      },
+      {
+        "level": 38,
+        "moveId": "aarti_fire"
+      },
+      {
+        "level": 44,
+        "moveId": "compost_bomb"
+      }
+    ],
+    "journalNotes": "The basil in the courtyard shrine, grown past the roof. The family walks round it every morning. It counts.",
+    "ability": "CLEAR_HEAD",
+    "growth": {
+      "serotonin": "early",
+      "vibeAttack": "steady",
+      "egoDefense": "late",
+      "spFractal": "steady",
+      "spGrounded": "late",
+      "bpmSpeed": "steady"
+    }
+  },
+  {
+    "id": "conchlet",
+    "dexNumber": 63,
+    "name": "Conchlet",
+    "types": [
+      "SONIC",
+      "SACRED"
+    ],
+    "baseStats": {
+      "serotonin": 50,
+      "vibeAttack": 40,
+      "egoDefense": 62,
+      "spFractal": 56,
+      "spGrounded": 60,
+      "bpmSpeed": 32
+    },
+    "intoxicationWeight": 0.3,
+    "catchRate": 160,
+    "evolutions": [
+      {
+        "targetId": "shankhorn",
+        "trigger": "LEVEL",
+        "level": 29
+      }
+    ],
+    "learnset": [
+      {
+        "level": 1,
+        "moveId": "tinnitus_ping"
+      },
+      {
+        "level": 1,
+        "moveId": "incense_waft"
+      },
+      {
+        "level": 5,
+        "moveId": "deep_breath"
+      },
+      {
+        "level": 9,
+        "moveId": "bell_ring"
+      },
+      {
+        "level": 13,
+        "moveId": "echo_chamber"
+      },
+      {
+        "level": 17,
+        "moveId": "holy_smoke"
+      },
+      {
+        "level": 21,
+        "moveId": "sound_check"
+      },
+      {
+        "level": 25,
+        "moveId": "feedback_loop"
+      },
+      {
+        "level": 29,
+        "moveId": "blessing"
+      },
+      {
+        "level": 33,
+        "moveId": "four_on_the_floor"
+      },
+      {
+        "level": 38,
+        "moveId": "aarti_fire"
+      },
+      {
+        "level": 44,
+        "moveId": "wall_of_sound"
+      }
+    ],
+    "journalNotes": "Hold it to your ear and you hear the sea. Hold it to the sea and it hears you. Found when the tide is out.",
+    "ability": "THICK_SKIN",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "steady",
+      "egoDefense": "early",
+      "spFractal": "late",
+      "spGrounded": "late",
+      "bpmSpeed": "steady"
+    }
+  },
+  {
+    "id": "shankhorn",
+    "dexNumber": 64,
+    "name": "Shankhorn",
+    "types": [
+      "SONIC",
+      "SACRED"
+    ],
+    "baseStats": {
+      "serotonin": 80,
+      "vibeAttack": 62,
+      "egoDefense": 98,
+      "spFractal": 96,
+      "spGrounded": 92,
+      "bpmSpeed": 44
+    },
+    "intoxicationWeight": 0.4,
+    "catchRate": 65,
+    "evolutions": [],
+    "learnset": [
+      {
+        "level": 1,
+        "moveId": "tinnitus_ping"
+      },
+      {
+        "level": 1,
+        "moveId": "incense_waft"
+      },
+      {
+        "level": 5,
+        "moveId": "deep_breath"
+      },
+      {
+        "level": 9,
+        "moveId": "bell_ring"
+      },
+      {
+        "level": 13,
+        "moveId": "echo_chamber"
+      },
+      {
+        "level": 17,
+        "moveId": "holy_smoke"
+      },
+      {
+        "level": 21,
+        "moveId": "sound_check"
+      },
+      {
+        "level": 25,
+        "moveId": "feedback_loop"
+      },
+      {
+        "level": 29,
+        "moveId": "blessing"
+      },
+      {
+        "level": 33,
+        "moveId": "four_on_the_floor"
+      },
+      {
+        "level": 38,
+        "moveId": "aarti_fire"
+      },
+      {
+        "level": 44,
+        "moveId": "wall_of_sound"
+      }
+    ],
+    "journalNotes": "The conch blown at dawn, three long notes. The fishermen say the day does not start without it, and nobody has tested this.",
+    "ability": "THICK_SKIN",
+    "growth": {
+      "serotonin": "steady",
+      "vibeAttack": "steady",
+      "egoDefense": "early",
+      "spFractal": "late",
+      "spGrounded": "late",
+      "bpmSpeed": "steady"
+    }
+  },
+  {
+    "id": "omkara",
+    "dexNumber": 65,
+    "name": "Omkara",
+    "types": [
+      "SONIC",
+      "SACRED"
+    ],
+    "baseStats": {
+      "serotonin": 105,
+      "vibeAttack": 80,
+      "egoDefense": 95,
+      "spFractal": 125,
+      "spGrounded": 110,
+      "bpmSpeed": 85
+    },
+    "intoxicationWeight": 0.9,
+    "catchRate": 10,
+    "evolutions": [],
+    "learnset": [
+      {
+        "level": 1,
+        "moveId": "feedback_loop"
+      },
+      {
+        "level": 1,
+        "moveId": "holy_smoke"
+      },
+      {
+        "level": 30,
+        "moveId": "sound_check"
+      },
+      {
+        "level": 40,
+        "moveId": "aarti_fire"
+      },
+      {
+        "level": 50,
+        "moveId": "blessing"
+      },
+      {
+        "level": 54,
+        "moveId": "root_note"
+      },
+      {
+        "level": 58,
+        "moveId": "the_silence"
+      }
+    ],
+    "journalNotes": "The first sound, the one the others are tuned to. The festival has been one long chord with this note missing.",
+    "ability": "CLEAR_HEAD",
+    "growth": {
+      "serotonin": "early",
+      "vibeAttack": "steady",
+      "egoDefense": "late",
+      "spFractal": "late",
+      "spGrounded": "steady",
+      "bpmSpeed": "steady"
     }
   }
 ]

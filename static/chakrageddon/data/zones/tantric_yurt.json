@@ -12,7 +12,7 @@
     "tttttttttttttttttttt",
     "t....yyyyyyyyyy....t",
     "t....yaaaaaaaay....t",
-    "t....ya°aaa°aay....t",
+    "t...īya°aaa°aayī...t",
     "t....yaa°a°aaay....t",
     "t....yyyyaayyyy....t",
     "t..M.....,,.....M..t",
@@ -182,6 +182,18 @@
         "weight": 20
       },
       {
+        "speciesId": "diyaling",
+        "minLevel": 9,
+        "maxLevel": 11,
+        "weight": 10
+      },
+      {
+        "speciesId": "chaisloth",
+        "minLevel": 10,
+        "maxLevel": 11,
+        "weight": 8
+      },
+      {
         "speciesId": "fractoad",
         "minLevel": 10,
         "maxLevel": 12,
@@ -220,6 +232,12 @@
         "minLevel": 11,
         "maxLevel": 12,
         "weight": 20
+      },
+      {
+        "speciesId": "lostling",
+        "minLevel": 9,
+        "maxLevel": 11,
+        "weight": 15
       }
     ]
   },

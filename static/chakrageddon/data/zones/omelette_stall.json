@@ -11,15 +11,15 @@
   "rows": [
     "tttttttttt,,tttttttttt",
     "t..=.....IffI........t",
-    "t..=......,,.........t",
+    "t..=..į...,,.........t",
     "t..=.OOOOµ,,..~~~~...t",
     "t..=.eeee.,,..~~~~...t",
     ",..=......,,.........t",
     ",,,,,,,,,,,,.........t",
     ",..=......,,.........t",
-    "t..=~~....,,...q.q...t",
+    "t..=~~....,,..įq.qā..t",
     "t..=~~....,,.........t",
-    "t..=......,,....C....t",
+    "t..=ō.....,,....C....t",
     "t..=......,,.........t",
     "t..=h.....,,.........t",
     "t.........,,.........t",
@@ -304,6 +304,18 @@
         "weight": 10
       },
       {
+        "speciesId": "chaisloth",
+        "minLevel": 15,
+        "maxLevel": 18,
+        "weight": 12
+      },
+      {
+        "speciesId": "tulsprout",
+        "minLevel": 15,
+        "maxLevel": 18,
+        "weight": 10
+      },
+      {
         "speciesId": "omeletron",
         "minLevel": 20,
         "maxLevel": 24,
@@ -335,6 +347,12 @@
         "minLevel": 15,
         "maxLevel": 18,
         "weight": 30
+      },
+      {
+        "speciesId": "lostling",
+        "minLevel": 15,
+        "maxLevel": 18,
+        "weight": 15
       }
     ]
   },
