@@ -62,4 +62,4 @@ export function applyItem(ctx, item, mon, opts = {}) {
  *  has none left. Sell it back, or lose it on a whiteout, and it is in stock again. */
 export const ONE_OF_A_KIND = ['OUTFIT', 'HELD'];
 export const soldOut = (state, item) => ONE_OF_A_KIND.includes(item?.category)
-  && (state.bag[item.id] > 0 || [...state.party, ...state.box].some((m) => m.held === item.id));
+  && (state.bag[item.id] > 0 || [...state.party, ...state.box, ...(state.dome || []).map((e) => e.mon)].some((m) => m.held === item.id));

@@ -31,7 +31,7 @@ async function boot() {
   const game = new Game({ assets, input, renderer, audio, langs, lang });
   audio?.setVolume(game.settings.volume);
   if (game.settings.volume > 0) audio?.unlock();
-  for (const mod of ['./sceneView.js', './battleView.js', './menuView.js', './shopView.js', './settingsView.js', './creditsView.js', './noticeView.js', './quickView.js', './introView.js', './endCardView.js', './tarotView.js', './evolveView.js']) {
+  for (const mod of ['./sceneView.js', './battleView.js', './menuView.js', './shopView.js', './settingsView.js', './creditsView.js', './noticeView.js', './whatsNewView.js', './quickView.js', './introView.js', './endCardView.js', './tarotView.js', './evolveView.js']) {
     const m = await optional(mod);
     if (m) m.install(game);
   }

@@ -14,11 +14,11 @@
     "t~~~..sr......,,.......sr.~~~t",
     ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",
     "t...~~........,,........~~...t",
-    "t~~.~~....b...,,...b....~~.~~t",
+    "t~~.~~...ęb...,,...b....~~.~~t",
     "t~~.~~........,,........~~.~~t",
     "ItbbtttIItIb..,,..IttttIIItbtb",
     "btbbtItItItt..,,..ttIttbItItIt",
-    "btbtttttItbtrr,,srtbttnnnnnnnn",
+    "btbtttttItbtrrę,srtbttnnnnnnnn",
     "bttIbtbtItttur,,rrtttInlllllln",
     "IIIttItbItttsr,,urbttInlllllln",
     "bttIItIbtttbsr,,srbtttnlllllln",
@@ -28,15 +28,15 @@
     "bIIbtttIIbtIrr,,srIbtInlllllln",
     "ItbttttbIItIur,,srttIInlllllln",
     "tbbtItbbbtItsr,,rrItIbnlllllln",
-    "tbIbtbtttIIbsr,,urtttInnnnnnnn",
+    "tbIbtbtttIIbsrį,urtttInnnnnnnn",
     "tIIbIIItIIIbsr,,srbbtttIbttttI",
     "btttbtIttItI..,,..tbttIbIbttbb",
     "t..........L..,,..L...sr.....t",
     "t.............,,.............t",
     ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",
     "b.............,,.............b",
-    "t~~~..sr......,,..m.......~~~t",
-    "t~~~.....b....,,....b.....~~~t",
+    "t~~~..sr......,,.ēm.......~~~t",
+    "t~~~.....bę...,,....būr...~~~t",
     "t~~~..........,,..........~~~t",
     "tttttttttttttt,,tttttttttttttt"
   ],
@@ -199,6 +199,18 @@
       },
       {
         "speciesId": "ketacrab",
+        "minLevel": 12,
+        "maxLevel": 15,
+        "weight": 15
+      },
+      {
+        "speciesId": "roadcalf",
+        "minLevel": 12,
+        "maxLevel": 15,
+        "weight": 20
+      },
+      {
+        "speciesId": "betelbug",
         "minLevel": 12,
         "maxLevel": 15,
         "weight": 15

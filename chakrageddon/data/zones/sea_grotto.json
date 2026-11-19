@@ -67,6 +67,102 @@
       "y": 10,
       "tile": "sign",
       "script": "sign_grotto"
+    },
+    {
+      "id": "root_swell_1",
+      "x": 13,
+      "y": 0,
+      "invisible": true,
+      "script": "root_swell",
+      "showWhen": {
+        "all": [
+          {
+            "flag": "root_asked"
+          },
+          {
+            "not": {
+              "flag": "root_u"
+            }
+          },
+          {
+            "not": {
+              "caughtSpecies": "omkara"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "root_swell_2",
+      "x": 14,
+      "y": 0,
+      "invisible": true,
+      "script": "root_swell",
+      "showWhen": {
+        "all": [
+          {
+            "flag": "root_asked"
+          },
+          {
+            "not": {
+              "flag": "root_u"
+            }
+          },
+          {
+            "not": {
+              "caughtSpecies": "omkara"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "root_swell_3",
+      "x": 15,
+      "y": 0,
+      "invisible": true,
+      "script": "root_swell",
+      "showWhen": {
+        "all": [
+          {
+            "flag": "root_asked"
+          },
+          {
+            "not": {
+              "flag": "root_u"
+            }
+          },
+          {
+            "not": {
+              "caughtSpecies": "omkara"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "root_swell_4",
+      "x": 16,
+      "y": 0,
+      "invisible": true,
+      "script": "root_swell",
+      "showWhen": {
+        "all": [
+          {
+            "flag": "root_asked"
+          },
+          {
+            "not": {
+              "flag": "root_u"
+            }
+          },
+          {
+            "not": {
+              "caughtSpecies": "omkara"
+            }
+          }
+        ]
+      }
     }
   ],
   "pickups": [
@@ -112,6 +208,18 @@
         "minLevel": 22,
         "maxLevel": 24,
         "weight": 15
+      },
+      {
+        "speciesId": "echit",
+        "minLevel": 21,
+        "maxLevel": 24,
+        "weight": 15
+      },
+      {
+        "speciesId": "conchlet",
+        "minLevel": 22,
+        "maxLevel": 24,
+        "weight": 12
       }
     ]
   }

@@ -426,7 +426,7 @@
       "label": "c36"
     },
     {
-      "ifCaught": 41,
+      "ifCaught": 65,
       "goto": "j36"
     },
     {
@@ -696,7 +696,7 @@
   "pit_local": [
     {
       "s": "Local",
-      "t": "Every type hits two others hard and bounces off two others. Stimulant flattens Organic and Downer. Check your Journal."
+      "t": "Every type hits two or three others hard and bounces off a few more. Stimulant flattens Organic and Downer. Check your Journal."
     }
   ],
   "sign_yurt": [
@@ -1082,7 +1082,7 @@
   "forest_wook": [
     {
       "s": "Wook",
-      "t": "His Astrals are Bummer and Psychedelic. Downers put both to sleep. I would know. I am one."
+      "t": "His Astrals are Bummer and Psychedelic. Anything loud rattles the Bummers, and Downers put the Psychedelic ones to sleep. I would know. I am one."
     }
   ],
   "sign_cliff": [
@@ -2315,6 +2315,26 @@
   "sunset_watcher": [
     {
       "ifCond": {
+        "all": [
+          {
+            "flag": "root_asked"
+          },
+          {
+            "not": {
+              "flag": "root_a"
+            }
+          },
+          {
+            "not": {
+              "caughtSpecies": "omkara"
+            }
+          }
+        ]
+      },
+      "goto": "root"
+    },
+    {
+      "ifCond": {
         "hour": [
           17,
           20
@@ -2368,6 +2388,108 @@
     {
       "s": "Sunset Watcher",
       "t": "It is not going anywhere. Well. It is going down. But it comes back."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "root"
+    },
+    {
+      "ifCond": {
+        "hour": [
+          5,
+          8
+        ]
+      },
+      "goto": "dawn"
+    },
+    {
+      "s": "Sunset Watcher",
+      "t": "You are after the other one. The one at the wrong end of the day.",
+      "style": "DOWNER"
+    },
+    {
+      "s": "Sunset Watcher",
+      "t": "The sun comes up behind the cliff. Nobody films it. Sit with me until then?",
+      "choice": [
+        "Wait for the sunrise",
+        "Not now"
+      ],
+      "goto": [
+        "rwait",
+        "no"
+      ]
+    },
+    {
+      "label": "rwait"
+    },
+    {
+      "clock": 330
+    },
+    {
+      "t": "You sit on the cold rock. The hours slide off. Behind you the sky goes grey, then pale, then the colour of weak chai."
+    },
+    {
+      "label": "dawn"
+    },
+    {
+      "ifCond": {
+        "intox": 0.25
+      },
+      "goto": "rhigh"
+    },
+    {
+      "ifCond": {
+        "not": {
+          "any": [
+            {
+              "leadType": "SONIC"
+            },
+            {
+              "leadType": "SACRED"
+            }
+          ]
+        }
+      },
+      "goto": "rlead"
+    },
+    {
+      "s": "Sunset Watcher",
+      "t": "Now. Do not look. There is nothing to look at. Listen.",
+      "style": "DOWNER"
+    },
+    {
+      "t": "The first wind of the day comes up the cliff face and opens out over the edge. Aaaaa. One long plain sound, with nobody awake to sponsor it.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "The first sound. Your Astral in front has gone very still. The watcher nods, as if the cliff had finally said something sensible."
+    },
+    {
+      "set": "root_a"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "rhigh"
+    },
+    {
+      "s": "Sunset Watcher",
+      "t": "It is here, and you are too full to hear it. This one wants a clear head. Walk it off, or drink some water. I will be here. I am always here.",
+      "style": "DOWNER"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "rlead"
+    },
+    {
+      "s": "Sunset Watcher",
+      "t": "The wind is saying it. You are not catching it, and neither is the one walking in front of you. Bring one that listens for a living: something SONIC, or something SACRED.",
+      "style": "DOWNER"
     }
   ],
   "crab_raver": [
@@ -4541,6 +4663,24 @@
   "baba_mandala": [
     {
       "ifCond": {
+        "all": [
+          {
+            "flag": "root_wall"
+          },
+          {
+            "not": {
+              "caughtSpecies": "omkara"
+            }
+          }
+        ]
+      },
+      "goto": "root_gate"
+    },
+    {
+      "label": "mandala"
+    },
+    {
+      "ifCond": {
         "caughtSpecies": "mandalord"
       },
       "goto": "after"
@@ -4689,6 +4829,151 @@
     {
       "s": "Baba Smoke",
       "t": "(The smoke draws a small, perfect circle. Then he blows it away, and looks very pleased about it.)",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "root_gate"
+    },
+    {
+      "ifNot": "root_asked",
+      "goto": "root"
+    },
+    {
+      "ifCond": {
+        "caughtSpecies": "mandalord"
+      },
+      "goto": "root_hints"
+    },
+    {
+      "s": "Baba Smoke",
+      "t": "(The smoke makes two shapes and waits: a wall with its mouth shut, and a circle in a square.)",
+      "style": "PSYCHEDELIC",
+      "choice": [
+        "The wall",
+        "The pattern"
+      ],
+      "goto": [
+        "root_hints",
+        "mandala"
+      ]
+    },
+    {
+      "label": "root"
+    },
+    {
+      "s": "Baba Smoke",
+      "t": "(He is watching the cave mouth when you come in, as if you were late. The smoke draws one long line: the whole week, kick drum after kick drum. Then it rubs out the bottom of it.)",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "s": "Baba Smoke",
+      "t": "(What is left hangs there with nothing under it. He holds the gap open between two fingers. It is exactly one note wide.)",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "The festival has been one long chord with its root note missing. Nobody noticed. It was very loud."
+    },
+    {
+      "s": "Baba Smoke",
+      "t": "(The smoke draws the painted wall in the gorge, mouth shut, cheeks full.)",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "The wall is saving its breath for that note. It has none to spare for your HELLO."
+    },
+    {
+      "s": "Baba Smoke",
+      "t": "(Three fingers, then a closed fist: three sounds and a silence. He points along your Astrals and stops at the one in front. The smoke makes a speaker, then a small lamp.)",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "Whoever walks in front of you has to be SONIC or SACRED. Otherwise all you will hear is weather."
+    },
+    {
+      "set": "root_asked"
+    },
+    {
+      "label": "root_hints"
+    },
+    {
+      "ifCond": {
+        "all": [
+          {
+            "flag": "root_a"
+          },
+          {
+            "flag": "root_u"
+          },
+          {
+            "flag": "root_m"
+          },
+          {
+            "flag": "root_s"
+          }
+        ]
+      },
+      "goto": "root_ready"
+    },
+    {
+      "if": "root_a",
+      "goto": "r2"
+    },
+    {
+      "s": "Baba Smoke",
+      "t": "(A cliff with no phones on it, and the sun coming up behind it, on the side nobody paid for. A glass of plain water. The first sound. The Sunset Cliff, at sunrise, with a clear head.)",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "label": "r2"
+    },
+    {
+      "if": "root_u",
+      "goto": "r3"
+    },
+    {
+      "s": "Baba Smoke",
+      "t": "(A cave with the sea shouldering in, and an eye with spirals in it. The second sound. The Sea Grotto, when the tide is in and you are well on your way.)",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "label": "r3"
+    },
+    {
+      "if": "root_m",
+      "goto": "r4"
+    },
+    {
+      "s": "Baba Smoke",
+      "t": "(He points at the floor of his own cave. Then he does nothing at all, for long enough that you check he is breathing. The third sound. Here, in the dark. Stand still.)",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "label": "r4"
+    },
+    {
+      "if": "root_s",
+      "goto": "r5"
+    },
+    {
+      "s": "Baba Smoke",
+      "t": "(A temple made of speakers, and two small plugs of foam. The smoke puts them in its own ears and looks relieved. The silence. The Mainstage Temple, with Earplugs.)",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "label": "r5"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "root_ready"
+    },
+    {
+      "s": "Baba Smoke",
+      "t": "(The smoke draws the wall in the gorge again. This time its mouth is open. He waves you out, gently, the way you wave smoke.)",
       "style": "PSYCHEDELIC"
     }
   ],
@@ -5841,6 +6126,22 @@
   ],
   "uncle_sunny": [
     {
+      "ifCond": {
+        "all": [
+          {
+            "has": "cable_piece",
+            "n": 3
+          },
+          {
+            "not": {
+              "flag": "cable_fixed"
+            }
+          }
+        ]
+      },
+      "goto": "solder"
+    },
+    {
       "s": "Uncle Sunny",
       "t": "Long walk, beta? You look like a long walk. Here. Drink this. Do not ask what is in it. Ginger, mostly. Mostly ginger."
     },
@@ -5878,6 +6179,34 @@
     {
       "s": "Uncle Sunny",
       "t": "You will be back. Everybody comes back to the mattress."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "solder"
+    },
+    {
+      "s": "Uncle Sunny",
+      "t": "What is this, beta? Three bits of string? Ah. The dancing brothers. Give, give. Uncle Sunny fixed a Bullet with a hairpin in 1987, and it is still running. Somewhere."
+    },
+    {
+      "t": "He heats a spoon over a lighter and goes at the cable with it, humming. There is a smell of burning, then a different smell of burning, then a great deal of electrical tape."
+    },
+    {
+      "take": "cable_piece",
+      "n": 3
+    },
+    {
+      "set": "cable_fixed"
+    },
+    {
+      "give": "mended_cable",
+      "n": 1
+    },
+    {
+      "s": "Uncle Sunny",
+      "t": "It works better now. Probably. There was a part left over, so I have taped it to the plug. A part should not feel left out."
     }
   ],
   "pinnacle_baba": [
@@ -5939,6 +6268,19 @@
   ],
   "echo_wall": [
     {
+      "ifCond": {
+        "caughtSpecies": "omkara"
+      },
+      "goto": "after"
+    },
+    {
+      "if": "finished",
+      "goto": "quiet"
+    },
+    {
+      "label": "first"
+    },
+    {
       "if": "b94_echo",
       "goto": "again"
     },
@@ -5998,6 +6340,249 @@
     },
     {
       "t": "J + B. DAY 4. 1994. If you listen hard, the wall is still laughing."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "quiet"
+    },
+    {
+      "if": "omkara_rest",
+      "goto": "resting"
+    },
+    {
+      "ifCond": {
+        "all": [
+          {
+            "flag": "root_a"
+          },
+          {
+            "flag": "root_u"
+          },
+          {
+            "flag": "root_m"
+          },
+          {
+            "flag": "root_s"
+          }
+        ]
+      },
+      "goto": "answer"
+    },
+    {
+      "if": "root_wall",
+      "goto": "held"
+    },
+    {
+      "t": "The rock here is covered in paintings: spirals, hand prints, a dancing figure in yellow. The gorge is so quiet you can hear the paint."
+    },
+    {
+      "t": "You could shout something.",
+      "choice": [
+        "Shout HELLO",
+        "Leave it"
+      ],
+      "goto": [
+        "hush",
+        "bye"
+      ]
+    },
+    {
+      "label": "hush"
+    },
+    {
+      "t": "HELLO..."
+    },
+    {
+      "t": "Nothing. Not a \"lo\". The gorge takes the word and keeps it."
+    },
+    {
+      "ifNot": "b94_echo",
+      "goto": "last"
+    },
+    {
+      "t": "Even the laughing under the yellow dancer has stopped. The wall is not broken. It looks like something holding its breath."
+    },
+    {
+      "set": "root_wall"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "last"
+    },
+    {
+      "t": "Then, late, as if from the bottom of a bag, a voice that is not yours. A young woman, laughing, thirty years away:",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "s": "???",
+      "t": "BANYAN! WAIT FOR ME AT THE SUNRISE SET! I WILL BE BACK BEFORE THE LAST TRACK!",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "No echo follows it. That was the last one the wall had, and it spent it on her."
+    },
+    {
+      "t": "Under the yellow dancer, scratched into the stone with something sharp: J + B. DAY 4. 1994."
+    },
+    {
+      "set": "b94_echo"
+    },
+    {
+      "set": "root_wall"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "held"
+    },
+    {
+      "if": "root_asked",
+      "goto": "held2"
+    },
+    {
+      "t": "You shout. The wall keeps it. It is not broken: it is holding its breath. Baba Smoke, in his cave by the sea, is the one who knows about breath."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "held2"
+    },
+    {
+      "t": "You shout. The wall keeps it, politely. It is still waiting for the rest: three sounds and a silence."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "answer"
+    },
+    {
+      "t": "You breathe in to shout."
+    },
+    {
+      "t": "The wall answers first.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "One note, low, from everywhere in the rock at once. The cliff's wind is in it, and the grotto's swell, and the hum of the cave. Then the paint begins to move.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "Answer it?",
+      "choice": [
+        "Answer",
+        "Back away"
+      ],
+      "goto": [
+        "go",
+        "no"
+      ]
+    },
+    {
+      "label": "go"
+    },
+    {
+      "set": "met_omkara"
+    },
+    {
+      "set": "omkara_rest"
+    },
+    {
+      "wild": "omkara",
+      "level": 60
+    },
+    {
+      "ifCond": {
+        "caughtSpecies": "omkara"
+      },
+      "goto": "caught"
+    },
+    {
+      "t": "The note thins out and goes back into the rock. The wall is quiet again. Walk out of the gorge and come back: it waited a whole festival, it can manage a little longer."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "caught"
+    },
+    {
+      "t": "The note stops. A moment later, from the far side of the gorge, quite small: \"...lo.\""
+    },
+    {
+      "t": "The wall has its echo back. The root note is in your Journal, where it will be reasonably quiet."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "no"
+    },
+    {
+      "t": "You back away. It does not mind. It has time."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "resting"
+    },
+    {
+      "t": "The wall is quiet. Whatever answered has gone back into the rock. Walk out of the gorge and come back."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "after"
+    },
+    {
+      "ifNot": "b94_echo",
+      "goto": "first"
+    },
+    {
+      "t": "J + B. DAY 4. 1994. If you listen hard, the wall is still laughing."
+    },
+    {
+      "t": "You could shout something.",
+      "choice": [
+        "Shout HELLO",
+        "Leave it"
+      ],
+      "goto": [
+        "echo",
+        "bye"
+      ]
+    },
+    {
+      "label": "echo"
+    },
+    {
+      "t": "HELLO... hello... llo... lo..."
+    },
+    {
+      "t": "Then three more, which you did not put in."
+    },
+    {
+      "t": "...aaa... The wind coming up the Sunset Cliff, before anybody is awake to film it.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "...ooo... The swell turning over under the Sea Grotto, in no hurry.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "...mmm... The Sadhu Cave, humming to itself in the dark.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "And after them nothing at all, for exactly as long as it should be. The wall has learned where the rests go."
     }
   ],
   "joni_stall": [
@@ -6064,6 +6649,580 @@
     {
       "s": "Joni",
       "t": "We are going to try two weeks again. See how it goes."
+    }
+  ],
+  "cable_lars": [
+    {
+      "if": "cable_done",
+      "goto": "done"
+    },
+    {
+      "ifHas": "mended_cable",
+      "goto": "mended"
+    },
+    {
+      "if": "cable_asked",
+      "goto": "again"
+    },
+    {
+      "s": "Lars",
+      "t": "See that man across the bridge, dancing like a deckchair in the wind? My brother Nils. We had one pair of earbuds and forty metres of cable. One bud each, the gorge in the middle. Six years, never out of time."
+    },
+    {
+      "s": "Lars",
+      "t": "Then he did a spin. I TOLD him, no spins. The cable went in three pieces. One fell into the slot canyon. One, a caver walked off with. And something big flew away with the third, to the ledges out west."
+    },
+    {
+      "s": "Lars",
+      "t": "Now he dances to what he remembers and I dance to what is left. Bring back the three pieces, find somebody who can solder, and I will stop telling people about it."
+    },
+    {
+      "set": "cable_asked"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "again"
+    },
+    {
+      "s": "Lars",
+      "t": "Three pieces: the slot canyon, the caver, the nest on the western ledges. Then somebody with a soldering iron. I am counting on you. I am counting in general. There is no music."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "mended"
+    },
+    {
+      "run": "cable_payoff"
+    },
+    {
+      "label": "done"
+    },
+    {
+      "s": "Lars",
+      "t": "Six years in time, three weeks out, and in again. Do not tell him, but the spin was quite good."
+    }
+  ],
+  "cable_nils": [
+    {
+      "if": "cable_done",
+      "goto": "done"
+    },
+    {
+      "ifHas": "mended_cable",
+      "goto": "mended"
+    },
+    {
+      "if": "cable_asked",
+      "goto": "again"
+    },
+    {
+      "s": "Nils",
+      "t": "You came over the bridge. Did the man on the other side tell you I did a spin? That is my brother Lars. I did not do a spin. I did a turn. A turn is allowed."
+    },
+    {
+      "s": "Nils",
+      "t": "One pair of earbuds, forty metres of cable, the gorge in between. Now the cable is in three pieces. One went down the slot canyon. One is holding up a caver's trousers. One is in a nest on the ledges out west, and the nest has opinions."
+    },
+    {
+      "s": "Nils",
+      "t": "Uncle Sunny at the mattress can solder. He says. Bring him all three. I would go myself, but then who would dance on this side?"
+    },
+    {
+      "set": "cable_asked"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "again"
+    },
+    {
+      "s": "Nils",
+      "t": "Slot canyon, trousers, nest. Then Sunny. Please hurry. I have been humming the same four bars since Tuesday."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "mended"
+    },
+    {
+      "run": "cable_payoff"
+    },
+    {
+      "label": "done"
+    },
+    {
+      "s": "Nils",
+      "t": "It was a turn. But between us: I am working on a spin."
+    }
+  ],
+  "cable_payoff": [
+    {
+      "t": "You hand over the mended cable. It is mostly electrical tape now. One end goes across the bridge, hand over hand, forty metres of it."
+    },
+    {
+      "take": "mended_cable",
+      "n": 1
+    },
+    {
+      "t": "One bud each. A click. Then, on both sides of the gorge at the same moment, the same left foot."
+    },
+    {
+      "s": "Lars and Nils",
+      "t": "IT IS IN STEREO."
+    },
+    {
+      "t": "They dance. Up at the painted wall the echo joins in, half a beat late, like somebody's uncle at a wedding.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "set": "cable_done"
+    },
+    {
+      "s": "Lars and Nils",
+      "t": "There was a spare part taped to the plug. Sunny always has a part left over. It splits the music two ways. We only need the one way now, so it is yours."
+    },
+    {
+      "give": "aux_splitter",
+      "n": 1
+    },
+    {
+      "s": "Lars and Nils",
+      "t": "Give it to an Astral to hold. Whatever the fight teaches, it hears its share, even from the bottom of the bag. The ones who fought get a little less. That is brothers for you."
+    }
+  ],
+  "cable_nest": [
+    {
+      "if": "cable_nest",
+      "goto": "empty"
+    },
+    {
+      "t": "A nest the size of a tractor tyre, wedged on the ledge. Twigs, one flip-flop, three dead glow sticks, and woven all through it, a length of white cable."
+    },
+    {
+      "ifNot": "cable_asked",
+      "goto": "sleepy"
+    },
+    {
+      "t": "Two round eyes open in the middle of it. Pull at the cable?",
+      "choice": [
+        "Pull",
+        "Leave it"
+      ],
+      "goto": [
+        "pull",
+        "no"
+      ]
+    },
+    {
+      "label": "pull"
+    },
+    {
+      "t": "You pull. The nest pulls back."
+    },
+    {
+      "wild": "sirenowl",
+      "level": 16
+    },
+    {
+      "set": "cable_nest"
+    },
+    {
+      "t": "The nest is quiet, and a little ruffled. A loop of cable has come away in your hand."
+    },
+    {
+      "give": "cable_piece",
+      "n": 1
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "sleepy"
+    },
+    {
+      "t": "Two round eyes open in the middle of it, look you over, and close again. Nobody has given either of you a reason."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "no"
+    },
+    {
+      "t": "You leave the nest alone. The eyes follow you all the way down the ledge."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "empty"
+    },
+    {
+      "t": "The nest, with a cable-shaped gap in it. Somebody has already started filling the gap with a second flip-flop."
+    }
+  ],
+  "caver_ravi_belt": [
+    {
+      "if": "cable_ravi",
+      "goto": "after"
+    },
+    {
+      "ifNot": "cable_asked",
+      "goto": "after"
+    },
+    {
+      "s": "Caver Ravi",
+      "t": "This? This is my belt. It fell out of the sky into the slot, and I took that as a sign. A sign that I needed a belt.",
+      "style": "DOWNER"
+    },
+    {
+      "s": "Caver Ravi",
+      "t": "The brothers' cable. Hm. They do look sad up there, all out of time. Fine. Take it. I have two hands and only one torch.",
+      "style": "DOWNER"
+    },
+    {
+      "set": "cable_ravi"
+    },
+    {
+      "give": "cable_piece",
+      "n": 1
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "after"
+    },
+    {
+      "s": "Caver Ravi",
+      "t": "Uncle Sunny is just through there. He will tell you to lie down. Lie down.",
+      "style": "DOWNER"
+    }
+  ],
+  "chill_dome": [
+    {
+      "if": "dome_met",
+      "goto": "menu"
+    },
+    {
+      "s": "Luna",
+      "t": "Shh. Welcome to the Chill-Out Dome. Shoes off, voices down. I have not raised mine since 2009."
+    },
+    {
+      "s": "Luna",
+      "t": "Some Astrals need a rest from all the clashing. Leave one with me. It lies on a cushion, and when you come back it knows things. I do not ask how."
+    },
+    {
+      "set": "dome_met"
+    },
+    {
+      "label": "menu"
+    },
+    {
+      "s": "Luna",
+      "t": "What can the Dome do for you?",
+      "choice": [
+        "Leave an Astral",
+        "Pick one up",
+        "How does it work?",
+        "Nothing"
+      ],
+      "goto": [
+        "leave",
+        "collect",
+        "how",
+        "bye"
+      ]
+    },
+    {
+      "label": "leave"
+    },
+    {
+      "s": "Luna",
+      "dome": "leave",
+      "full": "full",
+      "alone": "alone",
+      "cancel": "bye"
+    },
+    {
+      "s": "Luna",
+      "t": "{astral} will be fine. It walks when you walk, in its head. Come back when you miss it."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "full"
+    },
+    {
+      "s": "Luna",
+      "t": "Two cushions, two Astrals. The Dome is full. This is not a hostel."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "alone"
+    },
+    {
+      "s": "Luna",
+      "t": "And who walks you home? No. Keep at least one that can stand up."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "collect"
+    },
+    {
+      "s": "Luna",
+      "dome": "collect",
+      "none": "none",
+      "broke": "broke",
+      "stashed": "stashed",
+      "cancel": "bye"
+    },
+    {
+      "goto": "learn"
+    },
+    {
+      "label": "stashed"
+    },
+    {
+      "s": "Luna",
+      "t": "Your hands are full, so {astral} has gone to Chai Mama's stash. We have an arrangement."
+    },
+    {
+      "label": "learn"
+    },
+    {
+      "s": "Luna",
+      "dome": "learn"
+    },
+    {
+      "s": "Luna",
+      "t": "There. {astral} is yours again, at level {level}. If it looks ready to change, one good clash will do it. Evolving is too loud for in here."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "none"
+    },
+    {
+      "s": "Luna",
+      "t": "Nobody of yours is in the Dome. Only the cushions, and they are mine."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "broke"
+    },
+    {
+      "s": "Luna",
+      "t": "{astral} grew {levels} levels. That is Rs {fee}, and you do not have it. No hurry. It is very comfortable here."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "how"
+    },
+    {
+      "s": "Luna",
+      "t": "You leave an Astral on a cushion. Every step you walk, it gains a few Vibes: the higher its level, the more. It never outgrows the strongest Astral walking with you."
+    },
+    {
+      "s": "Luna",
+      "t": "It will not evolve in here, and if it learns a move it has no room for, we sort that out when you pick it up. I ask Rs {domeFee} for each level it grew. Two cushions, so two Astrals at most."
+    },
+    {
+      "goto": "menu"
+    },
+    {
+      "label": "bye"
+    },
+    {
+      "s": "Luna",
+      "t": "Then breathe out slowly, and mind the flap."
+    }
+  ],
+  "dome_tent": [
+    {
+      "t": "THE CHILL-OUT DOME. A canvas dome the colour of weak tea. From inside: a singing bowl, and somebody snoring in a key that goes with it."
+    }
+  ],
+  "root_swell": [
+    {
+      "ifCond": {
+        "any": [
+          {
+            "hour": [
+              4,
+              10
+            ]
+          },
+          {
+            "hour": [
+              16,
+              22
+            ]
+          }
+        ]
+      },
+      "goto": "low"
+    },
+    {
+      "ifCond": {
+        "not": {
+          "intox": 0.25
+        }
+      },
+      "goto": "sober"
+    },
+    {
+      "ifCond": {
+        "not": {
+          "any": [
+            {
+              "leadType": "SONIC"
+            },
+            {
+              "leadType": "SACRED"
+            }
+          ]
+        }
+      },
+      "goto": "nolead"
+    },
+    {
+      "t": "You put your ear to the back wall. The tide is in. The whole grotto breathes with it, in and out, in no hurry."
+    },
+    {
+      "t": "Then the swell turns over somewhere under the rock, and the wall says one long round sound. Ooooo. It goes through you the way it goes through the stone.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "The second sound. Your Astral in front heard it before you did, and is being decent about it."
+    },
+    {
+      "set": "root_u"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "low"
+    },
+    {
+      "t": "The back wall is wet to shoulder height and has nothing to say. The sea is a long way out, busy elsewhere. The tide table at Fishermen's Cove says when it comes back."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "sober"
+    },
+    {
+      "t": "The tide is in and the wall is booming. With a clear head it is only water hitting rock. Whatever is in there wants you less tidy than this."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "nolead"
+    },
+    {
+      "t": "The tide is in, you are suitably untidy, and the wall is booming. It stays a boom. Whoever walks in front of you is not the listening kind: it wants something SONIC or SACRED."
+    }
+  ],
+  "root_hum": [
+    {
+      "t": "You stand still. After a while the dark stops being empty and starts being full."
+    },
+    {
+      "t": "The cave is humming. Mmmmm. It has been all along, under the dripping and the smoke and your feet. It only needed you to stop making noise at it.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "The third sound. Your Astral in front is humming along, slightly flat. Baba Smoke has not moved. He may be asleep. He may be the hum."
+    },
+    {
+      "set": "root_m"
+    }
+  ],
+  "root_hum_miss": [
+    {
+      "t": "You stand still in the dark. Something in here is humming, probably. Nobody walking in front of you can tell you where: it would take something SONIC or SACRED."
+    },
+    {
+      "set": "root_m_miss"
+    }
+  ],
+  "root_silence": [
+    {
+      "ifCond": {
+        "not": {
+          "has": "earplugs"
+        }
+      },
+      "goto": "bare"
+    },
+    {
+      "ifCond": {
+        "not": {
+          "any": [
+            {
+              "leadType": "SONIC"
+            },
+            {
+              "leadType": "SACRED"
+            }
+          ]
+        }
+      },
+      "goto": "nolead"
+    },
+    {
+      "t": "You land on the warm stone and put the Earplugs in."
+    },
+    {
+      "t": "The kick drum goes. The bassline goes. The hi-hat carries on a moment longer, out of habit, and then that goes too."
+    },
+    {
+      "t": "What is left is not quiet. It is a silence with edges, exactly one note wide. Your Astral in front leans into it, the way you lean into a wind.",
+      "style": "PSYCHEDELIC"
+    },
+    {
+      "t": "The silence. You have it now. It weighs nothing, and you will still find a way to carry it badly."
+    },
+    {
+      "set": "root_s"
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "bare"
+    },
+    {
+      "t": "The Mainstage Temple is as loud as ever. Whatever is underneath all this, bare ears will not find it. The Flea Market sells Earplugs."
+    },
+    {
+      "end": true
+    },
+    {
+      "label": "nolead"
+    },
+    {
+      "t": "You put the Earplugs in. The music goes away and leaves an ordinary quiet, with nothing in it. Nobody walking in front of you knows what to listen for: it would take something SONIC or SACRED."
     }
   ]
 }

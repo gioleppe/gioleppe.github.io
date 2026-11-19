@@ -8,7 +8,7 @@ export const C = {
   sand: '#E8C39E', red: '#D90429', grey: '#6C757D', white: '#FFFFFF', ink: '#2A1A2E', yellow: '#FFE066',
 };
 export const TYPE_COLORS = {
-  PSYCHEDELIC: '#C86BFF', STIMULANT: '#FFD23F', DISSOCIATIVE: '#7FD6FF', ORGANIC: '#6CCB5F', DOWNER: '#7C8CD9', BUMMER: '#9A8F9F', NORMAL: '#D8C9B8',
+  PSYCHEDELIC: '#C86BFF', STIMULANT: '#FFD23F', DISSOCIATIVE: '#7FD6FF', ORGANIC: '#6CCB5F', DOWNER: '#7C8CD9', BUMMER: '#9A8F9F', SONIC: '#FF7A45', SACRED: '#E8B84A', NORMAL: '#D8C9B8',
 };
 
 export function panel(g, x, y, w, h, opts = {}) {

@@ -107,6 +107,18 @@
         "minLevel": 21,
         "maxLevel": 23,
         "weight": 20
+      },
+      {
+        "speciesId": "conchlet",
+        "minLevel": 21,
+        "maxLevel": 23,
+        "weight": 15
+      },
+      {
+        "speciesId": "echit",
+        "minLevel": 21,
+        "maxLevel": 23,
+        "weight": 12
       }
     ],
     "water": [

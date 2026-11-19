@@ -22,7 +22,7 @@
     "tb...kjeeeeeejk....t",
     "t...L....,,....L...t",
     "t..~~~...,,...~~~..t",
-    "tt.~~~.b.,,...~~~btt",
+    "tt.~~~āb.,,...~~~btt",
     "t...C....,,....M...t",
     "t........,,........t",
     "ttttttttt,,ttttttttt"
@@ -262,6 +262,18 @@
         "minLevel": 21,
         "maxLevel": 24,
         "weight": 15
+      },
+      {
+        "speciesId": "woofhound",
+        "minLevel": 22,
+        "maxLevel": 24,
+        "weight": 12
+      },
+      {
+        "speciesId": "wherewolf",
+        "minLevel": 26,
+        "maxLevel": 26,
+        "weight": 6
       },
       {
         "speciesId": "gurnagama",

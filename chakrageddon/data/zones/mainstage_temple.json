@@ -364,5 +364,25 @@
     "reset": [
       "temple_water_used"
     ]
+  },
+  "arriveScript": "root_silence",
+  "arriveUnless": {
+    "not": {
+      "all": [
+        {
+          "flag": "root_asked"
+        },
+        {
+          "not": {
+            "flag": "root_s"
+          }
+        },
+        {
+          "not": {
+            "caughtSpecies": "omkara"
+          }
+        }
+      ]
+    }
   }
 }

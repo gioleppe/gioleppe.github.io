@@ -1,6 +1,7 @@
 // Grid movement, collision, warps, field techniques, trainer line-of-sight and wild encounter rolls.
 // Pure functions over ctx = { data, state, rng, emit }.
 import { tl } from './i18n.js';
+import { domeTick } from './dome.js';
 import { check } from './quests.js';
 import { bandOf, bandIndex, egoGone } from './intox.js';
 import { runScript, startScript, bossGate, gauntletUnderWay } from './ScriptEngine.js';
@@ -203,6 +204,26 @@ export function enterZone(ctx, zoneId, x, y, dir) {
   ctx.emit({ type: 'AUDIO_CUE', trackBpm: zone.baseBpm, lowPassFilterHz: 20000 });
 }
 
+/** Standing still (the STAND_STILL command: state.still counts the seconds, and any other command sets it back to 0).
+ *  zone.stillSpots: [{ seconds, script, rect?: [x0, y0, x1, y1], cond? }]: once you have stood still for that long, inside
+ *  rect (the whole area without one) and with cond holding (a quest condition, src/core/quests.js), the script runs. A spot
+ *  that should answer only once sets a flag in its script and asks for { not: { flag } } in cond. Returns true when one ran. */
+export function standStill(ctx, seconds = 1) {
+  const s = ctx.state, zone = zoneOf(ctx), { x, y } = s.player;
+  s.still = Math.min(3600, (s.still || 0) + Math.max(0, Math.min(5, Number(seconds) || 0)));   // a long frame is not a long wait
+  for (const sp of zone?.stillSpots || []) {
+    if (s.still < (sp.seconds ?? 3)) continue;
+    if (sp.rect && !(x >= sp.rect[0] && y >= sp.rect[1] && x <= sp.rect[2] && y <= sp.rect[3])) continue;
+    if (sp.cond && !check(s, sp.cond, ctx.data)) continue;
+    const script = ctx.data.dialogues[sp.script];
+    if (!script) continue;
+    s.still = 0;
+    startScript(ctx, script);
+    return true;
+  }
+  return false;
+}
+
 /** where Unstuck (System menu) puts you: the spot where you came into this area; from a save older than that, the
  *  nearest place any way in arrives */
 export function unstuckSpot(ctx) {
@@ -254,6 +275,7 @@ export function step(ctx, dir) {
   if (shut) { bump(ctx); return startScript(ctx, [{ s: shut.closedBy || '', t: shut.closedText || tl('The way is closed.') }]); }
   s.player.x = nx; s.player.y = ny;
   s.steps++;
+  domeTick(ctx);                                                       // the Chill-Out Dome: whoever you left there walks along in its head
   // the festival clock: one minute every few steps, so an hour is about a minute of walking
   s.clockSteps = (s.clockSteps || 0) + 1;
   if (s.clockSteps >= (ctx.data.rules.stepsPerMinute || 1)) {

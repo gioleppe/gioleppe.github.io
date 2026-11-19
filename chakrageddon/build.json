@@ -1,7 +1,7 @@
 {
   "game": "Chakra-geddon",
-  "version": "1.6.1",
-  "commit": "a97b92d",
-  "sw": "b0c3b8cb1a52",
-  "files": 283
+  "version": "2.0.0",
+  "commit": "83bc182-dirty",
+  "sw": "df75423a20f4",
+  "files": 317
 }

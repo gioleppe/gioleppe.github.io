@@ -8,7 +8,7 @@ const LINES = [
   ['You got your passport back.', C.cream], ['You never did find your shoes.', C.cream], '', '',
   ['CAST', C.magenta], 'Prof. Banyan  -  in Goa since 1994, for two weeks', 'Astra-Zero  -  Chad, from the charter flight', 'Chai Mama  -  tired, kind, crochet',
   'DJ Diabolo', 'Guru Svetlana', 'Captain Keta', 'Chef Raju', 'Baron Von Darkpsy', 'Influencer Chloe', 'Baba Smoke', 'The Promoter', 'The Four-on-the-Floor', 'The VIP Shaman Council', '', '',
-  ['ASTRALS', C.magenta], 'Forty-one of them. Check your Journal.', '', '',
+  ['ASTRALS', C.magenta], 'Sixty-five of them. Check your Journal.', '', '',
   ['A SATIRE', C.magenta], 'Nothing here is advice.', 'Drink water. Wear sunscreen.', 'Look after the person next to you.', 'Harm reduction tents are real, and they are heroes.', '', '',
   ['MADE WITH', C.magenta], 'A headless deterministic core, plain JSON,', 'a canvas, one shader, and a synth with no samples.', 'Every sprite drawn by script in Aseprite.', '', '', '',
   ['Thank you for playing.', C.yellow], '', ['The festival goes on.', C.cream],

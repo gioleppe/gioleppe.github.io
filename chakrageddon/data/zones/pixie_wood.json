@@ -148,6 +148,12 @@
         "weight": 10
       },
       {
+        "speciesId": "glimmoth",
+        "minLevel": 7,
+        "maxLevel": 10,
+        "weight": 12
+      },
+      {
         "speciesId": "blottertot",
         "minLevel": 8,
         "maxLevel": 10,
@@ -188,6 +194,12 @@
         "weight": 15
       },
       {
+        "speciesId": "glimmoth",
+        "minLevel": 8,
+        "maxLevel": 10,
+        "weight": 20
+      },
+      {
         "speciesId": "blottertot",
         "minLevel": 8,
         "maxLevel": 11,
@@ -226,7 +238,7 @@
     "tttttttItttIIţtttţt,,ttttttIttb.~~~~~...ţttţ",
     "tttttttţtIttttttttţ,,ttttttbtttt~~~~~...ţttt",
     "ttttttţttttţtttttII,,bttttttttI..b~~~.bttttt",
-    "IţtttIţttttttttţttţ,,bţttttţItţ....ţ.Itttttt",
+    "IţtttIţttttttttţttţ,ębţttttţItţ....ţ.Itttttt",
     "ttttttţtttţttttţttt,,.......ţIb..bItttIttttI",
     "bttttttttttbtţtttt.,,............t.IIttItttt",
     "tttttbttttt........,,.ttt..........ttttttttt",
@@ -247,14 +259,14 @@
     "ttttttttţttIttttt,,tţtbttItt..ItttttttttIItt",
     "tttttttttttttţţtţffttItttbtbfftttttţttţttItt",
     "Ibttttttttttb..b.,,............tIbItttttttbt",
-    "ttttttttttb......,,.............tttttttttbtt",
+    "ttttttttttb....ę.,,.............tttttttttbtt",
     "ttttbttţ...f.....,,........~~~~~.ţtţtttttttt",
     "ţtţttttt...f~~...,,.......~~~~~~~..ttttţtttt",
     "tttttttb.~~f~~~~.,,......~~~~~~~~~Ittţtttttt",
     "ttttttttb~~~~~~~~,,.......~~~~~~~.ttţttttttt",
     "ttttttbIţ~~~~~~~.,,........~~.~..MtbttIttttt",
-    "tţttb.M..b....~..,,......................ttt",
-    "tţtt.............,,,,,,...................tt",
+    "tţttb.M..bę...~..,,......................ttt",
+    "tţtt.............,,,,,,...ē...............tt",
     "ttt..ö.....b.....,,,,,,...101.tbb.....ö...tI",
     "tttt.....ţttbţ.......,,......bttb.........ţt",
     "tItt....ţtItttţtt.ţ.b,,ţţbtţttttttb......bbt",

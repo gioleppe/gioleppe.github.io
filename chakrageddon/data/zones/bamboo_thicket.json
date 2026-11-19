@@ -187,6 +187,12 @@
         "minLevel": 20,
         "maxLevel": 23,
         "weight": 15
+      },
+      {
+        "speciesId": "didgeroo",
+        "minLevel": 20,
+        "maxLevel": 23,
+        "weight": 15
       }
     ],
     "water": [

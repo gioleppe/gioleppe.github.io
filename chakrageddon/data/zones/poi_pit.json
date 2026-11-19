@@ -25,7 +25,7 @@
     "tddddddddddddddddddddddddddt",
     "t.........,,,,,............t",
     "t..L......,,..........L....t",
-    "t...C.....,,..m.q..........t",
+    "t...C.....,,..m.qā.........t",
     "t..~~~~...,,....~~~~.......t",
     "t..~~~~...,,....~~~~.......t",
     "t.........,,...............t",
@@ -231,6 +231,12 @@
         "weight": 20
       },
       {
+        "speciesId": "tweeterling",
+        "minLevel": 5,
+        "maxLevel": 7,
+        "weight": 15
+      },
+      {
         "speciesId": "blottertot",
         "minLevel": 6,
         "maxLevel": 8,
@@ -269,6 +275,18 @@
         "minLevel": 5,
         "maxLevel": 7,
         "weight": 20
+      },
+      {
+        "speciesId": "lostling",
+        "minLevel": 5,
+        "maxLevel": 7,
+        "weight": 20
+      },
+      {
+        "speciesId": "tweeterling",
+        "minLevel": 6,
+        "maxLevel": 7,
+        "weight": 10
       }
     ]
   },

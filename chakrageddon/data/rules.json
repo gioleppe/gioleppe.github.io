@@ -139,7 +139,8 @@
       "wristband": "wonky_keychain",
       "types": [
         "DOWNER",
-        "ORGANIC"
+        "ORGANIC",
+        "SONIC"
       ]
     },
     "pink_flamingo_float": {
@@ -540,5 +541,12 @@
     "alley_cleared": {
       "flag": "beat_raju"
     }
+  },
+  "dome": {
+    "_comment": "The Chill-Out Dome at Sweetwater Lake (src/core/dome.js): slots Astrals at most; each step you walk gives one of them perStep Vibes plus 1 per perLevels levels it has, up to the level of your strongest; picking it up costs feePerLevel Rupees a level.",
+    "slots": 2,
+    "perStep": 1,
+    "perLevels": 8,
+    "feePerLevel": 60
   }
 }

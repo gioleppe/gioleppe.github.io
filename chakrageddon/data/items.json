@@ -454,5 +454,31 @@
       "outfit": "player_traveller"
     },
     "desc": "Cosmetic. Banyan's backpack from 1994, and his old vest. Two weeks' worth of clothes, thirty years' worth of dust. Wear it from the Stash Tin."
+  },
+  {
+    "id": "cable_piece",
+    "name": "Cable Piece",
+    "category": "KEY",
+    "price": 0,
+    "effect": {},
+    "desc": "A length of white earbud cable, chewed at both ends. Lars and Nils at the rope bridge in the Red Laterite Gorge are missing three of these."
+  },
+  {
+    "id": "mended_cable",
+    "name": "Mended Cable",
+    "category": "KEY",
+    "price": 0,
+    "effect": {},
+    "desc": "Forty metres of earbud cable, soldered by Uncle Sunny with a spoon and a lighter. It is mostly electrical tape now. For Lars and Nils at the rope bridge."
+  },
+  {
+    "id": "aux_splitter",
+    "name": "Aux Splitter",
+    "category": "HELD",
+    "price": 0,
+    "effect": {
+      "held": true
+    },
+    "desc": "To hold. Uncle Sunny's left-over part. Its holder listens in on every clash and takes a share of the Vibes without fighting. A share is a share: the others get less."
   }
 ]

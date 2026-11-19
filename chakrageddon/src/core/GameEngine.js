@@ -16,11 +16,12 @@ export function newState(data, seed = 1) {
   const start = data.manifest.start || { zone: Object.keys(data.zones)[0], x: 1, y: 1, dir: 'DOWN' };
   return {
     v: SAVE_VERSION,
+    seen200: 1,                                                       // 2.0.0: a save without it is from before the new types (the view shows a note once)
     rng: seed >>> 0, salt: seed >>> 0,                                // salt: this playthrough's growth rolls (mons.js)
     mode: 'OVERWORLD',
     zoneId: start.zone,
     player: { x: start.x, y: start.y, dir: start.dir || 'DOWN' },
-    party: [], box: [], bag: {}, rupees: data.rules.startRupees ?? 0,
+    party: [], box: [], dome: [], bag: {}, rupees: data.rules.startRupees ?? 0,
     flags: {}, wristbands: [], defeated: {}, picked: {},
     cleared: {}, pushed: {}, visited: { [start.zone]: 1 }, tents: [],
     dex: { seen: {}, caught: {} },
@@ -30,6 +31,7 @@ export function newState(data, seed = 1) {
     script: null, scriptMode: null, dialogue: null, battle: null, shop: null, menu: null, scene: null,
     playerName: null, npcPos: {}, outfit: null, said: {}, visitor: null, visitorFx: null, entered: null,
     elapsed: 0, peakIntox: 0,                                       // for the end card: festival minutes lived, highest high
+    still: 0,                                                       // seconds stood still on the map (STAND_STILL; zone.stillSpots)
   };
 }
 
@@ -51,7 +53,7 @@ export class GameEngine {
     // content added after a save was made, already behind you: marked as done (rules.doneIn: { flag: condition })
     for (const [flag, cond] of Object.entries(data.rules.doneIn || {})) if (flag[0] !== '_' && !state.flags[flag] && check(state, cond, data)) state.flags[flag] = 1;
     // stats come from growth since 1.2.0: an Astral from an older save keeps its level and lands on the average curve
-    for (const m of [...(state.party || []), ...(state.box || [])]) { const st = statsOf(data, m); m.hp = Math.min(m.hp, st.maxHp); m.hyd = Math.min(m.hyd, st.maxHyd); }
+    for (const m of [...(state.party || []), ...(state.box || []), ...(state.dome || []).map((e) => e.mon)]) { const st = statsOf(data, m); m.hp = Math.min(m.hp, st.maxHp); m.hyd = Math.min(m.hyd, st.maxHyd); }
     const e = new GameEngine(data, { state });
     if (state.mode === 'OVERWORLD' && data.zones[state.zoneId]) e.run((ctx) => OW.settle(ctx));   // the map may have been redrawn since
     return e;
@@ -70,7 +72,13 @@ export class GameEngine {
     const s = this.state;
     const bandBefore = bandIndex(this.data.rules, s.intox), goalBefore = currentGoal(this.data, s)?.id, clockBefore = s.clock;
     const questsBefore = Object.fromEntries(questLog(this.data, s).map((q) => [q.id, q.state]));
+    if (cmd.type !== 'STAND_STILL') s.still = 0;                       // anything else you do ends the standing still
     switch (cmd.type) {
+      case 'STAND_STILL':
+        // the clock only moves with your steps, so the view sends this about once a second while you stand on the map with
+        // nothing going on (seconds: how long since the last one). Somewhere that listens for it (zone.stillSpots), a script starts
+        if (s.mode === 'OVERWORLD' && !s.dialogue && !s.script && !s.battle) OW.standStill(ctx, cmd.seconds);
+        break;
       case 'BEGIN':
         if (!s.flags.started) { s.flags.started = 1; const intro = this.data.dialogues.intro; if (intro) startScript(ctx, intro); }
         break;

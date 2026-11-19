@@ -10,7 +10,7 @@
   "indoor": true,
   "rows": [
     "ccccccccccc,,ccccccccccc",
-    "c..x.......,,.......x..c",
+    "c..x..į....,,.......x..c",
     "c.~~~....777777.....8..c",
     "c.~~~....7cccc7.~~~....c",
     "ccccccc..7cccc7..ccccc.c",
@@ -25,7 +25,7 @@
     "cccc..ccc...7....ccc..cc",
     "c.......x...7........x.c",
     "c.8.........7..........c",
-    "c...........7..........c",
+    "c......į....7..........c",
     "ccccccccccc,,ccccccccccc"
   ],
   "warps": [
@@ -162,6 +162,18 @@
         "minLevel": 26,
         "maxLevel": 28,
         "weight": 20
+      },
+      {
+        "speciesId": "woofhound",
+        "minLevel": 25,
+        "maxLevel": 28,
+        "weight": 12
+      },
+      {
+        "speciesId": "wherewolf",
+        "minLevel": 27,
+        "maxLevel": 28,
+        "weight": 10
       }
     ]
   }

@@ -12,7 +12,7 @@ import { saveLanguage } from './assets.js';
 import { tl } from '../core/i18n.js';
 
 const SAVE_KEY = 'chakrageddon.save.v1', SETTINGS_KEY = 'chakrageddon.settings.v1';
-export const VERSION = '1.6.1';   // keep in step with package.json (tests/scenarios.test.mjs checks)
+export const VERSION = '2.0.0';   // keep in step with package.json (tests/scenarios.test.mjs checks)
 
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
@@ -284,7 +284,7 @@ export class Game {
     this.titleCursor = r.cursor;
     if (r.chosen >= 0) {
       const it = items[r.chosen];
-      if (it.id === 'continue') this.loadGame();
+      if (it.id === 'continue') { if (this.extra.whatsNew?.due(this)) this.screen = 'whatsNew'; else this.loadGame(); }
       else if (it.id === 'lang') { this.screen = 'settings'; this.extra.settings.openLanguage(this, 'title'); }
       else if (it.screen) { this.screen = it.screen; this.extra[it.screen].open?.(this, 'title'); }
       else if (this.hasSave() && !this.confirmNew) { this.confirmNew = true; this.say(tl('Press again to overwrite your save.')); }
