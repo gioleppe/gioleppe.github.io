@@ -1,0 +1,62 @@
+{
+  "id": "reef",
+  "title": "Reef and shipwreck",
+  "comment": "The reef path and the shipwreck at low tide: exposed, metallic, hollow. B locrian (the diminished fifth f under b). 75 bpm in 5/4 (bar 4 s), 8 bars. Square-wave pads for the hollow hull, FM bells with inharmonic ratios for struck metal, high pings in the delay like water in a steel room.",
+  "bpm": 75,
+  "beatsPerBar": 5,
+  "scale": { "root": "b3", "mode": "locrian" },
+  "gain": 0.79,
+  "bars": 8,
+  "seed": 71,
+  "fx": { "delayBeats": 1.5, "delayFeedback": 0.55, "delayTone": 3500 },
+  "layers": [
+    {
+      "id": "hull",
+      "voice": "pad",
+      "comment": "the hollow of the wreck: a square-wave pad, odd harmonics only, voiced above f4 so the low end stays clear; always on",
+      "params": { "wave": "square", "voices": 2, "detune": 7, "cutoff": 1400, "q": 2, "attack": 2.5, "release": 3.5, "sustain": 0.8, "width": 0.6, "level": 0.11 },
+      "gain": 0.75,
+      "reverb": 0.55,
+      "pattern": "<[f4,b4,c5] [e4,a4,b4]>/4"
+    },
+    {
+      "id": "metal",
+      "voice": "bell",
+      "comment": "struck metal: inharmonic FM, low-ish, ringing",
+      "params": { "ratio": 1.41, "index": 3, "decay": 4.5, "brightDecay": 0.2, "partial": 0.4, "partialRatio": 3.73, "cutoff": 3800, "level": 0.2, "humanise": 0.3 },
+      "gain": 0.8,
+      "reverb": 0.6,
+      "pan": -0.25,
+      "pattern": "<[b4 ~ ~ ~ ~] ~ [~ ~ f4 ~ ~] [~ ~ ~ ~ c5?]>"
+    },
+    {
+      "id": "pings",
+      "voice": "pluck",
+      "comment": "water dropping in a steel room: high square pings, long delay",
+      "params": { "wave": "square", "cutoff": 3000, "envAmount": 1, "decay": 0.25, "level": 0.14, "humanise": 0.4, "jitter": 10 },
+      "gain": 0.75,
+      "reverb": 0.5,
+      "delay": 0.65,
+      "pan": 0.45,
+      "pattern": "[~ ~ ~ b5? ~ ~ ~ ~ f5? ~]"
+    },
+    {
+      "id": "creaks",
+      "voice": "perc",
+      "comment": "the hull moving: metallic knocks and clicks, tuned up",
+      "params": { "tone": 1.6, "decay": 1.6, "level": 0.6, "humanise": 0.4 },
+      "gain": 0.7,
+      "reverb": 0.5,
+      "pattern": "<[knock? ~ ~ ~ ~ ~ click ~ ~ ~] [~ ~ ~ ~ ~ ~ ~ ~ knock ~]>"
+    },
+    {
+      "id": "undertow",
+      "voice": "drone",
+      "comment": "a low tritone under everything, quiet: the sea is not far",
+      "params": { "wave": "triangle", "cutoff": 400, "q": 1, "lfoRate": 0.07, "lfoDepth": 100, "drift": 5, "sub": 0, "attack": 3, "release": 5, "level": 0.08 },
+      "gain": 0.7,
+      "reverb": 0.4,
+      "pattern": "[b2,f3]/8"
+    }
+  ]
+}

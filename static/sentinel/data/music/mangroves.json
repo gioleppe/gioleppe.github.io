@@ -1,0 +1,62 @@
+{
+  "id": "mangroves",
+  "title": "Mangroves",
+  "comment": "Western Mangroves: murky, slow, wet. F minor with a flat second leaning in (gb). 45 bpm in 3/4, so the bar is 4 s like every region track; 12 bars. A resonant low-passed drone that the LFO moves like something under the water, drips through a long delay, frogs on an uneven Euclidean grid.",
+  "bpm": 45,
+  "beatsPerBar": 3,
+  "scale": { "root": "f3", "mode": "minor" },
+  "gain": 0.75,
+  "bars": 12,
+  "seed": 21,
+  "fx": { "delayBeats": 1.25, "delayFeedback": 0.5, "delayTone": 1600 },
+  "layers": [
+    {
+      "id": "murk",
+      "voice": "drone",
+      "comment": "the water: a resonant drone whose filter wanders; always on",
+      "params": { "wave": "sawtooth", "cutoff": 380, "q": 5, "lfoRate": 0.09, "lfoDepth": 240, "drift": 8, "sub": 0, "attack": 2.5, "release": 5, "level": 0.1 },
+      "gain": 0.75,
+      "reverb": 0.4,
+      "pattern": "<[f2,c3] [f2,db3] [f2,c3] [e2,c3]>/3"
+    },
+    {
+      "id": "mud",
+      "voice": "pad",
+      "comment": "dull chords that move every three bars, the gb chord a step off the key",
+      "params": { "wave": "triangle", "voices": 3, "detune": 16, "cutoff": 1300, "q": 1.4, "attack": 3, "decay": 2, "sustain": 0.75, "release": 4, "width": 0.6, "level": 0.2 },
+      "gain": 0.8,
+      "reverb": 0.5,
+      "pattern": "<[ab3,c4,eb4] [gb3,bb3,db4] [ab3,c4,f4] [g3,bb3,db4]>/3"
+    },
+    {
+      "id": "drips",
+      "voice": "pluck",
+      "comment": "water dripping from roots: sine plucks, short, high, uneven; the delay makes them echo under the canopy",
+      "params": { "wave": "sine", "cutoff": 4000, "envAmount": 0, "decay": 0.35, "level": 0.28, "humanise": 0.5, "jitter": 20 },
+      "gain": 0.8,
+      "reverb": 0.5,
+      "delay": 0.6,
+      "pan": 0.4,
+      "pattern": "[~ ~ f5? ~ ~ c6?0.7 ~ ~ ~ ab5? ~ ~]"
+    },
+    {
+      "id": "frogs",
+      "voice": "perc",
+      "comment": "low wooden knocks on a 5-in-12 Euclidean grid, half of them missing: frogs, or something else in the roots",
+      "params": { "tone": 0.6, "decay": 1.4, "level": 0.3, "humanise": 0.5 },
+      "gain": 0.75,
+      "reverb": 0.35,
+      "pan": -0.4,
+      "pattern": "knock(5,12,2)?0.45"
+    },
+    {
+      "id": "mist",
+      "voice": "perc",
+      "comment": "a slow exhale of air once every three bars",
+      "params": { "tone": 0.6, "decay": 4, "level": 0.22 },
+      "gain": 0.7,
+      "reverb": 0.6,
+      "pattern": "<breath ~ ~>"
+    }
+  ]
+}

@@ -91,57 +91,113 @@ function applyLayers(trackId, fade = 0.15) {
 
 const isPlaying = (id) => Boolean(music?.current.some((t) => t.id === id));
 
-async function play(id) {
+/**
+ * Play a track. Alone (whatever plays crossfades out), or `over` what plays (the tension over a region track).
+ * One-shot cues start at once instead of waiting for the next bar.
+ */
+async function play(id, { over = false } = {}) {
   await audio.unlock();
   if (!ensureMusic()) { render(); return; }
-  music.play(id, { fade: 1.5 });
+  const oneShot = scores.get(id).loop === false;
+  music.play(id, { fade: over ? 2 : 1.5, exclusive: !over, quantise: !oneShot });
   applyLayers(id, 0.01);
   render();
 }
 
-function stop() {
-  music?.stop({ fade: 2 });
+/** stop one track, or everything */
+function stop(id) {
+  if (id) music?.stopTrack(id, { fade: 2 });
+  else music?.stop({ fade: 2 });
   render();
 }
 
-function buildTracks() {
+/** "play B over A": audition the tension (or anything) over a region track */
+function buildCombo() {
+  const loops = [...scores.values()].filter((s) => s.loop !== false);
+  const pick = (label, list, value) => {
+    const sel = el('select', { 'aria-label': label });
+    for (const s of list) sel.append(el('option', { value: s.id, textContent: s.title ?? s.id }));
+    if (value && scores.has(value)) sel.value = value;
+    return sel;
+  };
+  const base = pick('Track A (base)', loops, 'coast_day');
+  const over = pick('Track B (over A)', loops, 'tension');
+  const go = el('button', { className: 'btn primary', type: 'button', textContent: 'Play B over A' });
+  go.addEventListener('click', async () => {
+    if (base.value === over.value) return;
+    await play(base.value);
+    await play(over.value, { over: true });
+  });
+  const halt = el('button', { className: 'btn', type: 'button', textContent: 'Stop all' });
+  halt.addEventListener('click', () => stop());
+  $('combo').replaceChildren(el('label', { className: 'combo-label' }, 'A ', base), el('label', { className: 'combo-label' }, 'B ', over), go, halt);
+}
+
+function layerRow(s, l, st) {
+  const muteBtn = el('button', { className: 'btn small', type: 'button', textContent: 'M', title: `Mute ${l.id}` });
+  const soloBtn = el('button', { className: 'btn small solo', type: 'button', textContent: 'S', title: `Solo ${l.id}` });
+  muteBtn.setAttribute('aria-pressed', 'false');
+  soloBtn.setAttribute('aria-pressed', 'false');
+  muteBtn.addEventListener('click', () => { st.mute = !st.mute; muteBtn.setAttribute('aria-pressed', String(st.mute)); applyLayers(s.id); });
+  soloBtn.addEventListener('click', () => { st.solo = !st.solo; soloBtn.setAttribute('aria-pressed', String(st.solo)); applyLayers(s.id); });
+  const range = el('input', { type: 'range', min: 0, max: 1.5, step: 0.05, value: 1, 'aria-label': `${l.id} gain` });
+  const out = el('output', { value: '100%' });
+  range.addEventListener('input', () => { st.gain = Number(range.value); out.value = `${Math.round(st.gain * 100)}%`; applyLayers(s.id, 0.1); });
+  return el('div', { className: 'layer', title: l.comment ?? '' },
+    el('span', { className: 'name' }, `${l.id} `, el('span', { className: 'voice', textContent: l.voice })), muteBtn, soloBtn, range, out);
+}
+
+function trackCard(s) {
+  const m = {};
+  for (const l of s.layers) m[l.id] = { gain: 1, mute: false, solo: false };
+  mix.set(s.id, m);
+  const playBtn = el('button', { className: 'btn primary', type: 'button', textContent: 'Play' });
+  playBtn.addEventListener('click', () => (isPlaying(s.id) ? stop(s.id) : play(s.id)));
+  const head = el('div', { className: 'track-head' }, el('h3', { textContent: s.title ?? s.id }), playBtn);
+  if (s.sections) {
+    const sel = el('select', { 'aria-label': `${s.id} section` });
+    for (const name of s.sections) sel.append(el('option', { value: name, textContent: `section ${name}` }));
+    sel.value = s.section ?? s.sections[0];
+    sel.addEventListener('change', () => { if (isPlaying(s.id)) music.setSection(s.id, sel.value); });
+    head.append(sel);
+  }
+  const scale = s.scale ? `${s.scale.root} ${s.scale.mode} · ` : '';
+  const kind = s.loop === false ? `one-shot, ${s.bars} bars` : `${s.bars}-bar loop`;
+  head.append(el('p', { className: 'track-meta', textContent: `${s.id} · ${s.bpm} bpm ${s.beatsPerBar}/4 · ${scale}${kind}` }));
+  const layers = el('div', { className: 'layers' });
+  let group = null;
+  for (const l of s.layers) {
+    if ((l.group ?? null) !== group) {
+      group = l.group ?? null;
+      if (group) layers.append(el('p', { className: 'layer-group', textContent: group }));
+    }
+    layers.append(layerRow(s, l, m[l.id]));
+  }
+  const details = el('details', { className: 'layer-box' }, el('summary', { textContent: `${s.layers.length} layers` }), layers);
+  const card = el('article', { className: 'track' }, head, details);
+  ui.set(s.id, { card, playBtn });
+  return card;
+}
+
+/** track cards under the group headings of data/music/index.json */
+function buildTracks(groups) {
   const box = $('tracks');
   box.replaceChildren();
-  for (const s of scores.values()) {
-    const m = {};
-    for (const l of s.layers) m[l.id] = { gain: 1, mute: false, solo: false };
-    mix.set(s.id, m);
-    const playBtn = el('button', { className: 'btn primary', type: 'button', textContent: 'Play' });
-    playBtn.addEventListener('click', () => (isPlaying(s.id) ? stop() : play(s.id)));
-    const head = el('div', { className: 'track-head' }, el('h3', { textContent: s.title ?? s.id }), playBtn);
-    if (s.sections) {
-      const sel = el('select', { 'aria-label': `${s.id} section` });
-      for (const name of s.sections) sel.append(el('option', { value: name, textContent: `section ${name}` }));
-      sel.value = s.section ?? s.sections[0];
-      sel.addEventListener('change', () => { if (isPlaying(s.id)) music.setSection(s.id, sel.value); });
-      head.append(sel);
+  const list = (groups?.length ? groups : [{ name: 'Tracks', tracks: [...scores.keys()] }])
+    .map((g) => ({ ...g, tracks: g.tracks.filter((id) => scores.has(id)) }));
+  const rest = [...scores.keys()].filter((id) => !list.some((g) => g.tracks.includes(id)));
+  if (rest.length) list.push({ name: 'Other', tracks: rest });
+  const placed = new Set();
+  for (const g of list) {
+    const ids = g.tracks.filter((id) => !placed.has(id));
+    if (!ids.length) continue;
+    box.append(el('h3', { className: 'group-title', textContent: g.name }));
+    for (const id of ids) {
+      placed.add(id);
+      box.append(trackCard(scores.get(id)));
     }
-    const scale = s.scale ? `${s.scale.root} ${s.scale.mode}, ` : '';
-    head.append(el('p', { className: 'track-meta', textContent: `${s.id} · ${s.bpm} bpm · ${scale}${s.bars} bars · ${s.layers.length} layers` }));
-    const layers = el('div', { className: 'layers' });
-    for (const l of s.layers) {
-      const st = m[l.id];
-      const muteBtn = el('button', { className: 'btn small', type: 'button', textContent: 'M', title: `Mute ${l.id}` });
-      const soloBtn = el('button', { className: 'btn small solo', type: 'button', textContent: 'S', title: `Solo ${l.id}` });
-      muteBtn.setAttribute('aria-pressed', 'false');
-      soloBtn.setAttribute('aria-pressed', 'false');
-      muteBtn.addEventListener('click', () => { st.mute = !st.mute; muteBtn.setAttribute('aria-pressed', String(st.mute)); applyLayers(s.id); });
-      soloBtn.addEventListener('click', () => { st.solo = !st.solo; soloBtn.setAttribute('aria-pressed', String(st.solo)); applyLayers(s.id); });
-      const range = el('input', { type: 'range', min: 0, max: 1.5, step: 0.05, value: 1, 'aria-label': `${l.id} gain` });
-      const out = el('output', { value: '100%' });
-      range.addEventListener('input', () => { st.gain = Number(range.value); out.value = `${Math.round(st.gain * 100)}%`; applyLayers(s.id, 0.1); });
-      layers.append(el('div', { className: 'layer' },
-        el('span', { className: 'name' }, `${l.id} `, el('span', { className: 'voice', textContent: l.voice })), muteBtn, soloBtn, range, out));
-    }
-    const card = el('article', { className: 'track' }, head, layers);
-    ui.set(s.id, { card, playBtn });
-    box.append(card);
   }
+  buildCombo();
 }
 
 // ---- status and meter ----------------------------------------------------------------------------------
@@ -153,7 +209,8 @@ function render() {
   if (music && state === 'running') {
     const st = music.state();
     const playing = st.tracks.filter((t) => !t.stopping);
-    if (playing.length) text += ` · ${playing.map((t) => `${t.id} bar ${t.loopBar + 1} beat ${Math.floor(t.beat) + 1}`).join(', ')}`;
+    const audible = playing.filter((t) => !t.ended);
+    if (audible.length) text += ` · ${audible.map((t) => `${t.id} bar ${t.loopBar + 1} beat ${Math.floor(t.beat) + 1}`).join(', ')}`;
     text += ` · ${st.voices} voices`;
   }
   status.textContent = text;
@@ -214,7 +271,7 @@ async function loadScores() {
       if (!r.ok) throw new Error(`${id}.json: HTTP ${r.status}`);
       scores.set(id, await r.json());
     }
-    buildTracks();
+    buildTracks(index.groups);
     if (music) music.load([...scores.values()]);
   } catch (e) {
     loadError = e.message;

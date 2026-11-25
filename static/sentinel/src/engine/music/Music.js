@@ -82,16 +82,22 @@ export class Music {
     return this;
   }
 
-  /** tracks that are playing and not fading out */
-  get current() { return this.tracks.filter((t) => t.stopAt === null); }
+  /** tracks that are playing: not fading out, and (one-shot cues) not past their last bar */
+  get current() {
+    const now = this.ctx.currentTime;
+    return this.tracks.filter((t) => !t.stopping && (t.endAt === null || now < t.endAt));
+  }
 
   /**
-   * Start a track. Whatever else plays fades out over the same time (a crossfade).
+   * Start a track. By default whatever else plays fades out over the same time (a crossfade).
    * @param {string} id
-   * @param {{ fade?: number, quantise?: boolean, at?: number }} [opts] quantise (default true): start on the next
-   *   bar line of the track already playing, so the two stay in step; `at`: exact audio time (offline rendering)
+   * @param {{ fade?: number, quantise?: boolean, at?: number, exclusive?: boolean, gain?: number }} [opts]
+   *   quantise (default true): start on the next bar line of the track already playing, so the two stay in step;
+   *   exclusive (default true): false layers this track over what plays (the stealth tension over a region track);
+   *   gain: track level 0..1 on top of the score's own `gain`; `at`: exact audio time (offline rendering).
+   *   A score with `loop: false` plays its bars once and ends by itself.
    */
-  play(id, { fade = 0, quantise = true, at } = {}) {
+  play(id, { fade = 0, quantise = true, at, exclusive = true, gain = 1 } = {}) {
     const score = this.scores.get(id);
     if (!score) throw new RangeError(`unknown track "${id}"`);
     const running = this.current;
@@ -99,8 +105,8 @@ export class Music {
     const now = this.ctx.currentTime;
     let start = at ?? now + 0.06;
     if (at === undefined && quantise && running.length) start = Math.max(start, running[0].nextBar(start));
-    for (const t of running) t.fadeOut(start, fade);
-    this.tracks.push(new Track(this, score, start, fade));
+    if (exclusive) for (const t of running) t.fadeOut(start, fade);
+    this.tracks.push(new Track(this, score, start, fade, gain));
     if (this.live) {
       this.scheduler.start();
       this.scheduler.tick();
@@ -115,10 +121,25 @@ export class Music {
     return this;
   }
 
+  /** fade out and stop one track, leaving the others playing */
+  stopTrack(id, { fade = 0, quantise = false } = {}) {
+    const now = this.ctx.currentTime;
+    for (const t of this.current.filter((x) => x.id === id)) t.fadeOut(quantise ? t.nextBar(now + 0.02) : now, fade);
+    return this;
+  }
+
   #track(id) {
     const t = this.current.find((x) => x.id === id);
     if (!t) throw new RangeError(`track "${id}" is not playing`);
     return t;
+  }
+
+  /** fade a whole track to `gain` (relative to its score gain), e.g. to duck it or for a half-way crossfade */
+  setTrackGain(trackId, gain, { fade = 0.05, quantise = false } = {}) {
+    const t = this.#track(trackId);
+    const at = quantise ? t.nextBar(this.ctx.currentTime + 0.02) : this.ctx.currentTime;
+    t.setGain(gain, at, fade);
+    return this;
   }
 
   /**
@@ -170,7 +191,8 @@ export class Music {
       time: now,
       context: this.ctx.state,
       scheduling: this.scheduler.running,
-      tracks: this.tracks.map((t) => ({ id: t.id, ...t.position(now), stopping: t.stopAt !== null,
+      tracks: this.tracks.map((t) => ({ id: t.id, ...t.position(now), stopping: t.stopping, gain: t.userGain,
+        ended: t.endAt !== null && now >= t.endAt,
         section: t.timeline.sectionAt(t.position(now).bar), layers: t.layers.map((l) => ({ id: l.id, gain: l.userGain })) })),
       ...this.stats,
       maxTimerGap: this.scheduler.maxGap,
@@ -277,15 +299,24 @@ class Layer {
 }
 
 class Track {
-  constructor(music, score, t0, fade) {
+  constructor(music, score, t0, fade, gain = 1) {
     const ctx = music.ctx;
     this.music = music;
     this.score = score;
     this.id = score.id;
     this.t0 = t0;
     this.timeline = new TrackTimeline(score);
+    /** no notes start at or after stopAt; nodes are freed at disposeAt */
     this.stopAt = null;
     this.disposeAt = null;
+    this.stopping = false;
+    this.userGain = gain;
+    /** one-shot cues end after their bars */
+    this.endAt = score.loop === false ? t0 + score.bars * this.timeline.spb : null;
+    if (this.endAt !== null) {
+      this.stopAt = this.endAt;
+      this.disposeAt = this.endAt + TAIL_SECONDS;
+    }
     const fx = fxParams(score.fx);
 
     this.dry = ctx.createGain();
@@ -304,14 +335,25 @@ class Track {
     this.fader = ctx.createGain();
     this.dry.connect(this.fader).connect(music.output);
     this.reverbBus.connect(this.reverbFader).connect(music.reverbIn);
+    const level = this.level;
     for (const f of [this.fader, this.reverbFader]) {
+      f.gain.value = level;
       if (fade > 0) {
         f.gain.setValueAtTime(0, t0);
-        f.gain.linearRampToValueAtTime(1, t0 + fade);
+        f.gain.linearRampToValueAtTime(level, t0 + fade);
       }
     }
     this.layers = score.layers.map((def) => new Layer(this, def));
     this.nodes = [this.dry, this.reverbBus, this.reverbFader, this.delayIn, this.delay, this.delayTone, this.feedback, this.fader];
+  }
+
+  /** fader level: the score's trim times the level the caller asked for */
+  get level() { return (this.score.gain ?? 1) * this.userGain; }
+
+  setGain(gain, at, fade) {
+    this.userGain = gain;
+    if (this.stopping) return;
+    for (const f of [this.fader, this.reverbFader]) rampParam(f.gain, this.level, at, fade);
   }
 
   layer(id) {
@@ -335,7 +377,8 @@ class Track {
 
   /** no new notes after `at + fade`; the faders reach silence by then; nodes are freed after the tails */
   fadeOut(at, fade) {
-    this.stopAt = at + fade;
+    this.stopping = true;
+    this.stopAt = this.stopAt === null ? at + fade : Math.min(this.stopAt, at + fade);
     this.disposeAt = this.stopAt + TAIL_SECONDS;
     for (const f of [this.fader, this.reverbFader]) rampParam(f.gain, 0, at, Math.max(fade, 0.02));
   }

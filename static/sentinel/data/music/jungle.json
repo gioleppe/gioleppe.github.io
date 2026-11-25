@@ -1,0 +1,72 @@
+{
+  "id": "jungle",
+  "title": "Interior jungle",
+  "comment": "The dense interior: close, percussive, irregular. E phrygian, 105 bpm in 7/4 (bar 4 s, like every region track), 8 bars. Everything is in sevens and fourteens, so the ear never finds the downbeat for long: knocks on 5-in-14, insects on a 14-step grid with most hits missing, a marimba-like ostinato that changes every other bar.",
+  "bpm": 105,
+  "beatsPerBar": 7,
+  "scale": { "root": "e3", "mode": "phrygian" },
+  "gain": 1.43,
+  "bars": 8,
+  "seed": 41,
+  "fx": { "delayBeats": 0.75, "delayFeedback": 0.3, "delayTone": 2000 },
+  "layers": [
+    {
+      "id": "canopy",
+      "voice": "pad",
+      "comment": "a dark cluster overhead, changing every two bars; always on",
+      "params": { "wave": "sawtooth", "voices": 3, "detune": 18, "cutoff": 1500, "q": 1.2, "attack": 2, "decay": 2, "sustain": 0.7, "release": 3, "width": 0.6, "level": 0.13 },
+      "gain": 0.75,
+      "reverb": 0.45,
+      "pattern": "<[e3,f3,b3] [d3,f3,c4] [e3,g3,b3,f4] [f3,a3,c4]>/2"
+    },
+    {
+      "id": "marimba",
+      "voice": "pluck",
+      "comment": "a wooden ostinato in 14 steps, the track's identity in the midrange (reads on a phone)",
+      "params": { "wave": "triangle", "cutoff": 1800, "envAmount": 3, "decay": 0.35, "level": 0.26, "humanise": 0.35, "jitter": 3 },
+      "gain": 0.8,
+      "reverb": 0.3,
+      "delay": 0.15,
+      "pan": 0.25,
+      "pattern": "<[e4 ~ f4 e4 ~ b3 ~ g4 ~ e4 ~ f4 ~ ~] [e4 ~ f4 e4 ~ c4 ~ b3 ~ ~ ~ f4? ~ ~]>"
+    },
+    {
+      "id": "knocks",
+      "voice": "perc",
+      "comment": "wood on wood, 5 in 14, plus a second voice 3 in 7 against it",
+      "params": { "tone": 1, "decay": 1, "level": 0.3, "humanise": 0.4 },
+      "gain": 0.75,
+      "reverb": 0.25,
+      "pan": -0.3,
+      "pattern": "knock(5,14,1), [~ knock(3,7,2)?0.3]"
+    },
+    {
+      "id": "insects",
+      "voice": "perc",
+      "comment": "ticks and a dry shaker, mostly missing",
+      "params": { "tone": 0.8, "decay": 1, "level": 0.14, "humanise": 0.6 },
+      "gain": 0.7,
+      "reverb": 0.2,
+      "pan": 0.45,
+      "pattern": "tick*14?0.55, [~ shaker]*7?0.6"
+    },
+    {
+      "id": "heart",
+      "voice": "perc",
+      "comment": "low thuds on a lopsided pattern: footsteps of something large, or your own pulse",
+      "params": { "tone": 0.9, "decay": 1.1, "level": 0.3 },
+      "gain": 0.7,
+      "reverb": 0.3,
+      "pattern": "<[thud ~ ~ ~ ~ thud ~] [thud ~ ~ ~ ~ ~ ~] [thud ~ ~ thud ~ ~ ~] [thud ~ ~ ~ ~ ~ thud?]>"
+    },
+    {
+      "id": "low",
+      "voice": "bass",
+      "comment": "a short e and an occasional f below the knocks",
+      "params": { "wave": "triangle", "sub": 0.25, "cutoff": 450, "attack": 0.01, "decay": 0.4, "sustain": 0.3, "release": 0.5, "level": 0.22 },
+      "gain": 0.7,
+      "reverb": 0.15,
+      "pattern": "[e2 ~ ~ ~ ~ ~ ~ ~ ~ ~ f2? ~ ~ ~]"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "id": "gameover",
+  "title": "Game over",
+  "comment": "One-shot sting, 2 bars (8 s plus the tail): a heavy thud, a bell pair a semitone apart, a tritone chord that sinks into the reverb. Play it with exclusive: true and a short fade, so whatever played fades under it.",
+  "bpm": 60,
+  "beatsPerBar": 4,
+  "scale": { "root": "d3", "mode": "phrygian" },
+  "gain": 1,
+  "bars": 2,
+  "loop": false,
+  "seed": 93,
+  "layers": [
+    {
+      "id": "hit",
+      "voice": "perc",
+      "comment": "the blow, and an exhale after it",
+      "params": { "tone": 0.9, "decay": 2.2, "level": 0.45 },
+      "gain": 0.8,
+      "reverb": 0.5,
+      "pattern": "<[thud ~ breath ~] ~>"
+    },
+    {
+      "id": "toll",
+      "voice": "bell",
+      "comment": "d and eb struck together, inharmonic: the island's flat second, one last time",
+      "params": { "ratio": 1.41, "index": 2.5, "decay": 6, "partial": 0.35, "partialRatio": 3.73, "cutoff": 3500, "level": 0.2 },
+      "gain": 0.8,
+      "reverb": 0.8,
+      "pattern": "<[d4,eb4] ~>"
+    },
+    {
+      "id": "fall",
+      "voice": "pad",
+      "comment": "a tritone chord held one bar, released into the reverb",
+      "params": { "wave": "sawtooth", "voices": 3, "detune": 25, "cutoff": 1600, "attack": 0.4, "release": 4, "sustain": 0.7, "level": 0.16 },
+      "gain": 0.75,
+      "reverb": 0.7,
+      "pattern": "<[d3,ab3,eb4] ~>"
+    },
+    {
+      "id": "drone",
+      "voice": "drone",
+      "comment": "the floor dropping out",
+      "params": { "wave": "sawtooth", "cutoff": 350, "q": 1.5, "lfoRate": 0.2, "lfoDepth": 120, "drift": 12, "sub": 0, "attack": 0.3, "release": 4, "level": 0.07 },
+      "gain": 0.7,
+      "reverb": 0.5,
+      "pattern": "<[d2,ab2] ~>"
+    }
+  ]
+}

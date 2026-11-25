@@ -1,0 +1,63 @@
+{
+  "id": "marek",
+  "title": "Marek's shack",
+  "comment": "The only warm cue in the game: G mixolydian, a small plucked figure like a cheap guitar slightly out of tune, a music-box tune that is itself tuned sharp against it. 90 bpm in 6/4 (bar 4 s), 8 bars. Not cosy: every fourth bar an eb drone sits under the G, the flat sixth of a key that was almost home.",
+  "bpm": 90,
+  "beatsPerBar": 6,
+  "scale": { "root": "g3", "mode": "mixolydian" },
+  "gain": 1.06,
+  "bars": 8,
+  "seed": 31,
+  "fx": { "delayBeats": 1, "delayFeedback": 0.25, "delayTone": 2500 },
+  "layers": [
+    {
+      "id": "guitar",
+      "voice": "pluck",
+      "comment": "the heart of the cue: a plucked arpeggio, uneven in level and a little flat, per-note pitch wobble",
+      "params": { "wave": "triangle", "cutoff": 3000, "envAmount": 3, "decay": 0.9, "level": 0.24, "humanise": 0.35, "tune": -12, "jitter": 9 },
+      "gain": 0.85,
+      "reverb": 0.3,
+      "pan": -0.15,
+      "pattern": "<[g3 d4 b4 d4 a4 d4] [c4 g4 e4 g4 d5 g4] [g3 d4 b4 d4 f4 d4] [d4 a4 f4 a4 c5 a4]>"
+    },
+    {
+      "id": "musicbox",
+      "voice": "bell",
+      "comment": "a small tune on a music box, tuned 18 cents sharp of the guitar; the human touch, and the wrongness",
+      "params": { "ratio": 2, "index": 0.8, "decay": 2.4, "brightDecay": 0.3, "partial": 0.15, "partialRatio": 4, "cutoff": 5000, "level": 0.2, "tune": 18, "jitter": 6, "humanise": 0.3 },
+      "gain": 0.75,
+      "reverb": 0.4,
+      "delay": 0.2,
+      "pan": 0.3,
+      "pattern": "<[~ ~ b5 ~ a5 ~] [g5 ~ ~ ~ ~ ~] [~ ~ b5 ~ c6 ~] [b5 ~ a5 ~ ~ ~] [~ ~ d6 ~ b5 ~] [a5 ~ ~ ~ g5 ~] [~ ~ f5 ~ ~ ~] ~>"
+    },
+    {
+      "id": "warmth",
+      "voice": "pad",
+      "comment": "a soft held chord under it all: the stove",
+      "params": { "wave": "triangle", "voices": 2, "detune": 8, "cutoff": 1400, "attack": 1.5, "release": 2.5, "level": 0.16 },
+      "gain": 0.75,
+      "reverb": 0.35,
+      "pattern": "<[g3,b3,d4] [g3,c4,e4] [f3,b3,d4] [f3,a3,d4]>"
+    },
+    {
+      "id": "unease",
+      "voice": "drone",
+      "comment": "a quiet eb under the last chord of each phrase: the island is still outside; the director may drop it while Marek talks",
+      "params": { "wave": "sawtooth", "cutoff": 320, "q": 1, "lfoRate": 0.1, "lfoDepth": 80, "drift": 6, "sub": 0, "attack": 1.5, "release": 3, "level": 0.12 },
+      "gain": 0.7,
+      "reverb": 0.4,
+      "pattern": "<~ ~ ~ eb3>"
+    },
+    {
+      "id": "creak",
+      "voice": "perc",
+      "comment": "a chair, a floorboard: a knock or two per loop",
+      "params": { "tone": 0.9, "decay": 1.5, "level": 0.6 },
+      "gain": 0.7,
+      "reverb": 0.3,
+      "pan": 0.5,
+      "pattern": "<~ ~ [~ ~ ~ ~ knock? ~] ~ ~ ~ ~ [knock ~ ~ ~ ~ ~]>"
+    }
+  ]
+}

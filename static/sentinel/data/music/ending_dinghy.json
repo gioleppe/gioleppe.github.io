@@ -1,0 +1,54 @@
+{
+  "id": "ending_dinghy",
+  "title": "Ending: dinghy",
+  "comment": "One-shot, 8 bars (32 s plus the tail). Out past the reef on the dinghy: the coast's chords and wave breaths (A aeolian, so it follows a coast track without a jolt), a slow rowing arpeggio, and the island's D drone falling away behind after four bars. Ends on a suspended chord: away, not safe.",
+  "bpm": 60,
+  "beatsPerBar": 4,
+  "scale": { "root": "a3", "mode": "minor" },
+  "gain": 0.79,
+  "bars": 8,
+  "loop": false,
+  "seed": 92,
+  "fx": { "delayBeats": 1.5, "delayFeedback": 0.4, "delayTone": 2800 },
+  "layers": [
+    {
+      "id": "bed",
+      "voice": "pad",
+      "comment": "the coast chords, ending on a sus2",
+      "params": { "wave": "triangle", "voices": 3, "detune": 10, "cutoff": 2000, "attack": 3, "release": 4, "sustain": 0.8, "width": 0.9, "level": 0.2 },
+      "gain": 0.8,
+      "reverb": 0.55,
+      "pattern": "<[a3,e4,b4] [g3,d4,a4] [c4,g4,d5] [a3,e4,b4]>/2"
+    },
+    {
+      "id": "oars",
+      "voice": "pluck",
+      "comment": "a slow arpeggio in the rhythm of rowing",
+      "params": { "wave": "triangle", "cutoff": 2600, "envAmount": 2, "decay": 1.2, "level": 0.22, "humanise": 0.3, "jitter": 4 },
+      "gain": 0.8,
+      "reverb": 0.45,
+      "delay": 0.35,
+      "pan": 0.3,
+      "pattern": "<[a3 e4 b4 e4] [g3 d4 a4 d4] [c4 g4 d5 g4] [a3 e4 b4 ~]>/2"
+    },
+    {
+      "id": "swell",
+      "voice": "perc",
+      "comment": "the open sea: the coast's breaths, longer",
+      "params": { "tone": 0.9, "decay": 3, "level": 0.28, "humanise": 0.4 },
+      "gain": 0.75,
+      "reverb": 0.5,
+      "pan": -0.3,
+      "pattern": "<[breath ~ ~ ~ ~ breath ~ ~] [~ ~ breath ~ ~ ~ ~ ~]>"
+    },
+    {
+      "id": "island",
+      "voice": "drone",
+      "comment": "the island's d, behind, for the first four bars only",
+      "params": { "wave": "sawtooth", "cutoff": 380, "q": 1.2, "lfoRate": 0.05, "lfoDepth": 100, "drift": 8, "sub": 0, "attack": 1, "release": 5, "level": 0.1 },
+      "gain": 0.65,
+      "reverb": 0.5,
+      "pattern": "<[d2,a2]@4 ~@4>"
+    }
+  ]
+}

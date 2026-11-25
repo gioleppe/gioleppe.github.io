@@ -1,0 +1,91 @@
+{
+  "id": "holdout",
+  "title": "Signal Peak holdout",
+  "comment": "The 60-second holdout after the signal is fired. 64 bpm 4/4 makes a 3.75 s bar, so four bars are exactly 15 s: the director steps through sections s1, s2, s3, s4 at 0, 15, 30 and 45 s (setSection quantises to the bar), and s4 loops until the rescue arrives; then ending_rescue. D phrygian, the title's key, rising chord by chord. The tension track is not played over this one (its bar is 4 s): the holdout carries its own tension.",
+  "bpm": 64,
+  "beatsPerBar": 4,
+  "scale": { "root": "d3", "mode": "phrygian" },
+  "gain": 1,
+  "bars": 4,
+  "sections": ["s1", "s2", "s3", "s4"],
+  "section": "s1",
+  "seed": 81,
+  "fx": { "delayBeats": 0.75, "delayFeedback": 0.35, "delayTone": 2500 },
+  "layers": [
+    {
+      "id": "drone",
+      "voice": "drone",
+      "comment": "the title's open fifth, through every section",
+      "params": { "wave": "sawtooth", "cutoff": 450, "q": 1.5, "lfoRate": 0.1, "lfoDepth": 150, "drift": 6, "sub": 0, "attack": 2, "release": 4, "level": 0.05 },
+      "gain": 0.7,
+      "reverb": 0.35,
+      "pattern": "[d2,a2]/4"
+    },
+    {
+      "id": "rise",
+      "voice": "pad",
+      "comment": "sections 1-2: a soft, dark pad on d, then eb; the build starts low and quiet",
+      "params": { "wave": "triangle", "voices": 3, "detune": 10, "cutoff": 2400, "q": 1, "attack": 2, "release": 2.5, "sustain": 0.8, "width": 0.8, "level": 0.12 },
+      "gain": 0.7,
+      "reverb": 0.45,
+      "sections": {
+        "s1": "[d4,a4,eb5]/4",
+        "s2": "<[d4,a4,eb5] [eb4,bb4,f5]>/2"
+      }
+    },
+    {
+      "id": "climb",
+      "voice": "pad",
+      "comment": "sections 3-4: the harmony climbs to f and g, then a over d with the flat ninth on top, in a brighter saw pad",
+      "params": { "wave": "sawtooth", "voices": 3, "detune": 16, "cutoff": 3400, "q": 1, "attack": 1, "release": 2.5, "sustain": 0.8, "width": 0.9, "level": 0.2 },
+      "gain": 0.8,
+      "reverb": 0.45,
+      "sections": {
+        "s3": "<[f4,c5,g5] [g4,d5,a5]>/2",
+        "s4": "<[a4,d5,eb6] [bb4,eb5,f6]>/2"
+      }
+    },
+    {
+      "id": "pulse",
+      "voice": "bass",
+      "comment": "a d that starts as a heartbeat and ends as eighth notes",
+      "params": { "wave": "triangle", "sub": 0.3, "cutoff": 500, "attack": 0.01, "decay": 0.3, "sustain": 0.4, "release": 0.3, "level": 0.11 },
+      "gain": 0.7,
+      "reverb": 0.15,
+      "sections": {
+        "s1": "d2 ~ ~ ~",
+        "s2": "d2 ~ d2 ~",
+        "s3": "[d2 d2] ~ [d2 d2] ~",
+        "s4": "d2*8"
+      }
+    },
+    {
+      "id": "drums",
+      "voice": "perc",
+      "comment": "patrols converging: thuds, then ticks, then knocks and shakers, denser each section",
+      "params": { "tone": 1.15, "decay": 1, "level": 0.3, "humanise": 0.3 },
+      "gain": 0.75,
+      "reverb": 0.3,
+      "sections": {
+        "s1": "thud ~ ~ ~ ~ ~ ~ ~",
+        "s2": "thud ~ ~ ~ thud ~ ~ ~, [~ tick]*4, knock(3,8)?0.5",
+        "s3": "thud ~ thud ~ thud ~ thud ~, [~ shaker]*4, knock(3,8)",
+        "s4": "[thud ~ thud thud]*2, [click shaker]*8, knock(5,8)"
+      }
+    },
+    {
+      "id": "bells",
+      "voice": "bell",
+      "comment": "from the third section: bells, then an alarm-like alternation",
+      "params": { "ratio": 3.51, "index": 1.8, "decay": 2.5, "partial": 0.2, "cutoff": 4200, "level": 0.22, "humanise": 0.3 },
+      "gain": 0.75,
+      "reverb": 0.5,
+      "delay": 0.3,
+      "pan": 0.3,
+      "sections": {
+        "s3": "[~ a5 ~ ~]*2",
+        "s4": "[a5 eb6]*4?0.3"
+      }
+    }
+  ]
+}
