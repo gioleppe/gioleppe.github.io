@@ -1,5 +1,5 @@
 // Built-in art for everything until real sprites exist, and the fallback afterwards (spec §4.1): colour-coded
-// boxes sized per kind with a short label and a facing mark, and flat checkered ground tiles.
+// boxes sized per kind with a short label and a facing mark, flat checkered ground tiles, and 16 x 16 labelled icons.
 // Implements the SpriteSource interface the Renderer draws through (see Renderer.js).
 
 /** box size (logical px), colour and label for each entity kind */
@@ -14,9 +14,18 @@ export const PLACEHOLDER_KINDS = Object.freeze({
   rock: { w: 32, h: 22, color: '#8d8d8d', label: 'ROCK' },
   monolith: { w: 20, h: 64, color: '#5b4b8a', label: 'MONO' },
   totem: { w: 16, h: 40, color: '#a0703c', label: 'TOT' },
+  wreck_hull: { w: 96, h: 56, color: '#6d5a4b', label: 'WRECK' },
+  kayak: { w: 48, h: 14, color: '#d96c3f', label: 'KAYAK' },
+  tent: { w: 48, h: 36, color: '#9c8f5a', label: 'TENT' },
+  dinghy: { w: 48, h: 18, color: '#e0e0d0', label: 'DINGHY' },
+  radio_rock: { w: 40, h: 80, color: '#6f6f78', label: 'RADIO' },
 });
 
 const UNKNOWN = { w: 24, h: 24, color: '#ff00ff', label: '?' };
+
+/** 16 x 16 icon placeholders (items and emotes, spec §4.2): a colour per sheet and the first letters of the name */
+export const ICON_SIZE = 16;
+export const PLACEHOLDER_ICON_COLORS = Object.freeze({ items: '#d9a441', emotes: '#f1faee' });
 
 /** flat colours for the eight terrain tiles of spec §4.2; [even, odd] for the checker */
 export const PLACEHOLDER_TERRAIN = Object.freeze({
@@ -69,7 +78,8 @@ export class PlaceholderSprites {
     ctx.font = '7px ui-monospace, Consolas, monospace';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    const label = k.w < 28 ? k.label.slice(0, 2) : k.label;
+    const text = k === UNKNOWN ? String(kind).slice(0, 4).toUpperCase() || '?' : k.label;   // name an unknown kind so it can be found
+    const label = k.w < 28 ? text.slice(0, 2) : text;
     ctx.fillText(label, x, top + Math.min(k.h - 6, CHARACTERS.has(kind) ? 30 : k.h / 2));
 
     if (facing) this.drawFacing(ctx, facing, left, top, k.w);
@@ -83,6 +93,27 @@ export class PlaceholderSprites {
     else if (facing === 'N') ctx.fillRect(cx - 6, top + 2, 12, 3);
     else if (facing === 'E') ctx.fillRect(left + w - 6, top + 8, 5, 5);
     else if (facing === 'W') ctx.fillRect(left + 1, top + 8, 5, 5);
+  }
+
+  /**
+   * A 16 x 16 icon with its top-left at (x, y).
+   * @param {CanvasRenderingContext2D} ctx
+   * @param {string} sheet  'items' | 'emotes'
+   * @param {string} name   icon name, e.g. 'water_bottle' or 'exclaim'
+   * @param {number} x
+   * @param {number} y
+   */
+  drawIcon(ctx, sheet, name, x, y) {
+    const s = ICON_SIZE;
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+    ctx.fillRect(x, y, s, s);
+    ctx.fillStyle = PLACEHOLDER_ICON_COLORS[sheet] ?? '#ff00ff';
+    ctx.fillRect(x + 1, y + 1, s - 2, s - 2);
+    ctx.fillStyle = '#10181a';
+    ctx.font = '6px ui-monospace, Consolas, monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(String(name).slice(0, 2).toUpperCase(), x + s / 2, y + s / 2);
   }
 
   /**

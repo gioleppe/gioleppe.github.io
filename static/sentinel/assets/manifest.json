@@ -1,1 +1,44 @@
-{}
+{
+  "$comment": "Format: see the top of src/engine/AssetManager.js. Set a sheet's ready to true when its PNG and JSON are exported.",
+  "sheets": {
+    "player": { "image": "sprites/player.png", "data": "sprites/player.json", "ready": false },
+    "sentinelese": { "image": "sprites/sentinelese.png", "data": "sprites/sentinelese.json", "ready": false },
+    "marek": { "image": "sprites/marek.png", "data": "sprites/marek.json", "ready": false },
+    "props_nature": { "image": "sprites/props_nature.png", "data": "sprites/props_nature.json", "ready": false },
+    "props_manmade": { "image": "sprites/props_manmade.png", "data": "sprites/props_manmade.json", "ready": false },
+    "items": { "image": "sprites/items.png", "data": "sprites/items.json", "ready": false },
+    "emotes": { "image": "sprites/emotes.png", "data": "sprites/emotes.json", "ready": false },
+    "terrain_tiles": { "image": "tiles/terrain_tiles.png", "data": "tiles/terrain_tiles.json", "ready": false }
+  },
+  "sprites": {
+    "player": { "sheet": "player", "states": ["idle", "walk", "crouch", "sprint", "swim"], "facings": ["N", "E", "S"], "mirrorW": true },
+    "sentinelese": { "sheet": "sentinelese", "states": ["idle", "patrol", "warn_bow", "chase", "gather"], "facings": ["N", "E", "S"], "mirrorW": true },
+    "marek": { "sheet": "marek", "states": ["idle", "sitting", "gesturing"], "facings": ["E", "S"], "mirrorW": true },
+    "palm": { "sheet": "props_nature", "frame": "palm" },
+    "banyan": { "sheet": "props_nature", "frame": "banyan" },
+    "mangrove": { "sheet": "props_nature", "frame": "mangrove" },
+    "tall_grass": { "sheet": "props_nature", "frame": "tall_grass", "shadow": 0 },
+    "rock": { "sheet": "props_nature", "frame": "rock" },
+    "monolith": { "sheet": "props_nature", "frame": "monolith" },
+    "totem": { "sheet": "props_nature", "frame": "totem" },
+    "wreck_hull": { "sheet": "props_manmade", "frame": "wreck_hull" },
+    "kayak": { "sheet": "props_manmade", "frame": "kayak" },
+    "tent": { "sheet": "props_manmade", "frame": "tent" },
+    "dinghy": { "sheet": "props_manmade", "frame": "dinghy" },
+    "radio_rock": { "sheet": "props_manmade", "frame": "radio_rock" }
+  },
+  "tiles": {
+    "sand": { "sheet": "terrain_tiles", "frames": ["sand"] },
+    "wet_sand": { "sheet": "terrain_tiles", "frames": ["wet_sand"] },
+    "shallow_water": { "sheet": "terrain_tiles", "frames": ["shallow_water"] },
+    "deep_water": { "sheet": "terrain_tiles", "frames": ["deep_water"] },
+    "jungle_floor": { "sheet": "terrain_tiles", "frames": ["jungle_floor"] },
+    "mud": { "sheet": "terrain_tiles", "frames": ["mud"] },
+    "reef_rock": { "sheet": "terrain_tiles", "frames": ["reef_rock"] },
+    "basalt": { "sheet": "terrain_tiles", "frames": ["basalt"] }
+  },
+  "icons": {
+    "items": [],
+    "emotes": ["exclaim", "question", "arrow_warn", "palm_up", "eye", "fish", "skull", "resonance_wave"]
+  }
+}
