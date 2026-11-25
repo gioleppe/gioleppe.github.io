@@ -1,10 +1,11 @@
 {
   "id": "title",
-  "title": "Title theme (sketch)",
-  "comment": "D phrygian, never landing: the pad keeps the flat second (eb) or the open fifth over d, the last chord is a d-a-eb cluster. One cycle = one bar; 16 bars loop.",
+  "title": "Title theme",
+  "comment": "D phrygian, never landing: the pad keeps the flat second (eb) or the open fifth over d, the last chord is a d-a-eb cluster. Bars 1-8 state it, bars 9-10 drop the pad and leave drone and bells alone, bars 11-16 add a high halo that pulls upward without resolving. One cycle = one bar; 16 bars loop.",
   "bpm": 56,
   "beatsPerBar": 4,
   "scale": { "root": "d3", "mode": "phrygian" },
+  "gain": 0.79,
   "bars": 16,
   "seed": 7,
   "fx": { "delayBeats": 0.75, "delayFeedback": 0.4, "delayTone": 2200 },
@@ -12,8 +13,8 @@
     {
       "id": "drone",
       "voice": "drone",
-      "comment": "open fifth on d, the flat second leaks in every fourth phrase",
-      "params": { "cutoff": 420, "q": 1.2, "lfoRate": 0.05, "lfoDepth": 160, "drift": 6, "sub": 0.08, "attack": 1.5, "release": 6, "level": 0.12 },
+      "comment": "open fifth on d, the flat second leaks in every fourth phrase; the floor of the piece",
+      "params": { "cutoff": 420, "q": 1.2, "lfoRate": 0.05, "lfoDepth": 160, "drift": 6, "sub": 0.05, "attack": 1.5, "release": 6, "level": 0.1 },
       "gain": 0.7,
       "reverb": 0.35,
       "pattern": "<[d2,a2] [d2,a2] [d2,a2] [d2,eb3]>/4"
@@ -21,17 +22,26 @@
     {
       "id": "pad",
       "voice": "pad",
-      "comment": "one chord every two bars, slow attack, dark filter; bars 9-10 drop out and leave the drone and the bells alone",
-      "params": { "wave": "sawtooth", "voices": 3, "detune": 14, "cutoff": 1300, "q": 0.9, "attack": 2.6, "decay": 2, "sustain": 0.75, "release": 3.2, "width": 0.7, "level": 0.2 },
+      "comment": "one chord every two bars, slow attack; bars 9-10 drop out",
+      "params": { "wave": "sawtooth", "voices": 3, "detune": 14, "cutoff": 1900, "q": 0.9, "attack": 2.6, "decay": 2, "sustain": 0.75, "release": 3.2, "width": 0.7, "level": 0.18 },
       "gain": 0.75,
       "reverb": 0.55,
       "pattern": "<[d3,f3,a3,eb4] [bb2,f3,a3,d4] [c3,g3,bb3,eb4] [d3,g3,a3,eb4] ~ [bb2,d3,a3,c4] [c3,f3,g3,d4] [d3,a3,eb4]>/2"
     },
     {
+      "id": "halo",
+      "voice": "pad",
+      "comment": "a high, thin triangle pad in bars 11-16 only: the piece lifts its head and finds nothing",
+      "params": { "wave": "triangle", "voices": 2, "detune": 9, "cutoff": 3200, "attack": 3.5, "release": 4, "width": 1, "level": 0.16 },
+      "gain": 0.8,
+      "reverb": 0.7,
+      "pattern": "<~@10 [a4,d5]@2 [bb4,f5]@2 [a4,eb5]@2>"
+    },
+    {
       "id": "bells",
       "voice": "bell",
       "comment": "scale degrees of d3 phrygian (7 = d4, 8 = eb4, 11 = a4, 12 = bb4, 14 = d5, 15 = eb5); sparse, high, far away",
-      "params": { "ratio": 3.51, "index": 1.6, "decay": 5, "brightDecay": 0.25, "partial": 0.25, "partialRatio": 2.76, "cutoff": 4200, "level": 0.3 },
+      "params": { "ratio": 3.51, "index": 1.6, "decay": 5, "brightDecay": 0.25, "partial": 0.25, "partialRatio": 2.76, "cutoff": 4200, "level": 0.3, "humanise": 0.25 },
       "gain": 0.9,
       "reverb": 0.7,
       "delay": 0.3,
@@ -50,10 +60,20 @@
       "pattern": "<~ ~ ~ [~ ~ a4 ~] ~ ~ ~ [~ eb5 ~ c5?]>"
     },
     {
+      "id": "air",
+      "voice": "perc",
+      "comment": "a slow breath of noise every other phrase: wind off the sea, or something breathing",
+      "params": { "tone": 0.8, "decay": 3, "level": 0.25 },
+      "gain": 0.7,
+      "reverb": 0.6,
+      "pan": -0.2,
+      "pattern": "<[breath ~ ~ ~] ~ [~ ~ breath ~] ~>/2"
+    },
+    {
       "id": "perc",
       "voice": "perc",
       "comment": "distant: a low thud like something heavy far off, insect-like ticks, a dry shaker that sometimes is not there",
-      "params": { "tone": 0.85, "decay": 1.2, "level": 0.55 },
+      "params": { "tone": 0.85, "decay": 1.2, "level": 0.55, "humanise": 0.3 },
       "gain": 0.7,
       "reverb": 0.6,
       "pan": 0.1,

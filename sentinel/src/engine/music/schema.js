@@ -5,11 +5,14 @@
 //   "id": "title", "title": "Title theme", "bpm": 56, "beatsPerBar": 4,
 //   "scale": { "root": "d3", "mode": "phrygian" },      // degrees in patterns resolve against it
 //   "bars": 16,                                          // loop length; one pattern cycle = one bar
+//   "loop": true,                                        // optional: false = a one-shot cue that plays `bars` bars once
+//   "gain": 1,                                           // optional: track trim 0..2 (loudness matching between tracks)
 //   "sections": ["calm", "tense"], "section": "calm",    // optional: section names and the one to start in
 //   "seed": 1,                                           // optional: seed for `?` (each layer adds its index)
 //   "fx": { "delayBeats": 0.75, "delayFeedback": 0.35, "delayTone": 2500 },   // optional
 //   "layers": [{
 //     "id": "pad", "voice": "pad", "params": { "cutoff": 900 },   // params: see VOICES below
+//     "group": "tier 1",                                           // optional label (the jukebox groups layers by it)
 //     "gain": 0.8, "reverb": 0.5, "delay": 0.1, "pan": 0, "transpose": 0,
 //     "pattern": "<[d3,f3,a3] [eb3,g3,bb3]>/2"                    // or "sections": { "calm": "...", "tense": "..." }
 //   }]
@@ -20,43 +23,47 @@ import { isNoteName, isDegree, resolveAtom, resolveScale } from './theory.js';
 /** [min, max, default] per numeric parameter; strings list their allowed values with the default first */
 const ENV = (a, d, s, r) => ({ attack: [0.001, 10, a], decay: [0.005, 20, d], sustain: [0, 1, s], release: [0.005, 20, r] });
 const WAVES = ['sawtooth', 'triangle', 'square', 'sine'];
+/** every voice: per-note level variation (0 = none, 0.3 = up to 30% quieter) */
+const HUMAN = { humanise: [0, 1, 0] };
+/** every pitched voice: a fixed offset and a per-note random offset, in cents (seeded by the note's time) */
+const TUNING = { ...HUMAN, tune: [-100, 100, 0], jitter: [0, 50, 0] };
 
 export const VOICES = {
   pad: {
     pitched: true,
     params: { ...ENV(1.5, 1, 0.8, 2.5), wave: WAVES, voices: [1, 5, 3], detune: [0, 50, 12], cutoff: [40, 16000, 900],
-      q: [0.1, 20, 0.7], width: [0, 1, 0.6], level: [0, 1, 0.25], maxVoices: [1, 32, 12] },
+      q: [0.1, 20, 0.7], width: [0, 1, 0.6], level: [0, 1, 0.25], maxVoices: [1, 32, 12], ...TUNING },
   },
   pluck: {
     pitched: true,
     params: { attack: [0.001, 1, 0.003], decay: [0.02, 10, 0.6], wave: ['triangle', 'sawtooth', 'square', 'sine'],
-      cutoff: [40, 16000, 2000], q: [0.1, 20, 1], envAmount: [0, 8, 3], level: [0, 1, 0.35], maxVoices: [1, 32, 8] },
+      cutoff: [40, 16000, 2000], q: [0.1, 20, 1], envAmount: [0, 8, 3], level: [0, 1, 0.35], maxVoices: [1, 32, 8], ...TUNING },
   },
   bass: {
     pitched: true,
     params: { ...ENV(0.02, 0.3, 0.7, 0.4), wave: ['triangle', 'sawtooth', 'square', 'sine'], sub: [0, 1, 0.5],
-      cutoff: [40, 8000, 400], q: [0.1, 20, 0.8], level: [0, 1, 0.45], maxVoices: [1, 32, 4] },
+      cutoff: [40, 8000, 400], q: [0.1, 20, 0.8], level: [0, 1, 0.45], maxVoices: [1, 32, 4], ...TUNING },
   },
   bell: {
     pitched: true,
     params: { attack: [0.001, 1, 0.002], decay: [0.05, 20, 4], ratio: [0.25, 16, 3.5], index: [0, 20, 2.5],
       brightDecay: [0.02, 1, 0.3], partial: [0, 1, 0.3], partialRatio: [0.5, 16, 2.76], cutoff: [200, 18000, 5000],
-      level: [0, 1, 0.22], maxVoices: [1, 32, 8] },
+      level: [0, 1, 0.22], maxVoices: [1, 32, 8], ...TUNING },
   },
   drone: {
     pitched: true,
     params: { ...ENV(3, 1, 1, 4), wave: WAVES, detune: [0, 50, 7], cutoff: [40, 8000, 500], q: [0.1, 20, 1],
-      lfoRate: [0.005, 5, 0.07], lfoDepth: [0, 4000, 200], drift: [0, 100, 4], sub: [0, 1, 0.3], level: [0, 1, 0.22], maxVoices: [1, 16, 4] },
+      lfoRate: [0.005, 5, 0.07], lfoDepth: [0, 4000, 200], drift: [0, 100, 4], sub: [0, 1, 0.3], level: [0, 1, 0.22], maxVoices: [1, 16, 4], ...TUNING },
   },
   perc: {
     pitched: false,
-    kinds: ['thud', 'shaker', 'click'],
-    params: { tone: [0.1, 4, 1], decay: [0.1, 8, 1], level: [0, 1, 0.5], maxVoices: [1, 32, 8] },
+    kinds: ['thud', 'shaker', 'click', 'breath', 'tick', 'knock'],
+    params: { tone: [0.1, 4, 1], decay: [0.1, 8, 1], level: [0, 1, 0.5], maxVoices: [1, 32, 8], ...HUMAN },
   },
 };
 
-export const SCORE_KEYS = ['id', 'title', 'bpm', 'beatsPerBar', 'scale', 'bars', 'sections', 'section', 'seed', 'fx', 'layers', 'comment'];
-export const LAYER_KEYS = ['id', 'voice', 'params', 'gain', 'reverb', 'delay', 'pan', 'transpose', 'pattern', 'sections', 'comment'];
+export const SCORE_KEYS = ['id', 'title', 'bpm', 'beatsPerBar', 'scale', 'bars', 'loop', 'gain', 'sections', 'section', 'seed', 'fx', 'layers', 'comment'];
+export const LAYER_KEYS = ['id', 'voice', 'group', 'params', 'gain', 'reverb', 'delay', 'pan', 'transpose', 'pattern', 'sections', 'comment'];
 export const FX = { delayBeats: [0.0625, 4, 0.75], delayFeedback: [0, 0.9, 0.3], delayTone: [200, 12000, 2500] };
 export const MIDI_RANGE = [21, 108];   // A0..C8: anything outside is a typo, not music
 const ID = /^[a-z][a-z0-9_]*$/;
@@ -106,6 +113,8 @@ export function validateScore(score, { name } = {}) {
   if (!Number.isInteger(score.beatsPerBar) || score.beatsPerBar < 1 || score.beatsPerBar > 16) bad('beatsPerBar must be an integer 1..16');
   if (!Number.isInteger(score.bars) || score.bars < 1 || score.bars > 256) bad('bars (loop length) must be an integer 1..256');
   if (score.seed !== undefined && !Number.isInteger(score.seed)) bad('seed must be an integer');
+  if (score.loop !== undefined && typeof score.loop !== 'boolean') bad('loop must be true or false');
+  if (score.gain !== undefined && (!isNum(score.gain) || score.gain < 0 || score.gain > 2)) bad(`gain must be 0..2 (got ${JSON.stringify(score.gain)})`);
   let scale = null;
   if (score.scale !== undefined) {
     try {
@@ -159,6 +168,7 @@ export function validateScore(score, { name } = {}) {
     range('reverb', 0, 1, 0);
     range('delay', 0, 1, 0);
     range('pan', -1, 1, 0);
+    if (layer.group !== undefined && (typeof layer.group !== 'string' || !layer.group.trim())) lbad('group must be a non-empty string');
     if (layer.transpose !== undefined && (!Number.isInteger(layer.transpose) || Math.abs(layer.transpose) > 48)) lbad('transpose must be an integer -48..48');
 
     const hasPattern = layer.pattern !== undefined;

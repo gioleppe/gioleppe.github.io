@@ -1,3 +1,10 @@
 {
-  "tracks": ["title", "test_tones"]
+  "tracks": ["title", "coast_day", "coast_night", "mangroves", "marek", "jungle", "meridian", "reef", "tension", "holdout", "ending_rescue", "ending_dinghy", "gameover", "test_tones"],
+  "groups": [
+    { "name": "Title", "tracks": ["title"] },
+    { "name": "Regions", "tracks": ["coast_day", "coast_night", "mangroves", "marek", "jungle", "meridian", "reef"] },
+    { "name": "Stealth", "tracks": ["tension"] },
+    { "name": "Signal Peak and endings", "tracks": ["holdout", "ending_rescue", "ending_dinghy", "gameover"] },
+    { "name": "Tests", "tracks": ["test_tones"] }
+  ]
 }

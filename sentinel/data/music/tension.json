@@ -1,0 +1,54 @@
+{
+  "id": "tension",
+  "title": "Stealth tension",
+  "comment": "Played over any region track (exclusive: false). Unpitched on purpose: only the perc voice (thuds, knocks, clicks, ticks, shakers, breaths), so it sits under any key. 120 bpm with 8 beats to the bar = a 4 s bar, the same bar as every region track: bar-quantised entries line up. 4 bars. Stack by the highest scout state near the player: INVESTIGATE = watched; WARN = watched + warned; CHASE = watched + warned + hunted; SEARCH = search alone, the others fading out.",
+  "bpm": 120,
+  "beatsPerBar": 8,
+  "gain": 1.1,
+  "bars": 4,
+  "seed": 61,
+  "layers": [
+    {
+      "id": "watched",
+      "voice": "perc",
+      "group": "INVESTIGATE",
+      "comment": "watched: a slow low pulse once a bar and a soft tick: you are being looked for",
+      "params": { "tone": 1.2, "decay": 1.1, "level": 0.3, "humanise": 0.2 },
+      "gain": 0.75,
+      "reverb": 0.4,
+      "pattern": "thud ~ ~ ~ ~ ~ ~ ~, [~ ~ knock? ~ ~ ~ tick ~], <~ [~ ~ ~ ~ breath ~ ~ ~]>"
+    },
+    {
+      "id": "warned",
+      "voice": "perc",
+      "group": "WARN",
+      "comment": "warned: a low beat on 3 and 7 (never on the watched pulse, so the low end does not pile up), a quick knock after it like a heartbeat, knocks tighten the grid",
+      "params": { "tone": 1.25, "decay": 0.9, "level": 0.3, "humanise": 0.25 },
+      "gain": 0.75,
+      "reverb": 0.3,
+      "pan": -0.15,
+      "pattern": "[~ ~ thud knock ~ ~ ~ ~]*2, knock(3,8,1), [~ click]*4?0.4"
+    },
+    {
+      "id": "hunted",
+      "voice": "perc",
+      "group": "CHASE",
+      "comment": "hunted: a driving sixteenth grid of clicks and shaker, knocks on 5-in-16, thuds on beats 2 and 6 between the others",
+      "params": { "tone": 1.3, "decay": 0.8, "level": 0.36, "humanise": 0.35 },
+      "gain": 0.75,
+      "reverb": 0.2,
+      "pan": 0.15,
+      "pattern": "[~ thud ~ ~ ~ thud ~ ~], [click shaker? click? shaker]*8, knock(5,16,3)"
+    },
+    {
+      "id": "search",
+      "voice": "perc",
+      "group": "SEARCH",
+      "comment": "search (the decay state): breaths and a lone tick, the pulse gone: they lost you, they are still there",
+      "params": { "tone": 0.7, "decay": 2.5, "level": 0.28, "humanise": 0.4 },
+      "gain": 0.75,
+      "reverb": 0.6,
+      "pattern": "<[breath ~ ~ ~ ~ ~ ~ ~] [~ ~ ~ ~ ~ tick ~ ~] [~ ~ ~ ~ breath ~ ~ ~] ~>"
+    }
+  ]
+}

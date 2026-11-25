@@ -1,0 +1,63 @@
+{
+  "id": "coast_night",
+  "title": "Coast, night",
+  "comment": "The coast_day material thinned out and darkened: same tempo, same 16 bars, same chords on the same bars (they avoid the f/f# that tells A aeolian from A dorian), so a crossfade between them is seamless. Triangle instead of saw, a lower filter, fewer and lower glints, insects instead of the bass.",
+  "bpm": 60,
+  "beatsPerBar": 4,
+  "scale": { "root": "a3", "mode": "minor" },
+  "gain": 0.55,
+  "bars": 16,
+  "seed": 12,
+  "fx": { "delayBeats": 1.5, "delayFeedback": 0.4, "delayTone": 1800 },
+  "layers": [
+    {
+      "id": "bed",
+      "voice": "pad",
+      "comment": "the coast_day chords, darker: always on",
+      "params": { "wave": "triangle", "voices": 3, "detune": 12, "cutoff": 1500, "q": 0.8, "attack": 3.5, "decay": 2, "sustain": 0.8, "release": 4.5, "width": 0.9, "level": 0.22 },
+      "gain": 0.85,
+      "reverb": 0.6,
+      "pattern": "<[a3,e4,b4] [g3,d4,a4] [c4,g4,d5] [a3,e4,b4] [d4,a4,e5] [g3,d4,a4] [c4,e4,b4] [e4,a4,b4]>/2"
+    },
+    {
+      "id": "swell",
+      "voice": "perc",
+      "comment": "the waves, half as often and duller",
+      "params": { "tone": 0.75, "decay": 3.2, "level": 0.3, "humanise": 0.4 },
+      "gain": 0.75,
+      "reverb": 0.5,
+      "pan": -0.3,
+      "pattern": "<[breath ~ ~ ~ ~ ~ ~ ~] ~ [~ ~ ~ ~ breath ~ ~ ~] ~>"
+    },
+    {
+      "id": "stars",
+      "voice": "pluck",
+      "comment": "what is left of the glints: fewer, an octave lower in places, often missing",
+      "params": { "wave": "sine", "cutoff": 2400, "envAmount": 1, "decay": 1.6, "level": 0.3, "humanise": 0.3, "jitter": 5 },
+      "gain": 0.8,
+      "reverb": 0.6,
+      "delay": 0.6,
+      "pan": 0.35,
+      "pattern": "<~ [~ ~ e5? ~] ~ ~ [~ b4 ~ ~] ~ ~ [~ ~ ~ a4?]>"
+    },
+    {
+      "id": "low",
+      "voice": "drone",
+      "comment": "a held fifth an octave above the day bass, so the crossfade does not stack two basses on one note",
+      "params": { "wave": "triangle", "cutoff": 500, "q": 0.9, "lfoRate": 0.04, "lfoDepth": 120, "drift": 3, "sub": 0, "attack": 3, "release": 5, "level": 0.14 },
+      "gain": 0.7,
+      "reverb": 0.4,
+      "pattern": "<[e3,a3] [d3,g3] [e3,g3] [e3,a3]>/4"
+    },
+    {
+      "id": "insects",
+      "voice": "perc",
+      "comment": "night insects: soft ticks, mostly missing, never on a grid you can count",
+      "params": { "tone": 0.9, "decay": 1.5, "level": 0.8, "humanise": 0.6 },
+      "gain": 0.7,
+      "reverb": 0.3,
+      "pan": 0.5,
+      "pattern": "[tick? ~ tick?0.8 ~ ~ tick?0.7 ~ ~]*2"
+    }
+  ]
+}

@@ -2,6 +2,7 @@
 // Parameters come from the score (schema.js lists them with ranges and defaults). Nothing here reads a clock or
 // Math.random: noise and the reverb come from a seeded generator, so offline renders are reproducible.
 import { midiToFreq } from './theory.js';
+import { hashUnit } from './mini.js';
 import { VOICES, voiceParams } from './schema.js';
 
 const FLOOR = 1e-4;   // -80 dB: where exponential releases end before the last linear step to silence
@@ -297,6 +298,37 @@ const BUILDERS = {
       nz.connect(hp).connect(lp).connect(env);
       return percEnvelope(env.gain, t, 0.012, 0.08 * p.decay, p.level);
     }
+    if (name === 'breath') {
+      // a slow swell of band-passed noise: air, wind, someone breathing close by
+      const nz = noise();
+      const bp = n.filter('bandpass', 900 * p.tone, 0.9);
+      const lp = n.filter('lowpass', Math.min(3200 * p.tone, 16000), 0.5);
+      n.mod('brightness', bp.detune);
+      nz.connect(bp).connect(lp).connect(env);
+      return percEnvelope(env.gain, t, 0.35 * p.decay, 0.9 * p.decay, p.level * 1.6);
+    }
+    if (name === 'tick') {
+      // a dry, small, high tick: insects, a clock, a twig
+      const nz = noise();
+      const bp = n.filter('bandpass', 5200 * p.tone, 6);
+      n.mod('brightness', bp.detune);
+      nz.connect(bp).connect(env);
+      return percEnvelope(env.gain, t, 0.0005, 0.012 * p.decay, p.level * 2.5);
+    }
+    if (name === 'knock') {
+      // wood: a short pitched body plus a burst of mid noise
+      const o = n.osc('sine', 340 * p.tone);
+      o.frequency.setValueAtTime(380 * p.tone, t);
+      o.frequency.exponentialRampToValueAtTime(300 * p.tone, t + 0.05);
+      o.connect(env);
+      const nz = noise();
+      const bp = n.filter('bandpass', 1100 * p.tone, 2);
+      n.mod('brightness', bp.detune);
+      const ng = n.gain(0);
+      nz.connect(bp).connect(ng).connect(env);
+      percEnvelope(ng.gain, t, 0.0005, 0.03 * p.decay, 0.5);
+      return percEnvelope(env.gain, t, 0.001, 0.12 * p.decay, p.level);
+    }
     // click
     const nz = noise();
     const bp = n.filter('bandpass', 2400 * p.tone, 3);
@@ -321,8 +353,14 @@ export function playNote(ctx, voice, { time, duration, note, params, out, mods }
   const build = BUILDERS[voice];
   if (!build) throw new RangeError(`unknown voice "${voice}"`);
   const n = new Note(ctx, mods);
-  const freq = note.midi !== undefined ? midiToFreq(note.midi) : 0;
-  n.start(time, build(n, { t: time, dur: duration, freq, name: note.name, p: params, out }));
+  // per-note variation, seeded by the note's time so renders stay reproducible: a little out of tune, a little
+  // uneven in level, never the same twice in a row
+  const h1 = hashUnit(Math.round(time * 1e4), 1);
+  const h2 = hashUnit(Math.round(time * 1e4), 2);
+  const cents = (params.tune ?? 0) + (h1 * 2 - 1) * (params.jitter ?? 0);
+  const freq = note.midi !== undefined ? midiToFreq(note.midi) * 2 ** (cents / 1200) : 0;
+  const p = params.humanise ? { ...params, level: params.level * (1 - params.humanise * h2) } : params;
+  n.start(time, build(n, { t: time, dur: duration, freq, name: note.name, p, out }));
   return n;
 }
 

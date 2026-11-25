@@ -79,7 +79,7 @@ input[type="range"] { width: 100%; accent-color: var(--accent); min-height: 28px
 .track:first-child { border-top: 0; padding-top: 0; }
 .track-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
 .track-head h3 { flex: 1 1 auto; }
-.track-meta { color: var(--muted); font-size: 12px; width: 100%; }
+.track-meta { color: var(--muted); font-size: 12px; width: 100%; margin: 0; }
 .track.playing h3 { color: var(--on); }
 
 button.btn {
@@ -103,6 +103,13 @@ button.btn.solo[aria-pressed="true"] { background: var(--on); border-color: var(
 select { min-height: 36px; background: #0e181b; color: var(--text); border: 1px solid var(--line); border-radius: 4px; font: inherit; }
 
 .layers { margin-top: 8px; display: grid; gap: 4px; }
+.layer-box summary { cursor: pointer; color: var(--muted); font-size: 12px; padding: 6px 0; min-height: 32px; }
+.layer-group { margin: 8px 0 2px; color: var(--accent); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+.group-title { margin: 18px 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); }
+.group-title:first-child { margin-top: 4px; }
+.combo { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding-bottom: 12px; margin-bottom: 4px; border-bottom: 1px solid var(--line); }
+.combo-label { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; }
+.combo select { max-width: 11em; }
 .layer { display: grid; grid-template-columns: minmax(6em, 9em) auto auto 1fr 3em; align-items: center; gap: 8px; }
 .layer .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .layer .voice { color: var(--muted); font-size: 11px; }
