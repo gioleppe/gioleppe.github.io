@@ -6,9 +6,12 @@ import { sanitizeInput } from './input.js';
 import { Player } from '../entities/Player.js';
 import { buildTestField } from '../world/TestField.js';
 import { IslandMap } from '../world/IslandMap.js';
+import { WorldState } from '../world/WorldState.js';
 
 /** bumped whenever the snapshot shape changes; restore refuses other versions (migration arrives with saving, step 5.2) */
-export const SNAPSHOT_VERSION = 2;
+export const SNAPSHOT_VERSION = 3;
+/** older versions restore can still read: 2 had no world (its clocks are rebuilt from the tick) */
+const READABLE_VERSIONS = new Set([2, SNAPSHOT_VERSION]);
 
 /**
  * World rectangle in world pixels for a map that is `width` x `height` tiles, or null for the open test field.
@@ -55,6 +58,8 @@ export class Sim {
       this.props = field.props;
     }
     this.player = new Player({ x: spawn.x, y: spawn.y, radius: tuning.player.radius });
+    /** tide, day/night and weather (WorldState.js) */
+    this.world = new WorldState(tuning);
   }
 
   /** seconds simulated so far (derived from `tick`, so it never drifts) */
@@ -69,6 +74,7 @@ export class Sim {
   step(input) {
     this.events = [];
     const inp = sanitizeInput(input);
+    this.world.step(this.rng, this.events);   // before the entities, so they see this tick's tide and weather
     this.player.update(inp, this.tuning.player, DT, this.bounds);
     this.tick++;
   }
@@ -81,6 +87,7 @@ export class Sim {
       tick: this.tick,
       rng: this.rng.snapshot(),
       player: this.player.snapshot(),
+      world: this.world.snapshot(),
       // the map itself is data, not state: only which map this was, so a save from another map is refused
       map: this.map ? { version: this.map.version, hash: this.map.hash } : null,
       // map props are rebuilt from the map; only the test field's (placed by the rng) are stored
@@ -94,7 +101,7 @@ export class Sim {
    * @returns {Sim}
    */
   static restore(snap, { map = null, tuning, data = {} }) {
-    if (!snap || snap.version !== SNAPSHOT_VERSION) throw new Error(`Sim.restore: unsupported snapshot version ${snap?.version}`);
+    if (!snap || !READABLE_VERSIONS.has(snap.version)) throw new Error(`Sim.restore: unsupported snapshot version ${snap?.version}`);
     const sim = new Sim({ map, tuning, data, seed: snap.seed });
     const want = snap.map ? `${snap.map.version}/${snap.map.hash}` : 'none';
     const have = sim.map ? `${sim.map.version}/${sim.map.hash}` : 'none';
@@ -102,6 +109,7 @@ export class Sim {
     sim.tick = snap.tick;
     sim.rng = Rng.restore(snap.rng);
     sim.player = Player.restore(snap.player);
+    sim.world = snap.world ? WorldState.restore(snap.world, tuning) : WorldState.atTick(snap.tick, tuning);
     if (!sim.map) sim.props = snap.props.map((p) => ({ ...p }));
     return sim;
   }

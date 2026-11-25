@@ -9,6 +9,7 @@ import { IslandMap } from './world/IslandMap.js';
 import { InputManager } from './engine/InputManager.js';
 import { AssetManager } from './engine/AssetManager.js';
 import { smokeStatus, pixelsVary } from './engine/smokeStatus.js';
+import { drawHud } from './ui/HUD.js';
 
 const SEED = 1;
 
@@ -137,13 +138,14 @@ async function loadGame() {
   }
   if (DEBUG) {
     // a dynamic import, so without ?debug the debug modules are never even fetched
-    import('./engine/debug/DebugMode.js').then((m) => {
+    Promise.all([import('./engine/debug/DebugMode.js'), import('./engine/debug/worldDebug.js')]).then(([m, w]) => {
       debug = m.installDebug({
         get sim() { return sim; },
         setSim(s) { sim = s; camera.setBounds(s.bounds); camera.snapTo(s.player.x, s.player.y); },
         get camera() { return camera; }, get input() { return input; }, get vp() { return vp; }, get safe() { return safe; },
         assets, renderer, stepper, tick, uiCanvas,
       });
+      w.registerWorldDebug(debug);
     }).catch((e) => console.error('debug mode failed to start', e));
   }
 }
@@ -198,6 +200,7 @@ function drawUi() {
     ctx.fillStyle = 'rgba(216, 210, 191, 0.45)';
     ctx.fillText(buildLabel, vp.uiLogicalWidth - safe.right - 3, vp.uiLogicalHeight - safe.bottom - 2);
   }
+  if (sim) drawHud(ctx, sim, vp, safe);
   if (input && sim) input.draw(ctx, { camera, player: sim.player });
   if (loadError) {
     ctx.font = '8px ui-monospace, Consolas, monospace';
