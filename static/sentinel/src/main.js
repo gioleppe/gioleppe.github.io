@@ -146,6 +146,7 @@ async function loadGame() {
         assets, renderer, stepper, tick, uiCanvas,
       });
       w.registerWorldDebug(debug);
+      return import('./engine/debug/collisionLayers.js').then((c) => c.collisionLayers().forEach((l) => debug.addLayer(l)));
     }).catch((e) => console.error('debug mode failed to start', e));
   }
 }
