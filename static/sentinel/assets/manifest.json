@@ -1,9 +1,10 @@
 {
   "$comment": "Format: see the top of src/engine/AssetManager.js. Set a sheet's ready to true when its PNG and JSON are exported.",
   "sheets": {
-    "player": { "image": "sprites/player.png", "data": "sprites/player.json", "ready": false },
-    "sentinelese": { "image": "sprites/sentinelese.png", "data": "sprites/sentinelese.json", "ready": false },
-    "marek": { "image": "sprites/marek.png", "data": "sprites/marek.json", "ready": false },
+    "player": { "image": "sprites/player.png", "data": "sprites/player.json", "ready": true },
+    "sentinelese": { "image": "sprites/sentinelese.png", "data": "sprites/sentinelese.json", "ready": true },
+    "marek": { "image": "sprites/marek.png", "data": "sprites/marek.json", "ready": true },
+    "gatherer": { "image": "sprites/gatherer.png", "data": "sprites/gatherer.json", "ready": true },
     "props_nature": { "image": "sprites/props_nature.png", "data": "sprites/props_nature.json", "ready": false },
     "props_manmade": { "image": "sprites/props_manmade.png", "data": "sprites/props_manmade.json", "ready": false },
     "items": { "image": "sprites/items.png", "data": "sprites/items.json", "ready": false },
@@ -11,8 +12,9 @@
     "terrain_tiles": { "image": "tiles/terrain_tiles.png", "data": "tiles/terrain_tiles.json", "ready": true }
   },
   "sprites": {
-    "player": { "sheet": "player", "states": ["idle", "walk", "crouch", "sprint", "swim"], "facings": ["N", "E", "S"], "mirrorW": true },
-    "sentinelese": { "sheet": "sentinelese", "states": ["idle", "patrol", "warn_bow", "chase", "gather"], "facings": ["N", "E", "S"], "mirrorW": true },
+    "player": { "sheet": "player", "states": ["idle", "walk", "crouch", "sneak", "sprint", "swim"], "facings": ["N", "E", "S"], "mirrorW": true },
+    "sentinelese": { "sheet": "sentinelese", "states": ["idle", "patrol", "search", "warn_bow", "lower_bow", "chase", "gather"], "facings": ["N", "E", "S"], "mirrorW": true },
+    "gatherer": { "sheet": "gatherer", "states": ["idle", "walk", "gather", "offer"], "facings": ["N", "E", "S"], "mirrorW": true },
     "marek": { "sheet": "marek", "states": ["idle", "sitting", "gesturing"], "facings": ["E", "S"], "mirrorW": true },
     "palm": { "sheet": "props_nature", "frame": "palm" },
     "banyan": { "sheet": "props_nature", "frame": "banyan" },
