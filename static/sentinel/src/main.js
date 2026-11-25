@@ -10,6 +10,9 @@ import { InputManager } from './engine/InputManager.js';
 import { AssetManager } from './engine/AssetManager.js';
 import { smokeStatus, pixelsVary } from './engine/smokeStatus.js';
 import { drawHud } from './ui/HUD.js';
+import { ResonanceFx } from './engine/ResonanceFx.js';
+import { MapOverlay } from './ui/MapOverlay.js';
+import './ui/hud/fogNotices.js';   // landmark and Shifting Paths notices join the shared queue
 import { installItemHud } from './ui/hud/Hotbar.js';
 import { ImpactEffects, drawAimMarker, throwPreview } from './engine/ItemRenderer.js';
 
@@ -31,7 +34,7 @@ let sim = null;
 let loadError = '';
 // placeholders draw from the first frame; real sheets take over one by one as they arrive
 const assets = new AssetManager();
-const renderer = new Renderer({ sprites: assets });
+const renderer = new Renderer({ sprites: assets, resonanceFx: new ResonanceFx() });
 let camera = new Camera();
 const DEBUG = new URLSearchParams(location.search).has('debug');
 /** debug mode (src/engine/debug/, loaded only with ?debug): loop, input and drawing hooks; null otherwise */
@@ -133,10 +136,12 @@ async function loadGame() {
     camera.snapTo(sim.player.x, sim.player.y);
     input = new InputManager({ tuning, surface: uiCanvas });
     input.setViewport(vp, safe);
+    mapOverlay = new MapOverlay({ tuning });
+    mapOverlay.attach({ input, surface: uiCanvas });
     itemHud = installItemHud({ input, assets, tuning });
     framesAtLoad = framesRun;
     if (DEBUG) {
-      window.__game = { get sim() { return sim; }, get camera() { return camera; }, input, assets, renderer, itemHud };
+      window.__game = { get sim() { return sim; }, get camera() { return camera; }, input, assets, renderer, itemHud, mapOverlay };
     }
   } catch (e) {
     loadError = `could not load the game data (${e.message})`;
@@ -145,7 +150,10 @@ async function loadGame() {
   }
   if (DEBUG) {
     // a dynamic import, so without ?debug the debug modules are never even fetched
-    Promise.all([import('./engine/debug/DebugMode.js'), import('./engine/debug/worldDebug.js'), import('./engine/debug/playerDebug.js')]).then(([m, w, pd]) => {
+    Promise.all([
+      import('./engine/debug/DebugMode.js'), import('./engine/debug/worldDebug.js'), import('./engine/debug/playerDebug.js'),
+      import('./engine/debug/resonanceDebug.js'),
+    ]).then(([m, w, pd, r]) => {
       debug = m.installDebug({
         get sim() { return sim; },
         setSim(s) { sim = s; camera.setBounds(s.bounds); camera.snapTo(s.player.x, s.player.y); },
@@ -153,6 +161,7 @@ async function loadGame() {
         assets, renderer, stepper, tick, uiCanvas,
       });
       w.registerWorldDebug(debug);
+      r.registerResonanceDebug(debug);
       pd.registerPlayerDebug(debug);
       // every landmark of the island is a teleport target (debug "Go" page, __game.debug.teleportTo(id))
       debug.addPlaces((s) => (s.map ? s.map.entitiesOfType('landmark').map((l) => ({ id: l.id, label: l.name, x: l.x, y: l.y })) : []));
@@ -166,7 +175,7 @@ window.__smoke = () => {
   const img = worldCtx.getImageData(0, 0, worldCanvas.width, worldCanvas.height);
   return smokeStatus({
     frames: framesRun - framesAtLoad, ticks: ticksRun, loaded: !!sim, loadError,
-    drawn: pixelsVary(img.data, 7), paused: !!debug?.paused,
+    drawn: pixelsVary(img.data, 7), paused: !!debug?.paused || uiPaused(),
   });
 };
 
@@ -174,6 +183,21 @@ window.__smoke = () => {
 
 /** @type {InputManager|null} keyboard, mouse and touch; null until the tuning has loaded */
 let input = null;
+/** @type {MapOverlay|null} the island map (Tab / J); null until the tuning has loaded */
+let mapOverlay = null;
+
+/** a screen that stops the world is open (the map; later the journal and the pause menu): no ticks run */
+function uiPaused() {
+  return !!mapOverlay?.isOpen;
+}
+
+/** the presentation-only actions of this frame: open and close the map */
+function handleUiActions() {
+  const ui = input?.takeUiActions();
+  if (!ui || !sim || !mapOverlay) return;
+  if (ui.openJournal) mapOverlay.toggle(sim);
+  else if (ui.pause && mapOverlay.isOpen) mapOverlay.close();
+}
 
 // ---- frame ----------------------------------------------------------------------------------------------
 
@@ -225,6 +249,7 @@ function drawUi() {
   if (sim && !sim.over) itemHud?.drawPrompt(ctx, sim, camera);
   if (sim) drawHud(ctx, sim, vp, safe, { time: performance.now() / 1000, reserve: hudReserve() });
   if (input && sim) input.draw(ctx, { camera, player: sim.player, landing: (wx, wy) => throwPreview(sim, wx, wy) });
+  if (mapOverlay?.isOpen) mapOverlay.draw(ctx, vp, safe, sim, performance.now());
   if (loadError) {
     ctx.font = '8px ui-monospace, Consolas, monospace';
     ctx.textAlign = 'center';
@@ -245,10 +270,13 @@ function frame(now) {
   rafId = requestAnimationFrame(frame);
   const elapsed = lastTime === null ? 0 : (now - lastTime) / 1000;
   lastTime = now;
-  if (debug) debug.advance(elapsed, tick, now);   // pause, step and speed live in debug mode
+  handleUiActions();   // the inventory and the pause menu arrive in later steps; until then those presses are dropped
+  if (uiPaused()) {
+    stepper.reset();   // the world waits; on closing it resumes from now, without catch-up ticks
+    mapOverlay.update(elapsed, input);
+  } else if (debug) debug.advance(elapsed, tick, now);   // pause, step and speed live in debug mode
   else stepper.advance(elapsed, tick);
   framesRun++;
-  input?.takeUiActions();   // journal, inventory and pause screens arrive in later steps; until then the presses are dropped
   if (sim) itemHud?.frame(sim);
   drawWorld(stepper.alpha, elapsed);
   drawUi();

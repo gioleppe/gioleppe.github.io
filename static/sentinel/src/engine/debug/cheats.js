@@ -195,6 +195,41 @@ export function toggleFlashlight(sim) {
   return sim.player.lightOn;
 }
 
+// ---- Resonance (step 3.6): every debug write to sim.resonance goes through these ------------------------------
+
+/** put Resonance at a value now (it then follows its sources as usual) */
+export function setResonance(sim, value) {
+  sim.resonance.setValue(value);
+  return sim.resonance.value;
+}
+
+/** pin Resonance at a value for some seconds (the scripted hook the Signal Peak climax will use) */
+export function forceResonance(sim, value, seconds) {
+  sim.resonance.force(value, seconds);
+  return sim.resonance.value;
+}
+
+// ---- fog of war (step 3.7): every debug write to sim.fog goes through these ----------------------------------
+
+/** explore the whole island and discover every landmark */
+export function revealMap(sim) {
+  sim.fog?.revealAll();
+  return sim.fog?.exploredFraction ?? 0;
+}
+
+/** forget the whole island (discovered landmarks keep their names) */
+export function forgetMap(sim) {
+  sim.fog?.forgetAll();
+  return sim.fog?.exploredFraction ?? 0;
+}
+
+/** Shifting Paths on regardless of Resonance (still only in deep jungle and anomaly ground), or back off */
+export function toggleShiftingPaths(sim, on = !sim.fog?.forced) {
+  if (!sim.fog) return false;
+  sim.fog.forced = !!on;
+  return sim.fog.forced;
+}
+
 // ---- items (step 3.4): every debug write to the inventory and the pickups goes through these ----------------
 
 /**

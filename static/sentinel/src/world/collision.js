@@ -8,7 +8,7 @@
 //   * the map edge (the centre stays within [radius, width - radius] x [radius, height - radius]).
 // Nothing else blocks: water never blocks, it changes the movement mode (see terrainMove below):
 //   ground: sand, wet_sand, jungle_floor, basalt, reef_rock (speed x tuning.terrain.<name>.speed)
-//   wade:   mud, shallow_water (slowed), or a tile flooded by the tide less than tuning.terrain.floodSwimDepth deep
+//   wade:   mud, shallow_water (slowed), or a tile flooded by the tide no more than tuning.water.deepMargin deep
 //   swim:   deep_water, or a tile flooded deeper than that (speed x tuning.terrain.swimSpeed)
 // Sight is blocked by blocked tiles and by props that block sight: tuning.props[kind].blocksSight if set, else
 // tuning.collision.blocksSight[kind] if set, else the prop's solidity (trunks, rocks, hull, monoliths do; grass not).
@@ -24,6 +24,7 @@
 // pixel-perfect alignment.
 import { TILE_W, TILE_H } from '../sim/constants.js';
 import { TERRAINS, TERRAIN_ID } from './IslandMap.js';
+import { isDeepFlood } from './water.js';
 
 /** movement modes by rank: deeper water is a higher rank */
 export const MODES = Object.freeze(['ground', 'wade', 'swim']);
@@ -454,7 +455,8 @@ export function terrainRules(tuning) {
     speed, rank,
     swimSpeed: need(t.swimSpeed, 'terrain.swimSpeed'),
     floodWadeSpeed: need(t.floodWadeSpeed, 'terrain.floodWadeSpeed'),
-    floodSwimDepth: need(t.floodSwimDepth, 'terrain.floodSwimDepth'),
+    /** tuning.water, for water.js isDeepFlood: when flooded ground is swum (the same rule the water classes use) */
+    water: Object.freeze({ deepMargin: need(tuning.water?.deepMargin, 'water.deepMargin') }),
     modeExitMargin: need(t.modeExitMargin, 'terrain.modeExitMargin'),
     lowTide: need(t.lowTide, 'terrain.lowTide'),
   });
@@ -467,7 +469,7 @@ export function modeRankAt(map, x, y, tideHeight, rules) {
   let r = rules.rank[map.terrainIdAt(tx, ty)];
   if (r < 2 && map.isFlooded(tx, ty, tideHeight)) {
     const depth = tideHeight - map.floodThreshold(map.floodLevel(tx, ty));
-    const f = depth > rules.floodSwimDepth ? 2 : 1;
+    const f = isDeepFlood(depth, rules.water) ? 2 : 1;
     if (f > r) r = f;
   }
   return r;
