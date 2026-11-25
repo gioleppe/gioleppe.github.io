@@ -4,6 +4,7 @@
 //
 // Placement: top centre, below the safe-area inset, clear of the debug tab (top left) and the touch controls'
 // top-right bar.
+import { drawHotbar } from './hud/Hotbar.js';
 
 /** palette colours used here (assets/src/palette.gpl names) */
 export const HUD_COLORS = Object.freeze({
@@ -76,6 +77,7 @@ function disc(ctx, cx, cy, r, color, lowerOnly = false) {
  */
 export function drawHud(ctx, sim, vp, safe) {
   if (sim?.world) drawTideWidget(ctx, sim.world, tideWidgetRect(vp, safe));
+  if (sim) drawHotbar(ctx, sim, vp, safe);
 }
 
 /** the tide indicator and the time-of-day dial in `rect` */

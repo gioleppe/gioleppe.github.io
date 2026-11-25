@@ -10,6 +10,8 @@ import { InputManager } from './engine/InputManager.js';
 import { AssetManager } from './engine/AssetManager.js';
 import { smokeStatus, pixelsVary } from './engine/smokeStatus.js';
 import { drawHud } from './ui/HUD.js';
+import { installItemHud } from './ui/hud/Hotbar.js';
+import { ImpactEffects, drawAimMarker, throwPreview } from './engine/ItemRenderer.js';
 
 const SEED = 1;
 
@@ -34,6 +36,10 @@ let camera = new Camera();
 const DEBUG = new URLSearchParams(location.search).has('debug');
 /** debug mode (src/engine/debug/, loaded only with ?debug): loop, input and drawing hooks; null otherwise */
 let debug = null;
+/** @type {import('./ui/hud/Hotbar.js').ItemHud|null} hotbar, item notices and the interaction prompt */
+let itemHud = null;
+/** dust and splash where thrown things land */
+const impactFx = new ImpactEffects();
 /** liveness counters for window.__smoke */
 let framesRun = 0;
 let ticksRun = 0;
@@ -117,19 +123,20 @@ async function loadGame() {
     const params = new URLSearchParams(location.search);
     // ?debug&map=none: the open test field instead of the island
     const useMap = !(params.has('debug') && params.get('map') === 'none');
-    const [tuning, mapJson] = await Promise.all([fetchJson('data/tuning.json'), useMap ? fetchJson('data/island_map.json') : null]);
+    const [tuning, mapJson, items] = await Promise.all([fetchJson('data/tuning.json'), useMap ? fetchJson('data/island_map.json') : null, fetchJson('data/items.json')]);
     const map = mapJson ? IslandMap.fromJSON(mapJson, tuning) : null;
     renderer.terrainAt = map ? (c, r) => map.terrainAt(c, r) : testFieldTerrain;
-    sim = new Sim({ map, tuning, data: {}, seed: SEED });
+    sim = new Sim({ map, tuning, data: { items }, seed: SEED });
     camera = new Camera(tuning.camera);
     camera.setViewport(vp.logicalWidth, vp.logicalHeight);
     camera.setBounds(sim.bounds);
     camera.snapTo(sim.player.x, sim.player.y);
     input = new InputManager({ tuning, surface: uiCanvas });
     input.setViewport(vp, safe);
+    itemHud = installItemHud({ input, assets, tuning });
     framesAtLoad = framesRun;
     if (DEBUG) {
-      window.__game = { get sim() { return sim; }, get camera() { return camera; }, input, assets, renderer };
+      window.__game = { get sim() { return sim; }, get camera() { return camera; }, input, assets, renderer, itemHud };
     }
   } catch (e) {
     loadError = `could not load the game data (${e.message})`;
@@ -148,6 +155,7 @@ async function loadGame() {
       w.registerWorldDebug(debug);
       // every landmark of the island is a teleport target (debug "Go" page, __game.debug.teleportTo(id))
       debug.addPlaces((s) => (s.map ? s.map.entitiesOfType('landmark').map((l) => ({ id: l.id, label: l.name, x: l.x, y: l.y })) : []));
+      import('./engine/debug/itemDebug.js').then((i) => i.registerItemDebug(debug)).catch((e) => console.error('item debug failed', e));
       return import('./engine/debug/collisionLayers.js').then((c) => c.collisionLayers().forEach((l) => debug.addLayer(l)));
     }).catch((e) => console.error('debug mode failed to start', e));
   }
@@ -177,6 +185,8 @@ function tick() {
   debug?.afterStep(inp);
   // events must be read after every tick: the next step replaces the list
   for (const e of sim.events) if (e.type === 'shake') camera.addShake(e.amount);
+  itemHud?.onStep(sim);
+  impactFx.onStep(sim);
 }
 
 function drawWorld(alpha, elapsed) {
@@ -188,6 +198,8 @@ function drawWorld(alpha, elapsed) {
   const p = sim.player;
   camera.update(elapsed, p.prevX + (p.x - p.prevX) * alpha, p.prevY + (p.y - p.prevY) * alpha);
   renderer.render(worldCtx, sim, camera, { alpha, time: sim.time });
+  impactFx.draw(worldCtx, camera, sim.time);
+  if (input && !input.touchVisible) drawAimMarker(worldCtx, sim, camera, input.mouse);
   debug?.drawWorld(worldCtx, alpha);
 }
 
@@ -204,7 +216,8 @@ function drawUi() {
     ctx.fillText(buildLabel, vp.uiLogicalWidth - safe.right - 3, vp.uiLogicalHeight - safe.bottom - 2);
   }
   if (sim) drawHud(ctx, sim, vp, safe);
-  if (input && sim) input.draw(ctx, { camera, player: sim.player });
+  if (sim) itemHud?.drawPrompt(ctx, sim, camera);
+  if (input && sim) input.draw(ctx, { camera, player: sim.player, landing: (wx, wy) => throwPreview(sim, wx, wy) });
   if (loadError) {
     ctx.font = '8px ui-monospace, Consolas, monospace';
     ctx.textAlign = 'center';
@@ -229,6 +242,7 @@ function frame(now) {
   else stepper.advance(elapsed, tick);
   framesRun++;
   input?.takeUiActions();   // journal, inventory and pause screens arrive in later steps; until then the presses are dropped
+  if (sim) itemHud?.frame(sim);
   drawWorld(stepper.alpha, elapsed);
   drawUi();
 }

@@ -20,7 +20,7 @@ export class ScriptError extends Error {
   }
 }
 
-const BOOL_FIELDS = new Set(['sprint', 'crouch', 'interact', 'useItem', 'toggleLight']);
+const BOOL_FIELDS = new Set(['sprint', 'crouch', 'interact', 'useItem', 'toggleLight', 'drop']);
 const KNOWN = new Set(INPUT_FIELDS);
 const EMPTY = Object.freeze(emptyInput());
 

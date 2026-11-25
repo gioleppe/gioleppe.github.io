@@ -15,6 +15,7 @@ export const KEY_BINDINGS = Object.freeze({
   KeyE: 'interact',
   KeyQ: 'useItem',
   KeyF: 'toggleLight',
+  KeyG: 'drop',
   Digit1: 'hotbar0', Digit2: 'hotbar1', Digit3: 'hotbar2', Digit4: 'hotbar3', Digit5: 'hotbar4', Digit6: 'hotbar5',
   Numpad1: 'hotbar0', Numpad2: 'hotbar1', Numpad3: 'hotbar2', Numpad4: 'hotbar3', Numpad5: 'hotbar4', Numpad6: 'hotbar5',
   Tab: 'openJournal', KeyJ: 'openJournal',
@@ -26,7 +27,7 @@ export const KEY_BINDINGS = Object.freeze({
 export const HELD_ACTIONS = Object.freeze(['up', 'down', 'left', 'right', 'sprint']);
 
 /** one-tick actions that reach the simulation (besides the hotbar) */
-export const SIM_ACTIONS = Object.freeze(['interact', 'useItem', 'toggleLight']);
+export const SIM_ACTIONS = Object.freeze(['interact', 'useItem', 'toggleLight', 'drop']);
 
 /** presentation-only one-shot actions: they never reach the simulation */
 export const UI_ACTIONS = Object.freeze(['openJournal', 'openInventory', 'pause']);

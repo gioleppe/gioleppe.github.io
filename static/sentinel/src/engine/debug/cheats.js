@@ -144,3 +144,32 @@ export function toggleFlashlight(sim) {
   sim.player.lightOn = !sim.player.lightOn;
   return sim.player.lightOn;
 }
+
+// ---- items (step 3.4): every debug write to the inventory and the pickups goes through these ----------------
+
+/**
+ * Put items in the inventory as far as there is room.
+ * @returns {number} how many went in
+ */
+export function giveItem(sim, id, n = 1) {
+  return sim.inventory.add(id, n);
+}
+
+/** empty every slot */
+export function clearInventory(sim) {
+  sim.inventory.clear();
+}
+
+/** fill every free slot with full stacks of ordinary items (to try an overflow) */
+export function fillInventory(sim, id = 'bone') {
+  const stack = sim.catalog.stackOf(id);
+  let n = 0;
+  const free = sim.inventory.slots.filter((s) => s === null).length;
+  for (let i = 0; i < free; i++) n += sim.inventory.add(id, stack);
+  return n;
+}
+
+/** place a pickup at the player's feet */
+export function spawnPickup(sim, id = 'rock', n = 1) {
+  return sim.pickups.drop(id, n, sim.player.x, sim.player.y);
+}

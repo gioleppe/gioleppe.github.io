@@ -143,6 +143,34 @@
     "unstuckSearch": 320,
     "blocksSight": { "kayak": false, "dinghy": false, "totem": false, "tall_grass": false }
   },
+  "inventory": {
+    "$comment": "src/entities/Inventory.js: the 6-slot hotbar is the whole inventory (spec §6.4). startingKit: what a new game carries. dropLongPressMs: holding a hotbar slot this long on touch drops its stack.",
+    "slots": 6,
+    "startingKit": [{ "item": "flashlight", "n": 1 }],
+    "dropLongPressMs": 450
+  },
+  "interaction": {
+    "$comment": "src/entities/Interactable.js. radius: world px from the player within which each action can be used (default for the rest). aimPickRadius: a click or tap within this of an in-range interactable picks it. spring: drinking channel length and hydration per second. gridCell: bucket size of the spatial lookup.",
+    "gridCell": 128,
+    "radius": { "pickup": 20, "container": 30, "spring": 28, "totem": 28, "talk": 34, "default": 30 },
+    "aimPickRadius": 14,
+    "spring": { "seconds": 2, "drinkPerSecond": 50 }
+  },
+  "throw": {
+    "$comment": "src/entities/Projectile.js, thrown distractions (spec §3.2, §6.1). speed px/s; maxRange px (aim points beyond are clamped); defaultDistance: a throw without an aim point, in the facing direction; minAimDistance: a coconut (which is drunk on use) is thrown only when aimed at least this far; arcHeight: drawn peak height per px of distance, capped at maxArcHeight; impactNoise: radius of the landing noise when tuning.noise.throwImpact is absent (spec: 220); radius: body of a landed item for the free-spot search; marchStep/backoff/landSearch px: line-of-sight sampling, step back from an obstacle, search for a free spot.",
+    "speed": 260,
+    "maxRange": 180,
+    "defaultDistance": 120,
+    "minAimDistance": 20,
+    "arcHeight": 0.22,
+    "maxArcHeight": 34,
+    "cooldownSeconds": 0.75,
+    "impactNoise": 220,
+    "radius": 3,
+    "marchStep": 2,
+    "backoff": 4,
+    "landSearch": 24
+  },
   "stuck": {
     "seconds": 3,
     "epsilon": 2
