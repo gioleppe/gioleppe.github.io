@@ -15,6 +15,7 @@ import { MapOverlay } from './ui/MapOverlay.js';
 import './ui/hud/fogNotices.js';   // landmark and Shifting Paths notices join the shared queue
 import { installItemHud } from './ui/hud/Hotbar.js';
 import { ImpactEffects, drawAimMarker, throwPreview } from './engine/ItemRenderer.js';
+import { DialogueUI } from './ui/DialogueUI.js';
 
 const SEED = 1;
 
@@ -126,10 +127,12 @@ async function loadGame() {
     const params = new URLSearchParams(location.search);
     // ?debug&map=none: the open test field instead of the island
     const useMap = !(params.has('debug') && params.get('map') === 'none');
-    const [tuning, mapJson, items] = await Promise.all([fetchJson('data/tuning.json'), useMap ? fetchJson('data/island_map.json') : null, fetchJson('data/items.json')]);
+    const [tuning, mapJson, items, dialogueMarek] = await Promise.all([
+      fetchJson('data/tuning.json'), useMap ? fetchJson('data/island_map.json') : null, fetchJson('data/items.json'), fetchJson('data/dialogue_marek.json'),
+    ]);
     const map = mapJson ? IslandMap.fromJSON(mapJson, tuning) : null;
     renderer.terrainAt = map ? (c, r) => map.terrainAt(c, r) : testFieldTerrain;
-    sim = new Sim({ map, tuning, data: { items }, seed: SEED });
+    sim = new Sim({ map, tuning, data: { items, dialogue_marek: dialogueMarek }, seed: SEED });
     camera = new Camera(tuning.camera);
     camera.setViewport(vp.logicalWidth, vp.logicalHeight);
     camera.setBounds(sim.bounds);
@@ -139,9 +142,11 @@ async function loadGame() {
     mapOverlay = new MapOverlay({ tuning });
     mapOverlay.attach({ input, surface: uiCanvas });
     itemHud = installItemHud({ input, assets, tuning });
+    // after the item HUD, so the dialogue's hit regions sit on top of the hotbar's
+    dialogueUi = new DialogueUI({ input, assets, tuning });
     framesAtLoad = framesRun;
     if (DEBUG) {
-      window.__game = { get sim() { return sim; }, get camera() { return camera; }, input, assets, renderer, itemHud, mapOverlay };
+      window.__game = { get sim() { return sim; }, get camera() { return camera; }, input, assets, renderer, itemHud, mapOverlay, get dialogueUi() { return dialogueUi; } };
     }
   } catch (e) {
     loadError = `could not load the game data (${e.message})`;
@@ -163,6 +168,7 @@ async function loadGame() {
       w.registerWorldDebug(debug);
       r.registerResonanceDebug(debug);
       pd.registerPlayerDebug(debug);
+      import('./engine/debug/storyDebug.js').then((m) => m.registerStoryDebug(debug)).catch((e) => console.error('story debug failed to start', e));
       // every landmark of the island is a teleport target (debug "Go" page, __game.debug.teleportTo(id))
       debug.addPlaces((s) => (s.map ? s.map.entitiesOfType('landmark').map((l) => ({ id: l.id, label: l.name, x: l.x, y: l.y })) : []));
       import('./engine/debug/itemDebug.js').then((i) => i.registerItemDebug(debug)).catch((e) => console.error('item debug failed', e));
@@ -198,6 +204,8 @@ function handleUiActions() {
   if (ui.openJournal) mapOverlay.toggle(sim);
   else if (ui.pause && mapOverlay.isOpen) mapOverlay.close();
 }
+/** @type {DialogueUI|null} Marek's dialogue box; null until the tuning has loaded */
+let dialogueUi = null;
 
 // ---- frame ----------------------------------------------------------------------------------------------
 
@@ -221,7 +229,10 @@ function drawWorld(alpha, elapsed) {
     return;
   }
   const p = sim.player;
-  camera.update(elapsed, p.prevX + (p.x - p.prevX) * alpha, p.prevY + (p.y - p.prevY) * alpha);
+  // during a conversation the camera frames player and speaker above the dialogue box
+  const focus = dialogueUi?.cameraFocus(sim, camera.viewH);
+  if (focus) camera.update(elapsed, focus.x, focus.y);
+  else camera.update(elapsed, p.prevX + (p.x - p.prevX) * alpha, p.prevY + (p.y - p.prevY) * alpha);
   renderer.render(worldCtx, sim, camera, { alpha, time: sim.time });
   impactFx.draw(worldCtx, camera, sim.time);
   if (input && !input.touchVisible) drawAimMarker(worldCtx, sim, camera, input.mouse);
@@ -246,9 +257,16 @@ function drawUi() {
     ctx.fillStyle = 'rgba(216, 210, 191, 0.45)';
     ctx.fillText(buildLabel, vp.uiLogicalWidth - safe.right - 3, vp.uiLogicalHeight - safe.bottom - 2);
   }
-  if (sim && !sim.over) itemHud?.drawPrompt(ctx, sim, camera);
-  if (sim) drawHud(ctx, sim, vp, safe, { time: performance.now() / 1000, reserve: hudReserve() });
+  const talking = !!dialogueUi?.open;
+  if (sim && !sim.over && !talking) itemHud?.drawPrompt(ctx, sim, camera);
+  if (sim) {
+    // the HUD dims while the dialogue box is open (ctx.filter; where a browser lacks it the HUD stays bright)
+    if (talking) ctx.filter = `brightness(${sim.tuning.dialogue.hudDim})`;
+    drawHud(ctx, sim, vp, safe, { time: performance.now() / 1000, reserve: hudReserve() });
+    ctx.filter = 'none';
+  }
   if (input && sim) input.draw(ctx, { camera, player: sim.player, landing: (wx, wy) => throwPreview(sim, wx, wy) });
+  if (talking) dialogueUi.draw(ctx, vp, safe, performance.now());
   if (mapOverlay?.isOpen) mapOverlay.draw(ctx, vp, safe, sim, performance.now());
   if (loadError) {
     ctx.font = '8px ui-monospace, Consolas, monospace';
@@ -278,6 +296,7 @@ function frame(now) {
   else stepper.advance(elapsed, tick);
   framesRun++;
   if (sim) itemHud?.frame(sim);
+  if (sim) dialogueUi?.sync(sim, elapsed);
   drawWorld(stepper.alpha, elapsed);
   drawUi();
 }

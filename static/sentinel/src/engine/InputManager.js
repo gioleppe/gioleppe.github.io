@@ -4,7 +4,7 @@
 // Per tick:  sim.step(input.nextTick({ camera, player: sim.player }))
 // Per frame: input.takeUiActions() -> { openJournal, openInventory, pause } (never reach the simulation)
 //            input.draw(uiCtx, { camera, player })
-// From the game: setContext('hand'|'eye'|'speech'|'offering'|null), setCrouch(bool),
+// From the game: setContext('hand'|'eye'|'speech'|'offering'|null), setCrouch(bool), setModal(box|null),
 //            addHitRegion(id, rectProvider, onTap, { onLongPress, longPressMs }) for tappable HUD parts (hotbar
 //            slots: tap selects, long-press drops), selectHotbar(slot).
 import { InputCore, CONTEXT_ICONS } from './input/InputCore.js';
@@ -97,6 +97,7 @@ export class InputManager extends InputCore {
    *   landing: where a throw aimed at a world point would come down (the drag-aim line ends there)
    */
   draw(ctx, { camera = null, player = null, landing = null } = {}) {
+    if (this.modal) return;   // the dialogue box is open: the touch controls are hidden (and inert, see InputCore)
     const playerScreen = camera && player ? camera.worldToScreen(player.x, player.y) : null;
     const clampAim = camera && landing ? (sx, sy) => {
       const w = camera.screenToWorld(sx, sy);

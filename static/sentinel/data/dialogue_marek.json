@@ -1,0 +1,382 @@
+{
+  "$comment": "Marek's conversation (spec §7.1). Format and condition language: top of src/sim/Dialogue.js. Validated by tools/lib/validate-dialogue.mjs. Flags set here: met_marek, told_missionary, told_sailor, told_cartographer, heard_crowbar, knows_totem, refused, after_refusal_seen, gave_gift, farewell_boat_said, farewell_flare_said. Flags read, set by marekHooks.js: plan_boat, plan_signal, dinghy_repaired. Everything he gives is optional help: nothing on either ending's critical path comes from him.",
+  "id": "marek",
+  "start": "start",
+  "speakers": { "marek": "Marek" },
+  "nodes": [
+    { "id": "start", "branch": [
+      { "if": "dinghy_repaired & met_marek & !farewell_boat_said", "goto": "farewell_boat" },
+      { "if": "has:flare_gun & met_marek & !farewell_flare_said", "goto": "farewell_flare" },
+      { "if": "light:on | has:radio_battery | tier:agitated", "goto": "hum_router" },
+      { "if": "!met_marek", "goto": "first_1" },
+      { "goto": "greet" }
+    ] },
+
+    { "id": "hum_router", "branch": [
+      { "if": "!met_marek", "goto": "hum_first" },
+      { "goto": "hum_known" }
+    ] },
+    { "id": "hum_first", "speaker": "marek", "lines": [
+      "Stop there. Whoever you are, that thing you carry. Off.",
+      "Light, radio, anything that hums. Off, or go back the way you came."
+    ], "choices": [
+      { "text": "All right. It's off.", "if": "light:on", "event": "light_off", "goto": "hum_off" },
+      { "text": "It's a battery. I can't switch it off.", "if": "!light:on & has:radio_battery", "goto": "hum_battery" },
+      { "text": "There's nothing to switch off.", "if": "!light:on & !has:radio_battery", "goto": "hum_inside" },
+      { "text": "I'll go.", "exit": true, "end": true }
+    ] },
+    { "id": "hum_known", "speaker": "marek", "lines": [
+      "You've brought something that hums. I can hear it from here.",
+      "Shut it off, or take it out past the mud."
+    ], "choices": [
+      { "text": "All right. It's off.", "if": "light:on", "event": "light_off", "goto": "hum_off" },
+      { "text": "It's a battery. I can't switch it off.", "if": "!light:on & has:radio_battery", "goto": "hum_battery" },
+      { "text": "There's nothing to switch off.", "if": "!light:on & !has:radio_battery", "goto": "hum_inside" },
+      { "text": "I'll go.", "exit": true, "end": true }
+    ] },
+    { "id": "hum_off", "branch": [
+      { "if": "!met_marek", "goto": "first_off" },
+      { "goto": "known_off" }
+    ] },
+    { "id": "first_off", "speaker": "marek", "text": "Better. Now. Let me look at you.", "next": "first_2" },
+    { "id": "known_off", "speaker": "marek", "text": "Better. Thank you. Sit, if you want.", "next": "hub" },
+    { "id": "hum_battery", "speaker": "marek", "lines": [
+      "Then put it down somewhere past the mud, and come back without it.",
+      "I mean it. Not here."
+    ], "end": true },
+    { "id": "hum_inside", "speaker": "marek", "lines": [
+      "Then it's in you. That happens, near the stones.",
+      "Sit somewhere away from them until it fades. Then come back."
+    ], "end": true },
+
+    { "id": "first_1", "speaker": "marek", "lines": [
+      "Don't come any closer. Not yet.",
+      "Let me look at you."
+    ], "next": "first_2" },
+    { "id": "first_2", "speaker": "marek", "lines": [
+      "No bow. No spear. Salt in your hair.",
+      "Off a boat, then. Like me, a long time ago."
+    ], "choices": [
+      { "text": "Who are you?", "goto": "first_who" },
+      { "text": "Is there a way off this island?", "goto": "first_way" },
+      { "text": "Are they going to kill me?", "goto": "first_kill" }
+    ] },
+    { "id": "first_who", "speaker": "marek", "lines": [
+      "Marek. It's the only name I use now.",
+      "I came ashore before you were born. They let me stay. I stopped asking why."
+    ], "next": "first_warn" },
+    { "id": "first_way", "speaker": "marek", "lines": [
+      "There are ways. I don't use them.",
+      "Listen first. Or you won't live long enough to find one."
+    ], "next": "first_warn" },
+    { "id": "first_kill", "speaker": "marek", "lines": [
+      "Maybe. They warn first, most times.",
+      "An arrow in the sand at your feet means go back. So you go back."
+    ], "next": "first_warn" },
+    { "id": "first_warn", "speaker": "marek", "text": "Two things. Remember them.", "next": "first_tide" },
+    { "id": "first_tide", "speaker": "marek", "lines": [
+      "The reef, to the north-east. At low water you can walk it to the wreck.",
+      "At high water it takes you. It doesn't give anything back."
+    ], "next": "first_metal" },
+    { "id": "first_metal", "speaker": "marek", "lines": [
+      "And metal. Anything that hums, or clicks, or shines.",
+      "Near their paths, put it away. They hate it. Or the island does."
+    ], "next": "first_metal2" },
+    { "id": "first_metal2", "speaker": "marek", "text": "I stopped trying to tell which.",
+      "set": "met_marek", "journal": "marek_warnings",
+      "choices": [
+        { "text": "Why do they let you live?", "goto": "first_why" },
+        { "text": "I'll remember.", "goto": "first_end" }
+      ] },
+    { "id": "first_why", "speaker": "marek", "lines": [
+      "I don't fully know.",
+      "I stay on the mud. I take nothing from the forest. I carry no metal.",
+      "I leave fish at the totems, and I don't go where they go. Maybe that's all of it."
+    ], "next": "first_end" },
+    { "id": "first_end", "speaker": "marek", "lines": [
+      "They don't come into the mud. Here, you can sit.",
+      "Out there, you can't. Come back when you need to."
+    ], "choices": [
+      { "text": "I have more questions.", "goto": "hub" },
+      { "text": "I'll go.", "exit": true, "end": true }
+    ] },
+
+    { "id": "greet", "branch": [
+      { "if": "refused & !after_refusal_seen", "goto": "greet_after_refusal" },
+      { "if": "tier:humming", "goto": "greet_humming" },
+      { "if": "weather:squall", "goto": "greet_rain" },
+      { "if": "time:night", "goto": "greet_night" },
+      { "if": "time:dawn | time:dusk", "goto": "greet_dusk" },
+      { "if": "tide:low", "goto": "greet_low" },
+      { "if": "tide:high", "goto": "greet_high" },
+      { "if": "visits>=6", "goto": "greet_regular" },
+      { "goto": "greet_default" }
+    ] },
+    { "id": "greet_after_refusal", "speaker": "marek", "lines": [
+      "You came back.",
+      "I thought you might not. I'm glad."
+    ], "set": "after_refusal_seen", "next": "hub" },
+    { "id": "greet_humming", "speaker": "marek", "lines": [
+      "You've been near the stones. It's on you, like smoke.",
+      "Sit a while. It fades."
+    ], "next": "hub" },
+    { "id": "greet_rain", "speaker": "marek", "lines": [
+      "Come in under the roof. Such as it is.",
+      "Rain is good. It covers your footsteps. Theirs too."
+    ], "next": "hub" },
+    { "id": "greet_night", "speaker": "marek", "lines": [
+      "You walked here in the dark?",
+      "Keep low on the way back. The moon shows more than you think."
+    ], "next": "hub" },
+    { "id": "greet_dusk", "speaker": "marek", "text": "The light's turning. The fish come in close now.", "next": "hub" },
+    { "id": "greet_low", "speaker": "marek", "lines": [
+      "Low water. The reef is showing its back.",
+      "If you mean to go to the wreck, you're wasting it here."
+    ], "next": "hub" },
+    { "id": "greet_high", "speaker": "marek", "text": "High water. Nobody crosses the reef now. Not them, not you.", "next": "hub" },
+    { "id": "greet_regular", "speaker": "marek", "text": "You again. Sit, if you want. The mud doesn't mind.", "next": "hub" },
+    { "id": "greet_default", "speaker": "marek", "text": "Still alive. Good.", "next": "hub" },
+
+    { "id": "hub", "speaker": "marek", "text": "What is it?", "choices": [
+      { "text": "Tell me about this island.", "goto": "ask" },
+      { "text": "About the others who came here.", "goto": "outsiders" },
+      { "text": "I need your help.", "goto": "help" },
+      { "text": "I should go.", "exit": true, "goto": "bye" }
+    ] },
+
+    { "id": "ask", "speaker": "marek", "text": "Ask.", "choices": [
+      { "text": "The tide.", "goto": "tide" },
+      { "text": "The people who live here.", "goto": "people_1" },
+      { "text": "The middle of the island.", "goto": "mer_1" },
+      { "text": "Never mind.", "exit": true, "goto": "hub" }
+    ] },
+    { "id": "tide", "branch": [
+      { "if": "tide:low", "goto": "tide_low" },
+      { "if": "tide:rising", "goto": "tide_rising" },
+      { "if": "tide:high", "goto": "tide_high" },
+      { "goto": "tide_falling" }
+    ] },
+    { "id": "tide_low", "speaker": "marek", "lines": [
+      "Low now. The reef path is open, all the way to the wreck.",
+      "Go now if you're going. It turns faster than you'd think."
+    ], "next": "tide_boat" },
+    { "id": "tide_rising", "speaker": "marek", "text": "Coming in. If you were out on the reef now, you'd already be late.", "next": "tide_boat" },
+    { "id": "tide_high", "speaker": "marek", "text": "High. The reef is under. Don't try it, not even the edge.", "next": "tide_boat" },
+    { "id": "tide_falling", "speaker": "marek", "text": "Going out. Soon the reef will show its back again.", "next": "tide_boat" },
+    { "id": "tide_boat", "speaker": "marek", "text": "A boat goes out on the high water. Over the outer reef, never through it.", "next": "ask" },
+    { "id": "people_1", "speaker": "marek", "lines": [
+      "They watch the reef. They watch the beaches.",
+      "They warn before they shoot. Respect the warning, and you may live to get another."
+    ], "next": "people_2" },
+    { "id": "people_2", "speaker": "marek", "lines": [
+      "I don't know their words. I've never heard them speak to me.",
+      "I know when to sit still. That's all I know."
+    ], "choices": [
+      { "text": "What do they want?", "goto": "people_want" },
+      { "text": "Something else.", "exit": true, "goto": "ask" }
+    ] },
+    { "id": "people_want", "speaker": "marek", "lines": [
+      "To be left alone. That much I'm sure of.",
+      "The rest I won't guess at. Guessing is how people like us end up in the roots."
+    ], "next": "ask" },
+    { "id": "mer_1", "speaker": "marek", "lines": [
+      "The middle. I call it the Quiet Meridian.",
+      "The birds stop there. So does everything else."
+    ], "next": "mer_2" },
+    { "id": "mer_2", "speaker": "marek", "lines": [
+      "The stones hum. Your compass will lie to you.",
+      "And the path you came in by is not there when you turn round."
+    ], "next": "mer_3" },
+    { "id": "mer_3", "speaker": "marek", "text": "I went in once. I don't go now.", "choices": [
+      { "text": "What happened to you there?", "goto": "mer_happened" },
+      { "text": "Is it a way across?", "goto": "mer_across" },
+      { "text": "Something else.", "exit": true, "goto": "ask" }
+    ] },
+    { "id": "mer_happened", "speaker": "marek", "lines": [
+      "Nothing. I came out the other side.",
+      "Most of me did. Some nights I can still hear it from here."
+    ], "next": "mer_3" },
+    { "id": "mer_across", "speaker": "marek", "lines": [
+      "It's shorter. If it lets you through.",
+      "No light. Nothing that hums. Walk, don't run. Don't trust the path behind you."
+    ], "next": "mer_3" },
+
+    { "id": "outsiders", "branch": [
+      { "if": "inspected>=1", "goto": "out_menu" },
+      { "goto": "out_none" }
+    ] },
+    { "id": "out_none", "speaker": "marek", "lines": [
+      "Others? A few, over the years. None of them left.",
+      "I won't tell their stories for them. Find them first. Then ask me."
+    ], "next": "hub" },
+    { "id": "out_menu", "speaker": "marek", "text": "Which one?", "choices": [
+      { "text": "The one by the kayak.", "if": "inspected:missionary_camp", "goto": "mis" },
+      { "text": "The sailor in the roots.", "if": "inspected:sailor_remains", "goto": "sail" },
+      { "text": "The one with the tent and the maps.", "if": "inspected:cartographer_camp", "goto": "carto" },
+      { "text": "Never mind.", "exit": true, "goto": "hub" }
+    ] },
+
+    { "id": "mis", "branch": [
+      { "if": "told_missionary", "goto": "mis_again" },
+      { "goto": "mis_1" }
+    ] },
+    { "id": "mis_1", "speaker": "marek", "lines": [
+      "The missionary. He paddled in with a book and a good tarp.",
+      "They put two arrows in the palm above his head. A warning."
+    ], "next": "mis_2" },
+    { "id": "mis_2", "speaker": "marek", "lines": [
+      "He came back. I told him what the arrows meant.",
+      "He said he wasn't afraid. He wasn't. It didn't help him."
+    ], "next": "mis_3" },
+    { "id": "mis_3", "speaker": "marek", "lines": [
+      "I left him where he lay. They don't like the ground opened.",
+      "His rope and his tarp are still good. Use them. He won't."
+    ], "set": "told_missionary", "next": "out_menu" },
+    { "id": "mis_again", "speaker": "marek", "text": "He meant well. Meaning well is not a shield. Not here.", "next": "out_menu" },
+
+    { "id": "sail", "branch": [
+      { "if": "told_sailor", "goto": "sail_again" },
+      { "goto": "sail_1" }
+    ] },
+    { "id": "sail_1", "speaker": "marek", "lines": [
+      "The sailor. From the freighter on the reef.",
+      "She ran aground in a storm. Eighty-one, I think. Or eighty-two."
+    ], "next": "sail_2" },
+    { "id": "sail_2", "speaker": "marek", "lines": [
+      "The crew waited on her deck for weeks, and in the end they were taken off.",
+      "He had gone ashore for water. Nobody came back for him."
+    ], "next": "sail_3" },
+    { "id": "sail_3", "speaker": "marek", "lines": [
+      "He lasted a season. Then he didn't.",
+      "He carried a pry bar for the hatches. Always. Even asleep."
+    ], "set": ["told_sailor", "heard_crowbar"], "journal": "marek_crowbar", "next": "sail_4" },
+    { "id": "sail_4", "branch": [
+      { "if": "has:crowbar", "goto": "sail_have" },
+      { "goto": "sail_go" }
+    ] },
+    { "id": "sail_have", "speaker": "marek", "text": "You have it now. Good. That ship might as well be some use to someone.", "next": "out_menu" },
+    { "id": "sail_go", "speaker": "marek", "text": "If it's still with him, take it. That ship might as well be some use to someone.", "next": "out_menu" },
+    { "id": "sail_again", "speaker": "marek", "lines": [
+      "He used to whistle at night, the sailor. Sometimes a whistle came back.",
+      "I never knew whether that was a kindness."
+    ], "next": "out_menu" },
+
+    { "id": "carto", "branch": [
+      { "if": "told_cartographer", "goto": "carto_again" },
+      { "goto": "carto_1" }
+    ] },
+    { "id": "carto_1", "speaker": "marek", "lines": [
+      "The mapmaker. The nineties. He came with a telephone that talked to satellites.",
+      "And flares, and a compass, and a great deal of confidence."
+    ], "next": "carto_2" },
+    { "id": "carto_2", "speaker": "marek", "lines": [
+      "He wanted to measure the middle. Put it on paper.",
+      "His phone died the day he arrived. His compass the day after."
+    ], "next": "carto_3" },
+    { "id": "carto_3", "speaker": "marek", "lines": [
+      "He nailed his map to a stone and walked into the Meridian.",
+      "I watched him go. He was humming. I don't think he knew."
+    ], "next": "carto_4" },
+    { "id": "carto_4", "speaker": "marek", "text": "His camp is still there. His flares may still be dry. His map is better than mine.",
+      "set": "told_cartographer", "next": "out_menu" },
+    { "id": "carto_again", "speaker": "marek", "text": "Some nights I think I hear him humming, out in the middle. I don't go and look.", "next": "out_menu" },
+
+    { "id": "help", "speaker": "marek", "text": "What do you need?", "choices": [
+      { "text": "The hum in my head. How do I quiet it?", "goto": "totem" },
+      { "text": "How do I get into the wreck?", "goto": "wreck" },
+      { "text": "When I go, come with me.", "if": "plan_boat | plan_signal", "goto": "ref" },
+      { "text": "Never mind.", "exit": true, "goto": "hub" }
+    ] },
+    { "id": "totem", "branch": [
+      { "if": "recipe:driftwood_totem", "goto": "totem_again" },
+      { "goto": "totem_1" }
+    ] },
+    { "id": "totem_1", "speaker": "marek", "text": "So you've started to hear it. Everyone does, sooner or later.", "next": "totem_2" },
+    { "id": "totem_2", "speaker": "marek", "lines": [
+      "Driftwood from the shore. A length of cord. A bone, or a shell.",
+      "Lash them in a cross and carry it with you."
+    ], "next": "totem_3" },
+    { "id": "totem_3", "speaker": "marek", "lines": [
+      "It quiets the hum. Not all of it. Enough.",
+      "I copied the ones at the borders. Why it works, I can't tell you."
+    ], "give": "recipe:driftwood_totem", "journal": "recipe_driftwood_totem", "set": "knows_totem", "next": "help" },
+    { "id": "totem_again", "speaker": "marek", "lines": [
+      "Driftwood, cord, a bone or a shell. Lash them. Carry it.",
+      "It won't make you quiet. Quieter."
+    ], "next": "help" },
+    { "id": "wreck", "branch": [
+      { "if": "has:crowbar", "goto": "wreck_have" },
+      { "if": "heard_crowbar", "goto": "wreck_again" },
+      { "goto": "wreck_1" }
+    ] },
+    { "id": "wreck_have", "speaker": "marek", "lines": [
+      "You have the sailor's bar. That opens it.",
+      "Go at low water. Be off the reef before the turn."
+    ], "next": "help" },
+    { "id": "wreck_again", "speaker": "marek", "text": "The sailor's bar. He's in the roots where the mangroves meet the forest, south-east of here.", "next": "help" },
+    { "id": "wreck_1", "speaker": "marek", "text": "The cabin is sealed. Rusted shut, and the hatch is heavy.", "next": "wreck_2" },
+    { "id": "wreck_2", "speaker": "marek", "lines": [
+      "The sailor from the freighter had a bar for it.",
+      "He lies in the roots where the mangroves meet the forest. South-east of here."
+    ], "set": "heard_crowbar", "journal": "marek_crowbar", "next": "help" },
+
+    { "id": "ref", "branch": [
+      { "if": "refused", "goto": "ref_again" },
+      { "goto": "ref_1" }
+    ] },
+    { "id": "ref_1", "text": "Marek looks at the water for a long time.", "next": "ref_2" },
+    { "id": "ref_2", "speaker": "marek", "text": "No.", "next": "ref_3" },
+    { "id": "ref_3", "speaker": "marek", "text": "I had a life somewhere else. It went on without me. That's as it should be.", "next": "ref_4" },
+    { "id": "ref_4", "speaker": "marek", "lines": [
+      "I belong to the quiet meridian now.",
+      "It wouldn't let me go. I wouldn't ask it to."
+    ], "choices": [
+      { "text": "There's room in the boat.", "if": "plan_boat", "goto": "ref_5" },
+      { "text": "A ship will come. There's room for two.", "if": "plan_signal", "goto": "ref_5" },
+      { "text": "Please.", "goto": "ref_5" },
+      { "text": "I understand.", "goto": "ref_5" }
+    ] },
+    { "id": "ref_5", "speaker": "marek", "lines": [
+      "Go when the water is right. Don't look back for me.",
+      "I'll leave a fish at the totem for you. That's how it's done here."
+    ], "set": "refused", "end": true },
+    { "id": "ref_again", "speaker": "marek", "text": "You asked. I answered. Go well, when you go.", "next": "help" },
+
+    { "id": "bye", "branch": [
+      { "if": "has:fish | has:coconut", "goto": "bye_gift" },
+      { "if": "time:night", "goto": "bye_night" },
+      { "goto": "bye_day" }
+    ] },
+    { "id": "bye_gift", "speaker": "marek", "text": "Mind the tide.", "choices": [
+      { "text": "Here. I brought you a fish.", "if": "has:fish", "once": true, "id": "gift_fish", "take": "fish", "goto": "gift_fish" },
+      { "text": "Have a coconut.", "if": "has:coconut", "once": true, "id": "gift_coconut", "take": "coconut", "goto": "gift_coconut" },
+      { "text": "Goodbye.", "exit": true, "end": true }
+    ] },
+    { "id": "gift_fish", "speaker": "marek", "lines": [
+      "A fish. You're learning how things are done here.",
+      "I'll take it to the totem tonight. Thank you."
+    ], "set": "gave_gift", "end": true },
+    { "id": "gift_coconut", "speaker": "marek", "text": "Thank you. I'll drink to your boat, whatever it turns out to be.", "set": "gave_gift", "end": true },
+    { "id": "bye_night", "speaker": "marek", "text": "Keep low. Keep dark. Come back if you need to.", "end": true },
+    { "id": "bye_day", "speaker": "marek", "text": "Mind the tide.", "end": true },
+
+    { "id": "farewell_boat", "speaker": "marek", "lines": [
+      "You patched it. I can see it on you.",
+      "Go on the high water. Over the outer reef, and then don't stop."
+    ], "set": "farewell_boat_said", "next": "farewell_boat_2" },
+    { "id": "farewell_boat_2", "speaker": "marek", "text": "I won't come down to the beach. They'd see two of us.", "choices": [
+      { "text": "Goodbye, Marek.", "exit": true, "end": true },
+      { "text": "One last time. Come with me.", "goto": "farewell_no" },
+      { "text": "Before I go...", "goto": "hub" }
+    ] },
+    { "id": "farewell_no", "speaker": "marek", "lines": ["No.", "Go well."], "end": true },
+    { "id": "farewell_flare", "speaker": "marek", "lines": [
+      "That's a flare pistol. You'll take it up to the ridge.",
+      "When it goes up, everyone on this island will see it. Everyone."
+    ], "set": "farewell_flare_said", "next": "farewell_flare_2" },
+    { "id": "farewell_flare_2", "speaker": "marek", "text": "Fire it, then hold your ground. Don't run for the trees.", "choices": [
+      { "text": "Goodbye, Marek.", "exit": true, "end": true },
+      { "text": "Before I go...", "goto": "hub" }
+    ] }
+  ]
+}

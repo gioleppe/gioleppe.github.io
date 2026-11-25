@@ -303,6 +303,39 @@
       "patrolSpeed": 45
     }
   },
+  "dialogue": {
+    "$comment": "Step 4.5, the dialogue box (src/ui/DialogueUI.js). Sizes in logical pixels unless named Css (CSS pixels, converted with the viewport scale like tuning.input). cps: typewriter characters per second; pauseMs: extra pause after . , ? ! and the dash.",
+    "cps": 50,
+    "pauseMs": { "stop": 220, "comma": 90 },
+    "fontPx": 9,
+    "lineHeight": 11,
+    "nameHeight": 11,
+    "maxTextLines": 3,
+    "maxChoices": 4,
+    "boxMaxWidth": 470,
+    "margin": 6,
+    "padding": 9,
+    "sideBySideMinWidth": 400,
+    "choiceColumnFraction": 0.44,
+    "choiceRowHeight": 12,
+    "touchChoiceRowCss": 34,
+    "speakerClearance": 6,
+    "hudDim": 0.6,
+    "caretBlinkMs": 400,
+    "maxLineChars": 130,
+    "maxChoiceChars": 44
+  },
+  "marek": {
+    "$comment": "Step 4.5. radius: body (the player cannot walk through him); standHours: [from, to) in-game hours he stands (idle) instead of sitting: fishing at first light and at dusk.",
+    "radius": 7,
+    "standHours": [[5.5, 7.5], [17.5, 19]]
+  },
+  "safeZones": {
+    "$comment": "Step 4.5. Circles where scouts never go and never pursue (step 4.1) and where the autosave triggers (5.2): { id, landmark, radius } centred on a map landmark, or { id, x, y, radius }.",
+    "zones": [
+      { "id": "marek_shack", "landmark": "marek_shack", "radius": 200 }
+    ]
+  },
   "testField": {
     "halfWidth": 400,
     "halfHeight": 300,

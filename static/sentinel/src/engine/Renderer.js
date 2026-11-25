@@ -215,6 +215,7 @@ export class Renderer {
       : sim.props;
     for (const prop of props) out.push({ id: prop.id, kind: prop.kind, x: prop.x, y: prop.y, state: 'idle', facing: null });
     collectItemViews(sim, view ?? null, out, this.sprites, this.itemScratch, alpha);
+    if (sim.marek) out.push(sim.marek.view());
     return out;
   }
 
