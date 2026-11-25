@@ -1,0 +1,25 @@
+{
+  "player": {
+    "walkSpeed": 60,
+    "radius": 6
+  },
+  "props": {
+    "palm": { "radius": 6 },
+    "rock": { "radius": 9 },
+    "tall_grass": { "radius": 0 },
+    "monolith": { "radius": 10 }
+  },
+  "camera": {
+    "followRate": 6,
+    "shakeDecay": 6,
+    "maxShake": 8
+  },
+  "testField": {
+    "halfWidth": 400,
+    "halfHeight": 300,
+    "clearRadius": 40,
+    "minSpacing": 28,
+    "placementTries": 30,
+    "counts": { "palm": 16, "rock": 12, "tall_grass": 22, "monolith": 1 }
+  }
+}
