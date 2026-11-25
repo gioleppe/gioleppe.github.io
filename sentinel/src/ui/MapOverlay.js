@@ -83,8 +83,16 @@ export function overlayFrame(vp, safe, margin) {
   const y = Math.round((safe.top || 0) + margin);
   const w = Math.floor(vp.uiLogicalWidth - (safe.right || 0) - margin - x);
   const h = Math.floor(vp.uiLogicalHeight - (safe.bottom || 0) - margin - y);
+  return frameIn({ x, y, w, h });
+}
+
+/**
+ * The map's frame inside a given rectangle (the Journal's Map tab embeds it this way).
+ * @param {{x:number,y:number,w:number,h:number}} r
+ */
+export function frameIn(r) {
   const header = 14;
-  return { x, y, w, h, header, map: { x: x + 2, y: y + header, w: w - 4, h: h - header - 2 } };
+  return { x: r.x, y: r.y, w: r.w, h: r.h, header, map: { x: r.x + 2, y: r.y + header, w: r.w - 4, h: r.h - header - 2 } };
 }
 
 /**
@@ -406,14 +414,17 @@ export class MapOverlay {
    * @param {{ top?: number, right?: number, bottom?: number, left?: number }} safe
    * @param {Object} sim
    * @param {number} now ms, for the animations
+   * @param {{x:number,y:number,w:number,h:number}|null} [rect] embedded (the Journal's Map tab): drawn inside this
+   *   rectangle, without the full-screen backdrop and without a close button of its own
    */
-  draw(ctx, vp, safe, sim, now = 0) {
+  draw(ctx, vp, safe, sim, now = 0, rect = null) {
     if (!this.isOpen || !sim?.map) return;
     const t0 = nowMs();
     const map = sim.map;
     this.buildStep(map);
     const C = MAP_COLORS;
-    const frame = overlayFrame(vp, safe, this.cfg.margin);
+    this.embedded = !!rect;
+    const frame = rect ? frameIn(rect) : overlayFrame(vp, safe, this.cfg.margin);
     const area = frame.map;
     const view = viewFor(area, map.width, map.height, this.cfg.zoomLevels, this.zoom, this.center);
     this.view = view;
@@ -424,10 +435,12 @@ export class MapOverlay {
     const time = now / 1000;
 
     ctx.save();
-    ctx.fillStyle = 'rgba(13, 11, 18, 0.92)';
-    ctx.fillRect(0, 0, vp.uiLogicalWidth, vp.uiLogicalHeight);
-    // the weathered paper 9-slice as the frame, reaching a little past the map on every side
-    drawPaperPanel(ctx, frame.x - PAPER_PAD, frame.y - PAPER_PAD, frame.w + PAPER_PAD * 2, frame.h + PAPER_PAD * 2);
+    if (!rect) {
+      ctx.fillStyle = 'rgba(13, 11, 18, 0.92)';
+      ctx.fillRect(0, 0, vp.uiLogicalWidth, vp.uiLogicalHeight);
+      // the weathered paper 9-slice as the frame, reaching a little past the map on every side
+      drawPaperPanel(ctx, frame.x - PAPER_PAD, frame.y - PAPER_PAD, frame.w + PAPER_PAD * 2, frame.h + PAPER_PAD * 2);
+    }
     ctx.fillStyle = C.parchmentEdge;
     ctx.fillRect(area.x - 1, area.y - 1, area.w + 2, area.h + 2);
     ctx.beginPath();
@@ -605,12 +618,14 @@ export class MapOverlay {
     }
     // buttons: zoom and close, right-aligned and finger-sized
     const bw = header + 6;
-    this.buttons.close = { x: x + w - bw, y: y - 2, w: bw, h: header + 4 };
-    this.buttons.zoom = { x: x + w - 2 * bw - 2, y: y - 2, w: bw, h: header + 4 };
+    // embedded in the Journal, its tab row has the close button
+    this.buttons.close = this.embedded ? null : { x: x + w - bw, y: y - 2, w: bw, h: header + 4 };
+    this.buttons.zoom = { x: x + w - (this.embedded ? 1 : 2) * bw - (this.embedded ? 0 : 2), y: y - 2, w: bw, h: header + 4 };
     ctx.fillStyle = C.paperDim;
     ctx.textAlign = 'right';
     ctx.fillText(parts.join('   '), this.buttons.zoom.x - 6, y + header / 2);
     for (const [k, label] of [['zoom', this.zoom ? '−' : '+'], ['close', '×']]) {
+      if (!this.buttons[k]) continue;
       const b = this.buttons[k];
       ctx.fillStyle = '#24212c';
       ctx.fillRect(b.x + 1, y + 1, b.w - 2, header - 2);

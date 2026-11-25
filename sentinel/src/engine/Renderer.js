@@ -9,6 +9,7 @@ import { Lighting } from './Lighting.js';
 import { WeatherFx, swayOffsets, grassPush } from './WeatherFx.js';
 import { waterAt, isWaterClass } from '../world/water.js';
 import { collectItemViews } from './ItemRenderer.js';
+import { propKind } from '../entities/storyInteractions.js';
 
 /**
  * The seam every picture goes through. PlaceholderSprites implements it; the AssetManager (step 1.2) will
@@ -292,7 +293,13 @@ export class Renderer {
       ? sim.map.propsInRect(view.x - PROP_REACH_SIDE, view.y - PROP_REACH_ABOVE, view.x + view.w + PROP_REACH_SIDE, view.y + view.h + PROP_REACH_BELOW, this.propScratch)
       : sim.props;
     const kinds = sim.tuning?.props ?? {};
-    for (const prop of props) out.push(propView(prop, kinds[prop.kind]));
+    for (const prop of props) {
+      // propKind: a prop whose look follows the story (the patched dinghy, step 4.7)
+      const kind = propKind(sim, prop);
+      const view = propView(prop, kinds[kind]);
+      view.kind = kind;
+      out.push(view);
+    }
     collectItemViews(sim, view ?? null, out, this.sprites, this.itemScratch, alpha);
     if (sim.marek) out.push(sim.marek.view());
     for (const v of this.extraViews) out.push(v);

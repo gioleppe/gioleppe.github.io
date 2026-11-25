@@ -7,7 +7,7 @@
 // differ from `emptyInput()`; a missing `input` is the empty input. A one-tick action (interact, useItem,
 // toggleLight, hotbar) in a step of several ticks is pressed on every one of those ticks, exactly as recorded.
 
-import { INPUT_FIELDS, emptyInput, sanitizeInput } from './input.js';
+import { INPUT_FIELDS, emptyInput, sanitizeInput, cleanJournal } from './input.js';
 
 /** @typedef {{ ticks: number, input?: Partial<import('./input.js').InputState> }} ScriptStep */
 /** @typedef {ScriptStep[]} InputScript */
@@ -40,6 +40,8 @@ export function validateInput(input, where = 'input') {
       if (typeof v !== 'number' || !Number.isFinite(v) || v < -1 || v > 1) throw new ScriptError(`${at}: expected a number in -1..1, got ${show(v)}`);
     } else if (BOOL_FIELDS.has(k)) {
       if (typeof v !== 'boolean') throw new ScriptError(`${at}: expected true or false, got ${show(v)}`);
+    } else if (k === 'journal') {
+      if (v !== null && (typeof v !== 'string' || cleanJournal(v) !== v)) throw new ScriptError(`${at}: expected null or space-separated read:<id> / craft:<id> commands, got ${show(v)}`);
     } else if (k === 'hotbar') {
       if (!Number.isInteger(v) || v < -1) throw new ScriptError(`${at}: expected an integer slot >= 0 or -1, got ${show(v)}`);
     } else if (v !== null && (typeof v !== 'number' || !Number.isFinite(v))) {   // aimX, aimY

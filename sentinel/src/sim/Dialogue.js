@@ -308,8 +308,10 @@ export class Story {
     this.inspected = new Set();
     /** @type {Set<string>} */
     this.recipes = new Set();
-    /** @type {string[]} journal entry ids in the order they were added */
+    /** @type {string[]} journal entry ids in the order they were added (dialogue and lore, Lore.js) */
     this.journal = [];
+    /** @type {Set<string>} journal entries the player has opened (the Journal's unread marks) */
+    this.read = new Set();
     /** @type {Set<string>} ids of once-only choices already picked */
     this.used = new Set();
     /** @type {{ tree: string, node: string, line: number }|null} */
@@ -324,7 +326,7 @@ export class Story {
     for (const k of Object.keys(this.visits).sort()) visits[k] = this.visits[k];
     return {
       flags: sorted(this.flags), counters, visits, inspected: sorted(this.inspected), recipes: sorted(this.recipes),
-      journal: [...this.journal], used: sorted(this.used), conversation: this.conversation ? { ...this.conversation } : null,
+      journal: [...this.journal], read: sorted(this.read), used: sorted(this.used), conversation: this.conversation ? { ...this.conversation } : null,
     };
   }
 
@@ -338,6 +340,7 @@ export class Story {
     st.inspected = new Set(s.inspected ?? []);
     st.recipes = new Set(s.recipes ?? []);
     st.journal = [...(s.journal ?? [])];
+    st.read = new Set(s.read ?? []);   // older saves: nothing read
     st.used = new Set(s.used ?? []);
     st.conversation = s.conversation ? { tree: s.conversation.tree, node: s.conversation.node, line: s.conversation.line | 0 } : null;
     return st;

@@ -14,6 +14,9 @@ import { ResonanceFx } from './engine/ResonanceFx.js';
 import { MapOverlay } from './ui/MapOverlay.js';
 import './ui/hud/fogNotices.js';   // landmark and Shifting Paths notices join the shared queue
 import { installItemHud } from './ui/hud/Hotbar.js';
+import './ui/storyNotices.js';   // after the item HUD's notices: journal, crafting and shipwreck lines (some replace its own)
+import { JournalUI } from './ui/JournalUI.js';
+import { recipeViews } from './entities/Crafting.js';
 import { ImpactEffects, drawAimMarker, throwPreview } from './engine/ItemRenderer.js';
 import { DialogueUI } from './ui/DialogueUI.js';
 
@@ -128,26 +131,29 @@ async function loadGame() {
     const params = new URLSearchParams(location.search);
     // ?debug&map=none: the open test field instead of the island
     const useMap = !(params.has('debug') && params.get('map') === 'none');
-    const [tuning, mapJson, items, dialogueMarek] = await Promise.all([
+    const [tuning, mapJson, items, dialogueMarek, lore, recipes] = await Promise.all([
       fetchJson('data/tuning.json'), useMap ? fetchJson('data/island_map.json') : null, fetchJson('data/items.json'), fetchJson('data/dialogue_marek.json'),
+      fetchJson('data/lore_entries.json'), fetchJson('data/recipes.json'),
     ]);
     const map = mapJson ? IslandMap.fromJSON(mapJson, tuning) : null;
     renderer.terrainAt = map ? (c, r) => map.terrainAt(c, r) : testFieldTerrain;
-    sim = new Sim({ map, tuning, data: { items, dialogue_marek: dialogueMarek }, seed: SEED });
+    sim = new Sim({ map, tuning, data: { items, dialogue_marek: dialogueMarek, lore_entries: lore, recipes }, seed: SEED });
     camera = new Camera(tuning.camera);
     camera.setViewport(vp.logicalWidth, vp.logicalHeight);
     camera.setBounds(sim.bounds);
     camera.snapTo(sim.player.x, sim.player.y);
     input = new InputManager({ tuning, surface: uiCanvas });
     input.setViewport(vp, safe);
+    // the island map lives in the Journal's Map tab, which forwards its input to it
     mapOverlay = new MapOverlay({ tuning });
-    mapOverlay.attach({ input, surface: uiCanvas });
     itemHud = installItemHud({ input, assets, tuning });
     // after the item HUD, so the dialogue's hit regions sit on top of the hotbar's
     dialogueUi = new DialogueUI({ input, assets, tuning });
+    journalUi = new JournalUI({ input, assets, tuning, map: mapOverlay, recipes: (s) => recipeViews(s), onCraft: () => { craftTickPending = true; } });
+    journalUi.attach({ surface: uiCanvas });
     framesAtLoad = framesRun;
     if (DEBUG) {
-      window.__game = { get sim() { return sim; }, get camera() { return camera; }, input, assets, renderer, itemHud, mapOverlay, get dialogueUi() { return dialogueUi; } };
+      window.__game = { get sim() { return sim; }, get camera() { return camera; }, input, assets, renderer, itemHud, mapOverlay, get dialogueUi() { return dialogueUi; }, get journalUi() { return journalUi; } };
     }
   } catch (e) {
     loadError = `could not load the game data (${e.message})`;
@@ -170,6 +176,7 @@ async function loadGame() {
       r.registerResonanceDebug(debug);
       pd.registerPlayerDebug(debug);
       import('./engine/debug/storyDebug.js').then((m) => m.registerStoryDebug(debug)).catch((e) => console.error('story debug failed to start', e));
+      import('./engine/debug/journalDebug.js').then((m) => m.registerJournalDebug(debug)).catch((e) => console.error('journal debug failed to start', e));
       // every landmark of the island is a teleport target (debug "Go" page, __game.debug.teleportTo(id))
       debug.addPlaces((s) => (s.map ? s.map.entitiesOfType('landmark').map((l) => ({ id: l.id, label: l.name, x: l.x, y: l.y })) : []));
       import('./engine/debug/itemDebug.js').then((i) => i.registerItemDebug(debug)).catch((e) => console.error('item debug failed', e));
@@ -191,20 +198,25 @@ window.__smoke = () => {
 
 /** @type {InputManager|null} keyboard, mouse and touch; null until the tuning has loaded */
 let input = null;
-/** @type {MapOverlay|null} the island map (Tab / J); null until the tuning has loaded */
+/** @type {MapOverlay|null} the island map, the Journal's Map tab; null until the tuning has loaded */
 let mapOverlay = null;
+/** @type {JournalUI|null} the Journal (Tab / J; I opens it on Recipes); null until the tuning has loaded */
+let journalUi = null;
+/** Make was pressed in the Journal: one tick runs at once (the world is paused) to carry the craft command */
+let craftTickPending = false;
 
-/** a screen that stops the world is open (the map; later the journal and the pause menu): no ticks run */
+/** a screen that stops the world is open (the Journal; later the pause menu): no ticks run */
 function uiPaused() {
-  return !!mapOverlay?.isOpen;
+  return !!journalUi?.isOpen;
 }
 
-/** the presentation-only actions of this frame: open and close the map */
+/** the presentation-only actions of this frame: open and close the Journal */
 function handleUiActions() {
   const ui = input?.takeUiActions();
-  if (!ui || !sim || !mapOverlay) return;
-  if (ui.openJournal) mapOverlay.toggle(sim);
-  else if (ui.pause && mapOverlay.isOpen) mapOverlay.close();
+  if (!ui || !sim || !journalUi) return;
+  if (ui.openJournal) journalUi.toggle(sim);
+  else if (ui.openInventory) journalUi.toggle(sim, 'recipes');   // the inventory is the hotbar; I shows what it can make
+  else if (ui.pause && journalUi.isOpen) journalUi.close();
 }
 /** @type {DialogueUI|null} Marek's dialogue box; null until the tuning has loaded */
 let dialogueUi = null;
@@ -214,6 +226,7 @@ let dialogueUi = null;
 function tick() {
   if (!sim) return;
   const live = input.nextTick({ camera, player: sim.player });
+  live.journal = journalUi?.takeCommands() ?? null;   // read marks and crafts made in the Journal
   const inp = debug?.nextInput() ?? live;   // a debug replay replaces the live input
   sim.step(inp);
   ticksRun++;
@@ -269,7 +282,7 @@ function drawUi() {
   }
   if (input && sim) input.draw(ctx, { camera, player: sim.player, landing: (wx, wy) => throwPreview(sim, wx, wy) });
   if (talking) dialogueUi.draw(ctx, vp, safe, performance.now());
-  if (mapOverlay?.isOpen) mapOverlay.draw(ctx, vp, safe, sim, performance.now());
+  if (journalUi?.isOpen) journalUi.draw(ctx, vp, safe, sim, performance.now());
   if (loadError) {
     ctx.font = '8px ui-monospace, Consolas, monospace';
     ctx.textAlign = 'center';
@@ -290,10 +303,10 @@ function frame(now) {
   rafId = requestAnimationFrame(frame);
   const elapsed = lastTime === null ? 0 : (now - lastTime) / 1000;
   lastTime = now;
-  handleUiActions();   // the inventory and the pause menu arrive in later steps; until then those presses are dropped
+  handleUiActions();   // the pause menu arrives in a later step; until then that press only closes the Journal
   if (uiPaused()) {
     stepper.reset();   // the world waits; on closing it resumes from now, without catch-up ticks
-    mapOverlay.update(elapsed, input);
+    if (craftTickPending) { craftTickPending = false; tick(); }   // a Make: exactly one tick, carrying the command
   } else if (debug) debug.advance(elapsed, tick, now);   // pause, step and speed live in debug mode
   else stepper.advance(elapsed, tick);
   framesRun++;

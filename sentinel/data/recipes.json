@@ -1,0 +1,21 @@
+{
+  "$comment": "Context crafting (spec §6.4, step 4.7), checked by tools/lib/validate-recipes.mjs and read by src/entities/Crafting.js. No workbench: a recipe is made from the Journal's Recipes tab or by using one of its ingredients in hand (gives), or at an interactable (requires.at, effect). ingredients: { item, n } or { anyOf: [items], n } (the first carried alternative is used; an anyOf never names a key item). requires: recipeKnown (the recipe id must be in the story's recipes), at (an interactable action: made there, over a channel). maxCrafts: how many times it can ever be made (the softlock rule: the totem never eats the dinghy's paracord). consumesKey: the key items it spends, which must be exactly the key items among its ingredients (the only key-item spends in the game besides firing the signal; see tests/crafting.test.mjs).",
+  "recipes": [
+    {
+      "id": "driftwood_totem", "name": "Driftwood totem",
+      "ingredients": [{ "item": "driftwood", "n": 1 }, { "item": "paracord", "n": 1 }, { "anyOf": ["bone", "reef_shell"], "n": 1 }],
+      "gives": { "item": "driftwood_totem", "n": 1 },
+      "requires": { "recipeKnown": true },
+      "maxCrafts": 1,
+      "consumesKey": ["driftwood", "paracord"]
+    },
+    {
+      "id": "patched_dinghy", "name": "Patched dinghy",
+      "ingredients": [{ "item": "waterproof_tarp", "n": 1 }, { "item": "paracord", "n": 1 }, { "item": "driftwood", "n": 1 }],
+      "effect": "dinghy_repaired",
+      "requires": { "recipeKnown": true, "at": "dinghy" },
+      "maxCrafts": 1,
+      "consumesKey": ["waterproof_tarp", "paracord", "driftwood"]
+    }
+  ]
+}
