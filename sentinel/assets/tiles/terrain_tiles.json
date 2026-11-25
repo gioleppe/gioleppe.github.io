@@ -1,0 +1,215 @@
+{ "frames": {
+   "sand_0": {
+    "frame": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "sourceSize": { "w": 32, "h": 24 },
+    "duration": 100
+   },
+   "sand_1": {
+    "frame": { "x": 32, "y": 0, "w": 32, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "sourceSize": { "w": 32, "h": 24 },
+    "duration": 100
+   },
+   "sand_2": {
+    "frame": { "x": 64, "y": 0, "w": 32, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "sourceSize": { "w": 32, "h": 24 },
+    "duration": 100
+   },
+   "wet_sand_0": {
+    "frame": { "x": 0, "y": 24, "w": 32, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "sourceSize": { "w": 32, "h": 24 },
+    "duration": 100
+   },
+   "wet_sand_1": {
+    "frame": { "x": 32, "y": 24, "w": 32, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "sourceSize": { "w": 32, "h": 24 },
+    "duration": 100
+   },
+   "wet_sand_2": {
+    "frame": { "x": 64, "y": 24, "w": 32, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "sourceSize": { "w": 32, "h": 24 },
+    "duration": 100
+   },
+   "shallow_water_0": {
+    "frame": { "x": 0, "y": 48, "w": 32, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "sourceSize": { "w": 32, "h": 24 },
+    "duration": 400
+   },
+   "shallow_water_1": {
+    "frame": { "x": 32, "y": 48, "w": 32, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "sourceSize": { "w": 32, "h": 24 },
+    "duration": 400
+   },
+   "shallow_water_2": {
+    "frame": { "x": 64, "y": 48, "w": 32, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "sourceSize": { "w": 32, "h": 24 },
+    "duration": 400
+   },
+   "deep_water_0": {
+    "frame": { "x": 0, "y": 72, "w": 32, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "sourceSize": { "w": 32, "h": 24 },
+    "duration": 600
+   },
+   "deep_water_1": {
+    "frame": { "x": 32, "y": 72, "w": 32, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "sourceSize": { "w": 32, "h": 24 },
+    "duration": 600
+   },
+   "deep_water_2": {
+    "frame": { "x": 64, "y": 72, "w": 32, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "sourceSize": { "w": 32, "h": 24 },
+    "duration": 600
+   },
+   "jungle_floor_0": {
+    "frame": { "x": 0, "y": 96, "w": 32, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "sourceSize": { "w": 32, "h": 24 },
+    "duration": 100
+   },
+   "jungle_floor_1": {
+    "frame": { "x": 32, "y": 96, "w": 32, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "sourceSize": { "w": 32, "h": 24 },
+    "duration": 100
+   },
+   "jungle_floor_2": {
+    "frame": { "x": 64, "y": 96, "w": 32, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "sourceSize": { "w": 32, "h": 24 },
+    "duration": 100
+   },
+   "mud_0": {
+    "frame": { "x": 0, "y": 120, "w": 32, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "sourceSize": { "w": 32, "h": 24 },
+    "duration": 100
+   },
+   "mud_1": {
+    "frame": { "x": 32, "y": 120, "w": 32, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "sourceSize": { "w": 32, "h": 24 },
+    "duration": 100
+   },
+   "mud_2": {
+    "frame": { "x": 64, "y": 120, "w": 32, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "sourceSize": { "w": 32, "h": 24 },
+    "duration": 100
+   },
+   "reef_rock_0": {
+    "frame": { "x": 0, "y": 144, "w": 32, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "sourceSize": { "w": 32, "h": 24 },
+    "duration": 100
+   },
+   "reef_rock_1": {
+    "frame": { "x": 32, "y": 144, "w": 32, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "sourceSize": { "w": 32, "h": 24 },
+    "duration": 100
+   },
+   "reef_rock_2": {
+    "frame": { "x": 64, "y": 144, "w": 32, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "sourceSize": { "w": 32, "h": 24 },
+    "duration": 100
+   },
+   "basalt_0": {
+    "frame": { "x": 0, "y": 168, "w": 32, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "sourceSize": { "w": 32, "h": 24 },
+    "duration": 100
+   },
+   "basalt_1": {
+    "frame": { "x": 32, "y": 168, "w": 32, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "sourceSize": { "w": 32, "h": 24 },
+    "duration": 100
+   },
+   "basalt_2": {
+    "frame": { "x": 64, "y": 168, "w": 32, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 24 },
+    "sourceSize": { "w": 32, "h": 24 },
+    "duration": 100
+   }
+ },
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.18.1-x64",
+  "image": "terrain_tiles.png",
+  "format": "RGBA8888",
+  "size": { "w": 96, "h": 192 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "sand", "from": 0, "to": 2, "direction": "forward", "color": "#000000ff" },
+   { "name": "wet_sand", "from": 3, "to": 5, "direction": "forward", "color": "#000000ff" },
+   { "name": "shallow_water", "from": 6, "to": 8, "direction": "forward", "color": "#000000ff" },
+   { "name": "deep_water", "from": 9, "to": 11, "direction": "forward", "color": "#000000ff" },
+   { "name": "jungle_floor", "from": 12, "to": 14, "direction": "forward", "color": "#000000ff" },
+   { "name": "mud", "from": 15, "to": 17, "direction": "forward", "color": "#000000ff" },
+   { "name": "reef_rock", "from": 18, "to": 20, "direction": "forward", "color": "#000000ff" },
+   { "name": "basalt", "from": 21, "to": 23, "direction": "forward", "color": "#000000ff" }
+  ],
+  "slices": [
+  ]
+ }
+}

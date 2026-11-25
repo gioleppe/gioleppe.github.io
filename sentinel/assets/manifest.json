@@ -8,7 +8,7 @@
     "props_manmade": { "image": "sprites/props_manmade.png", "data": "sprites/props_manmade.json", "ready": false },
     "items": { "image": "sprites/items.png", "data": "sprites/items.json", "ready": false },
     "emotes": { "image": "sprites/emotes.png", "data": "sprites/emotes.json", "ready": false },
-    "terrain_tiles": { "image": "tiles/terrain_tiles.png", "data": "tiles/terrain_tiles.json", "ready": false }
+    "terrain_tiles": { "image": "tiles/terrain_tiles.png", "data": "tiles/terrain_tiles.json", "ready": true }
   },
   "sprites": {
     "player": { "sheet": "player", "states": ["idle", "walk", "crouch", "sprint", "swim"], "facings": ["N", "E", "S"], "mirrorW": true },
@@ -28,14 +28,14 @@
     "radio_rock": { "sheet": "props_manmade", "frame": "radio_rock" }
   },
   "tiles": {
-    "sand": { "sheet": "terrain_tiles", "frames": ["sand"] },
-    "wet_sand": { "sheet": "terrain_tiles", "frames": ["wet_sand"] },
-    "shallow_water": { "sheet": "terrain_tiles", "frames": ["shallow_water"] },
-    "deep_water": { "sheet": "terrain_tiles", "frames": ["deep_water"] },
-    "jungle_floor": { "sheet": "terrain_tiles", "frames": ["jungle_floor"] },
-    "mud": { "sheet": "terrain_tiles", "frames": ["mud"] },
-    "reef_rock": { "sheet": "terrain_tiles", "frames": ["reef_rock"] },
-    "basalt": { "sheet": "terrain_tiles", "frames": ["basalt"] }
+    "sand": { "sheet": "terrain_tiles", "frames": ["sand_0", "sand_1", "sand_2"] },
+    "wet_sand": { "sheet": "terrain_tiles", "frames": ["wet_sand_0", "wet_sand_1", "wet_sand_2"] },
+    "shallow_water": { "sheet": "terrain_tiles", "frames": ["shallow_water_0", "shallow_water_1", "shallow_water_2"] },
+    "deep_water": { "sheet": "terrain_tiles", "frames": ["deep_water_0", "deep_water_1", "deep_water_2"] },
+    "jungle_floor": { "sheet": "terrain_tiles", "frames": ["jungle_floor_0", "jungle_floor_1", "jungle_floor_2"] },
+    "mud": { "sheet": "terrain_tiles", "frames": ["mud_0", "mud_1", "mud_2"] },
+    "reef_rock": { "sheet": "terrain_tiles", "frames": ["reef_rock_0", "reef_rock_1", "reef_rock_2"] },
+    "basalt": { "sheet": "terrain_tiles", "frames": ["basalt_0", "basalt_1", "basalt_2"] }
   },
   "icons": {
     "items": [],
