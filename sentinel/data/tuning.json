@@ -61,6 +61,35 @@
     "deepMargin": 0.2,
     "frameMs": { "shallow_water": 400, "deep_water": 600 }
   },
+  "terrain": {
+    "sand": { "speed": 1 },
+    "wet_sand": { "speed": 1 },
+    "jungle_floor": { "speed": 0.9 },
+    "basalt": { "speed": 1 },
+    "reef_rock": { "speed": 0.95 },
+    "mud": { "speed": 0.55, "mode": "wade" },
+    "shallow_water": { "speed": 0.6, "mode": "wade" },
+    "deep_water": { "speed": 0.45, "mode": "swim" },
+    "swimSpeed": 0.45,
+    "floodWadeSpeed": 0.6,
+    "floodSwimDepth": 0.15,
+    "modeExitMargin": 4,
+    "lowTide": 0
+  },
+  "collision": {
+    "subStepFraction": 0.5,
+    "maxSubSteps": 64,
+    "iterations": 6,
+    "epsilon": 0.000001,
+    "cornerAssist": { "maxOffset": 10, "probeStep": 1, "lookAhead": 4, "minProgress": 0.25, "speed": 1 },
+    "freeSearchStep": 2,
+    "unstuckSearch": 320,
+    "blocksSight": { "kayak": false, "dinghy": false, "totem": false, "tall_grass": false }
+  },
+  "stuck": {
+    "seconds": 3,
+    "epsilon": 2
+  },
   "camera": {
     "followRate": 6,
     "shakeDecay": 6,
