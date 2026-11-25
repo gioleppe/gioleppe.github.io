@@ -1,0 +1,305 @@
+{ "frames": {
+   "exclaim": {
+    "frame": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "question": {
+    "frame": { "x": 16, "y": 0, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "arrow_warn": {
+    "frame": { "x": 32, "y": 0, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "palm_up": {
+    "frame": { "x": 48, "y": 0, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "eye": {
+    "frame": { "x": 64, "y": 0, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "fish": {
+    "frame": { "x": 80, "y": 0, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "skull": {
+    "frame": { "x": 96, "y": 0, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "resonance_wave": {
+    "frame": { "x": 112, "y": 0, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "spear": {
+    "frame": { "x": 0, "y": 16, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "whistle": {
+    "frame": { "x": 16, "y": 16, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "search": {
+    "frame": { "x": 32, "y": 16, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "ellipsis": {
+    "frame": { "x": 48, "y": 16, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "bubble_neutral": {
+    "frame": { "x": 64, "y": 16, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "bubble_alert": {
+    "frame": { "x": 80, "y": 16, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "glyph_exclaim": {
+    "frame": { "x": 96, "y": 16, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "glyph_question": {
+    "frame": { "x": 112, "y": 16, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "glyph_arrow_warn": {
+    "frame": { "x": 0, "y": 32, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "glyph_palm_up": {
+    "frame": { "x": 16, "y": 32, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "glyph_eye": {
+    "frame": { "x": 32, "y": 32, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "glyph_fish": {
+    "frame": { "x": 48, "y": 32, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "glyph_skull": {
+    "frame": { "x": 64, "y": 32, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "glyph_resonance_wave": {
+    "frame": { "x": 80, "y": 32, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "glyph_spear": {
+    "frame": { "x": 96, "y": 32, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "glyph_whistle": {
+    "frame": { "x": 112, "y": 32, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "glyph_search": {
+    "frame": { "x": 0, "y": 48, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "glyph_ellipsis": {
+    "frame": { "x": 16, "y": 48, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   "pop_neutral_0": {
+    "frame": { "x": 32, "y": 48, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 60
+   },
+   "pop_neutral_1": {
+    "frame": { "x": 48, "y": 48, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 60
+   },
+   "pop_neutral_2": {
+    "frame": { "x": 64, "y": 48, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 60
+   },
+   "pop_alert_0": {
+    "frame": { "x": 80, "y": 48, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 60
+   },
+   "pop_alert_1": {
+    "frame": { "x": 96, "y": 48, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 60
+   },
+   "pop_alert_2": {
+    "frame": { "x": 112, "y": 48, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 60
+   }
+ },
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.18.1-x64",
+  "image": "emotes.png",
+  "format": "RGBA8888",
+  "size": { "w": 128, "h": 64 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "exclaim", "from": 0, "to": 0, "direction": "forward", "color": "#000000ff" },
+   { "name": "question", "from": 1, "to": 1, "direction": "forward", "color": "#000000ff" },
+   { "name": "arrow_warn", "from": 2, "to": 2, "direction": "forward", "color": "#000000ff" },
+   { "name": "palm_up", "from": 3, "to": 3, "direction": "forward", "color": "#000000ff" },
+   { "name": "eye", "from": 4, "to": 4, "direction": "forward", "color": "#000000ff" },
+   { "name": "fish", "from": 5, "to": 5, "direction": "forward", "color": "#000000ff" },
+   { "name": "skull", "from": 6, "to": 6, "direction": "forward", "color": "#000000ff" },
+   { "name": "resonance_wave", "from": 7, "to": 7, "direction": "forward", "color": "#000000ff" },
+   { "name": "spear", "from": 8, "to": 8, "direction": "forward", "color": "#000000ff" },
+   { "name": "whistle", "from": 9, "to": 9, "direction": "forward", "color": "#000000ff" },
+   { "name": "search", "from": 10, "to": 10, "direction": "forward", "color": "#000000ff" },
+   { "name": "ellipsis", "from": 11, "to": 11, "direction": "forward", "color": "#000000ff" },
+   { "name": "bubble_neutral", "from": 12, "to": 12, "direction": "forward", "color": "#000000ff" },
+   { "name": "bubble_alert", "from": 13, "to": 13, "direction": "forward", "color": "#000000ff" },
+   { "name": "glyph_exclaim", "from": 14, "to": 14, "direction": "forward", "color": "#000000ff" },
+   { "name": "glyph_question", "from": 15, "to": 15, "direction": "forward", "color": "#000000ff" },
+   { "name": "glyph_arrow_warn", "from": 16, "to": 16, "direction": "forward", "color": "#000000ff" },
+   { "name": "glyph_palm_up", "from": 17, "to": 17, "direction": "forward", "color": "#000000ff" },
+   { "name": "glyph_eye", "from": 18, "to": 18, "direction": "forward", "color": "#000000ff" },
+   { "name": "glyph_fish", "from": 19, "to": 19, "direction": "forward", "color": "#000000ff" },
+   { "name": "glyph_skull", "from": 20, "to": 20, "direction": "forward", "color": "#000000ff" },
+   { "name": "glyph_resonance_wave", "from": 21, "to": 21, "direction": "forward", "color": "#000000ff" },
+   { "name": "glyph_spear", "from": 22, "to": 22, "direction": "forward", "color": "#000000ff" },
+   { "name": "glyph_whistle", "from": 23, "to": 23, "direction": "forward", "color": "#000000ff" },
+   { "name": "glyph_search", "from": 24, "to": 24, "direction": "forward", "color": "#000000ff" },
+   { "name": "glyph_ellipsis", "from": 25, "to": 25, "direction": "forward", "color": "#000000ff" },
+   { "name": "pop_neutral", "from": 26, "to": 28, "direction": "forward", "color": "#000000ff" },
+   { "name": "pop_neutral_0", "from": 26, "to": 26, "direction": "forward", "color": "#000000ff" },
+   { "name": "pop_neutral_1", "from": 27, "to": 27, "direction": "forward", "color": "#000000ff" },
+   { "name": "pop_neutral_2", "from": 28, "to": 28, "direction": "forward", "color": "#000000ff" },
+   { "name": "pop_alert", "from": 29, "to": 31, "direction": "forward", "color": "#000000ff" },
+   { "name": "pop_alert_0", "from": 29, "to": 29, "direction": "forward", "color": "#000000ff" },
+   { "name": "pop_alert_1", "from": 30, "to": 30, "direction": "forward", "color": "#000000ff" },
+   { "name": "pop_alert_2", "from": 31, "to": 31, "direction": "forward", "color": "#000000ff" }
+  ],
+  "slices": [
+  ]
+ }
+}
