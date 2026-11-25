@@ -20,6 +20,47 @@
   "tide": {
     "floodThresholds": [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]
   },
+  "world": {
+    "$comment": "WorldState (src/world/WorldState.js): tide clock, day/night and weather. Seconds are real seconds.",
+    "tide": {
+      "periodSeconds": 360,
+      "startPhase": 0.7,
+      "$startPhase": "0 = low water, 0.5 = high water. 0.7 = falling past mid-tide (height 0.65): the reef tip starts to emerge within the first minute and low water comes 108 s into a new game",
+      "lowBelow": 0.15,
+      "highAbove": 0.85,
+      "debugFastPeriodSeconds": 30
+    },
+    "day": {
+      "lengthSeconds": 720,
+      "$lengthSeconds": "12 minutes = two tide cycles, so each day has one low water by day and one by night; 25-40 minute runs last 2-3 days",
+      "startHour": 6,
+      "dawnStart": 5,
+      "dawnEnd": 7,
+      "duskStart": 18,
+      "duskEnd": 20,
+      "moonCycleDays": 8,
+      "moonStartPhase": 0.3,
+      "moonlightMin": 0.05,
+      "moonlightMax": 0.35
+    },
+    "weather": {
+      "firstSquallSeconds": 270,
+      "$firstSquallSeconds": "fixed, so a new game's sky never depends on the seed; the first squall arrives after the first low water",
+      "clearSeconds": [180, 420],
+      "squallSeconds": [60, 120],
+      "$squallSeconds": "about one squall every 6-7 minutes (two per in-game day), raining a quarter of the time",
+      "rampInSeconds": 20,
+      "rampOutSeconds": 20,
+      "squall": { "noiseMultiplier": 0.5, "visibilityMultiplier": 0.7, "moveMultiplier": 0.9 },
+      "wind": { "calm": 0.2, "squall": 0.75, "gustAmplitude": 0.15, "gustRate": 0.25, "gustSeconds": [2, 6] }
+    }
+  },
+  "water": {
+    "$comment": "src/world/water.js depth classes from tide height h and a tile's flood threshold t: flooded (h > t) is shallow (wading) until h - t >= deepMargin, then deep (swimming); not flooded but t - h <= wetMargin is wet (about to flood or just drained). frameMs: water animation fallback when the sheet has no tag.",
+    "wetMargin": 0.06,
+    "deepMargin": 0.2,
+    "frameMs": { "shallow_water": 400, "deep_water": 600 }
+  },
   "camera": {
     "followRate": 6,
     "shakeDecay": 6,

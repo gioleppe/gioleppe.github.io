@@ -3,6 +3,7 @@
 // It only reads the simulation.
 import { TILE_W, TILE_H } from '../sim/constants.js';
 import { PlaceholderSprites } from './PlaceholderSprites.js';
+import { TideRenderer } from './TideRenderer.js';
 
 /**
  * The seam every picture goes through. PlaceholderSprites implements it; the AssetManager (step 1.2) will
@@ -16,7 +17,9 @@ import { PlaceholderSprites } from './PlaceholderSprites.js';
  *   Paint an entity with its anchor (ground contact point) at screen (x, y), whole logical pixels. `time` in seconds drives animation.
  * @property {(ctx: CanvasRenderingContext2D, terrain: string, x: number, y: number, w: number, h: number, variant: number) => void} drawTile
  *   Paint one ground tile with its top-left at screen (x, y); w x h is TILE_W x TILE_H; `variant` is tileVariant(col, row),
- *   a non-negative integer that is stable per tile (pick a frame with `variant % frames`).
+ *   a non-negative integer that is stable per tile (pick a frame with `variant % frames`). Animated water tiles
+ *   pass it advanced by one per frame time (TideRenderer.js), so `variant % frames` also animates them.
+ * @property {(terrain: string) => number|null} [tileFrameMs]  optional: ms per frame of an animated terrain
  */
 
 /**
@@ -117,6 +120,8 @@ export class Renderer {
     this.stats = { tiles: 0, entities: 0, drawn: 0 };
     /** reused by the map's prop query every frame */
     this.propScratch = [];
+    /** the island's ground under the tide: flooding, shoreline, water animation */
+    this.tide = new TideRenderer();
   }
 
   /**
@@ -130,7 +135,7 @@ export class Renderer {
     ctx.imageSmoothingEnabled = false;
     ctx.fillStyle = '#0b1416';
     ctx.fillRect(0, 0, camera.viewW, camera.viewH);
-    this.drawGround(ctx, camera, sim.bounds);
+    this.drawGround(ctx, camera, sim.bounds, sim, time);
 
     const all = this.collectEntities(sim, alpha, camera.visibleRect());
     const visible = cullAndSort(all, camera.visibleRect(), (k, s) => this.sprites.size(k, s));
@@ -139,9 +144,19 @@ export class Renderer {
     this.stats.drawn = visible.length;
   }
 
-  /** ground tiles under the view only */
-  drawGround(ctx, camera, bounds) {
-    const { c0, c1, r0, r1 } = tileRange(camera.visibleRect(), bounds);
+  /**
+   * Ground tiles under the view only. With a map and a world clock (`sim`), the tide decides what each tile shows.
+   * @param {Object} [sim]
+   * @param {number} [time] seconds, for the water animation
+   */
+  drawGround(ctx, camera, bounds, sim = null, time = 0) {
+    const range = tileRange(camera.visibleRect(), bounds);
+    const { c0, c1, r0, r1 } = range;
+    this.stats.tiles = (c1 - c0) * (r1 - r0);
+    if (sim?.map && sim.world) {
+      this.tide.draw(ctx, this.sprites, tileVariant, camera, sim, time, range);
+      return;
+    }
     const ox = camera.originX;
     const oy = camera.originY;
     for (let r = r0; r < r1; r++) {
@@ -149,7 +164,6 @@ export class Renderer {
         this.sprites.drawTile(ctx, this.terrainAt(c, r), c * TILE_W - ox, r * TILE_H - oy, TILE_W, TILE_H, tileVariant(c, r));
       }
     }
-    this.stats.tiles = (c1 - c0) * (r1 - r0);
   }
 
   /**

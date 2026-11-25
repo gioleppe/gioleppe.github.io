@@ -76,3 +76,39 @@ export function nextSeed(seed) {
   const m = /^(.*?)(\d+)$/.exec(String(seed));
   return m ? `${m[1]}${Number(m[2]) + 1}` : `${seed}2`;
 }
+
+// ---- world clocks (step 2.4): every debug write to sim.world goes through these -----------------------------
+
+/** set the tide to a phase of its cycle: 0 low water, 0.25 mid (rising), 0.5 high water */
+export function setTidePhase(sim, phase) {
+  sim.world.setTidePhase(phase);
+  return sim.world.tidePhase;
+}
+
+/** move the tide clock on by a fraction of a cycle */
+export function advanceTide(sim, fraction) {
+  sim.world.setTidePhase(sim.world.tidePhase + fraction);
+  return sim.world.tidePhase;
+}
+
+/** toggle (or set) the debug fast tide; returns whether it is on */
+export function toggleFastTide(sim, on = !sim.world.fastTide) {
+  sim.world.setFastTide(on);
+  return sim.world.fastTide;
+}
+
+/** set the time of day in hours */
+export function setTimeOfDay(sim, hour) {
+  sim.world.setTimeOfDay(hour);
+  return sim.world.timeOfDay;
+}
+
+/** start a squall now; instant: at full strength at once */
+export function startSquall(sim, { instant = false } = {}) {
+  sim.world.startSquall({ instant });
+}
+
+/** clear the sky now */
+export function clearWeather(sim) {
+  sim.world.clearWeather();
+}

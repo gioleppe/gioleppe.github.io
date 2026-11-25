@@ -222,6 +222,18 @@ export class AssetManager {
     this.placeholder.drawTile(ctx, terrain, x, y, w, h, variant);
   }
 
+  /**
+   * Milliseconds per frame of an animated terrain: the sheet's tag named after the terrain (its cycle length over
+   * its frame count), or null while the sheet is not loaded or has no such tag.
+   * @param {string} terrain
+   * @returns {number|null}
+   */
+  tileFrameMs(terrain) {
+    const t = this.manifest?.tiles.get(terrain);
+    const tag = t && this.sheets.get(t.sheet)?.data.tags.get(terrain);
+    return tag && tag.sequence.length ? tag.total / tag.sequence.length : null;
+  }
+
   /** a 16 x 16 icon by name with its top-left at (x, y) */
   drawIcon(ctx, sheet, name, x, y) {
     const s = this.sheets.get(sheet);
