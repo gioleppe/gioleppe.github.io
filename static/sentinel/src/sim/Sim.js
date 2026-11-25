@@ -5,9 +5,10 @@ import { Rng } from './rng.js';
 import { sanitizeInput } from './input.js';
 import { Player } from '../entities/Player.js';
 import { buildTestField } from '../world/TestField.js';
+import { IslandMap } from '../world/IslandMap.js';
 
 /** bumped whenever the snapshot shape changes; restore refuses other versions (migration arrives with saving, step 5.2) */
-export const SNAPSHOT_VERSION = 1;
+export const SNAPSHOT_VERSION = 2;
 
 /**
  * World rectangle in world pixels for a map that is `width` x `height` tiles, or null for the open test field.
@@ -21,14 +22,16 @@ export function worldBounds(map) {
 export class Sim {
   /**
    * @param {Object} opts
-   * @param {Object|null} [opts.map]   island map (step 2.1); null gives the open, unbounded test field
+   * @param {IslandMap|Object|null} [opts.map]  the island: an IslandMap, or the parsed data/island_map.json (decoded
+   *                                   here); null gives the open, unbounded test field
    * @param {Object} opts.tuning       contents of data/tuning.json
    * @param {Object} [opts.data]       other loaded data files, by name
    * @param {number|string} [opts.seed]
    */
   constructor({ map = null, tuning, data = {}, seed = 1 } = {}) {
     if (!tuning) throw new Error('Sim: tuning is required');
-    this.map = map;
+    /** @type {IslandMap|null} static world data; never part of a snapshot */
+    this.map = map == null ? null : map instanceof IslandMap ? map : IslandMap.fromJSON(map, tuning);
     this.tuning = tuning;
     this.data = data;
     this.seed = seed;
@@ -38,14 +41,14 @@ export class Sim {
     this.events = [];
     this.rng = new Rng(seed);
     /** world rectangle, or null when the world is the open test field */
-    this.bounds = worldBounds(map);
+    this.bounds = worldBounds(this.map);
 
     let spawn;
     /** @type {import('../world/TestField.js').Prop[]} static scenery */
     this.props = [];
-    if (map) {
-      spawn = map.spawn ?? { x: this.bounds.w / 2, y: this.bounds.h / 2 };
-      this.props = (map.props ?? []).map((p) => ({ ...p }));
+    if (this.map) {
+      spawn = this.map.spawn;
+      this.props = this.map.props;   // frozen and shared with the map: static scenery is not simulation state
     } else {
       const field = buildTestField(this.rng, tuning);
       spawn = field.spawn;
@@ -78,7 +81,10 @@ export class Sim {
       tick: this.tick,
       rng: this.rng.snapshot(),
       player: this.player.snapshot(),
-      props: this.props.map((p) => ({ ...p })),
+      // the map itself is data, not state: only which map this was, so a save from another map is refused
+      map: this.map ? { version: this.map.version, hash: this.map.hash } : null,
+      // map props are rebuilt from the map; only the test field's (placed by the rng) are stored
+      props: this.map ? null : this.props.map((p) => ({ ...p })),
     };
   }
 
@@ -90,10 +96,13 @@ export class Sim {
   static restore(snap, { map = null, tuning, data = {} }) {
     if (!snap || snap.version !== SNAPSHOT_VERSION) throw new Error(`Sim.restore: unsupported snapshot version ${snap?.version}`);
     const sim = new Sim({ map, tuning, data, seed: snap.seed });
+    const want = snap.map ? `${snap.map.version}/${snap.map.hash}` : 'none';
+    const have = sim.map ? `${sim.map.version}/${sim.map.hash}` : 'none';
+    if (want !== have) throw new Error(`Sim.restore: snapshot was made on map ${want}, not on ${have}`);
     sim.tick = snap.tick;
     sim.rng = Rng.restore(snap.rng);
     sim.player = Player.restore(snap.player);
-    sim.props = snap.props.map((p) => ({ ...p }));
+    if (!sim.map) sim.props = snap.props.map((p) => ({ ...p }));
     return sim;
   }
 }

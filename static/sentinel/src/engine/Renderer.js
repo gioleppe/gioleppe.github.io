@@ -15,7 +15,8 @@ import { PlaceholderSprites } from './PlaceholderSprites.js';
  * @property {(ctx: CanvasRenderingContext2D, kind: string, state: string, facing: ('N'|'E'|'S'|'W'|null), x: number, y: number, time: number) => void} draw
  *   Paint an entity with its anchor (ground contact point) at screen (x, y), whole logical pixels. `time` in seconds drives animation.
  * @property {(ctx: CanvasRenderingContext2D, terrain: string, x: number, y: number, w: number, h: number, variant: number) => void} drawTile
- *   Paint one ground tile with its top-left at screen (x, y); w x h is TILE_W x TILE_H; `variant` is (col + row) & 1.
+ *   Paint one ground tile with its top-left at screen (x, y); w x h is TILE_W x TILE_H; `variant` is tileVariant(col, row),
+ *   a non-negative integer that is stable per tile (pick a frame with `variant % frames`).
  */
 
 /**
@@ -31,6 +32,17 @@ import { PlaceholderSprites } from './PlaceholderSprites.js';
 
 /** room below the anchor for the ground shadow, in logical pixels, counted in culling */
 const SHADOW_PAD = 4;
+/** how far below the view a prop's anchor may be and still reach into it (tallest sprite), for the map's prop query */
+const PROP_REACH_BELOW = 160;
+/** half the widest prop sprite, for the same query */
+const PROP_REACH_SIDE = 64;
+
+/** stable per-tile variant: a hash of the tile coordinates (never the rng), so the ground never reshuffles */
+export function tileVariant(col, row) {
+  let h = Math.imul(col, 0x27d4eb2d) ^ Math.imul(row, 0x165667b1);
+  h = Math.imul(h ^ (h >>> 15), 0x85ebca6b);
+  return (h ^ (h >>> 13)) >>> 0;
+}
 
 /** painter's order: north first; ties broken by x then id so the order never flickers between frames */
 export function compareByY(a, b) {
@@ -103,6 +115,8 @@ export class Renderer {
     this.terrainAt = terrainAt;
     /** what the last frame processed, for debug overlays and tests */
     this.stats = { tiles: 0, entities: 0, drawn: 0 };
+    /** reused by the map's prop query every frame */
+    this.propScratch = [];
   }
 
   /**
@@ -118,7 +132,7 @@ export class Renderer {
     ctx.fillRect(0, 0, camera.viewW, camera.viewH);
     this.drawGround(ctx, camera, sim.bounds);
 
-    const all = this.collectEntities(sim, alpha);
+    const all = this.collectEntities(sim, alpha, camera.visibleRect());
     const visible = cullAndSort(all, camera.visibleRect(), (k, s) => this.sprites.size(k, s));
     for (const e of visible) this.drawEntity(ctx, e, camera, time);
     this.stats.entities = all.length;
@@ -132,7 +146,7 @@ export class Renderer {
     const oy = camera.originY;
     for (let r = r0; r < r1; r++) {
       for (let c = c0; c < c1; c++) {
-        this.sprites.drawTile(ctx, this.terrainAt(c, r), c * TILE_W - ox, r * TILE_H - oy, TILE_W, TILE_H, (c + r) & 1);
+        this.sprites.drawTile(ctx, this.terrainAt(c, r), c * TILE_W - ox, r * TILE_H - oy, TILE_W, TILE_H, tileVariant(c, r));
       }
     }
     this.stats.tiles = (c1 - c0) * (r1 - r0);
@@ -142,15 +156,19 @@ export class Renderer {
    * Everything that stands on the ground, as EntityViews. Moving entities are interpolated between their
    * last two ticks by `alpha`, so motion is smooth on displays faster than the 60 Hz simulation.
    * Later steps add their entity lists here.
+   * @param {{x:number,y:number,w:number,h:number}} [view] visible world rect: with a map, only props near it are listed
    * @returns {EntityView[]}
    */
-  collectEntities(sim, alpha) {
+  collectEntities(sim, alpha, view) {
     const p = sim.player;
     const out = [{
       id: 'player', kind: 'player', state: p.state, facing: p.facing,
       x: p.prevX + (p.x - p.prevX) * alpha, y: p.prevY + (p.y - p.prevY) * alpha,
     }];
-    for (const prop of sim.props) out.push({ id: prop.id, kind: prop.kind, x: prop.x, y: prop.y, state: 'idle', facing: null });
+    const props = sim.map && view
+      ? sim.map.propsInRect(view.x - PROP_REACH_SIDE, view.y - SHADOW_PAD, view.x + view.w + PROP_REACH_SIDE, view.y + view.h + PROP_REACH_BELOW, this.propScratch)
+      : sim.props;
+    for (const prop of props) out.push({ id: prop.id, kind: prop.kind, x: prop.x, y: prop.y, state: 'idle', facing: null });
     return out;
   }
 

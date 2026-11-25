@@ -4,7 +4,8 @@ import { FixedStep } from './engine/FixedStep.js';
 import { DT } from './sim/constants.js';
 import { Sim } from './sim/Sim.js';
 import { Camera } from './engine/Camera.js';
-import { Renderer } from './engine/Renderer.js';
+import { Renderer, testFieldTerrain } from './engine/Renderer.js';
+import { IslandMap } from './world/IslandMap.js';
 import { InputManager } from './engine/InputManager.js';
 import { AssetManager } from './engine/AssetManager.js';
 import { smokeStatus, pixelsVary } from './engine/smokeStatus.js';
@@ -112,8 +113,13 @@ async function fetchJson(url) {
 
 async function loadGame() {
   try {
-    const tuning = await fetchJson('data/tuning.json');
-    sim = new Sim({ map: null, tuning, data: {}, seed: SEED });
+    const params = new URLSearchParams(location.search);
+    // ?debug&map=none: the open test field instead of the island
+    const useMap = !(params.has('debug') && params.get('map') === 'none');
+    const [tuning, mapJson] = await Promise.all([fetchJson('data/tuning.json'), useMap ? fetchJson('data/island_map.json') : null]);
+    const map = mapJson ? IslandMap.fromJSON(mapJson, tuning) : null;
+    renderer.terrainAt = map ? (c, r) => map.terrainAt(c, r) : testFieldTerrain;
+    sim = new Sim({ map, tuning, data: {}, seed: SEED });
     camera = new Camera(tuning.camera);
     camera.setViewport(vp.logicalWidth, vp.logicalHeight);
     camera.setBounds(sim.bounds);
