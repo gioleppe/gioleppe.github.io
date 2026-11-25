@@ -27,6 +27,13 @@ export function worldLines(world) {
   ];
 }
 
+/** one line on the lighting of the last frame */
+export function lightingLine(last) {
+  const a = last.ambient;
+  const hex = (v) => Math.round(v).toString(16).padStart(2, '0');
+  return `light #${hex(a.r)}${hex(a.g)}${hex(a.b)} dark ${a.darkness.toFixed(2)}  lights ${last.lights}  ${last.ms.toFixed(2)} ms`;
+}
+
 /**
  * Register the world layers and actions.
  * @param {import('./DebugMode.js').DebugMode} debug
@@ -51,7 +58,32 @@ export function registerWorldDebug(debug) {
   debug.addLayer({
     id: 'world', label: 'World clocks', group: 'readouts', default: true,
     drawUi(ctx, sim, vp, env) {
-      if (sim.world) env.textBlock(ctx, worldLines(sim.world).map((text) => ({ text, color: COLORS.text })));
+      if (!sim.world) return;
+      const lines = worldLines(sim.world);
+      const lit = env.renderer?.lighting?.last;
+      if (lit) lines.push(lightingLine(lit));
+      const fx = env.renderer?.weather?.last;
+      lines.push(`wind ${sim.world.windStrength.toFixed(2)} gust ${sim.world.gust.toFixed(2)}${fx ? `  rain ${fx.drops} drops ${fx.splashes} splashes` : ''}`);
+      env.textBlock(ctx, lines.map((text) => ({ text, color: COLORS.text })));
+    },
+  });
+  debug.addLayer({
+    id: 'lights', label: 'Light radii', group: 'world', default: false,
+    drawWorld(ctx, sim, camera, env) {
+      const lights = env.renderer?.lighting?.lights ?? [];
+      ctx.lineWidth = 1;
+      for (const l of lights) {
+        ctx.strokeStyle = l.color ?? '#e9c46a';
+        const x = Math.round(l.x - camera.originX) + 0.5;
+        const y = Math.round(l.y - camera.originY) + 0.5;
+        ctx.beginPath();
+        if (l.kind === 'flashlight') {
+          ctx.ellipse(x + Math.cos(l.angle) * l.offset, y + Math.sin(l.angle) * l.offset, l.length / 2, l.width / 2, l.angle, 0, Math.PI * 2);
+          ctx.moveTo(x + l.radius, y);
+        }
+        ctx.arc(x, y, l.radius, 0, Math.PI * 2);
+        ctx.stroke();
+      }
     },
   });
 
@@ -65,6 +97,11 @@ export function registerWorldDebug(debug) {
   act('time-noon', 'Time: noon', (sim) => cheats.setTimeOfDay(sim, 12));
   act('time-dusk', 'Time: dusk', (sim) => cheats.setTimeOfDay(sim, 19));
   act('time-midnight', 'Time: midnight', (sim) => cheats.setTimeOfDay(sim, 0));
+  act('moon-full', 'Moon: full (sets the day)', (sim) => cheats.setMoon(sim, 0.5));
+  act('moon-new', 'Moon: new (sets the day)', (sim) => cheats.setMoon(sim, 0));
+  act('flashlight', 'Player: flashlight on/off', (sim) => cheats.toggleFlashlight(sim));
   act('squall', 'Weather: start squall', (sim) => cheats.startSquall(sim));
+  act('squall-full', 'Weather: full squall now', (sim) => cheats.startSquall(sim, { instant: true }));
   act('clear', 'Weather: clear', (sim) => cheats.clearWeather(sim));
+  act('wind-max', 'Weather: max wind', (sim) => cheats.maxWind(sim));
 }

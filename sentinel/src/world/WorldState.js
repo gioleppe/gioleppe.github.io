@@ -404,6 +404,20 @@ export class WorldState {
     this.dayTick = mod(Math.round((mod(hour, 24) / 24) * D), D);
   }
 
+  /** @param {number} day day number (>= 1); moves the moon with it */
+  setDay(day) {
+    if (!Number.isInteger(day) || day < 1) throw new TypeError(`setDay: expected a whole number >= 1, got ${day}`);
+    this.day = day;
+  }
+
+  /** @param {number} offset extra wind (-1..1) added to the gust now; it eases back as gusts are drawn */
+  setGust(offset) {
+    if (!Number.isFinite(offset)) throw new TypeError(`setGust: expected a number, got ${offset}`);
+    this.gust = offset;
+    this.gustTarget = offset;
+    this.gustTicksLeft = this.cfg.wind.gustTicks[1];   // held for the longest gust
+  }
+
   /**
    * Start a squall now, of the middle length of tuning's range (no randomness, so the rng stream is untouched).
    * @param {{ instant?: boolean }} [opts] instant: skip the ramp in (full intensity at once)

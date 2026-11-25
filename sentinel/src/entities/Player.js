@@ -46,6 +46,8 @@ export class Player {
     this.contactY = 0;
     /** scratch for the collider (not state) */
     this.contact = makeContact();
+    /** flashlight on (stub: toggled by input.toggleLight; Resonance cost and battery arrive in step 3.6) */
+    this.lightOn = false;
   }
 
   /** exact facing in radians (0 = east, y down); derived, so it never enters a snapshot */
@@ -77,6 +79,7 @@ export class Player {
    * @param {MoveEnv|null} [env] the island's collision and terrain; null on the open test field
    */
   update(input, cfg, dt, bounds, env = null) {
+    if (input.toggleLight) this.lightOn = !this.lightOn;
     this.prevX = this.x;
     this.prevY = this.y;
     let mx = input.moveX;
@@ -126,15 +129,15 @@ export class Player {
   }
 
   snapshot() {
-    const { x, y, prevX, prevY, vx, vy, radius, facing, dirX, dirY, mode, terrain, contactX, contactY } = this;
-    return { x, y, prevX, prevY, vx, vy, radius, facing, dirX, dirY, mode, terrain, contactX, contactY };
+    const { x, y, prevX, prevY, vx, vy, radius, facing, dirX, dirY, mode, terrain, contactX, contactY, lightOn } = this;
+    return { x, y, prevX, prevY, vx, vy, radius, facing, dirX, dirY, mode, terrain, contactX, contactY, lightOn };
   }
 
   static restore(s) {
     const p = new Player({ x: s.x, y: s.y, radius: s.radius });
     Object.assign(p, {
       prevX: s.prevX, prevY: s.prevY, vx: s.vx, vy: s.vy, facing: s.facing, dirX: s.dirX, dirY: s.dirY,
-      mode: s.mode ?? 'ground', terrain: s.terrain ?? null, contactX: s.contactX ?? 0, contactY: s.contactY ?? 0,
+      mode: s.mode ?? 'ground', terrain: s.terrain ?? null, contactX: s.contactX ?? 0, contactY: s.contactY ?? 0, lightOn: !!s.lightOn,
     });
     return p;
   }

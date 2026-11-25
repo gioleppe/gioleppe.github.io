@@ -4,6 +4,9 @@
 import { TILE_W, TILE_H } from '../sim/constants.js';
 import { PlaceholderSprites } from './PlaceholderSprites.js';
 import { TideRenderer } from './TideRenderer.js';
+import { Lighting } from './Lighting.js';
+import { WeatherFx, swayOffsets, grassPush } from './WeatherFx.js';
+import { waterAt, isWaterClass } from '../world/water.js';
 
 /**
  * The seam every picture goes through. PlaceholderSprites implements it; the AssetManager (step 1.2) will
@@ -39,6 +42,8 @@ const SHADOW_PAD = 4;
 const PROP_REACH_BELOW = 160;
 /** half the widest prop sprite, for the same query */
 const PROP_REACH_SIDE = 64;
+/** horizontal slices a swaying sprite is drawn in */
+export const SWAY_SLICES = 4;
 
 /** stable per-tile variant: a hash of the tile coordinates (never the rng), so the ground never reshuffles */
 export function tileVariant(col, row) {
@@ -112,7 +117,7 @@ export class Renderer {
    * @param {SpriteSource} [opts.sprites]       defaults to the built-in placeholders
    * @param {(col: number, row: number) => string} [opts.terrainAt]  terrain name of a tile; defaults to the test field
    */
-  constructor({ sprites = new PlaceholderSprites(), terrainAt = testFieldTerrain } = {}) {
+  constructor({ sprites = new PlaceholderSprites(), terrainAt = testFieldTerrain, lighting = new Lighting(), weather = new WeatherFx() } = {}) {
     /** @type {SpriteSource} */
     this.sprites = sprites;
     this.terrainAt = terrainAt;
@@ -122,6 +127,11 @@ export class Renderer {
     this.propScratch = [];
     /** the island's ground under the tide: flooding, shoreline, water animation */
     this.tide = new TideRenderer();
+    /** day/night tint and lights over the scene (null: none) */
+    this.lighting = lighting;
+    /** rain, splashes and the squall veil (null: none) */
+    this.weather = weather;
+    this.swayScratch = [];
   }
 
   /**
@@ -139,7 +149,13 @@ export class Renderer {
 
     const all = this.collectEntities(sim, alpha, camera.visibleRect());
     const visible = cullAndSort(all, camera.visibleRect(), (k, s) => this.sprites.size(k, s));
-    for (const e of visible) this.drawEntity(ctx, e, camera, time);
+    const sway = this.swayContext(sim, alpha);
+    for (const e of visible) this.drawEntity(ctx, e, camera, time, sway);
+    if (this.weather && sim.world) {
+      const map = sim.map;
+      this.weather.draw(ctx, sim, camera, time, map ? (tx, ty) => isWaterClass(waterAt(map, sim.world, tx, ty)) : null);
+    }
+    this.lighting?.draw(ctx, sim, camera, { time, alpha });
     this.stats.entities = all.length;
     this.stats.drawn = visible.length;
   }
@@ -186,12 +202,45 @@ export class Renderer {
     return out;
   }
 
-  /** one entity: shadow on the ground, then the upright billboard anchored at its feet */
-  drawEntity(ctx, e, camera, time) {
+  /** what foliage sway needs this frame, or null when there is no wind to show */
+  swayContext(sim, alpha) {
+    const wind = sim.world?.windStrength ?? 0;
+    const fx = sim.tuning?.weatherFx;
+    if (!(wind > 0) || !fx) return null;
+    const p = sim.player;
+    return { wind, fx, props: sim.tuning.props ?? {}, px: p.prevX + (p.x - p.prevX) * alpha, py: p.prevY + (p.y - p.prevY) * alpha };
+  }
+
+  /**
+   * One entity: shadow on the ground, then the upright billboard anchored at its feet. A kind with
+   * tuning.props[kind].sway is drawn in horizontal slices sheared by the wind (the anchor slice never moves).
+   */
+  drawEntity(ctx, e, camera, time, sway = null) {
     const x = Math.round(e.x) - camera.originX;
     const y = Math.round(e.y) - camera.originY;
     const size = this.sprites.size(e.kind, e.state);
     if (size.shadow !== 0) this.drawShadow(ctx, x, y, size.shadow ?? size.w);
+    const kc = sway && e.kind !== 'player' ? sway.props[e.kind] : null;
+    if (kc?.sway > 0) {
+      const push = kc.swayPush ? grassPush(e, sway.px, sway.py, kc.swayPush) : 0;
+      const off = swayOffsets(kc.sway, sway.wind, time, e.x, e.y, SWAY_SLICES, sway.fx, push, this.swayScratch);
+      if (off[SWAY_SLICES - 1] !== 0) {
+        const sliceH = Math.ceil(size.h / SWAY_SLICES);
+        const reach = Math.ceil(size.w / 2) + Math.abs(off[SWAY_SLICES - 1]) + 2;
+        for (let k = 0; k < SWAY_SLICES; k++) {
+          // the bottom slice also covers anything drawn below the anchor
+          const top = k === SWAY_SLICES - 1 ? y - size.h - 8 : y - (k + 1) * sliceH;
+          const bottom = k === 0 ? y + 8 : y - k * sliceH;
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(x - reach, top, reach * 2, bottom - top);
+          ctx.clip();
+          this.sprites.draw(ctx, e.kind, e.state, e.facing, x + off[k], y, time);
+          ctx.restore();
+        }
+        return;
+      }
+    }
     this.sprites.draw(ctx, e.kind, e.state, e.facing, x, y, time);
   }
 
