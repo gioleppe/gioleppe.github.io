@@ -103,7 +103,20 @@ export function dialogueHost(sim) {
     take: (id) => { if (sim.inventory?.remove) sim.inventory.remove(id); else sim.events.push({ type: 'item_taken', id, source: 'dialogue' }); },
     emit(e) {
       // Marek asks for the light to go off and the player agrees: the one world write a line of dialogue makes
-      if (e.type === 'light_off') sim.player.lightOn = false;
+      // It goes through the inventory, the light's single owner (ItemUse.syncLight): writing player.lightOn alone
+      // was undone on the next unpaused step, and a save during the conversation restored the light on.
+      if (e.type === 'light_off') {
+        const inv = sim.inventory;
+        if (inv) {
+          for (let i = 0; i < inv.slots.length; i++) {
+            if (inv.slots[i]?.id === 'flashlight' && inv.slots[i].on) {
+              inv.setPower(i, false);
+              sim.events.push({ type: 'power', item: 'flashlight', on: false, slot: i });
+            }
+          }
+          sim.player.lightOn = inv.isOn('flashlight');
+        } else sim.player.lightOn = false;
+      }
       sim.events.push(e);
     },
   };
