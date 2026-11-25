@@ -188,6 +188,59 @@
     "throwAimDistance": 120,
     "opacity": { "idle": 0.38, "pressed": 0.75, "active": 0.65, "disabled": 0.2, "joystick": 0.45, "hint": 0.2 }
   },
+  "audit": {
+    "$comment": "The map audit (tools/audit/map.mjs, TASKS.md V2). Tools only: the game never reads this block. Distances in world px, times in s, areas in tiles.",
+    "cellPx": 8,
+    "reachRadius": 20,
+    "$reachRadius": "an entity counts as reached when a cell the player can stand on is within this many px of it",
+    "tides": { "low": 0, "mid": 0.5, "high": 1 },
+    "start": "crash_site",
+    "tideGatedRegions": ["reef", "shipwreck"],
+    "$tideGatedRegions": "things here (and on any ground that floods) may be cut off at high tide; everything must still be walkable at low tide",
+    "seaMarkers": ["outer_reef_passage"],
+    "$seaMarkers": "places out at sea, checked by the boat route instead of on foot",
+    "anchors": ["crash_site", "missionary_camp", "dinghy", "marek_shack", "sailor_remains", "cartographer_camp", "monolith_ring", "signal_peak", "north_beach", "reef_start"],
+    "$anchors": "with the region anchors: every pair must be joined by two routes that share no tile (a patrol can never wall the player in); other places with a single way in are listed as warnings",
+    "regionAnchors": { "southern_cove": "crash_site", "western_mangroves": "marek_shack", "interior_jungle": "cartographer_camp", "quiet_meridian": "monolith_ring", "signal_peak": "signal_peak", "coast": "north_beach", "reef": "reef_refuge_1", "shipwreck": "shipwreck_deck" },
+    "criticalPaths": {
+      "signal": ["crash_site", "missionary_camp", "sailor_remains", "reef_start", "shipwreck_deck", "signal_peak"],
+      "dinghy": ["crash_site", "dinghy", "dinghy_launch"]
+    },
+    "boat": { "from": "dinghy_launch", "via": "outer_reef_passage", "tide": 1 },
+    "chokeWidthTiles": 3,
+    "$chokeWidthTiles": "min-cut widths are measured up to this many tiles; narrower borders and legs are listed",
+    "significantChokeTiles": 150,
+    "$significantChokeTiles": "a width-1 chokepoint matters when it cuts off at least this much walkable area",
+    "routeClearance": { "spawn": 450, "marek_shack": 250 },
+    "detourFactor": 2.5,
+    "routesMayFlood": [],
+    "refuges": ["reef_refuge_1", "reef_refuge_2", "shipwreck_deck"],
+    "minStandTiles": 2,
+    "reef": { "from": "reef_start", "to": "shipwreck_deck", "minWindowSeconds": 30 },
+    "swimGate": { "target": "shipwreck_deck", "mustHold": true, "margin": 1.5, "$margin": "at high tide the shortest unbroken swim to the target must exceed margin x a full stamina bar of swimming" },
+    "lethalOkRegions": [],
+    "loot": {
+      "paracordRegions": 3,
+      "driftwoodMin": 20,
+      "driftwoodLevels": 3,
+      "endings": {
+        "dinghy": [["waterproof_tarp"], ["paracord"], ["driftwood"]],
+        "signal": [["crowbar"], ["radio_battery"], ["flare_gun", "flare_casings"]]
+      }
+    },
+    "journey": [
+      ["crash_site", "sailor_remains", "reef_start", "shipwreck_deck", "reef_start", "signal_peak"],
+      ["crash_site", "missionary_camp", "sailor_remains", "marek_shack", "reef_start", "shipwreck_deck", "reef_start", "signal_peak"]
+    ],
+    "trailBias": 1.5,
+    "probe": { "enterSeconds": 2, "exitSeconds": 3, "samples": 12 },
+    "provisional": {
+      "$comment": "PROVISIONAL until step 3.1 / 3.3 / 4.1 land: the audit reads tuning.stamina { max, swimDrainPerSecond }, tuning.hydration { max, decayPerSecond, staminaCapBelow } and tuning.ai.patrolSpeed when they exist and falls back to these. Stamina numbers are those of the step 3.1 branch (100 / 2.5 = 40 s of swimming per bar).",
+      "stamina": { "max": 100, "swimDrainPerSecond": 2.5 },
+      "hydration": { "max": 100, "decayPerSecond": 0.12, "staminaCapBelow": 30, "$decayPerSecond": "the player agent's figures: thirst caps stamina after ~9.7 min (70 / 0.12 = 583 s) and empties at ~13.9 min" },
+      "patrolSpeed": 45
+    }
+  },
   "testField": {
     "halfWidth": 400,
     "halfHeight": 300,
