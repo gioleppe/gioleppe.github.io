@@ -10,6 +10,7 @@ import { barsWidget } from './hud/Bars.js';
 import { hotbarWidget, noticesWidget } from './hud/Hotbar.js';
 import { deathNotice } from './hud/DeathNotice.js';
 import { compassWidget } from './hud/Compass.js';
+import { awarenessWidget } from './hud/Awareness.js';
 
 export { HUD_COLORS, TIDE_WIDGET, clockText, tideReadout, tideWidgetRect, drawTideWidget } from './hud/TideWidget.js';
 
@@ -20,6 +21,7 @@ export const WIDGETS = [
   hotbarWidget,
   noticesWidget,
   compassWidget,
+  awarenessWidget,
   deathNotice,   // last: it covers the rest
 ];
 

@@ -261,6 +261,60 @@ export function spawnPickup(sim, id = 'rock', n = 1) {
   return sim.pickups.drop(id, n, sim.player.x, sim.player.y);
 }
 
+// ---- the Sentinelese (steps 4.1 to 4.3): every debug write to the scouts goes through these ------------------
+
+/** a scout standing guard at a world point, facing the player; returns it */
+export function spawnScout(sim, x, y) {
+  const p = sim.player;
+  return sim.scouts.spawnPost({ x, y, dirX: p.x - x, dirY: p.y - y || 1 });
+}
+
+/** freeze or unfreeze every scout (they keep their state; arrows in the air still land) */
+export function setAiFrozen(sim, on = !sim.scouts.cheats.frozen) {
+  sim.scouts.cheats.frozen = on;
+  return on;
+}
+
+/** the scouts cannot see the player */
+export function setInvisiblePlayer(sim, on = !sim.scouts.cheats.invisible) {
+  sim.scouts.cheats.invisible = on;
+  return on;
+}
+
+/** the scouts hear nothing */
+export function setDeafScouts(sim, on = !sim.scouts.cheats.deaf) {
+  sim.scouts.cheats.deaf = on;
+  return on;
+}
+
+/** put the scout nearest to the player into a state ('patrol', 'investigate', 'search', 'warn', 'chase') */
+export function forceScoutState(sim, state) {
+  const s = sim.scouts.nearestTo(sim.player.x, sim.player.y);
+  if (s) sim.scouts.force(sim, s, state);
+  return s?.id ?? null;
+}
+
+/**
+ * Move the scout nearest to the player next to them (`dist` px south, or the nearest free spot), facing them; it
+ * walks back to its route from there. Returns its id.
+ */
+export function teleportNearestScout(sim, dist = 110) {
+  const p = sim.player;
+  const s = sim.scouts.nearestTo(p.x, p.y);
+  if (!s) return null;
+  const at = { x: p.x, y: p.y + dist };
+  if (sim.collider && !sim.collider.isPositionFree(at.x, at.y, s.radius)) sim.collider.nearestFreePosition(p.x, p.y + dist, s.radius, 200, at);
+  s.x = s.prevX = at.x;
+  s.y = s.prevY = at.y;
+  sim.scouts.force(sim, s, 'patrol');
+  const dx = p.x - s.x;
+  const dy = p.y - s.y;
+  const d = Math.sqrt(dx * dx + dy * dy) || 1;
+  s.dirX = s.baseX = dx / d;
+  s.dirY = s.baseY = dy / d;
+  return s.id;
+}
+
 // ---- story and dialogue (step 4.5) ---------------------------------------------------------------------------
 
 /** set (on) or clear a story flag; returns whether it is now set */

@@ -10,6 +10,7 @@ import { WeatherFx, swayOffsets, grassPush } from './WeatherFx.js';
 import { waterAt, isWaterClass } from '../world/water.js';
 import { collectItemViews } from './ItemRenderer.js';
 import { propKind } from '../entities/storyInteractions.js';
+import { collectScoutViews } from './ScoutRenderer.js';
 
 /**
  * The seam every picture goes through. PlaceholderSprites implements it; the AssetManager (step 1.2) will
@@ -302,6 +303,7 @@ export class Renderer {
     }
     collectItemViews(sim, view ?? null, out, this.sprites, this.itemScratch, alpha);
     if (sim.marek) out.push(sim.marek.view());
+    collectScoutViews(sim, view ?? null, out, alpha);
     for (const v of this.extraViews) out.push(v);
     return out;
   }
