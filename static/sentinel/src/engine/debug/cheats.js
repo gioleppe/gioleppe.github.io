@@ -112,3 +112,35 @@ export function startSquall(sim, { instant = false } = {}) {
 export function clearWeather(sim) {
   sim.world.clearWeather();
 }
+
+/**
+ * Move the calendar to the day whose moon at the current hour is nearest to a phase (0 new, 0.5 full), so the
+ * night's moonlight can be seen. Searches one moon cycle from day 1.
+ * @param {number} phase 0..1
+ * @returns {number} the day chosen
+ */
+export function setMoon(sim, phase) {
+  const w = sim.world;
+  let best = w.day;
+  let bestD = Infinity;
+  const cycle = Math.ceil(sim.tuning.world.day.moonCycleDays) + 1;
+  for (let d = 1; d <= cycle; d++) {
+    w.setDay(d);
+    const diff = Math.abs(w.moonPhase - phase);
+    const dist = Math.min(diff, 1 - diff);
+    if (dist < bestD) { bestD = dist; best = d; }
+  }
+  w.setDay(best);
+  return best;
+}
+
+/** wind to full strength for the longest gust */
+export function maxWind(sim) {
+  sim.world.setGust(1);
+}
+
+/** switch the player's flashlight stub */
+export function toggleFlashlight(sim) {
+  sim.player.lightOn = !sim.player.lightOn;
+  return sim.player.lightOn;
+}

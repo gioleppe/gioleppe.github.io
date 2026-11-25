@@ -129,7 +129,7 @@ async function loadGame() {
     input.setViewport(vp, safe);
     framesAtLoad = framesRun;
     if (DEBUG) {
-      window.__game = { get sim() { return sim; }, get camera() { return camera; }, input, assets };
+      window.__game = { get sim() { return sim; }, get camera() { return camera; }, input, assets, renderer };
     }
   } catch (e) {
     loadError = `could not load the game data (${e.message})`;
