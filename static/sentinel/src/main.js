@@ -3,9 +3,9 @@ import { computeViewport, insetsToLogical } from './engine/viewport.js';
 import { FixedStep } from './engine/FixedStep.js';
 import { DT } from './sim/constants.js';
 import { Sim } from './sim/Sim.js';
-import { emptyInput } from './sim/input.js';
 import { Camera } from './engine/Camera.js';
 import { Renderer } from './engine/Renderer.js';
+import { InputManager } from './engine/InputManager.js';
 
 const SEED = 1;
 
@@ -57,6 +57,7 @@ function applyViewport() {
     top: parseFloat(cs.paddingTop), right: parseFloat(cs.paddingRight),
     bottom: parseFloat(cs.paddingBottom), left: parseFloat(cs.paddingLeft),
   }, vp.scale);
+  input?.setViewport(vp, safe);
 }
 
 let resizeQueued = false;
@@ -106,43 +107,27 @@ async function loadGame() {
     camera.setViewport(vp.logicalWidth, vp.logicalHeight);
     camera.setBounds(sim.bounds);
     camera.snapTo(sim.player.x, sim.player.y);
+    input = new InputManager({ tuning, surface: uiCanvas });
+    input.setViewport(vp, safe);
+    if (new URLSearchParams(location.search).has('debug')) {
+      window.__game = { get sim() { return sim; }, get camera() { return camera; }, input };
+    }
   } catch (e) {
     loadError = `could not load the game data (${e.message})`;
     console.error(e);
   }
 }
 
-// ---- input (TEMPORARY) ----------------------------------------------------------------------------------
+// ---- input ----------------------------------------------------------------------------------------------
 
-/**
- * TEMPORARY keyboard reader so the test field can be walked: WASD / arrows -> moveX, moveY.
- * Step 1.4 replaces this whole function with src/engine/InputManager.js (keyboard, mouse and touch);
- * nothing else in this file depends on it beyond the single `keyboard.read()` call in tick().
- */
-function createTemporaryKeyboard() {
-  const held = new Set();
-  const keys = { left: ['KeyA', 'ArrowLeft'], right: ['KeyD', 'ArrowRight'], up: ['KeyW', 'ArrowUp'], down: ['KeyS', 'ArrowDown'] };
-  const any = (list) => list.some((k) => held.has(k));
-  window.addEventListener('keydown', (e) => { held.add(e.code); if (e.code.startsWith('Arrow')) e.preventDefault(); });
-  window.addEventListener('keyup', (e) => held.delete(e.code));
-  window.addEventListener('blur', () => held.clear());   // no stuck keys after alt-tab
-  return {
-    read() {
-      const input = emptyInput();
-      input.moveX = (any(keys.right) ? 1 : 0) - (any(keys.left) ? 1 : 0);
-      input.moveY = (any(keys.down) ? 1 : 0) - (any(keys.up) ? 1 : 0);
-      return input;
-    },
-  };
-}
-
-const keyboard = createTemporaryKeyboard();
+/** @type {InputManager|null} keyboard, mouse and touch; null until the tuning has loaded */
+let input = null;
 
 // ---- frame ----------------------------------------------------------------------------------------------
 
 function tick() {
   if (!sim) return;
-  sim.step(keyboard.read());
+  sim.step(input.nextTick({ camera, player: sim.player }));
   // events must be read after every tick: the next step replaces the list
   for (const e of sim.events) if (e.type === 'shake') camera.addShake(e.amount);
 }
@@ -170,6 +155,7 @@ function drawUi() {
     ctx.fillStyle = 'rgba(216, 210, 191, 0.45)';
     ctx.fillText(buildLabel, vp.uiLogicalWidth - safe.right - 3, vp.uiLogicalHeight - safe.bottom - 2);
   }
+  if (input && sim) input.draw(ctx, { camera, player: sim.player });
   if (loadError) {
     ctx.font = '8px ui-monospace, Consolas, monospace';
     ctx.textAlign = 'center';
@@ -190,6 +176,7 @@ function frame(now) {
   const elapsed = lastTime === null ? 0 : (now - lastTime) / 1000;
   lastTime = now;
   stepper.advance(elapsed, tick);
+  input?.takeUiActions();   // journal, inventory and pause screens arrive in later steps; until then the presses are dropped
   drawWorld(stepper.alpha, elapsed);
   drawUi();
 }

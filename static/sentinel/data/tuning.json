@@ -14,6 +14,14 @@
     "shakeDecay": 6,
     "maxShake": 8
   },
+  "input": {
+    "joystick": { "deadZone": 8, "walkRadius": 40, "ringRadius": 60, "sprintEnter": 54, "sprintExit": 46, "knobRadius": 18 },
+    "buttons": { "size": 60, "primarySize": 76, "gap": 10, "margin": 14, "barSize": 58, "barGap": 8, "arcStepDeg": 45 },
+    "maxSizeFraction": 0.3,
+    "dragThreshold": 14,
+    "throwAimDistance": 120,
+    "opacity": { "idle": 0.38, "pressed": 0.75, "active": 0.65, "disabled": 0.2, "joystick": 0.45, "hint": 0.2 }
+  },
   "testField": {
     "halfWidth": 400,
     "halfHeight": 300,
