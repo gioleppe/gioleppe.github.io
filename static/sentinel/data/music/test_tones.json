@@ -1,0 +1,19 @@
+{
+  "id": "test_tones",
+  "title": "Test tones (every voice)",
+  "comment": "Exercises every voice, note names and scale degrees, sections, chords and each perc kind. Not music.",
+  "bpm": 90,
+  "beatsPerBar": 4,
+  "scale": { "root": "c3", "mode": "major" },
+  "bars": 4,
+  "sections": ["a", "b"],
+  "section": "a",
+  "layers": [
+    { "id": "pad", "voice": "pad", "gain": 0.8, "reverb": 0.3, "pattern": "<[c3,e3,g3] [a2,c3,e3]>/2" },
+    { "id": "pluck", "voice": "pluck", "gain": 0.8, "delay": 0.3, "sections": { "a": "0 2 4 7", "b": "7 4 2 0" } },
+    { "id": "bass", "voice": "bass", "gain": 0.8, "pattern": "c2 ~ g1 ~" },
+    { "id": "bell", "voice": "bell", "gain": 0.8, "reverb": 0.4, "pattern": "~ c5 ~ g5" },
+    { "id": "drone", "voice": "drone", "gain": 0.8, "pattern": "c2/4" },
+    { "id": "perc", "voice": "perc", "gain": 0.8, "pattern": "thud shaker click shaker" }
+  ]
+}
