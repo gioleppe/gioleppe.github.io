@@ -1,0 +1,68 @@
+{ "frames": {
+   "props_manmade 0.aseprite": {
+    "frame": { "x": 0, "y": 0, "w": 400, "h": 202 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 202 },
+    "sourceSize": { "w": 400, "h": 202 },
+    "duration": 100
+   },
+   "props_manmade 1.aseprite": {
+    "frame": { "x": 400, "y": 0, "w": 400, "h": 202 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 202 },
+    "sourceSize": { "w": 400, "h": 202 },
+    "duration": 120
+   },
+   "props_manmade 2.aseprite": {
+    "frame": { "x": 0, "y": 202, "w": 400, "h": 202 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 202 },
+    "sourceSize": { "w": 400, "h": 202 },
+    "duration": 120
+   },
+   "props_manmade 3.aseprite": {
+    "frame": { "x": 400, "y": 202, "w": 400, "h": 202 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 202 },
+    "sourceSize": { "w": 400, "h": 202 },
+    "duration": 120
+   }
+ },
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.18.1-x64",
+  "image": "props_manmade.png",
+  "format": "RGBA8888",
+  "size": { "w": 800, "h": 404 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "campfire", "from": 1, "to": 3, "direction": "forward", "color": "#000000ff" }
+  ],
+  "slices": [
+   { "name": "wreck_hull", "keys": [{ "frame": 0, "bounds": {"x": 140, "y": 2, "w": 96, "h": 76 }, "pivot": {"x": 48, "y": 70 } }] },
+   { "name": "wreck_hull_2", "keys": [{ "frame": 0, "bounds": {"x": 238, "y": 2, "w": 96, "h": 76 }, "pivot": {"x": 48, "y": 70 } }] },
+   { "name": "wreck_hull_3", "keys": [{ "frame": 0, "bounds": {"x": 2, "y": 92, "w": 96, "h": 76 }, "pivot": {"x": 48, "y": 70 } }] },
+   { "name": "wreck_hatch", "keys": [{ "frame": 0, "bounds": {"x": 236, "y": 170, "w": 36, "h": 18 }, "pivot": {"x": 18, "y": 17 } }] },
+   { "name": "kayak", "keys": [{ "frame": 0, "bounds": {"x": 126, "y": 170, "w": 60, "h": 22 }, "pivot": {"x": 30, "y": 16 } }] },
+   { "name": "tent", "keys": [{ "frame": 0, "bounds": {"x": 162, "y": 92, "w": 52, "h": 36 }, "pivot": {"x": 26, "y": 28 } }] },
+   { "name": "tent_2", "keys": [{ "frame": 0, "bounds": {"x": 216, "y": 92, "w": 50, "h": 34 }, "pivot": {"x": 24, "y": 26 } }] },
+   { "name": "dinghy", "keys": [{ "frame": 0, "bounds": {"x": 2, "y": 170, "w": 60, "h": 30 }, "pivot": {"x": 29, "y": 20 } }] },
+   { "name": "dinghy_patched", "keys": [{ "frame": 0, "bounds": {"x": 64, "y": 170, "w": 60, "h": 30 }, "pivot": {"x": 29, "y": 20 } }] },
+   { "name": "radio_rock", "keys": [{ "frame": 0, "bounds": {"x": 2, "y": 2, "w": 50, "h": 88 }, "pivot": {"x": 25, "y": 78 } }] },
+   { "name": "shack", "keys": [{ "frame": 0, "bounds": {"x": 54, "y": 2, "w": 84, "h": 76 }, "pivot": {"x": 41, "y": 74 } }] },
+   { "name": "skeleton", "keys": [{ "frame": 0, "bounds": {"x": 188, "y": 170, "w": 46, "h": 20 }, "pivot": {"x": 23, "y": 19 } }] },
+   { "name": "campfire_cold", "keys": [{ "frame": 0, "bounds": {"x": 296, "y": 92, "w": 26, "h": 30 }, "pivot": {"x": 13, "y": 24 } }] },
+   { "name": "campfire", "keys": [{ "frame": 0, "bounds": {"x": 268, "y": 92, "w": 26, "h": 30 }, "pivot": {"x": 13, "y": 24 } }] },
+   { "name": "warning_arrows", "keys": [{ "frame": 0, "bounds": {"x": 130, "y": 92, "w": 30, "h": 38 }, "pivot": {"x": 13, "y": 33 } }] },
+   { "name": "map_board", "keys": [{ "frame": 0, "bounds": {"x": 100, "y": 92, "w": 28, "h": 38 }, "pivot": {"x": 14, "y": 33 } }] },
+   { "name": "sat_phone", "keys": [{ "frame": 0, "bounds": {"x": 300, "y": 170, "w": 20, "h": 12 }, "pivot": {"x": 10, "y": 11 } }] },
+   { "name": "life_vest", "keys": [{ "frame": 0, "bounds": {"x": 274, "y": 170, "w": 24, "h": 14 }, "pivot": {"x": 12, "y": 12 } }] },
+   { "name": "crate", "keys": [{ "frame": 0, "bounds": {"x": 324, "y": 92, "w": 34, "h": 30 }, "pivot": {"x": 17, "y": 22 } }] },
+   { "name": "crate_2", "keys": [{ "frame": 0, "bounds": {"x": 360, "y": 92, "w": 34, "h": 30 }, "pivot": {"x": 17, "y": 22 } }] }
+  ]
+ }
+}

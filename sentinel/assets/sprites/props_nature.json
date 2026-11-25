@@ -1,0 +1,60 @@
+{ "frames": {
+   "props_nature.aseprite": {
+    "frame": { "x": 0, "y": 0, "w": 400, "h": 354 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 400, "h": 354 },
+    "sourceSize": { "w": 400, "h": 354 },
+    "duration": 100
+   }
+ },
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.18.1-x64",
+  "image": "props_nature.png",
+  "format": "RGBA8888",
+  "size": { "w": 400, "h": 354 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "slices": [
+   { "name": "palm", "keys": [{ "frame": 0, "bounds": {"x": 146, "y": 120, "w": 70, "h": 100 }, "pivot": {"x": 35, "y": 97 } }] },
+   { "name": "palm_2", "keys": [{ "frame": 0, "bounds": {"x": 218, "y": 120, "w": 70, "h": 100 }, "pivot": {"x": 35, "y": 97 } }] },
+   { "name": "palm_3", "keys": [{ "frame": 0, "bounds": {"x": 290, "y": 120, "w": 70, "h": 100 }, "pivot": {"x": 35, "y": 97 } }] },
+   { "name": "coconut_palm", "keys": [{ "frame": 0, "bounds": {"x": 320, "y": 2, "w": 70, "h": 100 }, "pivot": {"x": 35, "y": 97 } }] },
+   { "name": "coconut_palm_2", "keys": [{ "frame": 0, "bounds": {"x": 2, "y": 120, "w": 70, "h": 100 }, "pivot": {"x": 35, "y": 97 } }] },
+   { "name": "coconut_palm_3", "keys": [{ "frame": 0, "bounds": {"x": 74, "y": 120, "w": 70, "h": 100 }, "pivot": {"x": 35, "y": 97 } }] },
+   { "name": "banyan", "keys": [{ "frame": 0, "bounds": {"x": 2, "y": 2, "w": 104, "h": 116 }, "pivot": {"x": 52, "y": 107 } }] },
+   { "name": "banyan_2", "keys": [{ "frame": 0, "bounds": {"x": 108, "y": 2, "w": 104, "h": 116 }, "pivot": {"x": 52, "y": 107 } }] },
+   { "name": "banyan_3", "keys": [{ "frame": 0, "bounds": {"x": 214, "y": 2, "w": 104, "h": 116 }, "pivot": {"x": 52, "y": 107 } }] },
+   { "name": "mangrove", "keys": [{ "frame": 0, "bounds": {"x": 38, "y": 222, "w": 58, "h": 66 }, "pivot": {"x": 29, "y": 60 } }] },
+   { "name": "mangrove_2", "keys": [{ "frame": 0, "bounds": {"x": 98, "y": 222, "w": 58, "h": 66 }, "pivot": {"x": 29, "y": 60 } }] },
+   { "name": "mangrove_3", "keys": [{ "frame": 0, "bounds": {"x": 158, "y": 222, "w": 58, "h": 66 }, "pivot": {"x": 29, "y": 60 } }] },
+   { "name": "tall_grass", "keys": [{ "frame": 0, "bounds": {"x": 136, "y": 308, "w": 26, "h": 22 }, "pivot": {"x": 13, "y": 21 } }] },
+   { "name": "tall_grass_2", "keys": [{ "frame": 0, "bounds": {"x": 164, "y": 308, "w": 26, "h": 22 }, "pivot": {"x": 13, "y": 21 } }] },
+   { "name": "tall_grass_3", "keys": [{ "frame": 0, "bounds": {"x": 192, "y": 308, "w": 26, "h": 22 }, "pivot": {"x": 13, "y": 21 } }] },
+   { "name": "rock", "keys": [{ "frame": 0, "bounds": {"x": 104, "y": 308, "w": 30, "h": 22 }, "pivot": {"x": 15, "y": 16 } }] },
+   { "name": "rock_2", "keys": [{ "frame": 0, "bounds": {"x": 2, "y": 308, "w": 32, "h": 26 }, "pivot": {"x": 16, "y": 20 } }] },
+   { "name": "rock_3", "keys": [{ "frame": 0, "bounds": {"x": 220, "y": 308, "w": 28, "h": 20 }, "pivot": {"x": 14, "y": 15 } }] },
+   { "name": "cliff_rock", "keys": [{ "frame": 0, "bounds": {"x": 218, "y": 222, "w": 50, "h": 50 }, "pivot": {"x": 25, "y": 38 } }] },
+   { "name": "cliff_rock_2", "keys": [{ "frame": 0, "bounds": {"x": 270, "y": 222, "w": 50, "h": 50 }, "pivot": {"x": 25, "y": 38 } }] },
+   { "name": "cliff_rock_3", "keys": [{ "frame": 0, "bounds": {"x": 322, "y": 222, "w": 50, "h": 50 }, "pivot": {"x": 25, "y": 38 } }] },
+   { "name": "monolith", "keys": [{ "frame": 0, "bounds": {"x": 362, "y": 120, "w": 34, "h": 84 }, "pivot": {"x": 17, "y": 79 } }] },
+   { "name": "monolith_2", "keys": [{ "frame": 0, "bounds": {"x": 2, "y": 222, "w": 34, "h": 84 }, "pivot": {"x": 17, "y": 79 } }] },
+   { "name": "totem", "keys": [{ "frame": 0, "bounds": {"x": 374, "y": 222, "w": 24, "h": 46 }, "pivot": {"x": 12, "y": 43 } }] },
+   { "name": "spring", "keys": [{ "frame": 0, "bounds": {"x": 298, "y": 308, "w": 36, "h": 18 }, "pivot": {"x": 18, "y": 9 } }] },
+   { "name": "spring_2", "keys": [{ "frame": 0, "bounds": {"x": 336, "y": 308, "w": 36, "h": 18 }, "pivot": {"x": 18, "y": 9 } }] },
+   { "name": "driftwood_pile", "keys": [{ "frame": 0, "bounds": {"x": 2, "y": 336, "w": 36, "h": 16 }, "pivot": {"x": 18, "y": 12 } }] },
+   { "name": "driftwood_pile_2", "keys": [{ "frame": 0, "bounds": {"x": 40, "y": 336, "w": 36, "h": 16 }, "pivot": {"x": 18, "y": 12 } }] },
+   { "name": "glow_fungus", "keys": [{ "frame": 0, "bounds": {"x": 78, "y": 336, "w": 18, "h": 13 }, "pivot": {"x": 9, "y": 12 } }] },
+   { "name": "glow_fungus_2", "keys": [{ "frame": 0, "bounds": {"x": 98, "y": 336, "w": 18, "h": 13 }, "pivot": {"x": 9, "y": 12 } }] },
+   { "name": "fern", "keys": [{ "frame": 0, "bounds": {"x": 36, "y": 308, "w": 32, "h": 22 }, "pivot": {"x": 16, "y": 19 } }] },
+   { "name": "fern_2", "keys": [{ "frame": 0, "bounds": {"x": 70, "y": 308, "w": 32, "h": 22 }, "pivot": {"x": 16, "y": 19 } }] },
+   { "name": "driftwood", "keys": [{ "frame": 0, "bounds": {"x": 118, "y": 336, "w": 36, "h": 12 }, "pivot": {"x": 18, "y": 9 } }] },
+   { "name": "driftwood_2", "keys": [{ "frame": 0, "bounds": {"x": 156, "y": 336, "w": 28, "h": 12 }, "pivot": {"x": 14, "y": 9 } }] },
+   { "name": "coral", "keys": [{ "frame": 0, "bounds": {"x": 250, "y": 308, "w": 22, "h": 18 }, "pivot": {"x": 11, "y": 15 } }] },
+   { "name": "coral_2", "keys": [{ "frame": 0, "bounds": {"x": 274, "y": 308, "w": 22, "h": 18 }, "pivot": {"x": 11, "y": 15 } }] },
+   { "name": "shell_scatter", "keys": [{ "frame": 0, "bounds": {"x": 186, "y": 336, "w": 24, "h": 10 }, "pivot": {"x": 12, "y": 8 } }] }
+  ]
+ }
+}
