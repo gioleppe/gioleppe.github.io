@@ -27,7 +27,21 @@
     "kayak": { "sheet": "props_manmade", "frame": "kayak" },
     "tent": { "sheet": "props_manmade", "frame": "tent" },
     "dinghy": { "sheet": "props_manmade", "frame": "dinghy" },
-    "radio_rock": { "sheet": "props_manmade", "frame": "radio_rock" }
+    "radio_rock": { "sheet": "props_manmade", "frame": "radio_rock" },
+    "coconut_palm": { "sheet": "props_nature", "frame": "coconut_palm" },
+    "spring": { "sheet": "props_nature", "frame": "spring", "shadow": 0 },
+    "driftwood_pile": { "sheet": "props_nature", "frame": "driftwood_pile" },
+    "cliff_rock": { "sheet": "props_nature", "frame": "cliff_rock" },
+    "glow_fungus": { "sheet": "props_nature", "frame": "glow_fungus", "shadow": 0 },
+    "shack": { "sheet": "props_manmade", "frame": "shack" },
+    "skeleton": { "sheet": "props_manmade", "frame": "skeleton", "shadow": 0 },
+    "life_vest": { "sheet": "props_manmade", "frame": "life_vest", "shadow": 0 },
+    "wreck_hatch": { "sheet": "props_manmade", "frame": "wreck_hatch", "shadow": 0 },
+    "campfire_cold": { "sheet": "props_manmade", "frame": "campfire_cold" },
+    "sat_phone": { "sheet": "props_manmade", "frame": "sat_phone", "shadow": 0 },
+    "map_board": { "sheet": "props_manmade", "frame": "map_board" },
+    "warning_arrows": { "sheet": "props_manmade", "frame": "warning_arrows" },
+    "crate": { "sheet": "props_manmade", "frame": "crate" }
   },
   "tiles": {
     "sand": { "sheet": "terrain_tiles", "frames": ["sand_0", "sand_1", "sand_2"] },

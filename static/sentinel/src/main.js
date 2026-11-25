@@ -146,6 +146,8 @@ async function loadGame() {
         assets, renderer, stepper, tick, uiCanvas,
       });
       w.registerWorldDebug(debug);
+      // every landmark of the island is a teleport target (debug "Go" page, __game.debug.teleportTo(id))
+      debug.addPlaces((s) => (s.map ? s.map.entitiesOfType('landmark').map((l) => ({ id: l.id, label: l.name, x: l.x, y: l.y })) : []));
       return import('./engine/debug/collisionLayers.js').then((c) => c.collisionLayers().forEach((l) => debug.addLayer(l)));
     }).catch((e) => console.error('debug mode failed to start', e));
   }

@@ -2,12 +2,12 @@
 // arrays, then answered by O(1), allocation-free queries. Data and queries only: movement, collision and the tide
 // clock are other systems that ask this one.
 //
-// ---- data/island_map.json (format version 1) --------------------------------------------------------------------
+// ---- data/island_map.json (format version 2) --------------------------------------------------------------------
 // Baked by `node tools/map/build.mjs <name>` from tools/map/sources/<name>.src.mjs; never edited by hand
 // (`build.mjs --check` fails when the JSON and its source disagree). Checked by tools/lib/validate-map.mjs.
 //
 // {
-//   "format": "sentinel-island-map", "version": 1, "name": "sample",
+//   "format": "sentinel-island-map", "version": 2, "name": "sample",
 //   "width": 48, "height": 40,                 tiles; a tile is TILE_W x TILE_H = 32 x 24 world px
 //   "tile": [32, 24],                          informational, must equal the constants
 //   "legend": {                                one character per value, never a digit
@@ -16,17 +16,27 @@
 //     "collision": { ".": 0, "#": 1 },         1 = impassable (cliff, dense trunks, hull); NOT water depth
 //     "tide":      { ".": 0, "a": 1, ..., "i": 9 },   flood level, see below
 //     "region":    { ".": "open_sea", "c": "southern_cove", ... }   must include open_sea
+//     "sector":    { ".": null, "s": "south_beach", ... }            beach sectors; null = none
 //   },
 //   "layers": {                                one string per row (north first), run-length encoded:
 //     "terrain": ["d12h3s20..."], ...          a legend character + optional count ("d12" = 12 deep water)
-//     "collision": [...], "tide": [...], "region": [...]
+//     "collision": [...], "tide": [...], "region": [...],
+//     "sector": [...]                          optional (absent = no sectors)
 //   },
+// Regions of the island: southern_cove, western_mangroves, reef, shipwreck, interior_jungle, quiet_meridian,
+// signal_peak, coast (beaches outside the cove), open_sea. A beach sector is the stretch of coast a coastal
+// offering at its border totem clears of patrols (spec §7.3); routes and totems name theirs.
 //   "anomalyZones": [ { "id": "meridian", "strength": 1, "points": [[x, y], ...] } ],   world px, >= 3 points
 //   "entities": [ { "id": "...", "type": "...", ... }, ... ]     one per line, ids unique across the file
+//   "propSets": [                              scattered scenery, compact: one line per set
+//     { "id": "banyan", "kind": "banyan", "blocker"?: true, "cover"?: true, "radius"?, "coverRadius"?,
+//       "variant"?: "0210...",                 one digit per prop
+//       "xy": [x0, y0, x1, y1, ...] }          world px; prop n (1-based) has id "<set id>_<n>"
+//   ]
 // }
 //
 // Entity types (x, y are world px of the ground point; every entity has a stable unique `id`):
-//   spawn          { x, y }                                          exactly one: the player's start
+//   spawn          { x, y, facing? }                                 exactly one: the player's start (facing N/E/S/W)
 //   prop           { kind, x, y, radius?, cover?, coverRadius?, variant?, blocker? }
 //                  kind = a sprite kind of assets/manifest.json. radius (collision) and coverRadius default to
 //                  tuning.props[kind].radius / .coverRadius. cover: true = hides a crouched player (spec §6.1).
@@ -45,13 +55,15 @@
 // rises, so level 9 is the lowest ground (almost always wet) and level 1 floods only at the top of high tide.
 //
 // Out of bounds every query answers "open sea": deep water, not blocked, flood level 9 and always flooded,
-// region open_sea, no anomaly. Queries never throw.
+// region open_sea, no sector, no anomaly. Queries never throw.
+//
+// Loot items are ids of data/items.json.
 import { TILE_W, TILE_H } from '../sim/constants.js';
 import { hashSeed } from '../sim/rng.js';
 import { decodeLayer } from './mapCodec.js';
 
 export const MAP_FORMAT = 'sentinel-island-map';
-export const MAP_VERSION = 1;
+export const MAP_VERSION = 2;
 
 /** terrain names in their fixed internal order (terrainIdAt returns these indices) */
 export const TERRAINS = Object.freeze(['sand', 'wet_sand', 'shallow_water', 'deep_water', 'jungle_floor', 'mud', 'reef_rock', 'basalt']);
@@ -162,6 +174,14 @@ export class IslandMap {
     this.collision = decodeLayer(L.collision, lookupOf(COLLISION_LEGEND, (v) => v), width, height, 'collision');
     this.tide = decodeLayer(L.tide, lookupOf(TIDE_LEGEND, (v) => v), width, height, 'tide');
     this.region = decodeLayer(L.region, regionLookup, width, height, 'region');
+    // beach sectors (optional layer): null = not a beach sector
+    const sectorLegend = legend.sector ?? { '.': null };
+    /** sector names by id, null for "none" */
+    this.sectorNames = Object.freeze(Object.values(sectorLegend));
+    this.noSector = Math.max(0, this.sectorNames.indexOf(null));
+    this.sector = L.sector
+      ? decodeLayer(L.sector, lookupOf(sectorLegend, (name) => this.sectorNames.indexOf(name)), width, height, 'sector')
+      : new Uint8Array(width * height).fill(this.noSector);
     this.floodThresholds = floodThresholdTable(tuning);
 
     /** anomaly zones with flat point arrays and bounding boxes */
@@ -176,15 +196,29 @@ export class IslandMap {
     }));
 
     const propCfg = tuning?.props ?? {};
-    /** every entity, frozen, in file order */
-    this.entities = Object.freeze((json.entities ?? []).map((e) => {
+    const named = (json.entities ?? []).map((e) => {
       const out = { ...e };
       if (typeof e.kind === 'string') {
         out.radius = e.radius ?? propCfg[e.kind]?.radius ?? 0;
         if (e.cover) out.coverRadius = e.coverRadius ?? propCfg[e.kind]?.coverRadius ?? 0;
       }
       return deepFreeze(out);
-    }));
+    });
+    // scattered props, stored compactly per set, become ordinary prop entities with ids <set id>_<n>
+    const scattered = [];
+    for (const set of json.propSets ?? []) {
+      const radius = set.radius ?? propCfg[set.kind]?.radius ?? 0;
+      const coverRadius = set.cover ? set.coverRadius ?? propCfg[set.kind]?.coverRadius ?? 0 : undefined;
+      for (let i = 0, n = set.xy.length >> 1; i < n; i++) {
+        const p = { id: `${set.id}_${i + 1}`, type: 'prop', kind: set.kind, x: set.xy[i * 2], y: set.xy[i * 2 + 1], radius };
+        if (set.cover) { p.cover = true; p.coverRadius = coverRadius; }
+        if (set.variant) p.variant = set.variant.charCodeAt(i) - 48;
+        if (set.blocker) p.blocker = true;
+        scattered.push(Object.freeze(p));
+      }
+    }
+    /** every entity, frozen: the named ones in file order, then the scattered props set by set */
+    this.entities = Object.freeze(named.concat(scattered));
     this.idIndex = new Map();
     this.typeIndex = new Map();
     for (const e of this.entities) {
@@ -196,7 +230,7 @@ export class IslandMap {
 
     const sp = this.entitiesOfType('spawn')[0];
     /** the player's start in world px */
-    this.spawn = Object.freeze(sp ? { x: sp.x, y: sp.y } : { x: this.bounds.w / 2, y: this.bounds.h / 2 });
+    this.spawn = Object.freeze(sp ? { x: sp.x, y: sp.y, facing: sp.facing ?? 'S' } : { x: this.bounds.w / 2, y: this.bounds.h / 2, facing: 'S' });
 
     /** scenery the renderer draws and later systems collide with / hide in: every entity with a `kind` */
     this.props = Object.freeze(this.entities.filter((e) => typeof e.kind === 'string'));
@@ -282,6 +316,15 @@ export class IslandMap {
 
   regionAtWorld(x, y) {
     return this.regionNames[this.regionIdAt(Math.floor(x / TILE_W), Math.floor(y / TILE_H))];
+  }
+
+  /** @returns {string|null} the beach sector of a tile (the unit a coastal offering clears), or null */
+  sectorAt(tx, ty) {
+    return this.inBounds(tx, ty) ? this.sectorNames[this.sector[ty * this.width + tx]] ?? null : null;
+  }
+
+  sectorAtWorld(x, y) {
+    return this.sectorAt(Math.floor(x / TILE_W), Math.floor(y / TILE_H));
   }
 
   // ---- anomaly zones -----------------------------------------------------------------------------------------

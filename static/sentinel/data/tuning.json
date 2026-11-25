@@ -17,7 +17,21 @@
     "kayak": { "radius": 8 },
     "tent": { "radius": 12 },
     "dinghy": { "radius": 10 },
-    "radio_rock": { "radius": 14 }
+    "radio_rock": { "radius": 14 },
+    "coconut_palm": { "radius": 6 },
+    "spring": { "radius": 0 },
+    "driftwood_pile": { "radius": 0 },
+    "cliff_rock": { "radius": 14 },
+    "glow_fungus": { "radius": 0 },
+    "shack": { "radius": 0 },
+    "skeleton": { "radius": 0 },
+    "life_vest": { "radius": 0 },
+    "wreck_hatch": { "radius": 0 },
+    "campfire_cold": { "radius": 0 },
+    "sat_phone": { "radius": 0 },
+    "map_board": { "radius": 4 },
+    "warning_arrows": { "radius": 0 },
+    "crate": { "radius": 9 }
   },
   "tide": {
     "floodThresholds": [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]
