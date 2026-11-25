@@ -6,6 +6,7 @@ import { Sim } from './sim/Sim.js';
 import { Camera } from './engine/Camera.js';
 import { Renderer } from './engine/Renderer.js';
 import { InputManager } from './engine/InputManager.js';
+import { AssetManager } from './engine/AssetManager.js';
 
 const SEED = 1;
 
@@ -23,7 +24,9 @@ let buildLabel = '';
 /** @type {Sim|null} null until the data has loaded */
 let sim = null;
 let loadError = '';
-const renderer = new Renderer();
+// placeholders draw from the first frame; real sheets take over one by one as they arrive
+const assets = new AssetManager();
+const renderer = new Renderer({ sprites: assets });
 let camera = new Camera();
 
 // ---- screen ---------------------------------------------------------------------------------------------
@@ -110,7 +113,7 @@ async function loadGame() {
     input = new InputManager({ tuning, surface: uiCanvas });
     input.setViewport(vp, safe);
     if (new URLSearchParams(location.search).has('debug')) {
-      window.__game = { get sim() { return sim; }, get camera() { return camera; }, input };
+      window.__game = { get sim() { return sim; }, get camera() { return camera; }, input, assets };
     }
   } catch (e) {
     loadError = `could not load the game data (${e.message})`;
@@ -198,5 +201,6 @@ document.addEventListener('visibilitychange', () => (document.hidden ? stop() : 
 
 applyViewport();
 loadBuild();
+assets.load();
 loadGame();
 if (!document.hidden) start();

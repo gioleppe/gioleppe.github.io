@@ -9,8 +9,9 @@ import { PlaceholderSprites } from './PlaceholderSprites.js';
  * implement it with real sheets and fall back to PlaceholderSprites for anything missing.
  *
  * @typedef {Object} SpriteSource
- * @property {(kind: string, state?: string) => {w: number, h: number}} size
+ * @property {(kind: string, state?: string) => {w: number, h: number, shadow?: number}} size
  *   Sprite box in logical pixels; the anchor is its bottom-centre. Used for culling, so it must not be smaller than what `draw` paints.
+ *   `shadow`, if present, is the ground shadow width (0 = none); otherwise the shadow follows `w`.
  * @property {(ctx: CanvasRenderingContext2D, kind: string, state: string, facing: ('N'|'E'|'S'|'W'|null), x: number, y: number, time: number) => void} draw
  *   Paint an entity with its anchor (ground contact point) at screen (x, y), whole logical pixels. `time` in seconds drives animation.
  * @property {(ctx: CanvasRenderingContext2D, terrain: string, x: number, y: number, w: number, h: number, variant: number) => void} drawTile
@@ -158,7 +159,7 @@ export class Renderer {
     const x = Math.round(e.x) - camera.originX;
     const y = Math.round(e.y) - camera.originY;
     const size = this.sprites.size(e.kind, e.state);
-    this.drawShadow(ctx, x, y, size.w);
+    if (size.shadow !== 0) this.drawShadow(ctx, x, y, size.shadow ?? size.w);
     this.sprites.draw(ctx, e.kind, e.state, e.facing, x, y, time);
   }
 
