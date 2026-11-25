@@ -7,8 +7,9 @@
     "gatherer": { "image": "sprites/gatherer.png", "data": "sprites/gatherer.json", "ready": true },
     "props_nature": { "image": "sprites/props_nature.png", "data": "sprites/props_nature.json", "ready": false },
     "props_manmade": { "image": "sprites/props_manmade.png", "data": "sprites/props_manmade.json", "ready": false },
-    "items": { "image": "sprites/items.png", "data": "sprites/items.json", "ready": false },
-    "emotes": { "image": "sprites/emotes.png", "data": "sprites/emotes.json", "ready": false },
+    "items": { "image": "sprites/items.png", "data": "sprites/items.json", "ready": true },
+    "emotes": { "image": "sprites/emotes.png", "data": "sprites/emotes.json", "ready": true },
+    "ui": { "image": "sprites/ui.png", "data": "sprites/ui.json", "ready": true },
     "terrain_tiles": { "image": "tiles/terrain_tiles.png", "data": "tiles/terrain_tiles.json", "ready": true }
   },
   "sprites": {
@@ -54,7 +55,8 @@
     "basalt": { "sheet": "terrain_tiles", "frames": ["basalt_0", "basalt_1", "basalt_2"] }
   },
   "icons": {
-    "items": [],
-    "emotes": ["exclaim", "question", "arrow_warn", "palm_up", "eye", "fish", "skull", "resonance_wave"]
+    "items": ["paracord", "waterproof_tarp", "driftwood", "crowbar", "radio_battery", "flare_gun", "flare_casings", "coconut", "reef_shell", "bone", "fish", "healing_herbs", "bandage", "rock", "flashlight", "tin_flask", "driftwood_totem"],
+    "emotes": ["exclaim", "question", "arrow_warn", "palm_up", "eye", "fish", "skull", "resonance_wave", "spear", "whistle", "search", "ellipsis", "bubble_neutral", "bubble_alert", "glyph_exclaim", "glyph_question", "glyph_arrow_warn", "glyph_palm_up", "glyph_eye", "glyph_fish", "glyph_skull", "glyph_resonance_wave", "glyph_spear", "glyph_whistle", "glyph_search", "glyph_ellipsis", "pop_neutral_0", "pop_neutral_1", "pop_neutral_2", "pop_alert_0", "pop_alert_1", "pop_alert_2"],
+    "ui": ["hand", "eye_inspect", "speech", "offering", "crouch", "use", "throw", "light_on", "light_off", "inventory", "journal", "pause", "sprint", "compass_dial", "compass_needle_00", "compass_needle_01", "compass_needle_02", "compass_needle_03", "compass_needle_04", "compass_needle_05", "compass_needle_06", "compass_needle_07", "compass_needle_08", "compass_needle_09", "compass_needle_10", "compass_needle_11", "compass_needle_12", "compass_needle_13", "compass_needle_14", "compass_needle_15", "icon_stamina", "icon_hydration", "icon_health", "icon_resonance", "bar_l", "bar_m", "bar_r", "fill_stamina_l", "fill_stamina_m", "fill_stamina_r", "fill_hydration_l", "fill_hydration_m", "fill_hydration_r", "fill_health_l", "fill_health_m", "fill_health_r", "fill_resonance_l", "fill_resonance_m", "fill_resonance_r", "bar_frame_24", "bar_frame_40", "bar_frame_56", "slot", "slot_selected", "slot_empty", "tide_rising", "tide_falling", "time_sun", "time_sunrise", "time_moon", "marker_player", "marker_landmark", "marker_loot", "marker_danger", "marker_spring", "marker_totem", "marker_unknown", "status_crouch", "status_hidden", "status_wet", "status_bleeding", "status_thirsty", "status_light", "status_noise_1", "status_noise_2", "status_noise_3", "status_metal", "dlg_tl", "dlg_t", "dlg_tr", "dlg_l", "dlg_c", "dlg_r", "dlg_bl", "dlg_b", "dlg_br", "page_tl", "page_t", "page_tr", "page_l", "page_c", "page_r", "page_bl", "page_b", "page_br", "caret_0", "caret_1", "cursor", "tab_notes", "tab_map", "tab_objectives", "tab_recipes", "glyph_0", "glyph_1", "glyph_2", "glyph_3", "glyph_4", "glyph_5", "glyph_6", "glyph_7", "glyph_8", "glyph_9", "glyph_x", "glyph_colon", "glyph_percent"]
   }
 }
