@@ -177,9 +177,9 @@
     "gustSpeed": 4.1
   },
   "water": {
-    "$comment": "src/world/water.js depth classes from tide height h and a tile's flood threshold t: flooded (h > t) is shallow (wading) until h - t >= deepMargin, then deep (swimming); not flooded but t - h <= wetMargin is wet (about to flood or just drained). frameMs: water animation fallback when the sheet has no tag.",
+    "$comment": "src/world/water.js depth classes from tide height h and a tile's flood threshold t: flooded (h > t) is shallow (wading) while h - t <= deepMargin, deep (swimming) beyond it: one rule (water.js isDeepFlood) for movement, rendering and the audits; 0.15 is the audited value (the reef tide gate was measured with it); not flooded but t - h <= wetMargin is wet (about to flood or just drained). frameMs: water animation fallback when the sheet has no tag.",
     "wetMargin": 0.06,
-    "deepMargin": 0.2,
+    "deepMargin": 0.15,
     "frameMs": { "shallow_water": 400, "deep_water": 600 }
   },
   "terrain": {
@@ -193,7 +193,6 @@
     "deep_water": { "speed": 0.45, "mode": "swim" },
     "swimSpeed": 0.45,
     "floodWadeSpeed": 0.6,
-    "floodSwimDepth": 0.15,
     "modeExitMargin": 4,
     "lowTide": 0
   },
@@ -311,5 +310,54 @@
     "minSpacing": 28,
     "placementTries": 30,
     "counts": { "palm": 16, "rock": 12, "tall_grass": 22, "monolith": 1 }
+  },
+  "resonance": {
+    "$comment": "src/world/Resonance.js (spec §6.3). Target = min(max, sum of sources) x (1 - totemDampening if a Driftwood Totem is carried); the value walks to it at riseRate / fallRate points per second. Tiers: up at hummingAt / agitatedAt, down only hysteresis points below. Sources in points: flashlight while on, electronicEach per other electronic item powered on, anomalyAtFull x anomaly zone strength (0..1) where the player stands, monolith.near x (1 - distance / monolith.radius px) for the nearest monolith. detectionMultiplier: scout detection radius factor per tier. pulse: each anomaly zone pulses every baseSeconds + (1 - strength) x weakExtraSeconds, divided by (1 + speedAtMax x value / max).",
+    "max": 100,
+    "tiers": { "hummingAt": 31, "agitatedAt": 70, "hysteresis": 2 },
+    "sources": {
+      "flashlight": 40,
+      "electronicEach": 35,
+      "anomalyAtFull": 50,
+      "monolith": { "near": 15, "radius": 192 }
+    },
+    "riseRate": 8,
+    "fallRate": 2,
+    "totemDampening": 0.4,
+    "totemItem": "driftwood_totem",
+    "detectionMultiplier": { "quiet": 1, "humming": 1.2, "agitated": 1.35 },
+    "pulse": { "baseSeconds": 10, "weakExtraSeconds": 10, "speedAtMax": 2 }
+  },
+  "resonanceFx": {
+    "$comment": "src/engine/ResonanceFx.js and src/ui/hud/Compass.js (presentation). intensity: comfort scale for every screen effect, 0 disables them (the compass and bar stay). vignette alpha by tier, pulsing at pulseSpeed rad/s. distortion: Agitated only, a brief channel-split pulse every everySeconds[0] at 70 down to everySeconds[1] at 100, lasting pulseSeconds, offset px, alpha. ring: the expanding ring of an anomaly pulse (seconds, radius px, line width px). monolith: monolith lights within sightRadius px of the player brighten by boost x value / 100. compass: needle jitter amplitude (rad) across Humming, spin speed (rad/s) at 70 and at 100.",
+    "intensity": 1,
+    "vignette": { "humming": 0.24, "agitated": 0.36, "pulseSpeed": 1.3, "pulseDepth": 0.35 },
+    "distortion": {
+      "everySeconds": [2.6, 1.2],
+      "pulseSeconds": 0.26,
+      "offset": 3,
+      "alpha": 0.3,
+      "bands": 5,
+      "bandShift": 2
+    },
+    "ring": { "seconds": 2.4, "radius": 240, "width": 2, "alpha": 0.85, "light": 0.6 },
+    "monolith": { "sightRadius": 420, "boost": 0.8 },
+    "compass": { "jitter": [0.12, 0.6], "jitterSpeed": 9, "spin": [5, 14] }
+  },
+  "fog": {
+    "$comment": "src/world/FogOfWar.js. The explored map at one cell per cellTiles x cellTiles tiles. sightRadius px around the player is revealed, times ambientVisibility (night, squall) but never below minSightRadius, times highGround.multiplier in highGround.regions. landmarkRevealRadius: what revealLandmarks() uncovers around each landmark. shifting (Shifting Paths, spec §6.3): while Resonance is Agitated and the player is inside an anomaly zone or in one of shifting.regions, only memoryRadius px are kept and cells between memoryRadius and forgetRadius are forgotten.",
+    "cellTiles": 2,
+    "sightRadius": 320,
+    "minSightRadius": 112,
+    "highGround": { "regions": ["signal_peak"], "multiplier": 1.6 },
+    "landmarkRevealRadius": 192,
+    "shifting": { "regions": ["interior_jungle", "quiet_meridian"], "memoryRadius": 128, "forgetRadius": 640 }
+  },
+  "mapOverlay": {
+    "$comment": "src/ui/MapOverlay.js (presentation). The island cache is one pixel per tile, built chunkRows rows per frame. zoomLevels: map pixels per tile on screen as multiples of the fit-to-screen scale. panSpeed: logical px/s with the keys.",
+    "chunkRows": 40,
+    "zoomLevels": [1, 3],
+    "panSpeed": 220,
+    "margin": 10
   }
 }

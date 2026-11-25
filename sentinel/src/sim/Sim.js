@@ -8,6 +8,9 @@ import { buildTestField } from '../world/TestField.js';
 import { IslandMap } from '../world/IslandMap.js';
 import { WorldState } from '../world/WorldState.js';
 import { Collider, terrainRules } from '../world/collision.js';
+import { Resonance } from '../world/Resonance.js';
+import { FogOfWar } from '../world/FogOfWar.js';
+
 import { NoiseField } from '../world/Noise.js';
 import { FootprintTrail } from '../world/Footprints.js';
 import { ItemCatalog } from '../entities/ItemCatalog.js';
@@ -18,13 +21,14 @@ import { selectHotbar, toggleLight, useHeld, dropHeld, syncLight, giveStartingKi
 import { Projectiles, wantsThrow, throwHeld } from '../entities/Projectile.js';
 
 /** bumped whenever the snapshot shape changes; restore refuses other versions (migration arrives with saving, step 5.2) */
-export const SNAPSHOT_VERSION = 6;
+export const SNAPSHOT_VERSION = 7;
 /**
  * older versions restore can still read: 2 had no world (its clocks are rebuilt from the tick); 2 and 4 have no
  * player body (stamina and the rest start as in a new game) and no items (the fresh starting kit and the map's
- * loot); 5 is either half (body or items) of the two branches that both called themselves 5
+ * loot); 5 is either half (body or items) of the two branches that both called themselves 5; 2 to 6 may lack
+ * Resonance (it starts at rest) and the fog (it starts unexplored)
  */
-const READABLE_VERSIONS = new Set([2, 4, 5, SNAPSHOT_VERSION]);
+const READABLE_VERSIONS = new Set([2, 4, 5, 6, SNAPSHOT_VERSION]);
 
 /**
  * World rectangle in world pixels for a map that is `width` x `height` tiles, or null for the open test field.
@@ -87,6 +91,10 @@ export class Sim {
     }
     /** tide, day/night and weather (WorldState.js) */
     this.world = new WorldState(tuning);
+    /** Resonance (Resonance.js): sources, tiers, anomaly pulses */
+    this.resonance = new Resonance(tuning, this.map);
+    /** @type {FogOfWar|null} the explored map and Shifting Paths (FogOfWar.js); null on the open test field */
+    this.fog = this.map ? new FogOfWar(tuning, this.map) : null;
     /** recent noises the AI can hear (Noise.js) */
     this.noise = new NoiseField(tuning);
     /** footprints on wet sand (Footprints.js) */
@@ -196,6 +204,10 @@ export class Sim {
     pe.footprints = this.footprints;
     this.player.update(inp, pe);
     this.stepItems(inp);
+    // after the player and the items: this tick's position, light and power. Once the run is over Resonance
+    // still settles (the world goes on) but announces nothing, and the fog no longer follows the body
+    this.resonance.step(this, this.over ? [] : this.events);
+    if (!this.over) this.fog?.step(this, this.events);   // after Resonance: Shifting Paths reads this tick's tier
     this.collectEvents();
     this.checkOver();
     this.tick++;
@@ -261,6 +273,8 @@ export class Sim {
       rng: this.rng.snapshot(),
       player: this.player.snapshot(),
       world: this.world.snapshot(),
+      resonance: this.resonance.snapshot(),
+      fog: this.fog ? this.fog.snapshot() : null,
       noise: this.noise.snapshot(),
       footprints: this.footprints.snapshot(),
       over: this.over ? { ...this.over } : null,
@@ -290,6 +304,8 @@ export class Sim {
     sim.rng = Rng.restore(snap.rng);
     sim.player = Player.restore(snap.player, tuning);
     sim.world = snap.world ? WorldState.restore(snap.world, tuning) : WorldState.atTick(snap.tick, tuning);
+    if (snap.resonance) sim.resonance = Resonance.restore(snap.resonance, tuning, sim.map);
+    if (snap.fog && sim.map) sim.fog = FogOfWar.restore(snap.fog, tuning, sim.map);
     sim.noise = NoiseField.restore(snap.noise, tuning);
     sim.footprints = FootprintTrail.restore(snap.footprints, tuning);
     sim.over = snap.over ? { ...snap.over } : null;

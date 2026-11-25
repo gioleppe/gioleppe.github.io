@@ -6,6 +6,8 @@
 // - a bar below BAR_LOW of its maximum (hydration: below the stamina-cap threshold) pulses
 // - status marks under the bars: crouching, in cover, bleeding, limping, swimming, drowning
 
+import { drawResonanceBar } from './ResonanceBar.js';
+
 /** palette colours (assets/src/palette.gpl names) */
 export const BAR_COLORS = Object.freeze({
   ink: '#0d0b12',
@@ -41,8 +43,8 @@ const ICONS = Object.freeze({
 });
 
 /**
- * The bars, in slot order. Resonance (step 3.6) takes the fourth slot:
- *   { id: 'resonance', value: (p) => p.resonance, max: (t) => 100 }  (with its own icon and colours)
+ * The body's bars, in slot order. Resonance (step 3.6) takes the fourth slot, drawn by drawResonanceBar
+ * (ResonanceBar.js) from sim.resonance in the same row geometry.
  */
 export const BAR_DEFS = Object.freeze([
   { id: 'stamina', value: (p) => p.stamina, max: (t) => t.stamina.max, cap: (p) => p.staminaCap },
@@ -170,11 +172,21 @@ export function drawBars(ctx, rect, bars, marks, time) {
   ctx.restore();
 }
 
+/** top of the fourth row, where the Resonance bar's frame starts (the body bars' frames start 1 px into their row) */
+export function resonanceRowY(rect) {
+  return rect.y + RESONANCE_SLOT * BARS.rowH;
+}
+/** the slot Resonance takes */
+export const RESONANCE_SLOT = 3;
+
 /** the HUD widget (see HUD.js) */
 export const barsWidget = Object.freeze({
   id: 'bars',
   draw(ctx, sim, { vp, safe, time, reserve }) {
     if (!sim?.player || !sim.tuning?.hydration) return;
-    drawBars(ctx, barsRect(vp, safe, reserve), barReadout(sim.player, sim.tuning), statusMarks(sim.player), time);
+    const rect = barsRect(vp, safe, reserve);
+    drawBars(ctx, rect, barReadout(sim.player, sim.tuning), statusMarks(sim.player), time);
+    const r = sim.resonance;
+    if (r) drawResonanceBar(ctx, rect.x, resonanceRowY(rect), rect.w, r.value, r.tier, sim.tuning.resonance?.tiers);
   },
 });

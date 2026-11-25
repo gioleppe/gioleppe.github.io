@@ -2,8 +2,9 @@
 // noise, drowning, the renderer and the audits share. A pure query of the static map and the tide height;
 // nothing is stored per tile (spec §5.2: the tide floods and exposes tiles as it moves).
 //
-//   'deep'     base deep_water at any tide, or a tidal tile the water stands over by at least water.deepMargin
-//   'shallow'  base shallow_water at any tide, or a tidal tile just flooded (wading)
+//   'deep'     base deep_water at any tide, or a tidal tile the water stands over by more than water.deepMargin
+//              (isDeepFlood: the one rule, which movement also uses to decide when a body swims)
+//   'shallow'  base shallow_water (unless the tide stands deep over it), or a tidal tile just flooded (wading)
 //   'wet'      base wet_sand when not flooded, or a tidal tile within water.wetMargin below its flood threshold
 //              (about to flood or just drained)
 //   'dry'      everything else
@@ -17,6 +18,16 @@ export const WATER_CLASSES = Object.freeze(['dry', 'wet', 'shallow', 'deep']);
 const WET_SAND = TERRAIN_ID.wet_sand;
 
 /**
+ * Tidal water is deep (a body swims, the renderer draws deep water) once it stands more than water.deepMargin over
+ * the tile's flood threshold. Written once, here: collision.js (modeRankAt) and waterClass both ask this.
+ * @param {number} depth tide height minus the tile's flood threshold (> 0: flooded)
+ * @param {{ deepMargin: number }} cfg tuning.water
+ */
+export function isDeepFlood(depth, cfg) {
+  return depth > cfg.deepMargin;
+}
+
+/**
  * The depth class of one tile from its parts (no map needed: tests and the renderer use it directly).
  * @param {number} terrainId index into TERRAINS
  * @param {number} threshold the tile's flood threshold (+Infinity for level 0)
@@ -26,8 +37,9 @@ const WET_SAND = TERRAIN_ID.wet_sand;
  */
 export function waterClass(terrainId, threshold, tideHeight, cfg) {
   if (terrainId === DEEP_WATER) return 'deep';
+  // the tide first: shallow-water ground the tide stands deep over is swum (as collision.js modeRankAt has it)
+  if (tideHeight > threshold) return isDeepFlood(tideHeight - threshold, cfg) ? 'deep' : 'shallow';
   if (terrainId === SHALLOW_WATER) return 'shallow';
-  if (tideHeight > threshold) return tideHeight - threshold >= cfg.deepMargin ? 'deep' : 'shallow';
   if (terrainId === WET_SAND || threshold - tideHeight <= cfg.wetMargin) return 'wet';
   return 'dry';
 }

@@ -122,7 +122,7 @@ export class Renderer {
    * @param {SpriteSource} [opts.sprites]       defaults to the built-in placeholders
    * @param {(col: number, row: number) => string} [opts.terrainAt]  terrain name of a tile; defaults to the test field
    */
-  constructor({ sprites = new PlaceholderSprites(), terrainAt = testFieldTerrain, lighting = new Lighting(), weather = new WeatherFx() } = {}) {
+  constructor({ sprites = new PlaceholderSprites(), terrainAt = testFieldTerrain, lighting = new Lighting(), weather = new WeatherFx(), resonanceFx = null } = {}) {
     /** @type {SpriteSource} */
     this.sprites = sprites;
     this.terrainAt = terrainAt;
@@ -137,6 +137,9 @@ export class Renderer {
     /** rain, splashes and the squall veil (null: none) */
     this.weather = weather;
     this.swayScratch = [];
+    /** Resonance screen effects after the lighting pass (ResonanceFx.js; null: none); its light joins the lighting */
+    this.resonanceFx = resonanceFx;
+    if (resonanceFx && lighting) lighting.addSource(resonanceFx.lightSource);
     /** reused by the pickup query every frame */
     this.itemScratch = [];
   }
@@ -165,6 +168,7 @@ export class Renderer {
     }
     this.lighting?.draw(ctx, sim, camera, { time, alpha });
     drawNoiseRings(ctx, sim, camera, time);   // after the darkness: a loud noise is a signal, readable at night too
+    this.resonanceFx?.draw(ctx, sim, camera, { time, alpha });   // last: its vignette tints the edges over everything
     this.stats.entities = all.length;
     this.stats.drawn = visible.length;
   }
