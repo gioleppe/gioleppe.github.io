@@ -33,6 +33,12 @@ export const PLACEHOLDER_KINDS = Object.freeze({
   map_board: { w: 24, h: 32, color: '#c9b48a', label: 'MAP' },
   warning_arrows: { w: 24, h: 40, color: '#b0703c', label: 'ARROW' },
   crate: { w: 32, h: 28, color: '#8c6b3e', label: 'CRATE' },
+  campfire: { w: 24, h: 26, color: '#f2a33a', label: 'FIRE' },
+  dinghy_patched: { w: 56, h: 26, color: '#3c587a', label: 'DINGHY' },
+  fern: { w: 30, h: 18, color: '#4f8a3a', label: 'FERN' },
+  driftwood: { w: 34, h: 10, color: '#9a8c74', label: 'DRIFT' },
+  coral: { w: 20, h: 16, color: '#dba984', label: 'CORAL' },
+  shell_scatter: { w: 22, h: 8, color: '#e7cd98', label: 'SH' },
 });
 
 const UNKNOWN = { w: 24, h: 24, color: '#ff00ff', label: '?' };
