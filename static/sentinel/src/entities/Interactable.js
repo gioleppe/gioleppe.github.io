@@ -282,10 +282,7 @@ export function updateInteraction(sim, inp) {
       ch.ticksLeft -= 1;
       if (done || ch.ticksLeft <= 0) reason = 'done';
     }
-    if (reason) {
-      reg.channel = null;
-      sim.events.push({ type: 'channel_end', id: ch.id, action: ch.action, reason });
-    }
+    if (reason) endChannel(sim, reason);
     if (inp.interact) return;   // the press that ends a channel does nothing else
   }
   if (!inp.interact) return;
@@ -301,6 +298,17 @@ export function updateInteraction(sim, inp) {
 export function startChannel(sim, target, seconds) {
   sim.interactables.channel = { id: target.id, action: target.action, ticksLeft: Math.max(1, Math.round(seconds * TICK_HZ)) };
   sim.events.push({ type: 'channel_start', id: target.id, action: target.action });
+}
+
+/**
+ * End the running channel, if any, with a reason: 'done' | 'moved' | 'cancelled' | 'dead'.
+ * @returns {void}
+ */
+export function endChannel(sim, reason) {
+  const ch = sim.interactables.channel;
+  if (!ch) return;
+  sim.interactables.channel = null;
+  sim.events.push({ type: 'channel_end', id: ch.id, action: ch.action, reason });
 }
 
 // ---- helpers for handlers ---------------------------------------------------------------------------------
@@ -382,8 +390,8 @@ registerInteraction('spring', {
   },
   channelTick(sim) {
     const p = sim.player;
-    if (typeof p.drink === 'function') p.drink(sim.tuning.interaction.spring.drinkPerSecond * DT);
-    // full: stop early when the player model reports hydration (step 3.3)
-    return typeof p.hydration === 'number' && p.hydration >= (typeof p.maxHydration === 'number' ? p.maxHydration : 100);
+    p.drink(sim.tuning.interaction.spring.drinkPerSecond * DT);
+    // full (or dead: drink is a no-op then): stop early
+    return p.dead || p.hydration >= sim.tuning.hydration.max;
   },
 });

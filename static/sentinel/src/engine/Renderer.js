@@ -4,6 +4,7 @@
 import { TILE_W, TILE_H } from '../sim/constants.js';
 import { PlaceholderSprites } from './PlaceholderSprites.js';
 import { TideRenderer } from './TideRenderer.js';
+import { drawFootprints, drawNoiseRings } from './StealthRenderer.js';
 import { Lighting } from './Lighting.js';
 import { WeatherFx, swayOffsets, grassPush } from './WeatherFx.js';
 import { waterAt, isWaterClass } from '../world/water.js';
@@ -152,6 +153,7 @@ export class Renderer {
     ctx.fillStyle = '#0b1416';
     ctx.fillRect(0, 0, camera.viewW, camera.viewH);
     this.drawGround(ctx, camera, sim.bounds, sim, time);
+    drawFootprints(ctx, sim, camera);
 
     const all = this.collectEntities(sim, alpha, camera.visibleRect());
     const visible = cullAndSort(all, camera.visibleRect(), (k, s) => this.sprites.size(k, s));
@@ -162,6 +164,7 @@ export class Renderer {
       this.weather.draw(ctx, sim, camera, time, map ? (tx, ty) => isWaterClass(waterAt(map, sim.world, tx, ty)) : null);
     }
     this.lighting?.draw(ctx, sim, camera, { time, alpha });
+    drawNoiseRings(ctx, sim, camera, time);   // after the darkness: a loud noise is a signal, readable at night too
     this.stats.entities = all.length;
     this.stats.drawn = visible.length;
   }
@@ -200,6 +203,8 @@ export class Renderer {
     const out = [{
       id: 'player', kind: 'player', state: p.state, facing: p.facing,
       x: p.prevX + (p.x - p.prevX) * alpha, y: p.prevY + (p.y - p.prevY) * alpha,
+      // slightly see-through in cover, so the player can tell they are hidden (spec §6.1)
+      alpha: p.inCover ? (sim.tuning?.cover?.spriteAlpha ?? 1) : 1,
     }];
     const props = sim.map && view
       ? sim.map.propsInRect(view.x - PROP_REACH_SIDE, view.y - SHADOW_PAD, view.x + view.w + PROP_REACH_SIDE, view.y + view.h + PROP_REACH_BELOW, this.propScratch)
@@ -228,6 +233,13 @@ export class Renderer {
     if (e.paint) { e.paint(ctx, x, y, time); return; }
     const size = this.sprites.size(e.kind, e.state);
     if (size.shadow !== 0) this.drawShadow(ctx, x, y, size.shadow ?? size.w);
+    if (e.alpha !== undefined && e.alpha < 1) {
+      const before = ctx.globalAlpha;
+      ctx.globalAlpha = before * e.alpha;
+      this.sprites.draw(ctx, e.kind, e.state, e.facing, x, y, time);
+      ctx.globalAlpha = before;
+      return;
+    }
     const kc = sway && e.kind !== 'player' ? sway.props[e.kind] : null;
     if (kc?.sway > 0) {
       const push = kc.swayPush ? grassPush(e, sway.px, sway.py, kc.swayPush) : 0;

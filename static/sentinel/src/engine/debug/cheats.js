@@ -5,6 +5,7 @@
 // later steps (give item, set tide, set hour, set Resonance, spawn scout) belong here too; the panel's
 // actions call these functions rather than touching `sim` themselves.
 import { Sim } from '../../sim/Sim.js';
+import { toggleLight, syncLight } from '../../entities/ItemUse.js';
 
 /**
  * Move the player to a world point at once (no interpolation streak, no velocity). Inside a bounded map the
@@ -113,6 +114,49 @@ export function clearWeather(sim) {
   sim.world.clearWeather();
 }
 
+// ---- the player's body (steps 3.1 to 3.3): every debug write to stamina, hydration and health ----------------
+
+/** set stamina (clamped to 0..the current cap); returns the value set */
+export function setStamina(sim, value) {
+  const p = sim.player;
+  p.stamina = Math.max(0, Math.min(p.staminaCap, value));
+  return p.stamina;
+}
+
+/** set hydration (clamped to 0..max); the stamina cap follows at once */
+export function setHydration(sim, value) {
+  const p = sim.player;
+  p.hydration = Math.max(0, Math.min(sim.tuning.hydration.max, value));
+  p.staminaCap = p.capFor(p.hydration);
+  if (p.stamina > p.staminaCap) p.stamina = p.staminaCap;
+  return p.hydration;
+}
+
+/** set health: up through heal, down through damage (0 kills, cause 'debug') */
+export function setHealth(sim, value) {
+  const p = sim.player;
+  const v = Math.max(0, Math.min(sim.tuning.health.max, value));
+  if (v > p.health) p.heal(v - p.health);
+  else if (v < p.health) p.damage(p.health - v, 'debug');
+  return p.health;
+}
+
+/** an arrow hit, as M4's scouts will deal it */
+export function arrowHit(sim) {
+  return sim.player.applyArrowHit();
+}
+
+/** kill the player now */
+export function killPlayer(sim) {
+  return sim.player.damage(sim.player.health, 'debug');
+}
+
+/** toggle (or set) "no needs": hydration and stamina stop draining; returns whether it is on */
+export function toggleNoNeeds(sim, on = !sim.player.noNeeds) {
+  sim.player.noNeeds = !!on;
+  return sim.player.noNeeds;
+}
+
 /**
  * Move the calendar to the day whose moon at the current hour is nearest to a phase (0 new, 0.5 full), so the
  * night's moonlight can be seen. Searches one moon cycle from day 1.
@@ -139,9 +183,15 @@ export function maxWind(sim) {
   sim.world.setGust(1);
 }
 
-/** switch the player's flashlight stub */
+/**
+ * Switch the player's flashlight through the inventory, which owns `player.lightOn` (a flashlight is given first
+ * when none is carried).
+ * @returns {boolean} whether the light is on now
+ */
 export function toggleFlashlight(sim) {
-  sim.player.lightOn = !sim.player.lightOn;
+  if (sim.inventory.slotOf('flashlight') < 0) sim.inventory.add('flashlight', 1);
+  toggleLight(sim);
+  syncLight(sim);
   return sim.player.lightOn;
 }
 
