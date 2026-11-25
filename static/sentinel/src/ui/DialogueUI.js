@@ -17,7 +17,6 @@ export const DIALOGUE_COLORS = Object.freeze({
   text: '#e9e2cf', dim: '#8f8789', name: '#f2a33a', narration: '#bdb5a6',
 });
 const FONT_FAMILY = '"Trebuchet MS", "Segoe UI", Arial, sans-serif';
-const TILE = 8;
 const ADVANCE_KEYS = new Set(['KeyE', 'Enter', 'NumpadEnter', 'Space']);
 const UP_KEYS = new Set(['ArrowUp', 'KeyW']);
 const DOWN_KEYS = new Set(['ArrowDown', 'KeyS']);
@@ -358,7 +357,7 @@ export class DialogueUI {
 
   /** a ui-sheet icon, or the fallback while the sheet is not loaded */
   icon(ctx, name, x, y, fallback) {
-    if (this.assets?.sheets?.has('ui')) this.assets.drawIcon(ctx, 'ui', name, x, y);
+    if (this.assets?.hasIcon?.('ui', name)) this.assets.drawIcon(ctx, 'ui', name, x, y);
     else fallback();
   }
 
@@ -374,7 +373,7 @@ export class DialogueUI {
 
   /** the dark-plate 9-slice from the ui sheet, rendered once per size into a cached canvas; procedural until it loads */
   drawPlate(ctx, b) {
-    const ready = !!this.assets?.sheets?.has('ui');
+    const ready = !!this.assets?.hasIcon?.('ui', 'dlg_c');
     const key = `${b.w}x${b.h}:${ready}`;
     if (this.plateCache.key !== key) {
       const c = typeof OffscreenCanvas === 'function' ? new OffscreenCanvas(b.w, b.h) : Object.assign(document.createElement('canvas'), { width: b.w, height: b.h });
@@ -387,20 +386,9 @@ export class DialogueUI {
     ctx.drawImage(this.plateCache.canvas, b.x, b.y);
   }
 
+  /** the dark plate 9-slice (ICONS.md), tiled into the cache once per size */
   tilePlate(g, w, h) {
-    const a = this.assets;
-    const d = (n, x, y) => a.drawIcon(g, 'ui', `dlg_${n}`, x, y);
-    const lastX = w - TILE * 2;
-    const lastY = h - TILE * 2;
-    for (let y = TILE; y < h - TILE; y += TILE) {
-      for (let x = TILE; x < w - TILE; x += TILE) d('c', Math.min(x, lastX), Math.min(y, lastY));
-    }
-    for (let x = TILE; x < w - TILE; x += TILE) { d('t', Math.min(x, lastX), 0); d('b', Math.min(x, lastX), h - TILE); }
-    for (let y = TILE; y < h - TILE; y += TILE) { d('l', 0, Math.min(y, lastY)); d('r', w - TILE, Math.min(y, lastY)); }
-    d('tl', 0, 0);
-    d('tr', w - TILE, 0);
-    d('bl', 0, h - TILE);
-    d('br', w - TILE, h - TILE);
+    this.assets.drawPanel9(g, 'ui', 'dlg', 0, 0, w, h, { mode: 'tile' });
   }
 
   proceduralPlate(g, w, h) {

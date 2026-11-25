@@ -86,7 +86,8 @@ export function collectItemViews(sim, view, out, sprites, scratch = [], alpha = 
   for (const p of list) {
     const phase = phaseOf(p.id);
     out.push({
-      id: p.id, kind: 'pickup', x: p.x, y: p.y, state: 'idle', facing: null, size: PICKUP_SIZE,
+      // flat: lying on the ground, drawn in the ground pass so a character just north of it stands in front
+      id: p.id, kind: 'pickup', x: p.x, y: p.y, state: 'idle', facing: null, size: PICKUP_SIZE, flat: true,
       paint: (ctx, x, y, time) => paintPickup(ctx, sprites, p.item, phase, x, y, time),
     });
   }

@@ -7,9 +7,12 @@
 // button); `itemHud.drawPrompt(ctx, sim, camera)` on #ui. HUD.js draws the hotbar and notices as two widgets.
 import { Notices, registerNotice, NOTICE_COLORS } from '../Notices.js';
 import { TOUCH_ICONS } from '../../engine/input/icons.js';
+import { drawDarkPanel } from './uiArt.js';
 
-/** sizes in logical pixels */
-export const HOTBAR = Object.freeze({ slots: 6, slot: 18, gap: 2, margin: 4, clear: 4 });
+/** sizes in logical pixels (slot: the ui sheet's 20 x 20 `slot` frames, item at +2,+2) */
+export const HOTBAR = Object.freeze({ slots: 6, slot: 20, gap: 2, margin: 4, clear: 4 });
+/** ui-sheet glyph for each context icon id the sim gives (input/icons.js ids) */
+export const CONTEXT_GLYPHS = Object.freeze({ hand: 'hand', eye: 'eye_inspect', speech: 'speech', offering: 'offering' });
 
 /** palette colours (assets/src/palette.gpl names) */
 const C = Object.freeze({
@@ -127,10 +130,15 @@ export class ItemHud {
     if (!inv) return;
     ctx.save();
     ctx.font = '5px ui-monospace, Consolas, monospace';
+    const art = this.assets?.hasIcon?.('ui', 'slot') ? this.assets : null;
     for (let i = 0; i < L.slots.length; i++) {
       const r = L.slots[i];
       const s = inv.slots[i];
       const sel = inv.selected === i;
+      if (art) {
+        this.drawSlotArt(ctx, art, r, s, sel, i);
+        continue;
+      }
       ctx.globalAlpha = 0.72;
       ctx.fillStyle = C.ink;
       ctx.fillRect(r.x, r.y, r.w, r.h);
@@ -177,6 +185,29 @@ export class ItemHud {
     ctx.restore();
   }
 
+  /**
+   * One slot from the ui sheet (ICONS.md "Hotbar"): `slot` / `slot_selected` / `slot_empty`, the item at +2,+2,
+   * its count in the 4 x 6 digits right-aligned in the item's clear corner, an amber "on" dot for powered
+   * electronics, and on desktop the slot's key in the top-left corner.
+   */
+  drawSlotArt(ctx, art, r, s, sel, i) {
+    art.drawIcon(ctx, 'ui', s ? (sel ? 'slot_selected' : 'slot') : sel ? 'slot_selected' : 'slot_empty', r.x, r.y);
+    if (s) {
+      art.drawIcon(ctx, 'items', s.id, r.x + 2, r.y + 2);
+      if (s.n > 1) {
+        const t = String(s.n);
+        art.drawGlyphs(ctx, t, r.x + 19 - t.length * 4, r.y + 13);
+      }
+      if (s.on) {
+        ctx.fillStyle = C.ink;
+        ctx.fillRect(r.x + 14, r.y + 14, 4, 4);
+        ctx.fillStyle = C.selected;
+        ctx.fillRect(r.x + 15, r.y + 15, 2, 2);
+      }
+    }
+    if (!this.input.touchVisible && !s) art.drawGlyphs(ctx, String(i + 1), r.x + 8, r.y + 7);
+  }
+
   /** the item notices, just above the hotbar (and its held-item name) drawn this frame */
   drawNotices(ctx, sim) {
     const L = this.layout;
@@ -193,6 +224,11 @@ export class ItemHud {
     if (!t || this.input.touchVisible || !camera) return;
     const s = camera.worldToScreen(t.x, t.y);
     const label = promptLabel(sim, t);
+    const glyph = CONTEXT_GLYPHS[sim.interactIcon ?? 'hand'] ?? 'hand';
+    if (this.assets?.hasIcon?.('ui', glyph)) {
+      this.drawPromptArt(ctx, s, t, label, glyph);
+      return;
+    }
     ctx.save();
     ctx.font = '6px ui-monospace, Consolas, monospace';
     const tw = Math.ceil(ctx.measureText(label).width);
@@ -214,6 +250,32 @@ export class ItemHud {
     TOUCH_ICONS[sim.interactIcon ?? 'hand']?.(ctx, x + 13, y + 5, 8);
     ctx.textAlign = 'left';
     ctx.fillText(label, x + 18, y + 5.5);
+    ctx.restore();
+  }
+
+  /** the prompt on the dark plate: an amber key chip, the context glyph (24 px art at half size) and the label */
+  drawPromptArt(ctx, s, t, label, glyph) {
+    ctx.save();
+    ctx.font = '6px ui-monospace, Consolas, monospace';
+    const tw = Math.ceil(ctx.measureText(label).width);
+    const h = 16;
+    const w = 26 + tw + 6;
+    const x = Math.round(s.x - w / 2);
+    // above a standing figure (48 px) for sites and people, just above the item for pickups
+    const y = Math.round(s.y - (t.action === 'pickup' ? 38 : 66));
+    drawDarkPanel(ctx, x, y, w, h, this.assets);
+    ctx.fillStyle = C.ink;
+    ctx.fillRect(x + 3, y + 3, 9, 10);
+    ctx.fillStyle = C.selected;
+    ctx.fillRect(x + 4, y + 4, 7, 8);
+    ctx.fillStyle = C.ink;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('E', x + 7.5, y + 8.5);
+    this.assets.drawIcon(ctx, 'ui', glyph, x + 13, y + 2, 12, 12);
+    ctx.fillStyle = C.text;
+    ctx.textAlign = 'left';
+    ctx.fillText(label, x + 27, y + 8.5);
     ctx.restore();
   }
 }

@@ -8,7 +8,7 @@
 // the next step replaces the list). Presentation only: reads the simulation, never writes it.
 
 /** palette colours (assets/src/palette.gpl) */
-export const NOTICE_COLORS = Object.freeze({ text: '#e9e2cf', warn: '#f2a33a', dim: '#8f8789', ink: '#0d0b12' });
+export const NOTICE_COLORS = Object.freeze({ text: '#e9e2cf', warn: '#f2a33a', dim: '#8f8789', ink: '#0d0b12', rim: '#37323f' });
 
 /** @type {Map<string, (event: Object, sim: Object) => (string|{text:string,color?:string}|null)>} */
 const FORMATTERS = new Map();
@@ -88,7 +88,10 @@ export class Notices {
     lines.forEach((l, i) => {
       const y = Math.round(bottom - (lines.length - 1 - i) * lh);
       const w = Math.ceil(ctx.measureText(l.text).width) + 6;
-      ctx.globalAlpha = l.alpha * 0.7;
+      // a near-opaque plate with a basalt rim, so a line reads on bright sand as well as dark jungle
+      ctx.globalAlpha = l.alpha * 0.85;
+      ctx.fillStyle = NOTICE_COLORS.rim;
+      ctx.fillRect(Math.round(cx - w / 2) - 1, y - lh, w + 2, lh + 1);
       ctx.fillStyle = NOTICE_COLORS.ink;
       ctx.fillRect(Math.round(cx - w / 2), y - lh + 1, w, lh - 1);
       ctx.globalAlpha = l.alpha;

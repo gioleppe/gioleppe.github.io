@@ -61,6 +61,15 @@ export const PLACEHOLDER_TERRAIN = Object.freeze({
 
 const CHARACTERS = new Set(['player', 'sentinelese', 'marek']);
 
+/** 3 x 5 fallback glyphs for drawGlyphs while the ui sheet loads */
+const GLYPHS = Object.freeze({
+  0: ['###', '#.#', '#.#', '#.#', '###'], 1: ['.#.', '##.', '.#.', '.#.', '###'], 2: ['###', '..#', '###', '#..', '###'],
+  3: ['###', '..#', '.##', '..#', '###'], 4: ['#.#', '#.#', '###', '..#', '..#'], 5: ['###', '#..', '###', '..#', '###'],
+  6: ['###', '#..', '###', '#.#', '###'], 7: ['###', '..#', '.#.', '.#.', '.#.'], 8: ['###', '#.#', '###', '#.#', '###'],
+  9: ['###', '#.#', '###', '..#', '###'], x: ['...', '#.#', '.#.', '#.#', '...'], ':': ['...', '.#.', '...', '.#.', '...'],
+  '%': ['#.#', '..#', '.#.', '#..', '#.#'],
+});
+
 export class PlaceholderSprites {
   /** @returns {{w:number,h:number}} */
   size(kind) {
@@ -123,17 +132,41 @@ export class PlaceholderSprites {
    * @param {number} x
    * @param {number} y
    */
-  drawIcon(ctx, sheet, name, x, y) {
-    const s = ICON_SIZE;
+  drawIcon(ctx, sheet, name, x, y, w = ICON_SIZE, h = w) {
     ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-    ctx.fillRect(x, y, s, s);
+    ctx.fillRect(x, y, w, h);
     ctx.fillStyle = PLACEHOLDER_ICON_COLORS[sheet] ?? '#ff00ff';
-    ctx.fillRect(x + 1, y + 1, s - 2, s - 2);
+    ctx.fillRect(x + 1, y + 1, w - 2, h - 2);
+    if (w < 10 || h < 8) return;   // too small to label
     ctx.fillStyle = '#10181a';
     ctx.font = '6px ui-monospace, Consolas, monospace';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(String(name).slice(0, 2).toUpperCase(), x + s / 2, y + s / 2);
+    ctx.fillText(String(name).slice(0, 2).toUpperCase(), x + w / 2, y + h / 2);
+  }
+
+  /** a UI panel while its slices are loading: a dark plate with a lighter rim */
+  drawPanel(ctx, x, y, w, h) {
+    ctx.fillStyle = '#0d0b12';
+    ctx.fillRect(x, y, w, h);
+    if (w > 2 && h > 2) {
+      ctx.fillStyle = '#4f4955';
+      ctx.fillRect(x + 1, y + 1, w - 2, h - 2);
+    }
+    if (w > 4 && h > 4) {
+      ctx.fillStyle = '#24212c';
+      ctx.fillRect(x + 2, y + 2, w - 4, h - 4);
+    }
+  }
+
+  /** one 3 x 5 digit (or x : %) in bone with an ink shadow, in a 4 x 6 cell with its top-left at (x, y) */
+  drawGlyph(ctx, ch, x, y) {
+    const rows = GLYPHS[String(ch).toLowerCase()];
+    if (!rows) return;
+    for (const [color, d] of [['#0d0b12', 1], ['#e9e2cf', 0]]) {
+      ctx.fillStyle = color;
+      rows.forEach((row, dy) => { for (let dx = 0; dx < 3; dx++) if (row[dx] === '#') ctx.fillRect(x + dx + d, y + dy + d, 1, 1); });
+    }
   }
 
   /**

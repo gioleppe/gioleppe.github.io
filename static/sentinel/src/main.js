@@ -7,7 +7,7 @@ import { Camera } from './engine/Camera.js';
 import { Renderer, testFieldTerrain } from './engine/Renderer.js';
 import { IslandMap } from './world/IslandMap.js';
 import { InputManager } from './engine/InputManager.js';
-import { AssetManager } from './engine/AssetManager.js';
+import { AssetManager, setActiveAssets } from './engine/AssetManager.js';
 import { smokeStatus, pixelsVary } from './engine/smokeStatus.js';
 import { drawHud } from './ui/HUD.js';
 import { ResonanceFx } from './engine/ResonanceFx.js';
@@ -35,6 +35,7 @@ let sim = null;
 let loadError = '';
 // placeholders draw from the first frame; real sheets take over one by one as they arrive
 const assets = new AssetManager();
+setActiveAssets(assets);   // the HUD, touch controls, map and emote bubbles draw from it
 const renderer = new Renderer({ sprites: assets, resonanceFx: new ResonanceFx() });
 let camera = new Camera();
 const DEBUG = new URLSearchParams(location.search).has('debug');
@@ -172,6 +173,7 @@ async function loadGame() {
       // every landmark of the island is a teleport target (debug "Go" page, __game.debug.teleportTo(id))
       debug.addPlaces((s) => (s.map ? s.map.entitiesOfType('landmark').map((l) => ({ id: l.id, label: l.name, x: l.x, y: l.y })) : []));
       import('./engine/debug/itemDebug.js').then((i) => i.registerItemDebug(debug)).catch((e) => console.error('item debug failed', e));
+      import('./engine/debug/artDebug.js').then((a) => a.registerArtDebug(debug)).catch((e) => console.error('art debug failed', e));
       return import('./engine/debug/collisionLayers.js').then((c) => c.collisionLayers().forEach((l) => debug.addLayer(l)));
     }).catch((e) => console.error('debug mode failed to start', e));
   }

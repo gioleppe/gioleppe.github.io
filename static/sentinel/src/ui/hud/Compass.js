@@ -1,10 +1,21 @@
 // The compass widget (spec §6.3, §9 HUD.js "Tide/Compass widget"): a small dial beside the tide indicator whose
 // needle points north while Resonance is Quiet, jitters while it Hums and spins wildly when it is Agitated.
 // Presentation only: the needle's motion is a function of the tier, the value and the clock, never stored.
+// From the ui sheet: `compass_dial` and one of the 16 `compass_needle_NN` (NN x 22.5° clockwise from up) at the
+// same top-left; the jitter and the spin pick among them (needleIndex). Procedural until the sheet loads.
 import { tideWidgetRect } from './TideWidget.js';
+import { activeAssets } from '../../engine/AssetManager.js';
 
-/** widget size in logical pixels; the same height as the tide widget, `gap` px to its right */
-export const COMPASS = Object.freeze({ w: 22, h: 22, gap: 3, r: 9 });
+/** widget size in logical pixels (the 24 x 24 dial); the same height as the tide widget, `gap` px to its right */
+export const COMPASS = Object.freeze({ w: 24, h: 24, gap: 3, r: 10 });
+/** needle pictures in the sheet, evenly spaced clockwise from up */
+export const NEEDLES = 16;
+
+/** the needle picture (0..15) nearest an angle clockwise from up */
+export function needleIndex(angle) {
+  const k = Math.round((angle / (Math.PI * 2)) * NEEDLES) % NEEDLES;
+  return k < 0 ? k + NEEDLES : k;
+}
 
 /** palette colours (assets/src/palette.gpl); the frame ones match HUD.js's tide widget */
 export const COMPASS_COLORS = Object.freeze({
@@ -68,11 +79,28 @@ export function drawCompassWidget(ctx, sim, tideRect, time = sim.time) {
   const cfg = sim.tuning.resonanceFx?.compass;
   const tiers = sim.tuning.resonance.tiers;
   const angle = cfg ? needleAngle(res.tier, res.value, time, cfg, tiers) : 0;
-  drawCompass(ctx, compassRect(tideRect), angle, res.tier);
+  drawCompass(ctx, compassRect(tideRect), angle, res.tier, activeAssets(), time);
 }
 
-/** the dial with its needle at `angle` (clockwise from up) */
-export function drawCompass(ctx, rect, angle, tier) {
+/** the dial with its needle at `angle` (clockwise from up); the ui sheet's dial and needles once loaded */
+export function drawCompass(ctx, rect, angle, tier, art = null, time = 0) {
+  if (art?.hasIcon('ui', 'compass_dial')) {
+    const { x, y, w, h } = rect;
+    ctx.save();
+    if (tier !== 'quiet') {
+      // the hum shows as a halo behind the dial: violet, cyan and pulsing when Agitated
+      ctx.globalAlpha = tier === 'agitated' ? 0.45 + 0.25 * Math.sin(time * 9) : 0.35;
+      ctx.fillStyle = tier === 'agitated' ? COMPASS_COLORS.cyan : COMPASS_COLORS.violet;
+      ctx.beginPath();
+      ctx.arc(x + w / 2, y + h / 2, w / 2 + 1.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+    art.drawIcon(ctx, 'ui', 'compass_dial', x, y);
+    art.drawIcon(ctx, 'ui', `compass_needle_${String(needleIndex(angle)).padStart(2, '0')}`, x, y);
+    ctx.restore();
+    return;
+  }
   const C = COMPASS_COLORS;
   const K = COMPASS_COLORS;
   const { x, y, w, h } = rect;

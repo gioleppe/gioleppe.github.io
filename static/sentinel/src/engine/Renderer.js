@@ -15,11 +15,13 @@ import { collectItemViews } from './ItemRenderer.js';
  * implement it with real sheets and fall back to PlaceholderSprites for anything missing.
  *
  * @typedef {Object} SpriteSource
- * @property {(kind: string, state?: string) => {w: number, h: number, shadow?: number}} size
+ * @property {(kind: string, state?: string, variant?: number) => {w: number, h: number, shadow?: number, below?: number}} size
  *   Sprite box in logical pixels; the anchor is its bottom-centre. Used for culling, so it must not be smaller than what `draw` paints.
- *   `shadow`, if present, is the ground shadow width (0 = none); otherwise the shadow follows `w`.
- * @property {(ctx: CanvasRenderingContext2D, kind: string, state: string, facing: ('N'|'E'|'S'|'W'|null), x: number, y: number, time: number) => void} draw
- *   Paint an entity with its anchor (ground contact point) at screen (x, y), whole logical pixels. `time` in seconds drives animation.
+ *   `shadow`, if present, is the ground shadow width (0 = none); otherwise the shadow follows `w`. `below`, if present,
+ *   is how far the picture reaches under the anchor. `variant` is a prop's variant (that picture's own box).
+ * @property {(ctx: CanvasRenderingContext2D, kind: string, state: string, facing: ('N'|'E'|'S'|'W'|null), x: number, y: number, time: number, variant?: number) => void} draw
+ *   Paint an entity with its anchor (ground contact point) at screen (x, y), whole logical pixels. `time` in seconds drives
+ *   animation; `variant` (props, 0-2) picks one of the kind's pictures.
  * @property {(ctx: CanvasRenderingContext2D, terrain: string, x: number, y: number, w: number, h: number, variant: number) => void} drawTile
  *   Paint one ground tile with its top-left at screen (x, y); w x h is TILE_W x TILE_H; `variant` is tileVariant(col, row),
  *   a non-negative integer that is stable per tile (pick a frame with `variant % frames`). Animated water tiles
@@ -39,6 +41,10 @@ import { collectItemViews } from './ItemRenderer.js';
  * @property {{w:number,h:number}} [size]  culling box when the view paints itself (instead of the sprite size)
  * @property {(ctx: CanvasRenderingContext2D, x: number, y: number, time: number) => void} [paint]  draws the view
  *   itself (shadow included) with its anchor at screen (x, y): pickups, projectiles
+ * @property {number} [variant]  props: which of the kind's pictures (0-2)
+ * @property {number} [phase]    seconds added to the animation clock, so neighbouring props do not animate in step
+ * @property {boolean} [flat]    a ground decal: drawn in a ground pass before the y-sorted upright entities, no shadow
+ * @property {('swim'|'wade'|null)} [water]  a character in water: foam at the waterline instead of a ground shadow
  */
 
 /** room below the anchor for the ground shadow, in logical pixels, counted in culling */
@@ -47,6 +53,8 @@ const SHADOW_PAD = 4;
 const PROP_REACH_BELOW = 160;
 /** half the widest prop sprite, for the same query */
 const PROP_REACH_SIDE = 64;
+/** how far above the view a prop's anchor may be while its base (drawn under the anchor) still reaches into it */
+const PROP_REACH_ABOVE = 16;
 /** horizontal slices a swaying sprite is drawn in */
 export const SWAY_SLICES = 4;
 
@@ -82,9 +90,10 @@ export function tileRange(rect, bounds) {
   return { c0, c1: Math.max(c0, c1), r0, r1: Math.max(r0, r1) };
 }
 
-/** the world rectangle an entity's picture can cover: its sprite box above the anchor, plus its shadow below */
+/** the world rectangle an entity's picture can cover: its sprite box above the anchor, plus its shadow or base below */
 export function spriteRect(e, size) {
-  return { x: e.x - size.w / 2, y: e.y - size.h, w: size.w, h: size.h + SHADOW_PAD };
+  const below = size.below > SHADOW_PAD ? size.below : SHADOW_PAD;
+  return { x: e.x - size.w / 2, y: e.y - size.h, w: size.w, h: size.h + below };
 }
 
 export function intersects(a, b) {
@@ -95,12 +104,64 @@ export function intersects(a, b) {
  * The entities whose picture touches `rect`, in draw order.
  * @param {EntityView[]} entities
  * @param {{x:number,y:number,w:number,h:number}} rect
- * @param {(kind: string, state: string) => {w:number,h:number}} sizeOf
+ * @param {(kind: string, state: string, variant?: number) => {w:number,h:number}} sizeOf
  * @returns {EntityView[]}
  */
 export function cullAndSort(entities, rect, sizeOf) {
-  return entities.filter((e) => intersects(spriteRect(e, e.size ?? sizeOf(e.kind, e.state)), rect)).sort(compareByY);
+  return entities.filter((e) => intersects(spriteRect(e, e.size ?? sizeOf(e.kind, e.state, e.variant ?? 0)), rect)).sort(compareByY);
 }
+
+/**
+ * Split a y-sorted list into ground decals (drawn first) and upright entities, each keeping the order.
+ * @param {EntityView[]} sorted
+ * @returns {{ flat: EntityView[], upright: EntityView[] }}
+ */
+export function splitFlat(sorted, flat = [], upright = []) {
+  flat.length = 0;
+  upright.length = 0;
+  for (const e of sorted) (e.flat ? flat : upright).push(e);
+  return { flat, upright };
+}
+
+/** a stable per-position number in [0, 1) for props: animation phase and automatic variants */
+export function propHash(x, y) {
+  return tileVariant(Math.round(x), Math.round(y)) / 4294967296;
+}
+
+/**
+ * The EntityView of a map prop. Its variant is the map's, else (kinds with tuning.props[kind].autoVariant: the
+ * scattered nature the map leaves unvaried) a stable hash of its position; the phase desynchronises animations.
+ * @param {{ id: string, kind: string, x: number, y: number, variant?: number }} prop
+ * @param {Object} [kc] tuning.props[prop.kind]
+ * @returns {EntityView}
+ */
+export function propView(prop, kc) {
+  const h = propHash(prop.x, prop.y);
+  const variant = prop.variant ?? (kc?.autoVariant ? Math.floor(h * 3) : 0);
+  return { id: prop.id, kind: prop.kind, x: prop.x, y: prop.y, state: 'idle', facing: null, variant, phase: h * 4, flat: !!kc?.flat };
+}
+
+/** foam at a swimmer's or wader's waterline (palette bone/teal, see-through) */
+const FOAM = Object.freeze({ ring: 'rgba(207, 238, 221, 0.6)', dark: 'rgba(13, 11, 18, 0.16)' });
+
+/** a ring of foam at the waterline (the swim frames show only head and shoulders) or round the shins when wading */
+export function drawWaterRing(ctx, x, y, time, water) {
+  const swim = water === 'swim';
+  const rx = swim ? 9 : 7;
+  const ry = swim ? 3 : 2;
+  const wob = Math.sin(time * 3) > 0 ? 1 : 0;
+  ctx.fillStyle = FOAM.dark;
+  ctx.beginPath();
+  ctx.ellipse(x, y, rx + 1, ry + 1, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = FOAM.ring;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.ellipse(x, y - 0.5, rx + wob, ry, 0, 0, Math.PI * 2);
+  ctx.stroke();
+}
+
+const now = () => (globalThis.performance ? globalThis.performance.now() : 0);
 
 /**
  * Ground of the open test field: patches of a few terrains so the oblique grid and the motion read.
@@ -127,7 +188,7 @@ export class Renderer {
     this.sprites = sprites;
     this.terrainAt = terrainAt;
     /** what the last frame processed, for debug overlays and tests */
-    this.stats = { tiles: 0, entities: 0, drawn: 0 };
+    this.stats = { tiles: 0, entities: 0, drawn: 0, flat: 0, renderMs: 0, renderAvgMs: 0 };
     /** reused by the map's prop query every frame */
     this.propScratch = [];
     /** the island's ground under the tide: flooding, shoreline, water animation */
@@ -142,6 +203,12 @@ export class Renderer {
     if (resonanceFx && lighting) lighting.addSource(resonanceFx.lightSource);
     /** reused by the pickup query every frame */
     this.itemScratch = [];
+    this.flatScratch = [];
+    this.uprightScratch = [];
+    /** drawn after the lighting pass, before Resonance effects: emote bubbles and other night-readable signals */
+    this.afterLighting = [];
+    /** presentation-only EntityViews added to every frame (debug: a lit campfire to look at) */
+    this.extraViews = [];
   }
 
   /**
@@ -152,6 +219,7 @@ export class Renderer {
    * @param {{ alpha?: number, time?: number }} [opts] alpha: tick interpolation 0..1; time: seconds for animation
    */
   render(ctx, sim, camera, { alpha = 1, time = sim.time } = {}) {
+    const t0 = now();
     ctx.imageSmoothingEnabled = false;
     ctx.fillStyle = '#0b1416';
     ctx.fillRect(0, 0, camera.viewW, camera.viewH);
@@ -159,18 +227,27 @@ export class Renderer {
     drawFootprints(ctx, sim, camera);
 
     const all = this.collectEntities(sim, alpha, camera.visibleRect());
-    const visible = cullAndSort(all, camera.visibleRect(), (k, s) => this.sprites.size(k, s));
+    const visible = cullAndSort(all, camera.visibleRect(), (k, s, v) => this.sprites.size(k, s, v));
     const sway = this.swayContext(sim, alpha);
-    for (const e of visible) this.drawEntity(ctx, e, camera, time, sway);
+    // ground decals first, so nothing standing "behind" a spring or a pickup is hidden by it
+    const { flat, upright } = splitFlat(visible, this.flatScratch, this.uprightScratch);
+    for (const e of flat) this.drawEntity(ctx, e, camera, time, null);
+    for (const e of upright) this.drawEntity(ctx, e, camera, time, sway);
     if (this.weather && sim.world) {
       const map = sim.map;
       this.weather.draw(ctx, sim, camera, time, map ? (tx, ty) => isWaterClass(waterAt(map, sim.world, tx, ty)) : null);
     }
     this.lighting?.draw(ctx, sim, camera, { time, alpha });
     drawNoiseRings(ctx, sim, camera, time);   // after the darkness: a loud noise is a signal, readable at night too
+    // signals that must read at night (emote bubbles, Emotes.js): (ctx, sim, camera, { time, alpha })
+    for (const fn of this.afterLighting) fn(ctx, sim, camera, { time, alpha });
     this.resonanceFx?.draw(ctx, sim, camera, { time, alpha });   // last: its vignette tints the edges over everything
     this.stats.entities = all.length;
     this.stats.drawn = visible.length;
+    this.stats.flat = flat.length;
+    const ms = now() - t0;
+    this.stats.renderMs = ms;
+    this.stats.renderAvgMs = this.stats.renderAvgMs ? this.stats.renderAvgMs + (ms - this.stats.renderAvgMs) * 0.05 : ms;
   }
 
   /**
@@ -209,13 +286,16 @@ export class Renderer {
       x: p.prevX + (p.x - p.prevX) * alpha, y: p.prevY + (p.y - p.prevY) * alpha,
       // slightly see-through in cover, so the player can tell they are hidden (spec §6.1)
       alpha: p.inCover ? (sim.tuning?.cover?.spriteAlpha ?? 1) : 1,
+      water: p.mode === 'swim' ? 'swim' : p.mode === 'wade' ? 'wade' : null,
     }];
     const props = sim.map && view
-      ? sim.map.propsInRect(view.x - PROP_REACH_SIDE, view.y - SHADOW_PAD, view.x + view.w + PROP_REACH_SIDE, view.y + view.h + PROP_REACH_BELOW, this.propScratch)
+      ? sim.map.propsInRect(view.x - PROP_REACH_SIDE, view.y - PROP_REACH_ABOVE, view.x + view.w + PROP_REACH_SIDE, view.y + view.h + PROP_REACH_BELOW, this.propScratch)
       : sim.props;
-    for (const prop of props) out.push({ id: prop.id, kind: prop.kind, x: prop.x, y: prop.y, state: 'idle', facing: null });
+    const kinds = sim.tuning?.props ?? {};
+    for (const prop of props) out.push(propView(prop, kinds[prop.kind]));
     collectItemViews(sim, view ?? null, out, this.sprites, this.itemScratch, alpha);
     if (sim.marek) out.push(sim.marek.view());
+    for (const v of this.extraViews) out.push(v);
     return out;
   }
 
@@ -236,12 +316,15 @@ export class Renderer {
     const x = Math.round(e.x) - camera.originX;
     const y = Math.round(e.y) - camera.originY;
     if (e.paint) { e.paint(ctx, x, y, time); return; }
-    const size = this.sprites.size(e.kind, e.state);
-    if (size.shadow !== 0) this.drawShadow(ctx, x, y, size.shadow ?? size.w);
+    const v = e.variant ?? 0;
+    if (e.phase) time += e.phase;
+    const size = this.sprites.size(e.kind, e.state, v);
+    if (e.water) drawWaterRing(ctx, x, y, time, e.water);
+    else if (size.shadow !== 0 && !e.flat) this.drawShadow(ctx, x, y, size.shadow ?? size.w);
     if (e.alpha !== undefined && e.alpha < 1) {
       const before = ctx.globalAlpha;
       ctx.globalAlpha = before * e.alpha;
-      this.sprites.draw(ctx, e.kind, e.state, e.facing, x, y, time);
+      this.sprites.draw(ctx, e.kind, e.state, e.facing, x, y, time, v);
       ctx.globalAlpha = before;
       return;
     }
@@ -260,13 +343,13 @@ export class Renderer {
           ctx.beginPath();
           ctx.rect(x - reach, top, reach * 2, bottom - top);
           ctx.clip();
-          this.sprites.draw(ctx, e.kind, e.state, e.facing, x + off[k], y, time);
+          this.sprites.draw(ctx, e.kind, e.state, e.facing, x + off[k], y, time, v);
           ctx.restore();
         }
         return;
       }
     }
-    this.sprites.draw(ctx, e.kind, e.state, e.facing, x, y, time);
+    this.sprites.draw(ctx, e.kind, e.state, e.facing, x, y, time, v);
   }
 
   /** a soft oval: a wide faint ring around a darker core */
