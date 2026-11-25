@@ -2,17 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#0b1416">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Escape North Sentinel Island</title>
   <link rel="stylesheet" href="style.css">
   <script type="module" src="src/main.js"></script>
 </head>
 <body>
-  <main class="title">
-    <h1>Escape North Sentinel Island</h1>
-    <p class="tagline">Scavenge. Evade. Escape.</p>
-    <p id="build" class="build">&nbsp;</p>
-  </main>
+  <div id="game">
+    <canvas id="world"></canvas>
+    <canvas id="ui"></canvas>
+  </div>
+  <div id="rotate-hint" aria-hidden="true">Turn your device sideways for a wider view</div>
+  <div id="safe-probe" aria-hidden="true"></div>
+  <noscript><p class="noscript">Escape North Sentinel Island needs JavaScript.</p></noscript>
 </body>
 </html>
