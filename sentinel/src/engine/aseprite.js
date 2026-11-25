@@ -100,6 +100,22 @@ function parseTag(t, frames) {
   return { name: t.name, from: t.from, to: t.to, direction, sequence, ends, total };
 }
 
+/** slice bounds `b` (in a frame's logical box) mapped into the sheet through frame `f`, clipped to its trimmed pixels */
+function mapSlice(name, b, pivot, f) {
+  const x0 = Math.max(b.x, f.offX);
+  const y0 = Math.max(b.y, f.offY);
+  const x1 = Math.min(b.x + b.w, f.offX + f.w);
+  const y1 = Math.min(b.y + b.h, f.offY + f.h);
+  return {
+    name,
+    x: f.x + (x0 - f.offX), y: f.y + (y0 - f.offY), w: Math.max(0, x1 - x0), h: Math.max(0, y1 - y0),
+    offX: x0 - b.x, offY: y0 - b.y, srcW: b.w, srcH: b.h,
+    pivotX: pivot ? pivot.x : Math.floor(b.w / 2), pivotY: pivot ? pivot.y : b.h,
+    duration: DEFAULT_DURATION,
+    bounds: { x: b.x, y: b.y, w: b.w, h: b.h },
+  };
+}
+
 /** a slice's bounds at frame 0, mapped into the sheet through frame 0 (clipped to its trimmed pixels) */
 function parseSlice(s, frames) {
   if (!isObj(s) || typeof s.name !== 'string' || !Array.isArray(s.keys) || s.keys.length === 0) {
@@ -110,19 +126,22 @@ function parseSlice(s, frames) {
   const b = rect(key.bounds, `${what}.bounds`);
   const f = frames[0];
   if (!f) throw new Error(`${what}: the sheet has no frames`);
-  // the part of the slice that frame 0 actually has pixels for
-  const x0 = Math.max(b.x, f.offX);
-  const y0 = Math.max(b.y, f.offY);
-  const x1 = Math.min(b.x + b.w, f.offX + f.w);
-  const y1 = Math.min(b.y + b.h, f.offY + f.h);
   const pivot = isObj(key.pivot) && isNum(key.pivot.x) && isNum(key.pivot.y) ? key.pivot : null;
-  return {
-    name: s.name,
-    x: f.x + (x0 - f.offX), y: f.y + (y0 - f.offY), w: Math.max(0, x1 - x0), h: Math.max(0, y1 - y0),
-    offX: x0 - b.x, offY: y0 - b.y, srcW: b.w, srcH: b.h,
-    pivotX: pivot ? pivot.x : Math.floor(b.w / 2), pivotY: pivot ? pivot.y : b.h,
-    duration: DEFAULT_DURATION,
-  };
+  return mapSlice(s.name, b, pivot, f);
+}
+
+/**
+ * A slice's rectangle in another frame of the sheet (same bounds and pivot, that frame's pixels): how a still
+ * prop drawn from a slice plays a tag of the same name (the campfire's flames). Frame 0 gives the slice itself.
+ * @param {Sheet} sheet
+ * @param {Region} slice a region from sheet.slices
+ * @param {number} index frame index
+ * @returns {Region}
+ */
+export function sliceInFrame(sheet, slice, index) {
+  const f = sheet.frames[index];
+  if (!f || !slice.bounds || index === 0) return slice;
+  return mapSlice(slice.name, slice.bounds, { x: slice.pivotX, y: slice.pivotY }, f);
 }
 
 /**

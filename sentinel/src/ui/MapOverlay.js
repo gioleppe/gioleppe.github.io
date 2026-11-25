@@ -16,6 +16,11 @@
 import { TILE_W, TILE_H } from '../sim/constants.js';
 import { TERRAINS } from '../world/IslandMap.js';
 import { tideReadout } from './HUD.js';
+import { drawPaperPanel, drawMapMarker, markerForLandmark } from './hud/uiArt.js';
+import { activeAssets } from '../engine/AssetManager.js';
+
+/** how far the paper frame reaches outside the map's frame rect (inside tuning.mapOverlay.margin) */
+const PAPER_PAD = 6;
 
 /** palette colours (assets/src/palette.gpl) */
 export const MAP_COLORS = Object.freeze({
@@ -25,6 +30,8 @@ export const MAP_COLORS = Object.freeze({
   }),
   parchment: '#45312a',      // earth_1: what has not been seen
   parchmentEdge: '#2a1e1a',  // earth_0
+  paperInk: '#2a1e1a',       // earth_0: writing on the paper frame
+  paperDim: '#45312a',       // earth_1
   forgotten: '#8b5cf6',      // violet
   ink: '#0d0b12',
   text: '#e9e2cf',
@@ -419,8 +426,10 @@ export class MapOverlay {
     ctx.save();
     ctx.fillStyle = 'rgba(13, 11, 18, 0.92)';
     ctx.fillRect(0, 0, vp.uiLogicalWidth, vp.uiLogicalHeight);
+    // the weathered paper 9-slice as the frame, reaching a little past the map on every side
+    drawPaperPanel(ctx, frame.x - PAPER_PAD, frame.y - PAPER_PAD, frame.w + PAPER_PAD * 2, frame.h + PAPER_PAD * 2);
     ctx.fillStyle = C.parchmentEdge;
-    ctx.fillRect(frame.x, frame.y, frame.w, frame.h);
+    ctx.fillRect(area.x - 1, area.y - 1, area.w + 2, area.h + 2);
     ctx.beginPath();
     ctx.rect(area.x, area.y, area.w, area.h);
     ctx.clip();
@@ -490,18 +499,13 @@ export class MapOverlay {
       const m = worldToMap(l.x, l.y);
       const s = mapToScreen(view, m.x, m.y);
       const name = l.name ?? l.id;
-      items.push({ id: l.id, sx: Math.round(s.x) + 3, sy: Math.round(s.y), w: ctx.measureText(name).width + 2, name, x: Math.round(s.x), y: Math.round(s.y) });
+      items.push({ id: l.id, sx: Math.round(s.x) + 5, sy: Math.round(s.y), w: ctx.measureText(name).width + 2, name, x: Math.round(s.x), y: Math.round(s.y) });
     }
     const pm = worldToMap(sim.player.x, sim.player.y);
     const ps = mapToScreen(view, pm.x, pm.y);
     const labelled = placeLabels(items, 7, [{ x: ps.x - 7, y: ps.y - 7, w: 14, h: 14 }]);
-    // every dot first, then the labels over them
-    for (const it of items) {
-      ctx.fillStyle = C.ink;
-      ctx.fillRect(it.x - 1, it.y - 1, 3, 3);
-      ctx.fillStyle = C.landmark;
-      ctx.fillRect(it.x, it.y, 1, 1);
-    }
+    // every marker first, then the labels over them
+    for (const it of items) drawMapMarker(ctx, markerForLandmark(it.id), it.x, it.y);
     for (const it of items) {
       if (!labelled.has(it.id)) continue;
       ctx.fillStyle = 'rgba(13, 11, 18, 0.6)';
@@ -530,6 +534,11 @@ export class MapOverlay {
     ctx.arc(s.x, s.y, ring, 0, Math.PI * 2);
     ctx.stroke();
     ctx.globalAlpha = 1;
+    if (activeAssets()?.hasIcon('ui', 'marker_player')) {
+      // the amber arrowhead, turned to the facing (presentation-only angle, clockwise from up)
+      drawMapMarker(ctx, 'player', s.x, s.y, Math.atan2(fx, -fy));
+      return;
+    }
     ctx.beginPath();
     ctx.moveTo(s.x + fx * 5, s.y + fy * 5);
     ctx.lineTo(s.x - fx * 3 - fy * 3, s.y - fy * 3 + fx * 3);
@@ -577,12 +586,11 @@ export class MapOverlay {
     const C = MAP_COLORS;
     const { x, y, w, header } = frame;
     ctx.save();
-    ctx.fillStyle = C.ink;
-    ctx.fillRect(x, y, w, header);
+    // the header is written on the paper frame, in its dark ink
     ctx.font = '7px ui-monospace, Consolas, monospace';
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'left';
-    ctx.fillStyle = shifting ? C.forgotten : C.text;
+    ctx.fillStyle = shifting ? C.forgotten : C.paperInk;
     const fog = sim.fog;
     const share = fog ? fog.exploredFraction * 100 : 0;
     const pct = fog ? ` · ${share < 10 ? share.toFixed(1) : Math.round(share)}% charted` : '';
@@ -599,7 +607,7 @@ export class MapOverlay {
     const bw = header + 6;
     this.buttons.close = { x: x + w - bw, y: y - 2, w: bw, h: header + 4 };
     this.buttons.zoom = { x: x + w - 2 * bw - 2, y: y - 2, w: bw, h: header + 4 };
-    ctx.fillStyle = C.dim;
+    ctx.fillStyle = C.paperDim;
     ctx.textAlign = 'right';
     ctx.fillText(parts.join('   '), this.buttons.zoom.x - 6, y + header / 2);
     for (const [k, label] of [['zoom', this.zoom ? '−' : '+'], ['close', '×']]) {
@@ -610,10 +618,12 @@ export class MapOverlay {
       ctx.textAlign = 'center';
       ctx.fillText(label, b.x + b.w / 2, y + header / 2);
     }
-    ctx.strokeStyle = shifting ? C.forgotten : '#4f4955';
-    ctx.globalAlpha = shifting ? 0.6 + 0.4 * Math.sin(time * 3) : 1;
-    ctx.lineWidth = 1;
-    ctx.strokeRect(x + 0.5, y + 0.5, w - 1, frame.h - 1);
+    if (shifting) {
+      ctx.strokeStyle = C.forgotten;
+      ctx.globalAlpha = 0.6 + 0.4 * Math.sin(time * 3);
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x + 0.5, y + 0.5, w - 1, frame.h - 1);
+    }
     ctx.restore();
   }
 }

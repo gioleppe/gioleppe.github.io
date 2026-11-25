@@ -104,6 +104,6 @@ export class InputManager extends InputCore {
       const l = landing(w.x, w.y);
       return l ? camera.worldToScreen(l.x, l.y) : null;
     } : null;
-    drawTouchControls(ctx, this, { playerScreen, clampAim });
+    drawTouchControls(ctx, this, { playerScreen, clampAim, lightOn: !!player?.lightOn });
   }
 }

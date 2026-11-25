@@ -3,6 +3,8 @@
 //
 // Placement: top centre, below the safe-area inset, clear of the debug tab (top left) and the touch controls'
 // top-right bar.
+import { activeAssets } from '../../engine/AssetManager.js';
+import { drawDarkPanel } from './uiArt.js';
 
 /** palette colours used here (assets/src/palette.gpl names) */
 export const HUD_COLORS = Object.freeze({
@@ -19,8 +21,8 @@ export const HUD_COLORS = Object.freeze({
   sky: { night: '#101834', dawn: '#a8522b', day: '#379a95', dusk: '#6b2c1e' },   // deep_0, rust_1, teal_2, rust_0
 });
 
-/** widget size in logical pixels */
-export const TIDE_WIDGET = Object.freeze({ w: 94, h: 22, top: 3 });
+/** widget size in logical pixels (24 high: the dark plate's 8 px edges around a 12 px glyph row) */
+export const TIDE_WIDGET = Object.freeze({ w: 94, h: 24, top: 3 });
 const DIAL_R = 8;
 
 /** m:ss for a number of seconds (rounded up, so it never shows 0:00 before the moment) */
@@ -70,12 +72,55 @@ function disc(ctx, cx, cy, r, color, lowerOnly = false) {
 export const tideWidget = Object.freeze({
   id: 'tide',
   draw(ctx, sim, { vp, safe }) {
-    if (sim?.world) drawTideWidget(ctx, sim.world, tideWidgetRect(vp, safe));
+    if (sim?.world) drawTideWidget(ctx, sim.world, tideWidgetRect(vp, safe), activeAssets());
   },
 });
 
-/** the tide indicator and the time-of-day dial in `rect` */
-export function drawTideWidget(ctx, world, rect) {
+/** the ui sheet's time-of-day glyph for a day phase */
+export function timeIcon(dayPhase) {
+  return dayPhase === 'night' ? 'time_moon' : dayPhase === 'dawn' || dayPhase === 'dusk' ? 'time_sunrise' : 'time_sun';
+}
+
+/**
+ * From the ui sheet (ICONS.md "Tide and time of day"): on the dark plate, the water gauge, the `tide_rising` /
+ * `tide_falling` glyph, the time to the turn and the height in the 4 x 6 digits, and the sun / sunrise / moon.
+ */
+function drawTideArt(ctx, world, rect, art) {
+  const C = HUD_COLORS;
+  const { x, y, w, h } = rect;
+  const t = tideReadout(world);
+  drawDarkPanel(ctx, x, y, w, h, art);
+  // gauge: water in a little column, inside the plate's left edge
+  const gx = x + 6;
+  const gy = y + 5;
+  const gh = h - 10;
+  ctx.fillStyle = C.ink;
+  ctx.fillRect(gx - 1, gy - 1, 6, gh + 2);
+  ctx.fillStyle = C.gaugeBack;
+  ctx.fillRect(gx, gy, 4, gh);
+  const fill = Math.round(t.height * gh);
+  if (fill > 0) {
+    ctx.fillStyle = C.water;
+    ctx.fillRect(gx, gy + gh - fill, 4, fill);
+    ctx.fillStyle = C.waterTop;
+    ctx.fillRect(gx, gy + gh - fill, 4, 1);
+  }
+  const iy = y + Math.round((h - 12) / 2);
+  const gyph = y + Math.round((h - 6) / 2);
+  art.drawIcon(ctx, 'ui', t.rising ? 'tide_rising' : 'tide_falling', x + 14, iy);
+  art.drawGlyphs(ctx, clockText(world.timeToNext(t.next)), x + 29, gyph);
+  art.drawGlyphs(ctx, `${t.percent}%`, x + 50, gyph);
+  art.drawIcon(ctx, 'ui', timeIcon(world.dayPhase), x + w - 20, iy);
+}
+
+/** the tide indicator and the time-of-day dial in `rect` (the ui sheet's glyphs once it has loaded) */
+export function drawTideWidget(ctx, world, rect, art = null) {
+  if (art?.hasIcon('ui', 'tide_rising')) {
+    ctx.save();
+    drawTideArt(ctx, world, rect, art);
+    ctx.restore();
+    return;
+  }
   const C = HUD_COLORS;
   const { x, y, w, h } = rect;
   const t = tideReadout(world);
