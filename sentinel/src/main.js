@@ -7,6 +7,7 @@ import { Camera } from './engine/Camera.js';
 import { Renderer } from './engine/Renderer.js';
 import { InputManager } from './engine/InputManager.js';
 import { AssetManager } from './engine/AssetManager.js';
+import { smokeStatus, pixelsVary } from './engine/smokeStatus.js';
 
 const SEED = 1;
 
@@ -28,6 +29,13 @@ let loadError = '';
 const assets = new AssetManager();
 const renderer = new Renderer({ sprites: assets });
 let camera = new Camera();
+const DEBUG = new URLSearchParams(location.search).has('debug');
+/** debug mode (src/engine/debug/, loaded only with ?debug): loop, input and drawing hooks; null otherwise */
+let debug = null;
+/** liveness counters for window.__smoke */
+let framesRun = 0;
+let ticksRun = 0;
+let framesAtLoad = 0;
 
 // ---- screen ---------------------------------------------------------------------------------------------
 
@@ -112,14 +120,35 @@ async function loadGame() {
     camera.snapTo(sim.player.x, sim.player.y);
     input = new InputManager({ tuning, surface: uiCanvas });
     input.setViewport(vp, safe);
-    if (new URLSearchParams(location.search).has('debug')) {
+    framesAtLoad = framesRun;
+    if (DEBUG) {
       window.__game = { get sim() { return sim; }, get camera() { return camera; }, input, assets };
     }
   } catch (e) {
     loadError = `could not load the game data (${e.message})`;
     console.error(e);
+    return;
+  }
+  if (DEBUG) {
+    // a dynamic import, so without ?debug the debug modules are never even fetched
+    import('./engine/debug/DebugMode.js').then((m) => {
+      debug = m.installDebug({
+        get sim() { return sim; },
+        setSim(s) { sim = s; camera.setBounds(s.bounds); camera.snapTo(s.player.x, s.player.y); },
+        get camera() { return camera; }, get input() { return input; }, get vp() { return vp; }, get safe() { return safe; },
+        assets, renderer, stepper, tick, uiCanvas,
+      });
+    }).catch((e) => console.error('debug mode failed to start', e));
   }
 }
+
+window.__smoke = () => {
+  const img = worldCtx.getImageData(0, 0, worldCanvas.width, worldCanvas.height);
+  return smokeStatus({
+    frames: framesRun - framesAtLoad, ticks: ticksRun, loaded: !!sim, loadError,
+    drawn: pixelsVary(img.data, 7), paused: !!debug?.paused,
+  });
+};
 
 // ---- input ----------------------------------------------------------------------------------------------
 
@@ -130,7 +159,11 @@ let input = null;
 
 function tick() {
   if (!sim) return;
-  sim.step(input.nextTick({ camera, player: sim.player }));
+  const live = input.nextTick({ camera, player: sim.player });
+  const inp = debug?.nextInput() ?? live;   // a debug replay replaces the live input
+  sim.step(inp);
+  ticksRun++;
+  debug?.afterStep(inp);
   // events must be read after every tick: the next step replaces the list
   for (const e of sim.events) if (e.type === 'shake') camera.addShake(e.amount);
 }
@@ -144,6 +177,7 @@ function drawWorld(alpha, elapsed) {
   const p = sim.player;
   camera.update(elapsed, p.prevX + (p.x - p.prevX) * alpha, p.prevY + (p.y - p.prevY) * alpha);
   renderer.render(worldCtx, sim, camera, { alpha, time: sim.time });
+  debug?.drawWorld(worldCtx, alpha);
 }
 
 function drawUi() {
@@ -166,6 +200,7 @@ function drawUi() {
     ctx.fillStyle = '#e76f51';
     ctx.fillText(loadError, vp.uiLogicalWidth / 2, vp.uiLogicalHeight / 2);
   }
+  debug?.drawUi(ctx, stepper.alpha);
 }
 
 // ---- loop -----------------------------------------------------------------------------------------------
@@ -178,7 +213,9 @@ function frame(now) {
   rafId = requestAnimationFrame(frame);
   const elapsed = lastTime === null ? 0 : (now - lastTime) / 1000;
   lastTime = now;
-  stepper.advance(elapsed, tick);
+  if (debug) debug.advance(elapsed, tick, now);   // pause, step and speed live in debug mode
+  else stepper.advance(elapsed, tick);
+  framesRun++;
   input?.takeUiActions();   // journal, inventory and pause screens arrive in later steps; until then the presses are dropped
   drawWorld(stepper.alpha, elapsed);
   drawUi();
