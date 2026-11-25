@@ -55,9 +55,11 @@ function pixelLine(ctx, x1, y1, x2, y2, spacing) {
 /**
  * @param {CanvasRenderingContext2D} ctx #ui context in logical pixels
  * @param {import('./InputCore.js').InputCore} input
- * @param {{ playerScreen?: {x:number,y:number}|null }} [opts] the player on screen, to draw the throw line from
+ * @param {{ playerScreen?: {x:number,y:number}|null, clampAim?: ((sx:number, sy:number) => ({x:number,y:number}|null))|null }} [opts]
+ *   the player on screen, to draw the throw line from; clampAim: where a throw aimed at a screen point lands (range
+ *   and obstacles), so the line ends where the item will come down
  */
-export function drawTouchControls(ctx, input, { playerScreen = null } = {}) {
+export function drawTouchControls(ctx, input, { playerScreen = null, clampAim = null } = {}) {
   if (!input.touchVisible) return;
   const L = input.layout;
   const op = input.cfg.opacity;
@@ -128,8 +130,10 @@ export function drawTouchControls(ctx, input, { playerScreen = null } = {}) {
     const len = Math.sqrt(dx * dx + dy * dy);
     if (playerScreen && len > 0) {
       const reach = input.cfg.throwAimDistance;
-      const ex = playerScreen.x + (dx / len) * reach;
-      const ey = playerScreen.y + (dy / len) * reach;
+      let ex = playerScreen.x + (dx / len) * reach;
+      let ey = playerScreen.y + (dy / len) * reach;
+      const land = clampAim ? clampAim(ex, ey) : null;
+      if (land) { ex = land.x; ey = land.y; }
       pixelLine(ctx, playerScreen.x, playerScreen.y, ex, ey, 4);
       pixelRing(ctx, ex, ey, 4, 1);
     }

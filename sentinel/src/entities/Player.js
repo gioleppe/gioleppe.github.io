@@ -46,7 +46,7 @@ export class Player {
     this.contactY = 0;
     /** scratch for the collider (not state) */
     this.contact = makeContact();
-    /** flashlight on (stub: toggled by input.toggleLight; Resonance cost and battery arrive in step 3.6) */
+    /** flashlight on: mirrors the carried flashlight, which the inventory owns (ItemUse.syncLight sets it every tick) */
     this.lightOn = false;
   }
 
@@ -79,7 +79,6 @@ export class Player {
    * @param {MoveEnv|null} [env] the island's collision and terrain; null on the open test field
    */
   update(input, cfg, dt, bounds, env = null) {
-    if (input.toggleLight) this.lightOn = !this.lightOn;
     this.prevX = this.x;
     this.prevY = this.y;
     let mx = input.moveX;

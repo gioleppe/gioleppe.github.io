@@ -28,6 +28,7 @@ const noUi = () => Object.fromEntries(UI_ACTIONS.map((a) => [a, false]));
  * @property {number} [button] 0 left, 2 right (mouse)
  * @property {number} x       logical pixels
  * @property {number} y
+ * @property {number} [t]     event time in ms (any clock), for long presses on hit regions
  */
 
 export class InputCore {
@@ -60,7 +61,7 @@ export class InputCore {
     this.joystick = null;
     /** @type {{ startX:number, startY:number, x:number, y:number, aiming:boolean }|null} use button press */
     this.useDrag = null;
-    /** @type {Map<string, { rect: () => ({x:number,y:number,w:number,h:number}|null), onTap: () => void }>} */
+    /** @type {Map<string, { rect: () => ({x:number,y:number,w:number,h:number}|null), onTap: () => void, onLongPress?: () => void, longPressMs?: number }>} */
     this.regions = new Map();
   }
 
@@ -93,11 +94,13 @@ export class InputCore {
    * @param {string} id
    * @param {() => ({x:number,y:number,w:number,h:number}|null)} rectProvider current rectangle in logical pixels, or null when hidden
    * @param {() => void} onTap called when a press both starts and ends inside it
+   * @param {{ onLongPress?: () => void, longPressMs?: number }} [opts] a press held at least `longPressMs` (judged on
+   *   release, from the pointer event times) calls onLongPress instead of onTap
    * @returns {() => void} removes the region
    */
-  addHitRegion(id, rectProvider, onTap) {
+  addHitRegion(id, rectProvider, onTap, { onLongPress, longPressMs = 450 } = {}) {
     this.regions.delete(id);
-    this.regions.set(id, { rect: rectProvider, onTap });
+    this.regions.set(id, { rect: rectProvider, onTap, onLongPress, longPressMs });
     return () => { if (this.regions.get(id)?.onTap === onTap) this.regions.delete(id); };
   }
 
@@ -180,7 +183,7 @@ export class InputCore {
       const button = p.button ?? 0;
       if (button === 0) {
         const region = this.regionAt(x, y);
-        if (region) { this.pointers.set(id, { control: `region:${region}` }); return true; }
+        if (region) { this.pointers.set(id, { control: `region:${region}`, t0: p.t }); return true; }
         this.trigger('interact', { screen: { x, y } });
       } else if (button === 2) {
         this.trigger('useItem', { screen: { x, y } });
@@ -191,7 +194,7 @@ export class InputCore {
     const wasVisible = this.touchVisible;
     this.touchVisible = true;
     const region = this.regionAt(x, y);
-    if (region) { this.pointers.set(id, { control: `region:${region}` }); return true; }
+    if (region) { this.pointers.set(id, { control: `region:${region}`, t0: p.t }); return true; }
     const hit = hitTestTouch(this.layout, x, y);
     if (!hit) return false;
     if (hit === 'joystick') {
@@ -243,7 +246,8 @@ export class InputCore {
       this.trigger('useItem', d.aiming ? { throw: { dx: d.x - d.startX, dy: d.y - d.startY } } : null);
     } else if (owned.control.startsWith('region:')) {
       const region = this.regions.get(owned.control.slice(7));
-      if (region && inRect(region.rect(), p.x, p.y)) region.onTap();
+      const long = region?.onLongPress && Number.isFinite(p.t) && Number.isFinite(owned.t0) && p.t - owned.t0 >= region.longPressMs;
+      if (region && inRect(region.rect(), p.x, p.y)) (long ? region.onLongPress : region.onTap)();
     }
   }
 

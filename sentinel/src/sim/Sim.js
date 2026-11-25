@@ -8,11 +8,17 @@ import { buildTestField } from '../world/TestField.js';
 import { IslandMap } from '../world/IslandMap.js';
 import { WorldState } from '../world/WorldState.js';
 import { Collider, terrainRules } from '../world/collision.js';
+import { ItemCatalog } from '../entities/ItemCatalog.js';
+import { Inventory } from '../entities/Inventory.js';
+import { Pickups } from '../entities/Pickups.js';
+import { Interactables, updateInteraction, refreshTarget } from '../entities/Interactable.js';
+import { selectHotbar, toggleLight, useHeld, dropHeld, syncLight, giveStartingKit } from '../entities/ItemUse.js';
+import { Projectiles, wantsThrow, throwHeld } from '../entities/Projectile.js';
 
 /** bumped whenever the snapshot shape changes; restore refuses other versions (migration arrives with saving, step 5.2) */
-export const SNAPSHOT_VERSION = 4;
-/** older versions restore can still read: 2 had no world (its clocks are rebuilt from the tick) */
-const READABLE_VERSIONS = new Set([2, SNAPSHOT_VERSION]);
+export const SNAPSHOT_VERSION = 5;
+/** older versions restore can still read: 2 had no world (its clocks are rebuilt from the tick), 2 and 4 no items */
+const READABLE_VERSIONS = new Set([2, 4, SNAPSHOT_VERSION]);
 
 /**
  * World rectangle in world pixels for a map that is `width` x `height` tiles, or null for the open test field.
@@ -75,7 +81,32 @@ export class Sim {
     }
     /** tide, day/night and weather (WorldState.js) */
     this.world = new WorldState(tuning);
+    this.buildItems();
+    giveStartingKit(this.inventory, tuning.inventory.startingKit);
     this.settlePlayer('spawn');
+    refreshTarget(this);
+  }
+
+  /**
+   * Items and interaction (step 3.4): the catalog (data.items), the inventory, the world's pickups and the
+   * interactables, all built from the map. `interactTarget`/`interactIcon` are derived each tick, never saved.
+   */
+  buildItems() {
+    const t = this.tuning;
+    /** item definitions of data/items.json */
+    this.catalog = new ItemCatalog(this.data.items);
+    /** the 6-slot hotbar */
+    this.inventory = new Inventory(this.catalog, t.inventory.slots);
+    /** items lying in the world, and container contents */
+    this.pickups = new Pickups(this.map, this.catalog, t.interaction);
+    /** the island's interactables and the interaction state */
+    this.interactables = new Interactables(this.map, t.interaction);
+    /** things in flight (thrown items; arrows in M4) and the throw cooldown */
+    this.projectiles = new Projectiles();
+    /** @type {Object|null} what `interact` would use now (an Interactable or a pickup) */
+    this.interactTarget = null;
+    /** @type {string|null} its context icon: 'hand' | 'eye' | 'speech' | 'offering' */
+    this.interactIcon = null;
   }
 
   /** seconds simulated so far (derived from `tick`, so it never drifts) */
@@ -135,7 +166,23 @@ export class Sim {
       env.events = this.events;
     }
     this.player.update(inp, this.tuning.player, DT, this.bounds, env);
+    this.stepItems(inp);
     this.tick++;
+  }
+
+  /** hotbar, light, interaction, use and drop for one tick, then the target the presentation shows */
+  stepItems(inp) {
+    selectHotbar(this, inp.hotbar);
+    if (inp.toggleLight) toggleLight(this);
+    updateInteraction(this, inp);
+    if (inp.useItem) {
+      if (wantsThrow(this, inp)) throwHeld(this, inp);
+      else useHeld(this);
+    }
+    if (inp.drop) dropHeld(this);
+    this.projectiles.update(this);
+    syncLight(this);
+    refreshTarget(this);
   }
 
   /** @returns {Object} JSON-serialisable state; with the same map/tuning/data it rebuilds this exact Sim */
@@ -147,6 +194,10 @@ export class Sim {
       rng: this.rng.snapshot(),
       player: this.player.snapshot(),
       world: this.world.snapshot(),
+      inventory: this.inventory.snapshot(),
+      pickups: this.pickups.snapshot(),
+      interaction: this.interactables.snapshot(),
+      projectiles: this.projectiles.snapshot(),
       // the map itself is data, not state: only which map this was, so a save from another map is refused
       map: this.map ? { version: this.map.version, hash: this.map.hash } : null,
       // map props are rebuilt from the map; only the test field's (placed by the rng) are stored
@@ -170,12 +221,21 @@ export class Sim {
     sim.player = Player.restore(snap.player);
     sim.world = snap.world ? WorldState.restore(snap.world, tuning) : WorldState.atTick(snap.tick, tuning);
     if (!sim.map) sim.props = snap.props.map((p) => ({ ...p }));
+    if (snap.inventory) {
+      // an older snapshot has no items: it keeps the fresh starting kit and the map's loot
+      sim.inventory = Inventory.restore(snap.inventory, sim.catalog, tuning.inventory.slots);
+      sim.pickups = Pickups.restore(snap.pickups, sim.map, sim.catalog, tuning.interaction);
+      sim.interactables.restoreState(snap.interaction);
+      if (snap.projectiles) sim.projectiles = Projectiles.restore(snap.projectiles);
+    }
     sim.events = [];
     if (sim.collider) {
       // a restored player inside a wall is moved out; one that is free keeps its mode (hysteresis state) as saved
       const free = sim.collider.isPositionFree(sim.player.x, sim.player.y, sim.player.radius);
       if (!free) sim.settlePlayer('restore');
     }
+    syncLight(sim);
+    refreshTarget(sim);
     return sim;
   }
 }

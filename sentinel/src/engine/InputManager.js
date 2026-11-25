@@ -5,7 +5,8 @@
 // Per frame: input.takeUiActions() -> { openJournal, openInventory, pause } (never reach the simulation)
 //            input.draw(uiCtx, { camera, player })
 // From the game: setContext('hand'|'eye'|'speech'|'offering'|null), setCrouch(bool),
-//            addHitRegion(id, rectProvider, onTap) for tappable HUD parts (hotbar slots), selectHotbar(slot).
+//            addHitRegion(id, rectProvider, onTap, { onLongPress, longPressMs }) for tappable HUD parts (hotbar
+//            slots: tap selects, long-press drops), selectHotbar(slot).
 import { InputCore, CONTEXT_ICONS } from './input/InputCore.js';
 import { drawTouchControls } from './input/touchDraw.js';
 
@@ -50,7 +51,7 @@ export class InputManager extends InputCore {
 
   record(e) {
     const { x, y } = this.toLogical(e);
-    return { id: e.pointerId, type: e.pointerType || 'mouse', button: e.button, x, y };
+    return { id: e.pointerId, type: e.pointerType || 'mouse', button: e.button, x, y, t: e.timeStamp };
   }
 
   attach() {
@@ -91,10 +92,17 @@ export class InputManager extends InputCore {
   /**
    * Draw the touch controls (nothing unless a touch has been seen).
    * @param {CanvasRenderingContext2D} ctx #ui context, scaled to logical pixels
-   * @param {{ camera?: { worldToScreen(x:number,y:number): {x:number,y:number} }|null, player?: {x:number,y:number}|null }} [ctx2]
+   * @param {{ camera?: { worldToScreen(x:number,y:number): {x:number,y:number}, screenToWorld(x:number,y:number): {x:number,y:number} }|null,
+   *   player?: {x:number,y:number}|null, landing?: ((wx:number, wy:number) => ({x:number,y:number}|null))|null }} [ctx2]
+   *   landing: where a throw aimed at a world point would come down (the drag-aim line ends there)
    */
-  draw(ctx, { camera = null, player = null } = {}) {
+  draw(ctx, { camera = null, player = null, landing = null } = {}) {
     const playerScreen = camera && player ? camera.worldToScreen(player.x, player.y) : null;
-    drawTouchControls(ctx, this, { playerScreen });
+    const clampAim = camera && landing ? (sx, sy) => {
+      const w = camera.screenToWorld(sx, sy);
+      const l = landing(w.x, w.y);
+      return l ? camera.worldToScreen(l.x, l.y) : null;
+    } : null;
+    drawTouchControls(ctx, this, { playerScreen, clampAim });
   }
 }

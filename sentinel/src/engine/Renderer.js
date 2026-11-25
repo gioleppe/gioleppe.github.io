@@ -7,6 +7,7 @@ import { TideRenderer } from './TideRenderer.js';
 import { Lighting } from './Lighting.js';
 import { WeatherFx, swayOffsets, grassPush } from './WeatherFx.js';
 import { waterAt, isWaterClass } from '../world/water.js';
+import { collectItemViews } from './ItemRenderer.js';
 
 /**
  * The seam every picture goes through. PlaceholderSprites implements it; the AssetManager (step 1.2) will
@@ -34,6 +35,9 @@ import { waterAt, isWaterClass } from '../world/water.js';
  * @property {number} y
  * @property {string} state
  * @property {('N'|'E'|'S'|'W'|null)} facing
+ * @property {{w:number,h:number}} [size]  culling box when the view paints itself (instead of the sprite size)
+ * @property {(ctx: CanvasRenderingContext2D, x: number, y: number, time: number) => void} [paint]  draws the view
+ *   itself (shadow included) with its anchor at screen (x, y): pickups, projectiles
  */
 
 /** room below the anchor for the ground shadow, in logical pixels, counted in culling */
@@ -94,7 +98,7 @@ export function intersects(a, b) {
  * @returns {EntityView[]}
  */
 export function cullAndSort(entities, rect, sizeOf) {
-  return entities.filter((e) => intersects(spriteRect(e, sizeOf(e.kind, e.state)), rect)).sort(compareByY);
+  return entities.filter((e) => intersects(spriteRect(e, e.size ?? sizeOf(e.kind, e.state)), rect)).sort(compareByY);
 }
 
 /**
@@ -132,6 +136,8 @@ export class Renderer {
     /** rain, splashes and the squall veil (null: none) */
     this.weather = weather;
     this.swayScratch = [];
+    /** reused by the pickup query every frame */
+    this.itemScratch = [];
   }
 
   /**
@@ -199,6 +205,7 @@ export class Renderer {
       ? sim.map.propsInRect(view.x - PROP_REACH_SIDE, view.y - SHADOW_PAD, view.x + view.w + PROP_REACH_SIDE, view.y + view.h + PROP_REACH_BELOW, this.propScratch)
       : sim.props;
     for (const prop of props) out.push({ id: prop.id, kind: prop.kind, x: prop.x, y: prop.y, state: 'idle', facing: null });
+    collectItemViews(sim, view ?? null, out, this.sprites, this.itemScratch, alpha);
     return out;
   }
 
@@ -218,6 +225,7 @@ export class Renderer {
   drawEntity(ctx, e, camera, time, sway = null) {
     const x = Math.round(e.x) - camera.originX;
     const y = Math.round(e.y) - camera.originY;
+    if (e.paint) { e.paint(ctx, x, y, time); return; }
     const size = this.sprites.size(e.kind, e.state);
     if (size.shadow !== 0) this.drawShadow(ctx, x, y, size.shadow ?? size.w);
     const kc = sway && e.kind !== 'player' ? sway.props[e.kind] : null;
