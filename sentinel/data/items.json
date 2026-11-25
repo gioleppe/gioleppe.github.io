@@ -1,0 +1,22 @@
+{
+  "$comment": "Items (spec §6.4, §7, §8). key: progression item that cannot be thrown, offered or lost on death. metal / electronic: provoke scouts and Resonance (§6.3, §7.3). throwable: a distraction (§6.1). offering: accepted at a border totem (§7.3). consumable: used up when used. stack: max per hotbar slot. crafted: made, never found (never a map loot spawn). Step 3.4 extends this file; the map validator rejects loot of unknown or crafted items.",
+  "items": [
+    { "id": "paracord", "name": "Paracord", "key": true, "metal": false, "electronic": false, "throwable": false, "offering": false, "consumable": false, "stack": 3 },
+    { "id": "waterproof_tarp", "name": "Waterproof Tarp", "key": true, "metal": false, "electronic": false, "throwable": false, "offering": false, "consumable": false, "stack": 1 },
+    { "id": "driftwood", "name": "Driftwood", "key": false, "metal": false, "electronic": false, "throwable": false, "offering": false, "consumable": false, "stack": 4 },
+    { "id": "crowbar", "name": "Crowbar", "key": true, "metal": true, "electronic": false, "throwable": false, "offering": false, "consumable": false, "stack": 1 },
+    { "id": "radio_battery", "name": "Radio Battery", "key": true, "metal": false, "electronic": true, "throwable": false, "offering": false, "consumable": false, "stack": 1 },
+    { "id": "flare_gun", "name": "Flare Gun", "key": true, "metal": true, "electronic": false, "throwable": false, "offering": false, "consumable": false, "stack": 1 },
+    { "id": "flare_casings", "name": "Flare Casings", "key": true, "metal": false, "electronic": false, "throwable": false, "offering": false, "consumable": false, "stack": 3 },
+    { "id": "coconut", "name": "Coconut", "key": false, "metal": false, "electronic": false, "throwable": true, "offering": true, "consumable": true, "stack": 3 },
+    { "id": "reef_shell", "name": "Reef Shell", "key": false, "metal": false, "electronic": false, "throwable": true, "offering": true, "consumable": false, "stack": 5 },
+    { "id": "bone", "name": "Bone", "key": false, "metal": false, "electronic": false, "throwable": true, "offering": false, "consumable": false, "stack": 3 },
+    { "id": "fish", "name": "Fish", "key": false, "metal": false, "electronic": false, "throwable": false, "offering": true, "consumable": true, "stack": 2 },
+    { "id": "healing_herbs", "name": "Healing Herbs", "key": false, "metal": false, "electronic": false, "throwable": false, "offering": false, "consumable": true, "stack": 3 },
+    { "id": "bandage", "name": "Bandage", "key": false, "metal": false, "electronic": false, "throwable": false, "offering": false, "consumable": true, "stack": 3 },
+    { "id": "rock", "name": "Rock", "key": false, "metal": false, "electronic": false, "throwable": true, "offering": false, "consumable": false, "stack": 5 },
+    { "id": "flashlight", "name": "Flashlight", "key": false, "metal": true, "electronic": true, "throwable": false, "offering": false, "consumable": false, "stack": 1 },
+    { "id": "tin_flask", "name": "Tin Flask", "key": false, "metal": true, "electronic": false, "throwable": false, "offering": false, "consumable": false, "stack": 1 },
+    { "id": "driftwood_totem", "name": "Driftwood Totem", "key": false, "metal": false, "electronic": false, "throwable": false, "offering": false, "consumable": false, "stack": 1, "crafted": true }
+  ]
+}

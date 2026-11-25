@@ -68,6 +68,11 @@ export class Sim {
       this.props = field.props;
     }
     this.player = new Player({ x: spawn.x, y: spawn.y, radius: tuning.player.radius });
+    if (spawn.facing && spawn.facing !== this.player.facing) {
+      // the map chooses which way the player first looks (the island starts facing inland)
+      const dir = { N: [0, -1], E: [1, 0], S: [0, 1], W: [-1, 0] }[spawn.facing];
+      if (dir) [this.player.facing, this.player.dirX, this.player.dirY] = [spawn.facing, dir[0], dir[1]];
+    }
     /** tide, day/night and weather (WorldState.js) */
     this.world = new WorldState(tuning);
     this.settlePlayer('spawn');

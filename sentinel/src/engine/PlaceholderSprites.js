@@ -19,6 +19,20 @@ export const PLACEHOLDER_KINDS = Object.freeze({
   tent: { w: 48, h: 36, color: '#9c8f5a', label: 'TENT' },
   dinghy: { w: 48, h: 18, color: '#e0e0d0', label: 'DINGHY' },
   radio_rock: { w: 40, h: 80, color: '#6f6f78', label: 'RADIO' },
+  coconut_palm: { w: 48, h: 96, color: '#5a9a4a', label: 'COCO' },
+  spring: { w: 32, h: 14, color: '#5fb3c9', label: 'SPRING' },
+  driftwood_pile: { w: 32, h: 12, color: '#a48a68', label: 'DRIFT' },
+  cliff_rock: { w: 48, h: 48, color: '#5e5c60', label: 'CLIFF' },
+  glow_fungus: { w: 16, h: 12, color: '#7fe3c4', label: 'GLOW' },
+  shack: { w: 80, h: 72, color: '#8a6a44', label: 'SHACK' },
+  skeleton: { w: 32, h: 12, color: '#e8e2cf', label: 'SKEL' },
+  life_vest: { w: 20, h: 10, color: '#f08a24', label: 'VEST' },
+  wreck_hatch: { w: 32, h: 14, color: '#4f4238', label: 'HATCH' },
+  campfire_cold: { w: 24, h: 12, color: '#5a4a3a', label: 'FIRE' },
+  sat_phone: { w: 16, h: 10, color: '#3a3f44', label: 'SAT' },
+  map_board: { w: 24, h: 32, color: '#c9b48a', label: 'MAP' },
+  warning_arrows: { w: 24, h: 40, color: '#b0703c', label: 'ARROW' },
+  crate: { w: 32, h: 28, color: '#8c6b3e', label: 'CRATE' },
 });
 
 const UNKNOWN = { w: 24, h: 24, color: '#ff00ff', label: '?' };
