@@ -9,17 +9,6 @@
 // swimming, where the item would sink out of reach for good.
 
 /**
- * The player's model gains drink/heal/damage in step 3.3; until then these calls are skipped.
- * @returns {boolean} the call was made
- */
-function callPlayer(sim, method, ...args) {
-  const fn = sim.player?.[method];
-  if (typeof fn !== 'function') return false;
-  fn.apply(sim.player, args);
-  return true;
-}
-
-/**
  * Hotbar input: select a slot, or empty the hands by selecting the selected slot again.
  * @param {import('../sim/Sim.js').Sim} sim
  * @param {number} slot -1 for none this tick
@@ -51,10 +40,10 @@ export function toggleLight(sim) {
 
 /**
  * Keep the player's light (drawn by the lighting system, read by Resonance) in step with the flashlight's power.
- * The inventory is the source of truth; `player.lightOn` is set only when the player model has the field.
+ * The inventory is the single owner: nothing else (the player included) sets `player.lightOn`.
  */
 export function syncLight(sim) {
-  if (sim.player && 'lightOn' in sim.player) sim.player.lightOn = sim.inventory.isOn('flashlight');
+  sim.player.lightOn = sim.inventory.isOn('flashlight');
 }
 
 /**
@@ -75,10 +64,10 @@ export function useHeld(sim) {
     case 'drink':
     case 'heal': {
       if (!sim.catalog.canConsume(held.id)) break;
-      if (use.type === 'drink') callPlayer(sim, 'drink', use.amount);
+      if (use.type === 'drink') sim.player.drink(use.amount);
       else {
-        callPlayer(sim, 'heal', use.amount);
-        if (use.stopsBleed) callPlayer(sim, 'stopBleeding');
+        sim.player.heal(use.amount);
+        if (use.stopsBleed) sim.player.stopBleeding();
       }
       const item = held.id;
       inv.removeOneFromSlot(inv.selected);

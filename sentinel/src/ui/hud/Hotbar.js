@@ -4,7 +4,7 @@
 //
 // Wiring (src/main.js): `const itemHud = installItemHud({ input, assets, tuning })` once the game has loaded;
 // `itemHud.onStep(sim)` after every sim.step; `itemHud.frame(sim)` every frame (context icon of the touch
-// button); `itemHud.drawPrompt(ctx, sim, camera)` on #ui. HUD.js draws the hotbar and notices with drawHotbar().
+// button); `itemHud.drawPrompt(ctx, sim, camera)` on #ui. HUD.js draws the hotbar and notices as two widgets.
 import { Notices, registerNotice, NOTICE_COLORS } from '../Notices.js';
 import { TOUCH_ICONS } from '../../engine/input/icons.js';
 
@@ -175,7 +175,13 @@ export class ItemHud {
       ctx.fillText(nameOf(sim, held.id), L.x + L.w / 2, L.y - 1);
     }
     ctx.restore();
-    this.notices.draw(ctx, L.x + L.w / 2, L.y - (held ? 9 : 2));
+  }
+
+  /** the item notices, just above the hotbar (and its held-item name) drawn this frame */
+  drawNotices(ctx, sim) {
+    const L = this.layout;
+    if (!L) return;
+    this.notices.draw(ctx, L.x + L.w / 2, L.y - (sim.inventory?.held ? 9 : 2));
   }
 
   /**
@@ -221,7 +227,24 @@ export function installItemHud(opts) {
   return active;
 }
 
-/** HUD.js entry: the hotbar and notices, when installed */
+/** the hotbar and notices, when installed (the two HUD widgets below in one call) */
 export function drawHotbar(ctx, sim, vp, safe) {
   active?.draw(ctx, sim, vp, safe);
+  active?.drawNotices(ctx, sim);
 }
+
+/** HUD widget (see HUD.js): the six slots, when the item HUD is installed */
+export const hotbarWidget = Object.freeze({
+  id: 'hotbar',
+  draw(ctx, sim, { vp, safe }) {
+    if (sim) active?.draw(ctx, sim, vp, safe);
+  },
+});
+
+/** HUD widget: the item notices above the hotbar (after hotbarWidget, which lays the bar out) */
+export const noticesWidget = Object.freeze({
+  id: 'notices',
+  draw(ctx, sim) {
+    if (sim) active?.drawNotices(ctx, sim);
+  },
+});

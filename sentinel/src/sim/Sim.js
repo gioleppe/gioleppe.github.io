@@ -8,17 +8,23 @@ import { buildTestField } from '../world/TestField.js';
 import { IslandMap } from '../world/IslandMap.js';
 import { WorldState } from '../world/WorldState.js';
 import { Collider, terrainRules } from '../world/collision.js';
+import { NoiseField } from '../world/Noise.js';
+import { FootprintTrail } from '../world/Footprints.js';
 import { ItemCatalog } from '../entities/ItemCatalog.js';
 import { Inventory } from '../entities/Inventory.js';
 import { Pickups } from '../entities/Pickups.js';
-import { Interactables, updateInteraction, refreshTarget } from '../entities/Interactable.js';
+import { Interactables, updateInteraction, refreshTarget, endChannel } from '../entities/Interactable.js';
 import { selectHotbar, toggleLight, useHeld, dropHeld, syncLight, giveStartingKit } from '../entities/ItemUse.js';
 import { Projectiles, wantsThrow, throwHeld } from '../entities/Projectile.js';
 
 /** bumped whenever the snapshot shape changes; restore refuses other versions (migration arrives with saving, step 5.2) */
-export const SNAPSHOT_VERSION = 5;
-/** older versions restore can still read: 2 had no world (its clocks are rebuilt from the tick), 2 and 4 no items */
-const READABLE_VERSIONS = new Set([2, 4, SNAPSHOT_VERSION]);
+export const SNAPSHOT_VERSION = 6;
+/**
+ * older versions restore can still read: 2 had no world (its clocks are rebuilt from the tick); 2 and 4 have no
+ * player body (stamina and the rest start as in a new game) and no items (the fresh starting kit and the map's
+ * loot); 5 is either half (body or items) of the two branches that both called themselves 5
+ */
+const READABLE_VERSIONS = new Set([2, 4, 5, SNAPSHOT_VERSION]);
 
 /**
  * World rectangle in world pixels for a map that is `width` x `height` tiles, or null for the open test field.
@@ -73,7 +79,7 @@ export class Sim {
       spawn = field.spawn;
       this.props = field.props;
     }
-    this.player = new Player({ x: spawn.x, y: spawn.y, radius: tuning.player.radius });
+    this.player = new Player({ x: spawn.x, y: spawn.y, radius: tuning.player.radius, tuning });
     if (spawn.facing && spawn.facing !== this.player.facing) {
       // the map chooses which way the player first looks (the island starts facing inland)
       const dir = { N: [0, -1], E: [1, 0], S: [0, 1], W: [-1, 0] }[spawn.facing];
@@ -81,6 +87,21 @@ export class Sim {
     }
     /** tide, day/night and weather (WorldState.js) */
     this.world = new WorldState(tuning);
+    /** recent noises the AI can hear (Noise.js) */
+    this.noise = new NoiseField(tuning);
+    /** footprints on wet sand (Footprints.js) */
+    this.footprints = new FootprintTrail(tuning);
+    /**
+     * @type {{ cause: string, tick: number, day: number, distance: number }|null} set when the run is lost:
+     * cause 'arrow' | 'bleed' | 'drowning' | 'thirst', the tick of death, world.day (days survived) and the
+     * distance travelled in metres
+     */
+    this.over = null;
+    /** what the player borrows from the world each tick (reused, not state; refreshed every step) */
+    this.playerEnv = {
+      tuning, dt: DT, tick: 0, bounds: this.bounds, move: this.moveEnv, world: this.world,
+      map: this.map, props: this.props, noise: this.noise, footprints: this.footprints,
+    };
     this.buildItems();
     giveStartingKit(this.inventory, tuning.inventory.startingKit);
     this.settlePlayer('spawn');
@@ -165,24 +186,70 @@ export class Sim {
       env.tide = this.tideHeight();
       env.events = this.events;
     }
-    this.player.update(inp, this.tuning.player, DT, this.bounds, env);
+    this.noise.beginTick(this.tick);
+    this.footprints.beginTick(this.tick);
+    const pe = this.playerEnv;
+    pe.tick = this.tick;
+    pe.world = this.world;
+    pe.props = this.props;
+    pe.noise = this.noise;
+    pe.footprints = this.footprints;
+    this.player.update(inp, pe);
     this.stepItems(inp);
+    this.collectEvents();
+    this.checkOver();
     this.tick++;
   }
 
-  /** hotbar, light, interaction, use and drop for one tick, then the target the presentation shows */
+  /**
+   * Hotbar, light, interaction, use, drop and throw for one tick, then things in flight and the target the
+   * presentation shows. A dead player's inputs are ignored and a running channel (drinking) ends; what is already
+   * in the air still lands.
+   */
   stepItems(inp) {
-    selectHotbar(this, inp.hotbar);
-    if (inp.toggleLight) toggleLight(this);
-    updateInteraction(this, inp);
-    if (inp.useItem) {
-      if (wantsThrow(this, inp)) throwHeld(this, inp);
-      else useHeld(this);
+    if (this.player.dead) {
+      if (this.interactables.channel) endChannel(this, 'dead');
+    } else {
+      selectHotbar(this, inp.hotbar);
+      if (inp.toggleLight) toggleLight(this);
+      updateInteraction(this, inp);
+      if (inp.useItem) {
+        if (wantsThrow(this, inp)) throwHeld(this, inp);
+        else useHeld(this);
+      }
+      if (inp.drop) dropHeld(this);
     }
-    if (inp.drop) dropHeld(this);
     this.projectiles.update(this);
     syncLight(this);
     refreshTarget(this);
+  }
+
+  /**
+   * The lose state (spec §8): once the player is dead, `over` records how and when, with the days survived and
+   * the distance travelled for the game-over screen, and `player_died` is raised exactly once.
+   */
+  checkOver() {
+    const p = this.player;
+    if (!p.dead || this.over) return;
+    this.over = { cause: p.deathCause, tick: this.tick, day: this.world.day, distance: p.distanceMetres };
+    this.events.push({ type: 'player_died', ...this.over });
+  }
+
+  /**
+   * Move the events raised by the player and the noise field (also those raised between steps, e.g. by a debug
+   * cheat) into this step's list.
+   */
+  collectEvents() {
+    for (const e of this.player.takeEvents()) this.events.push(e);
+    for (const e of this.noise.takeEvents()) this.events.push(e);
+  }
+
+  /**
+   * Footprints within `r` world px of a point, freshest first, each with its `age` in seconds (for the AI).
+   * @returns {Array<import('../world/Footprints.js').Footprint & { age: number }>}
+   */
+  footprintsNear(x, y, r) {
+    return this.footprints.near(x, y, r);
   }
 
   /** @returns {Object} JSON-serialisable state; with the same map/tuning/data it rebuilds this exact Sim */
@@ -194,6 +261,9 @@ export class Sim {
       rng: this.rng.snapshot(),
       player: this.player.snapshot(),
       world: this.world.snapshot(),
+      noise: this.noise.snapshot(),
+      footprints: this.footprints.snapshot(),
+      over: this.over ? { ...this.over } : null,
       inventory: this.inventory.snapshot(),
       pickups: this.pickups.snapshot(),
       interaction: this.interactables.snapshot(),
@@ -218,8 +288,11 @@ export class Sim {
     if (want !== have) throw new Error(`Sim.restore: snapshot was made on map ${want}, not on ${have}`);
     sim.tick = snap.tick;
     sim.rng = Rng.restore(snap.rng);
-    sim.player = Player.restore(snap.player);
+    sim.player = Player.restore(snap.player, tuning);
     sim.world = snap.world ? WorldState.restore(snap.world, tuning) : WorldState.atTick(snap.tick, tuning);
+    sim.noise = NoiseField.restore(snap.noise, tuning);
+    sim.footprints = FootprintTrail.restore(snap.footprints, tuning);
+    sim.over = snap.over ? { ...snap.over } : null;
     if (!sim.map) sim.props = snap.props.map((p) => ({ ...p }));
     if (snap.inventory) {
       // an older snapshot has no items: it keeps the fresh starting kit and the map's loot

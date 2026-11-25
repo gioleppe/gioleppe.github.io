@@ -1,7 +1,71 @@
 {
   "player": {
+    "$comment": "Movement states (step 3.1, spec §6.2). Speed = walkSpeed x (sprintMultiplier | sneakMultiplier | 1) x terrain rule x world.moveMultiplier x limp.",
     "walkSpeed": 60,
-    "radius": 6
+    "radius": 6,
+    "sprintMultiplier": 1.75,
+    "sneakMultiplier": 0.5,
+    "metresPerPixel": 0.04,
+    "$metresPerPixel": "the 48 px player sprite is about 1.9 m tall; distance travelled is reported in metres on the game-over screen"
+  },
+  "hydration": {
+    "$comment": "Hydration 0..max (spec §6.2). Drains slowly, faster while sprinting (running costs water: keeps sprinting a choice on long trips); rain in a squall refills it at rainPerSecond x squall intensity. Below staminaCapBelow (30) max stamina is staminaCapFraction (50%). At zero, health drops at thirstDamagePerSecond. From full: 100 -> 30 in 583 s (9.7 min), -> 0 in 833 s (13.9 min), dead of thirst 200 s later (17.2 min without a drink or rain).",
+    "max": 100,
+    "drainPerSecond": 0.12,
+    "sprintDrainMultiplier": 2.5,
+    "rainPerSecond": 0.35,
+    "staminaCapBelow": 30,
+    "staminaCapFraction": 0.5,
+    "thirstDamagePerSecond": 0.5
+  },
+  "health": {
+    "$comment": "Health 0..max (spec §6.2, §8). An arrow hit (M4) deals arrowDamage (50) plus a bleed of bleedDamagePerSecond for bleedSeconds (stopped by any heal) and a limp (speed x limpMultiplier) for limpSeconds: two arrows kill. Swimming at zero stamina drowns at drowningDamagePerSecond: from full stamina a swimmer has 40 s, then 12.5 s more.",
+    "max": 100,
+    "arrowDamage": 50,
+    "bleedDamagePerSecond": 2,
+    "bleedSeconds": 5,
+    "limpMultiplier": 0.6,
+    "limpSeconds": 12,
+    "drowningDamagePerSecond": 8
+  },
+  "stamina": {
+    "$comment": "Stamina 0..max (spec §6.2). Drains while sprinting and while swimming; regenerates when walking or still (faster when still) after regenDelaySeconds without exertion. A sprint starts only at sprintStartMin or more (no flicker at zero). 100 / 10 = 10 s of sprint from full; 100 / 2.5 = 40 s of swimming before drowning starts.",
+    "max": 100,
+    "sprintDrainPerSecond": 10,
+    "swimDrainPerSecond": 2.5,
+    "regenStillPerSecond": 15,
+    "regenMovingPerSecond": 6,
+    "regenDelaySeconds": 1,
+    "sprintStartMin": 15
+  },
+  "noise": {
+    "$comment": "Noise radius in world px by surface and action (spec §6.1: crouch on sand/water 20, walk on sand 60, walk in jungle brush 100, sprint 180, thrown impact 220); the gaps are filled to the same scale. 'water' is wading (shallow water, flooded ground); 'swim' is swimming (crouch and sprint cannot happen there; 'still' is treading water). Footsteps are multiplied by world.noiseMultiplier (a squall halves them); thrown impacts are not. loudAt: a noise this big or bigger raises noise_loud and is drawn as a faint ring. memorySeconds: how long the AI can still hear a noise after its last emission.",
+    "throwImpact": 220,
+    "loudAt": 110,
+    "memorySeconds": 1.5,
+    "maxEntries": 32,
+    "defaultSurface": "sand",
+    "table": {
+      "sand":         { "still": 0,  "sneak": 20, "walk": 60,  "sprint": 180 },
+      "wet_sand":     { "still": 0,  "sneak": 20, "walk": 55,  "sprint": 180 },
+      "jungle_floor": { "still": 0,  "sneak": 40, "walk": 100, "sprint": 220 },
+      "basalt":       { "still": 0,  "sneak": 30, "walk": 70,  "sprint": 190 },
+      "reef_rock":    { "still": 0,  "sneak": 35, "walk": 80,  "sprint": 200 },
+      "mud":          { "still": 0,  "sneak": 40, "walk": 90,  "sprint": 200 },
+      "water":        { "still": 0,  "sneak": 20, "walk": 110, "sprint": 200 },
+      "swim":         { "still": 20, "sneak": 20, "walk": 90,  "sprint": 90 }
+    }
+  },
+  "cover": {
+    "$comment": "Crouched inside a cover prop's coverRadius (tall grass, mangrove roots): enemy sight range against the player x visibilityFactor (0.35 = 65% less, spec §6.1); the sprite is drawn at spriteAlpha.",
+    "visibilityFactor": 0.35,
+    "spriteAlpha": 0.55
+  },
+  "footprints": {
+    "$comment": "Prints on wet sand (spec §6.1): one every `spacing` px travelled on foot, gone after lifetimeSeconds (15 s), at most `max` kept.",
+    "lifetimeSeconds": 15,
+    "spacing": 14,
+    "max": 64
   },
   "props": {
     "$comment": "sway: top-of-sprite lean in px at full wind (0 or absent = rigid); swayPush: tall grass leaning away from a passing player; light: a light the renderer adds at the prop (src/engine/Lighting.js: radius px, intensity 0..1, color, flicker 0..1, pulse { speed rad/s, depth 0..1 }, glow 0..1 additive colour, zoneBoost x anomaly strength)",
@@ -157,7 +221,7 @@
     "spring": { "seconds": 2, "drinkPerSecond": 50 }
   },
   "throw": {
-    "$comment": "src/entities/Projectile.js, thrown distractions (spec §3.2, §6.1). speed px/s; maxRange px (aim points beyond are clamped); defaultDistance: a throw without an aim point, in the facing direction; minAimDistance: a coconut (which is drunk on use) is thrown only when aimed at least this far; arcHeight: drawn peak height per px of distance, capped at maxArcHeight; impactNoise: radius of the landing noise when tuning.noise.throwImpact is absent (spec: 220); radius: body of a landed item for the free-spot search; marchStep/backoff/landSearch px: line-of-sight sampling, step back from an obstacle, search for a free spot.",
+    "$comment": "src/entities/Projectile.js, thrown distractions (spec §3.2, §6.1). speed px/s; maxRange px (aim points beyond are clamped); defaultDistance: a throw without an aim point, in the facing direction; minAimDistance: a coconut (which is drunk on use) is thrown only when aimed at least this far; arcHeight: drawn peak height per px of distance, capped at maxArcHeight; radius: body of a landed item for the free-spot search; marchStep/backoff/landSearch px: line-of-sight sampling, step back from an obstacle, search for a free spot.",
     "speed": 260,
     "maxRange": 180,
     "defaultDistance": 120,
@@ -165,7 +229,6 @@
     "arcHeight": 0.22,
     "maxArcHeight": 34,
     "cooldownSeconds": 0.75,
-    "impactNoise": 220,
     "radius": 3,
     "marchStep": 2,
     "backoff": 4,

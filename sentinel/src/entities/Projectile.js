@@ -6,14 +6,14 @@
 // runs (`registerImpact`).
 //
 // Throwing (`throwHeld`): the held throwable flies to the aim point (clamped to tuning.throw.maxRange), or without
-// one tuning.throw.defaultDistance in the facing direction. On impact: noise of radius tuning.noise.throwImpact
-// (220 px; tuning.throw.impactNoise until the noise block exists) through `sim.noise?.emit` and a `noise` event,
+// one tuning.throw.defaultDistance in the facing direction. On impact: a noise of radius tuning.noise.throwImpact
+// (220 px) through `sim.noise.emit` (which raises the `noise` and `noise_loud` events),
 // an `impact` event, and a rock becomes a pickup where it landed unless it fell in swimming-depth water (lost).
 // A coconut is used up. Throwing keeps the player's crouch: throwing from cover is the point of a distraction.
 // A key item is never thrown (ItemCatalog.canThrow).
 //
 // Events: throw {id, item, x0, y0, x1, y1, aimX, aimY, blocked}, throw_refused {reason, item},
-//         impact {id, kind, item, x, y, water, lost, consumed}, noise {x, y, radius, kind: 'impact', sourceId}
+//         impact {id, kind, item, x, y, water, lost, consumed}; the noise field adds noise / noise_loud
 
 import { TICK_HZ } from '../sim/constants.js';
 import { terrainMove } from '../world/collision.js';
@@ -249,9 +249,9 @@ export function wantsThrow(sim, inp) {
   return dx * dx + dy * dy >= m * m;
 }
 
-/** the noise radius of an impact: the noise system's tuning when present (spec §6.1: 220 px) */
+/** the noise radius of an impact: tuning.noise.throwImpact (spec §6.1: 220 px) */
 export function impactNoiseRadius(tuning) {
-  return tuning.noise?.throwImpact ?? tuning.throw.impactNoise;
+  return tuning.noise.throwImpact;
 }
 
 /**
@@ -303,9 +303,7 @@ registerImpact('throw', (sim, p) => {
   const lost = water === 'swim';
   const consumed = sim.catalog.get(p.item)?.consumable === true;
   if (!lost && !consumed) sim.pickups.drop(p.item, 1, p.x1, p.y1);
-  const radius = impactNoiseRadius(sim.tuning);
-  const noise = { x: p.x1, y: p.y1, radius, kind: 'impact', sourceId: p.id };
-  if (sim.noise && typeof sim.noise.emit === 'function') sim.noise.emit({ ...noise });
-  sim.events.push({ type: 'noise', ...noise });
+  // the noise field is the one source of noise events (`noise`, and `noise_loud` at 220 px)
+  sim.noise.emit({ x: p.x1, y: p.y1, radius: impactNoiseRadius(sim.tuning), kind: 'impact', sourceId: p.id });
   sim.events.push({ type: 'impact', id: p.id, kind: p.kind, item: p.item, x: p.x1, y: p.y1, water: water !== 'ground', lost, consumed });
 });

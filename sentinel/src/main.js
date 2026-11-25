@@ -145,7 +145,7 @@ async function loadGame() {
   }
   if (DEBUG) {
     // a dynamic import, so without ?debug the debug modules are never even fetched
-    Promise.all([import('./engine/debug/DebugMode.js'), import('./engine/debug/worldDebug.js')]).then(([m, w]) => {
+    Promise.all([import('./engine/debug/DebugMode.js'), import('./engine/debug/worldDebug.js'), import('./engine/debug/playerDebug.js')]).then(([m, w, pd]) => {
       debug = m.installDebug({
         get sim() { return sim; },
         setSim(s) { sim = s; camera.setBounds(s.bounds); camera.snapTo(s.player.x, s.player.y); },
@@ -153,6 +153,7 @@ async function loadGame() {
         assets, renderer, stepper, tick, uiCanvas,
       });
       w.registerWorldDebug(debug);
+      pd.registerPlayerDebug(debug);
       // every landmark of the island is a teleport target (debug "Go" page, __game.debug.teleportTo(id))
       debug.addPlaces((s) => (s.map ? s.map.entitiesOfType('landmark').map((l) => ({ id: l.id, label: l.name, x: l.x, y: l.y })) : []));
       import('./engine/debug/itemDebug.js').then((i) => i.registerItemDebug(debug)).catch((e) => console.error('item debug failed', e));
@@ -203,6 +204,12 @@ function drawWorld(alpha, elapsed) {
   debug?.drawWorld(worldCtx, alpha);
 }
 
+/** room the HUD leaves for debug mode's tab at the top-left (nothing without ?debug) */
+function hudReserve() {
+  const m = debug?.panel?.m;
+  return m ? { top: Math.max(0, Math.ceil(m.y + m.rowH + 2 - (safe.top || 0) - 4)) } : {};
+}
+
 function drawUi() {
   const ctx = uiCtx;
   ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -215,8 +222,8 @@ function drawUi() {
     ctx.fillStyle = 'rgba(216, 210, 191, 0.45)';
     ctx.fillText(buildLabel, vp.uiLogicalWidth - safe.right - 3, vp.uiLogicalHeight - safe.bottom - 2);
   }
-  if (sim) drawHud(ctx, sim, vp, safe);
-  if (sim) itemHud?.drawPrompt(ctx, sim, camera);
+  if (sim && !sim.over) itemHud?.drawPrompt(ctx, sim, camera);
+  if (sim) drawHud(ctx, sim, vp, safe, { time: performance.now() / 1000, reserve: hudReserve() });
   if (input && sim) input.draw(ctx, { camera, player: sim.player, landing: (wx, wy) => throwPreview(sim, wx, wy) });
   if (loadError) {
     ctx.font = '8px ui-monospace, Consolas, monospace';
