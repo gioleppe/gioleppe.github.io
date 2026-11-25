@@ -63,6 +63,12 @@ export class InputCore {
     this.useDrag = null;
     /** @type {Map<string, { rect: () => ({x:number,y:number,w:number,h:number}|null), onTap: () => void, onLongPress?: () => void, longPressMs?: number }>} */
     this.regions = new Map();
+    /**
+     * @type {{ onKey(code: string, repeat: boolean): boolean, allowRegion?(id: string): boolean }|null} a box that
+     * owns the keyboard and pointers (the dialogue): keys go to it, only the hit regions it allows take pointers,
+     * nothing moves, touch controls are hidden
+     */
+    this.modal = null;
   }
 
   // ---- configuration ------------------------------------------------------------------------------------
@@ -107,7 +113,10 @@ export class InputCore {
   /** id of the topmost hit region under (x, y), or null */
   regionAt(x, y) {
     const ids = [...this.regions.keys()].reverse();
-    for (const id of ids) if (inRect(this.regions.get(id).rect(), x, y)) return id;
+    for (const id of ids) {
+      if (this.modal?.allowRegion && !this.modal.allowRegion(id)) continue;   // a modal box hides the HUD's regions
+      if (inRect(this.regions.get(id).rect(), x, y)) return id;
+    }
     return null;
   }
 
@@ -127,6 +136,20 @@ export class InputCore {
     if (SIM_ACTIONS.includes(action)) this.queue.push({ action, aim });
   }
 
+  /**
+   * Open or close a modal box (null closes). Opening lets go of the joystick and throw; closing drops one-tick
+   * actions still queued, so nothing pressed inside the box fires in the world afterwards.
+   * @param {{ onKey(code: string, repeat: boolean): boolean }|null} modal
+   */
+  setModal(modal) {
+    if (modal) {
+      this.joystick = null;
+      this.useDrag = null;
+      for (const [id, p] of this.pointers) if (!p.control.startsWith('region:')) this.pointers.delete(id);
+    } else if (this.modal) this.queue = [];
+    this.modal = modal || null;
+  }
+
   /** select a hotbar slot (0-based) on the next tick, e.g. from a tapped HUD slot */
   selectHotbar(slot) {
     this.trigger(`hotbar${slot}`);
@@ -142,6 +165,7 @@ export class InputCore {
   keyDown(code, { repeat = false, ctrl = false, alt = false, meta = false } = {}) {
     this.touchVisible = false;
     if (ctrl || alt || meta) return false;   // browser and system shortcuts stay theirs
+    if (this.modal) return this.modal.onKey(code, repeat) || PREVENT_DEFAULT_CODES.has(code);
     const action = KEY_BINDINGS[code];
     if (action) {
       if (HELD_ACTIONS.includes(action)) this.heldCodes.add(code);
@@ -184,8 +208,8 @@ export class InputCore {
       if (button === 0) {
         const region = this.regionAt(x, y);
         if (region) { this.pointers.set(id, { control: `region:${region}`, t0: p.t }); return true; }
-        this.trigger('interact', { screen: { x, y } });
-      } else if (button === 2) {
+        if (!this.modal) this.trigger('interact', { screen: { x, y } });
+      } else if (button === 2 && !this.modal) {
         this.trigger('useItem', { screen: { x, y } });
       }
       return false;
@@ -195,6 +219,7 @@ export class InputCore {
     this.touchVisible = true;
     const region = this.regionAt(x, y);
     if (region) { this.pointers.set(id, { control: `region:${region}`, t0: p.t }); return true; }
+    if (this.modal) return false;
     const hit = hitTestTouch(this.layout, x, y);
     if (!hit) return false;
     if (hit === 'joystick') {
@@ -281,7 +306,7 @@ export class InputCore {
    */
   nextTick({ camera = null, player = null } = {}) {
     const input = emptyInput();
-    const held = (action) => DIRECTION_CODES[action].some((c) => this.heldCodes.has(c));
+    const held = (action) => !this.modal && DIRECTION_CODES[action].some((c) => this.heldCodes.has(c));
     let mx = (held('right') ? 1 : 0) - (held('left') ? 1 : 0);
     let my = (held('down') ? 1 : 0) - (held('up') ? 1 : 0);
     const kl = Math.sqrt(mx * mx + my * my);
@@ -293,7 +318,7 @@ export class InputCore {
     if (len > 1) { mx /= len; my /= len; }
     input.moveX = mx;
     input.moveY = my;
-    input.sprint = held('sprint') || stick.sprint;
+    input.sprint = held('sprint') || (!this.modal && stick.sprint);
     input.crouch = this.crouch;
 
     // one of each kind per tick; later presses of the same kind wait for the following ticks

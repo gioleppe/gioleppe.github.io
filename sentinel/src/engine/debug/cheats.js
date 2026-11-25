@@ -6,6 +6,8 @@
 // actions call these functions rather than touching `sim` themselves.
 import { Sim } from '../../sim/Sim.js';
 import { toggleLight, syncLight } from '../../entities/ItemUse.js';
+import { Story } from '../../sim/Dialogue.js';
+import { OUTSIDER_SITES } from '../../entities/marekHooks.js';
 
 /**
  * Move the player to a world point at once (no interpolation streak, no velocity). Inside a bounded map the
@@ -257,4 +259,36 @@ export function fillInventory(sim, id = 'bone') {
 /** place a pickup at the player's feet */
 export function spawnPickup(sim, id = 'rock', n = 1) {
   return sim.pickups.drop(id, n, sim.player.x, sim.player.y);
+}
+
+// ---- story and dialogue (step 4.5) ---------------------------------------------------------------------------
+
+/** set (on) or clear a story flag; returns whether it is now set */
+export function setStoryFlag(sim, name, on = !sim.story.flags.has(name)) {
+  if (on) sim.story.flags.add(name);
+  else sim.story.flags.delete(name);
+  return sim.story.flags.has(name);
+}
+
+/**
+ * Pretend the player inspected a Fallen Outsider site (what the interaction step's `site_inspected` event
+ * records). The fact goes straight into the story, since events pushed between steps are cleared.
+ * @returns {string|null} the site recorded
+ */
+export function fakeSiteInspected(sim, id) {
+  const site = OUTSIDER_SITES.includes(id) ? id : null;
+  if (site) sim.story.inspected.add(site);
+  return site;
+}
+
+/** close the open conversation, if any */
+export function endConversation(sim) {
+  sim.dialogue.end();
+}
+
+/** forget the whole story: flags, counters, visits, sites, recipes, journal, used choices, the conversation */
+export function resetStory(sim) {
+  sim.dialogue.end();
+  const fresh = new Story();
+  for (const k of Object.keys(fresh)) sim.story[k] = fresh[k];
 }

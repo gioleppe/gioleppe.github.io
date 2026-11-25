@@ -19,16 +19,39 @@ import { Pickups } from '../entities/Pickups.js';
 import { Interactables, updateInteraction, refreshTarget, endChannel } from '../entities/Interactable.js';
 import { selectHotbar, toggleLight, useHeld, dropHeld, syncLight, giveStartingKit } from '../entities/ItemUse.js';
 import { Projectiles, wantsThrow, throwHeld } from '../entities/Projectile.js';
+import { Dialogue, Story, compileTree } from './Dialogue.js';
+import { SafeZones } from './SafeZones.js';
+import { MarekNPC } from '../entities/MarekNPC.js';
+import { afterStep as marekAfterStep, dialogueHost } from '../entities/marekHooks.js';
 
 /** bumped whenever the snapshot shape changes; restore refuses other versions (migration arrives with saving, step 5.2) */
-export const SNAPSHOT_VERSION = 7;
+export const SNAPSHOT_VERSION = 8;
 /**
  * older versions restore can still read: 2 had no world (its clocks are rebuilt from the tick); 2 and 4 have no
  * player body (stamina and the rest start as in a new game) and no items (the fresh starting kit and the map's
  * loot); 5 is either half (body or items) of the two branches that both called themselves 5; 2 to 6 may lack
- * Resonance (it starts at rest) and the fog (it starts unexplored)
+ * Resonance (it starts at rest) and the fog (it starts unexplored); 2 to 7 have no story (a fresh one)
  */
-const READABLE_VERSIONS = new Set([2, 4, 5, 6, SNAPSHOT_VERSION]);
+const READABLE_VERSIONS = new Set([2, 4, 5, 6, 7, SNAPSHOT_VERSION]);
+
+/**
+ * Compiled dialogue trees from the loaded data files named `dialogue_<id>` (e.g. data.dialogue_marek).
+ * Compiled once per data object and cached on it (data is never state).
+ */
+export function dialogueTrees(data) {
+  const cache = dialogueTrees.cache;
+  if (cache.has(data)) return cache.get(data);
+  const trees = {};
+  for (const [name, json] of Object.entries(data ?? {})) {
+    if (name.startsWith('dialogue_') && json) {
+      const t = compileTree(json);
+      trees[t.id] = t;
+    }
+  }
+  cache.set(data, trees);
+  return trees;
+}
+dialogueTrees.cache = new WeakMap();
 
 /**
  * World rectangle in world pixels for a map that is `width` x `height` tiles, or null for the open test field.
@@ -113,7 +136,31 @@ export class Sim {
     this.buildItems();
     giveStartingKit(this.inventory, tuning.inventory.startingKit);
     this.settlePlayer('spawn');
+    this.initStory(new Story(), null, null);
     refreshTarget(this);
+  }
+
+  /**
+   * Story, dialogue, Marek and the safe zones (step 4.5); called by the constructor and by restore.
+   * @param {Story} story
+   * @param {Object|null} marekSnap
+   * @param {Object|null} zonesSnap
+   */
+  initStory(story, marekSnap, zonesSnap) {
+    /** flags, counters, sites seen, the conversation in progress (Dialogue.js) */
+    this.story = story;
+    /** the conversation engine; while `dialogue.active` the world is paused (see step) */
+    this.dialogue = new Dialogue({ trees: dialogueTrees(this.data), story, host: dialogueHost(this) });
+    /** @type {MarekNPC|null} */
+    this.marek = marekSnap ? MarekNPC.restore(marekSnap, this.tuning.marek) : MarekNPC.fromMap(this.map, this.tuning.marek);
+    this.safeZones = SafeZones.restore(zonesSnap, this.tuning.safeZones, this.map);
+  }
+
+  /** Marek's pose for this tick (he is updated even while the world is paused for a conversation) */
+  updateMarek() {
+    if (!this.marek) return;
+    const view = this.dialogue.active ? this.dialogue.current() : null;
+    this.marek.update(this.tuning.marek, { hour: this.world.timeOfDay, talking: !!view, speaking: view?.speaker === 'marek', player: this.player });
   }
 
   /**
@@ -188,6 +235,15 @@ export class Sim {
   step(input) {
     this.events = [];
     const inp = sanitizeInput(input);
+    if (this.dialogue.active) {
+      // A conversation pauses everything: tide, day, weather, player, (later) scouts. The tension of the game is
+      // stealth, not reading speed. Only the conversation advances (hotbar n = choose n, interact = advance),
+      // and the tick counter, so replays and hashes stay one entry per input.
+      this.dialogue.step(inp);
+      this.updateMarek();
+      this.tick++;
+      return;
+    }
     this.world.step(this.rng, this.events);   // before the entities, so they see this tick's tide and weather
     const env = this.moveEnv;
     if (env) {
@@ -209,6 +265,11 @@ export class Sim {
     this.resonance.step(this, this.over ? [] : this.events);
     if (!this.over) this.fog?.step(this, this.events);   // after Resonance: Shifting Paths reads this tick's tier
     this.collectEvents();
+    // story systems run last, so they see every event of this tick (site_inspected, ...)
+    this.marek?.blockPlayer(this.player, this.collider);
+    this.safeZones.update(this.player, this.events);
+    marekAfterStep(this);
+    this.updateMarek();
     this.checkOver();
     this.tick++;
   }
@@ -282,6 +343,9 @@ export class Sim {
       pickups: this.pickups.snapshot(),
       interaction: this.interactables.snapshot(),
       projectiles: this.projectiles.snapshot(),
+      story: this.story.snapshot(),
+      marek: this.marek ? this.marek.snapshot() : null,
+      safeZones: this.safeZones.snapshot(),
       // the map itself is data, not state: only which map this was, so a save from another map is refused
       map: this.map ? { version: this.map.version, hash: this.map.hash } : null,
       // map props are rebuilt from the map; only the test field's (placed by the rng) are stored
@@ -317,6 +381,9 @@ export class Sim {
       sim.interactables.restoreState(snap.interaction);
       if (snap.projectiles) sim.projectiles = Projectiles.restore(snap.projectiles);
     }
+    sim.initStory(Story.restore(snap.story), snap.marek ?? null, snap.safeZones ?? null);
+    // a conversation saved at a node the dialogue data no longer has is closed, not left hanging
+    if (sim.story.conversation && !sim.dialogue.node()) sim.story.conversation = null;
     sim.events = [];
     if (sim.collider) {
       // a restored player inside a wall is moved out; one that is free keeps its mode (hysteresis state) as saved
