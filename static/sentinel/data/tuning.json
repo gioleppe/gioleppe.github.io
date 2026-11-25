@@ -393,5 +393,34 @@
     "zoomLevels": [1, 3],
     "panSpeed": 220,
     "margin": 10
+  },
+  "story": {
+    "$comment": "src/entities/storyInteractions.js (step 4.7). repairSeconds: patching the dinghy (a channel: moving or pressing again stops it, nothing spent). prySeconds: prying the wreck's hatch with the crowbar, which makes a noise of pryNoiseRadius world px every tick (louder than a sprint, 180, and a thrown rock, 220). flareGunRounds: flares loaded in the wreck's gun; flarePouchRounds: the Cartographer's pouch. signalRadius: world px from the signal point within which the flare gun may be fired (anywhere else it refuses, so it is never wasted).",
+    "repairSeconds": 4,
+    "prySeconds": 3,
+    "pryNoiseRadius": 300,
+    "flareGunRounds": 1,
+    "flarePouchRounds": 3,
+    "signalRadius": 120
+  },
+  "lore": {
+    "$comment": "src/sim/Lore.js (step 4.6). visitRadius: world px; a landmark already discovered from a found map gets its discovery note once the player comes this close.",
+    "visitRadius": 160
+  },
+  "journal": {
+    "$comment": "src/ui/JournalUI.js (presentation, step 4.6). Logical pixels unless named Css (CSS pixels, converted with the viewport scale). fontPx/lineHeight: body text; titlePx: entry titles; tabHeight: the tab row on desktop, touchTabCss the least it is on a touch screen; rowHeight / touchRowCss: list rows; listWidth: fraction of the content for the Notes list (min..max px); wheelStep / keyStep: px scrolled per wheel notch / key press; mapKeyPan: px per arrow press on the Map tab.",
+    "margin": 6,
+    "fontPx": 8,
+    "lineHeight": 10,
+    "titlePx": 9,
+    "tabHeight": 18,
+    "touchTabCss": 40,
+    "rowHeight": 11,
+    "touchRowCss": 30,
+    "listWidth": { "fraction": 0.34, "min": 112, "max": 176 },
+    "padding": 6,
+    "wheelStep": 24,
+    "keyStep": 20,
+    "mapKeyPan": 24
   }
 }

@@ -1,0 +1,172 @@
+{
+  "$comment": "Journal entries (spec §7.2, step 4.6), checked by tools/lib/validate-lore.mjs and read by src/sim/Lore.js. category: note | site | recipe | objective | marek (objective entries are the survival hints listed on the Objectives tab, not in Notes). unlockedBy: one string or a list (any of): start (the first step of a new game) | dialogue (added by a dialogue `journal` effect) | site:<container or landmark id> (inspected) | discover:<landmark id> (first seen) | event:<type> or event:<type>:<id> (a simulation event) | recipe:<id> (known) | flag:<story flag> | entry:<entry id> (another entry unlocked). Optional: reveals (landmark ids put on the player's map when the entry unlocks), teaches (a recipe learned when it unlocks). Text: \\n starts a paragraph. The Sentinelese are never quoted, never explained, never made monsters: it is their home.",
+  "entries": [
+    {
+      "id": "washed_up", "category": "note", "unlockedBy": "start",
+      "title": "Washed up",
+      "text": "The storm put me on the reef before dawn and the surf did the rest. The dinghy is holed but whole. I have my flashlight, my clothes, salt in everything.\nI know whose island this is. Everyone does. I did not mean to land here, and that will not matter to anyone watching from the trees."
+    },
+
+    {
+      "id": "missionary_scene", "category": "site", "unlockedBy": "site:missionary_camp",
+      "title": "The Missionary's camp",
+      "text": "A red kayak lies overturned above the tide line, split along the keel. Two arrows stand in the trunk of the palm over it, high up, fletched with something pale. They were never meant to hit anyone.\nUnder the kayak: a coil of orange cord, a folded tarp, and a plastic bag holding a swollen notebook. What is left of him lies further up, under the palms. I leave him as he is."
+    },
+    {
+      "id": "missionary_notebook", "category": "note", "unlockedBy": "site:missionary_camp",
+      "title": "The Missionary's notebook",
+      "text": "3 Mar. Landed on the south beach at first light. I have rehearsed what I will say a hundred times, knowing they will not understand a word. That is not the point. The point is to come in peace and be seen to.\n4 Mar. They came out of the trees shouting, and two arrows went into the palm above me. Above me, not at me. I paddled out, and I came back. A man who keeps coming back, unarmed, must in the end be let in.\n6 Mar. The man in the mangroves says the arrows mean go back. He says it kindly. He does not understand what I am here for.\n9 Mar. Sat on the sand all morning with my hands open. Nobody came, though I think they watched. I am less sure than I was of what I have to give them.\n11 Mar. If this book is found, do not blame them. I came uninvited. They have told me as plainly as anyone can that this is their home."
+    },
+
+    {
+      "id": "sailor_scene", "category": "site", "unlockedBy": "site:sailor_remains",
+      "title": "The Freighter Sailor",
+      "text": "Where the mangroves give way to forest, the roots have grown through an orange life vest, the old kind with the stiff collar. The bones inside it are long since clean.\nA crowbar lies across his knees, as if he had been holding it when he sat down for the last time. Beside him, a dented tin flask with words scratched into its side, and a folded page sealed in plastic."
+    },
+    {
+      "id": "sailor_flask", "category": "note", "unlockedBy": "site:sailor_remains",
+      "title": "Scratched on the flask",
+      "text": "MV CELANDINE. ASHORE FOR WATER. BOAT DID NOT COME BACK FOR ME.\nAFT CABIN HATCH JAMMED WHEN SHE HEELED. BAR OPENS IT.\nBATTERY + FLARE LOCKER BELOW. LOW WATER ONLY.\nTHEY WATCH THE REEF."
+    },
+    {
+      "id": "sailor_log", "category": "note", "unlockedBy": "site:sailor_remains",
+      "title": "A page of the Celandine's log",
+      "text": "0340. Grounded on the reef in heavy weather. Heavy list to port. No injuries. Master orders all hands to remain aboard pending rescue.\nRadio room flooded to the sill; main set dead. Spare battery and pyrotechnics locker are in the aft cabin. Cabin hatch jammed by the list. Bosun to work it free with the bar when the sea allows.\nWater ration halved. Shore party to look for a spring at low water."
+    },
+
+    {
+      "id": "cartographer_scene", "category": "site", "unlockedBy": "site:cartographer_camp",
+      "title": "The Rogue Cartographer's camp",
+      "text": "A dome tent of the nineties kind, green and grey, folded in on itself under a fallen branch. A satellite phone with a stub aerial, screen black, battery swollen. Survey pegs in a neat row. A pouch of signal flares wrapped in waxed cloth, still dry.\nBeyond the camp, on the face of a black stone, a map, nailed at the corners. Faded, but careful."
+    },
+    {
+      "id": "cartographer_map", "category": "site", "unlockedBy": "site:cartographer_camp",
+      "title": "The map on the stone",
+      "reveals": ["reef_start", "shipwreck_deck", "cabin_hatch", "signal_peak", "peak_pool", "carto_spring", "ne_spring", "north_spring", "peak_spring", "meridian_spring", "marek_shack", "mangrove_spring", "dinghy_launch", "monolith_ring"],
+      "text": "His map is better than anything I could draw. The reef and the wreck, with tide times pencilled beside them. A high point in the north-west, marked SIGNAL? Springs, ringed in blue. A gap in the southern reef: BOAT PASSAGE, HIGH WATER ONLY. In the western mangroves, a small square and a question: someone lives here?\nAcross the middle he drew nothing at all, only the stones, and over them, in a hand that is not quite steady: DO NOT TRUST THE PATH BEHIND YOU.\nI copy what I can into my own map."
+    },
+    {
+      "id": "cartographer_notes", "category": "note", "unlockedBy": "site:cartographer_camp", "teaches": "driftwood_totem",
+      "title": "The Cartographer's field book",
+      "text": "Day 1. Phone dead on arrival. Moisture? Compass fine. Base camp in the clearing. Begin the traverse tomorrow.\nDay 2. Compass useless within two kilometres of the centre. Not magnetic deviation: it does not point anywhere, it wanders. Reverted to pacing and sun sights.\nDay 5. Paths re-walked today do not match yesterday's. Error in my pacing? Checked twice. They do not match.\nDay 6. The islanders set posts on their beaches. Driftwood, lashed with cord, a shell or a bone at the crown. Near them the hum is lower. Made one of my own and carried it. It works. I do not know why it works.\nDay 9. The hum is in the instruments and in me. I have named the centre the Quiet Meridian. It should be measured. It must be measured.\nDay ? the map is on the stone where it will not move. the paths move. the stone does not. going in for the last bearing"
+    },
+
+    {
+      "id": "marek_warnings", "category": "marek", "unlockedBy": "dialogue",
+      "title": "What Marek told me",
+      "text": "Two things to remember, he said.\nThe reef in the north-east can be walked to the wreck at low water. At high water it takes you, and gives nothing back.\nAnd metal: anything that hums, or clicks, or shines. Near their paths, put it away. He does not know whether it is the people or the island that hates it. He stopped trying to tell."
+    },
+    {
+      "id": "marek_crowbar", "category": "marek", "unlockedBy": "dialogue",
+      "title": "The sailor's bar",
+      "text": "The wreck's cabin is sealed, rusted shut, and the hatch is heavy.\nThe sailor from the freighter carried a pry bar for the hatches. Always, even asleep. Marek says he lies in the roots where the mangroves meet the forest, south-east of the shack."
+    },
+    {
+      "id": "recipe_driftwood_totem", "category": "recipe", "unlockedBy": ["dialogue", "recipe:driftwood_totem"],
+      "title": "Driftwood totem",
+      "text": "Driftwood from the shore, a length of cord, and a bone or a shell, lashed in a cross and carried.\nThe islanders set posts like this at the borders of their beaches. Near them, the hum is lower. Not gone. Lower."
+    },
+    {
+      "id": "recipe_patched_dinghy", "category": "recipe", "unlockedBy": "recipe:patched_dinghy",
+      "title": "Patching the dinghy",
+      "text": "The tarp over the split, folded twice and lashed around the hull with cord; a length of driftwood braced across inside to hold the shape.\nIt will not be pretty. It only has to float as far as the passage, and a long way past it."
+    },
+
+    {
+      "id": "dinghy_plan", "category": "note", "unlockedBy": "event:dinghy_inspected",
+      "title": "The dinghy",
+      "text": "Grey rubber, one chamber split along a seam, the floor still sound. With a tarp across the split, cord to lash it and a length of wood to hold the shape, it would float.\nIt would have to wait for high water to get over the reef."
+    },
+    {
+      "id": "hatch_plan", "category": "note", "unlockedBy": "event:hatch_inspected",
+      "title": "The cabin hatch",
+      "text": "A steel hatch on the wreck's after deck, rusted into its frame. I put my whole weight on the wheel and it did not move at all. It will need a bar, and low water to reach it."
+    },
+    {
+      "id": "hatch_opened", "category": "note", "unlockedBy": "event:hatch_opened",
+      "title": "Inside the Celandine",
+      "text": "The bar went in under the lip and the hatch gave with a shriek I felt in my teeth. Anyone within a long way heard it too.\nBelow: a small cabin, half dark. A locker with an orange flare pistol, one cartridge already in it. A marine battery in a sealed case, its switch left on all these years. Cord, and a tarp still in its wrapping. Someone packed this cabin for exactly this. Nobody came to use it."
+    },
+    {
+      "id": "signal_point_note", "category": "note", "unlockedBy": "event:signal_point_inspected",
+      "title": "The radio rock",
+      "text": "A slab of rock at the top of the ridge, flat as a table. Someone has been up here before me: a rusted bracket bolted into the stone, a few strands of old wire.\nFrom here a flare would be seen from the sea. From everywhere on the island too."
+    },
+
+    {
+      "id": "found_marek_shack", "category": "note", "unlockedBy": "discover:marek_shack",
+      "title": "A shack in the mud",
+      "text": "A shack on stilts in the mangroves, roofed with palm and tin gone brown. Smoke, and a net drying. Someone lives here, and has for a long time."
+    },
+    {
+      "id": "found_reef_start", "category": "note", "unlockedBy": "discover:reef_start",
+      "title": "The reef",
+      "text": "From here the reef runs out north-east towards the wreck. At low water it is a road of rock and pools. I watched the sea come back over it in the time it took to drink. Not a place to be caught."
+    },
+    {
+      "id": "found_shipwreck", "category": "note", "unlockedBy": "discover:shipwreck_deck",
+      "title": "The wreck",
+      "text": "A freighter on her side on the reef, rust bleeding down the hull. The name is still legible on the bow: CELANDINE. The deck stays dry above the tide. Somewhere below it is a cabin."
+    },
+    {
+      "id": "found_monolith_ring", "category": "note", "unlockedBy": "discover:monolith_ring",
+      "title": "The stones",
+      "text": "Black stones standing in a ring, taller than a man and smooth, as if worked. No birds. The compass needle will not settle. I could feel the hum in my teeth before I saw them."
+    },
+    {
+      "id": "found_signal_peak", "category": "note", "unlockedBy": "discover:signal_peak",
+      "title": "Signal Peak",
+      "text": "The top of the ridge. Bare rock, and the whole sea to the north and west. Anyone out there would see a light from here. Anyone on the island would see it too."
+    },
+    {
+      "id": "found_dinghy_launch", "category": "note", "unlockedBy": "discover:dinghy_launch",
+      "title": "The passage",
+      "text": "A gap in the outer reef, darker water between the breakers. At high tide a small boat could get through here. At low tide it would tear its bottom out."
+    },
+
+    {
+      "id": "scrap_fishers_camp", "category": "site", "unlockedBy": "site:fishers_camp",
+      "title": "Fishers' camp",
+      "text": "Fire-blackened stones, fish bones, a rack of split cane for drying. Recent. Whoever fishes here comes and goes with the tide, and I am standing in their place. Among the stones, a sealed field dressing the sea brought from somewhere else. I take what was washed up and leave the rack alone."
+    },
+    {
+      "id": "scrap_collapsed_hut", "category": "site", "unlockedBy": "site:collapsed_hut",
+      "title": "Collapsed hut",
+      "text": "A lean-to of poles and thatch, fallen in on itself years ago. Inside, a canvas satchel rotted through and a first-aid tin with a ship's stamp. Not theirs. Somebody else waited here once."
+    },
+    {
+      "id": "scrap_old_shrine", "category": "site", "unlockedBy": "site:old_shrine", "teaches": "driftwood_totem",
+      "title": "Old shrine",
+      "text": "Stones set in a low ring, shells laid along the top, and at the centre a post of driftwood lashed with cord, a shell bound at its crown. The air is quieter here.\nI do not touch the post, but I look at it long enough to see how it is made. A few shells have rolled out of the ring into the grass."
+    },
+    {
+      "id": "scrap_hunters_blind", "category": "site", "unlockedBy": "site:hunters_blind",
+      "title": "Hunters' blind",
+      "text": "A screen of woven fronds facing a game trail, old and still sound. Someone sits here for hours without moving. I should learn to do the same."
+    },
+    {
+      "id": "scrap_bone_pit", "category": "site", "unlockedBy": "site:bone_pit",
+      "title": "Bone pit",
+      "text": "A hollow full of pig bones, old kills cleaned by ants and rain. Not a grave. A larder's leftovers, and a sign of how long people have lived well here."
+    },
+    {
+      "id": "scrap_stone_cairn", "category": "site", "unlockedBy": "site:stone_cairn",
+      "title": "Stone cairn",
+      "text": "A heap of stones taller than me, built with care and old enough for moss. A marker, I think, though I cannot say of what. The trail bends round it and never crosses."
+    },
+    {
+      "id": "scrap_old_lookout", "category": "site", "unlockedBy": "site:old_lookout",
+      "title": "Old lookout",
+      "text": "A shelf of rock above the east beach, worn smooth where people have sat. From here you see every boat that could come. They are still watching for one."
+    },
+
+    { "id": "hint_tide", "category": "objective", "unlockedBy": ["entry:marek_warnings", "discover:reef_start"], "title": "The tide", "text": "Low water opens the reef to the wreck. Be off it before the turn." },
+    { "id": "hint_metal", "category": "objective", "unlockedBy": "entry:marek_warnings", "title": "Metal", "text": "Near their paths, keep metal stowed and switch off anything that hums." },
+    { "id": "hint_arrow", "category": "objective", "unlockedBy": "site:missionary_camp", "title": "Warnings", "text": "An arrow in the sand at my feet means go back. So I go back." },
+    { "id": "hint_shack", "category": "objective", "unlockedBy": "discover:marek_shack", "title": "The mud", "text": "They do not come into the mud round Marek's shack. There, I can sit." },
+    { "id": "hint_totem", "category": "objective", "unlockedBy": "recipe:driftwood_totem", "title": "The totem", "text": "A driftwood totem, carried, quiets the hum. It does not silence it." },
+    { "id": "hint_battery", "category": "objective", "unlockedBy": "event:battery_humming", "title": "The battery", "text": "The radio battery hums while it is switched on. Off, unless I need it." },
+    { "id": "hint_flare", "category": "objective", "unlockedBy": "flag:got_flare_gun", "title": "The flare", "text": "The flare goes up from the peak and nowhere else, where a ship could see it." },
+    { "id": "hint_high_water", "category": "objective", "unlockedBy": ["flag:dinghy_repaired", "discover:dinghy_launch"], "title": "High water", "text": "A boat goes out on the high water, over the outer reef, never through it." }
+  ]
+}

@@ -23,16 +23,21 @@ import { Dialogue, Story, compileTree } from './Dialogue.js';
 import { SafeZones } from './SafeZones.js';
 import { MarekNPC } from '../entities/MarekNPC.js';
 import { afterStep as marekAfterStep, dialogueHost } from '../entities/marekHooks.js';
+import { loreBook, loreAfterStep, applyJournalCommands, unlockStartEntries } from './Lore.js';
+import { recipeBook, craft, craftFromHand } from '../entities/Crafting.js';
+import { useFlareGun, storyItemsAfterStep } from '../entities/storyInteractions.js';   // also registers the dinghy, hatch and signal point
 
 /** bumped whenever the snapshot shape changes; restore refuses other versions (migration arrives with saving, step 5.2) */
-export const SNAPSHOT_VERSION = 8;
+export const SNAPSHOT_VERSION = 9;
 /**
  * older versions restore can still read: 2 had no world (its clocks are rebuilt from the tick); 2 and 4 have no
  * player body (stamina and the rest start as in a new game) and no items (the fresh starting kit and the map's
  * loot); 5 is either half (body or items) of the two branches that both called themselves 5; 2 to 6 may lack
- * Resonance (it starts at rest) and the fog (it starts unexplored); 2 to 7 have no story (a fresh one)
+ * Resonance (it starts at rest) and the fog (it starts unexplored); 2 to 7 have no story (a fresh one); 8 has no
+ * read marks and no lore unlocked (the journal holds only what the dialogue added; `start` entries unlock on the
+ * first step)
  */
-const READABLE_VERSIONS = new Set([2, 4, 5, 6, 7, SNAPSHOT_VERSION]);
+const READABLE_VERSIONS = new Set([2, 4, 5, 6, 7, 8, SNAPSHOT_VERSION]);
 
 /**
  * Compiled dialogue trees from the loaded data files named `dialogue_<id>` (e.g. data.dialogue_marek).
@@ -77,6 +82,10 @@ export class Sim {
     this.map = map == null ? null : map instanceof IslandMap ? map : IslandMap.fromJSON(map, tuning);
     this.tuning = tuning;
     this.data = data;
+    /** the Journal's entries (data.lore_entries compiled, Lore.js); data, not state */
+    this.lore = loreBook(data);
+    /** the recipes (data.recipes compiled, Crafting.js); data, not state */
+    this.recipeBook = recipeBook(data);
     this.seed = seed;
     /** ticks simulated so far */
     this.tick = 0;
@@ -137,6 +146,7 @@ export class Sim {
     giveStartingKit(this.inventory, tuning.inventory.startingKit);
     this.settlePlayer('spawn');
     this.initStory(new Story(), null, null);
+    unlockStartEntries(this);
     refreshTarget(this);
   }
 
@@ -269,6 +279,8 @@ export class Sim {
     this.marek?.blockPlayer(this.player, this.collider);
     this.safeZones.update(this.player, this.events);
     marekAfterStep(this);
+    storyItemsAfterStep(this);   // the flare rounds of the wreck's gun and the Cartographer's pouch
+    loreAfterStep(this);   // after Marek's hooks: their flags can unlock entries
     this.updateMarek();
     this.checkOver();
     this.tick++;
@@ -280,15 +292,18 @@ export class Sim {
    * in the air still lands.
    */
   stepItems(inp) {
+    const crafts = applyJournalCommands(this, inp.journal);
     if (this.player.dead) {
       if (this.interactables.channel) endChannel(this, 'dead');
     } else {
       selectHotbar(this, inp.hotbar);
       if (inp.toggleLight) toggleLight(this);
+      for (const id of crafts) craft(this, id, 'journal');   // Make on the Journal's Recipes tab
       updateInteraction(this, inp);
       if (inp.useItem) {
         if (wantsThrow(this, inp)) throwHeld(this, inp);
-        else useHeld(this);
+        else if (this.inventory.heldId === 'flare_gun') useFlareGun(this);   // never wasted away from the peak
+        else if (!craftFromHand(this)) useHeld(this);   // an ingredient in hand makes its recipe
       }
       if (inp.drop) dropHeld(this);
     }
