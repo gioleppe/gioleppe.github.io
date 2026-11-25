@@ -25,16 +25,25 @@ export function hasItem(sim, id) {
   return !!sim.inventory?.has?.(id);
 }
 
+/**
+ * Scouts are warning or hunting the player (sim.threat, steps 4.1-4.3): no conversation then, since a conversation
+ * pauses the world and would otherwise be a pause button in a chase.
+ */
+export function huntedNow(sim) {
+  const level = sim.threat?.level;
+  return level === 'warn' || level === 'chase';
+}
+
 registerInteraction('talk', {
   icon: 'speech',
-  // only Marek talks (the Sentinelese never speak); not while a conversation is already open
-  canInteract: (sim, t) => !!sim.marek && t.id === sim.marek.id && !sim.dialogue?.active,
+  // only Marek talks (the Sentinelese never speak); not while a conversation is already open, nor while hunted
+  canInteract: (sim, t) => !!sim.marek && t.id === sim.marek.id && !sim.dialogue?.active && !huntedNow(sim),
   interact: (sim) => { talkToMarek(sim); },
 });
 
-/** start the conversation with Marek; false if there is no Marek, no dialogue data, or one is already open */
+/** start the conversation with Marek; false if there is no Marek, no dialogue data, one is already open, or scouts hunt the player */
 export function talkToMarek(sim) {
-  if (!sim.marek || !sim.dialogue || sim.dialogue.active) return false;
+  if (!sim.marek || !sim.dialogue || sim.dialogue.active || huntedNow(sim)) return false;
   return sim.dialogue.start('marek');
 }
 

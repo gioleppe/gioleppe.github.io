@@ -26,18 +26,20 @@ import { afterStep as marekAfterStep, dialogueHost } from '../entities/marekHook
 import { loreBook, loreAfterStep, applyJournalCommands, unlockStartEntries } from './Lore.js';
 import { recipeBook, craft, craftFromHand } from '../entities/Crafting.js';
 import { useFlareGun, storyItemsAfterStep } from '../entities/storyInteractions.js';   // also registers the dinghy, hatch and signal point
+import { Scouts } from '../entities/SentineleseAI.js';
 
 /** bumped whenever the snapshot shape changes; restore refuses other versions (migration arrives with saving, step 5.2) */
-export const SNAPSHOT_VERSION = 9;
+export const SNAPSHOT_VERSION = 10;
 /**
  * older versions restore can still read: 2 had no world (its clocks are rebuilt from the tick); 2 and 4 have no
  * player body (stamina and the rest start as in a new game) and no items (the fresh starting kit and the map's
  * loot); 5 is either half (body or items) of the two branches that both called themselves 5; 2 to 6 may lack
  * Resonance (it starts at rest) and the fog (it starts unexplored); 2 to 7 have no story (a fresh one); 8 has no
  * read marks and no lore unlocked (the journal holds only what the dialogue added; `start` entries unlock on the
- * first step)
+ * first step); 2 to 9 have no scouts (they are put on their routes where a new game's patrols would be at the
+ * snapshot's tick)
  */
-const READABLE_VERSIONS = new Set([2, 4, 5, 6, 7, 8, SNAPSHOT_VERSION]);
+const READABLE_VERSIONS = new Set([2, 4, 5, 6, 7, 8, 9, SNAPSHOT_VERSION]);
 
 /**
  * Compiled dialogue trees from the loaded data files named `dialogue_<id>` (e.g. data.dialogue_marek).
@@ -148,6 +150,21 @@ export class Sim {
     this.initStory(new Story(), null, null);
     unlockStartEntries(this);
     refreshTarget(this);
+    this.buildScouts();
+  }
+
+  /**
+   * The Sentinelese (steps 4.1-4.3): `scouts` on their routes, and `threat`, the summary of what the scouts near
+   * the player are doing ({ level: 'none'|'investigate'|'search'|'warn'|'chase', nearest, nearestId, count }),
+   * derived every tick for the HUD and the music, never saved.
+   */
+  buildScouts() {
+    /** the scouts (SentineleseAI.js) */
+    this.scouts = new Scouts(this);
+    this.scouts.spawnFromMap(this);
+    /** @type {{ level: string, nearest: number|null, nearestId: string|null, count: number }} */
+    this.threat = null;
+    this.scouts.summarize(this);
   }
 
   /**
@@ -246,7 +263,7 @@ export class Sim {
     this.events = [];
     const inp = sanitizeInput(input);
     if (this.dialogue.active) {
-      // A conversation pauses everything: tide, day, weather, player, (later) scouts. The tension of the game is
+      // A conversation pauses everything: tide, day, weather, player, scouts. The tension of the game is
       // stealth, not reading speed. Only the conversation advances (hotbar n = choose n, interact = advance),
       // and the tick counter, so replays and hashes stay one entry per input.
       this.dialogue.step(inp);
@@ -270,6 +287,10 @@ export class Sim {
     pe.footprints = this.footprints;
     this.player.update(inp, pe);
     this.stepItems(inp);
+    // the scouts after the player, the items and the projectiles (they see this tick's world, and an arrow hit
+    // this tick is in this tick's events and death check); before Resonance, so they read the tier of the tick
+    // before, as everything else that reads it does. After the run is over they stand down.
+    this.scouts.update(this);
     // after the player and the items: this tick's position, light and power. Once the run is over Resonance
     // still settles (the world goes on) but announces nothing, and the fog no longer follows the body
     this.resonance.step(this, this.over ? [] : this.events);
@@ -361,6 +382,7 @@ export class Sim {
       story: this.story.snapshot(),
       marek: this.marek ? this.marek.snapshot() : null,
       safeZones: this.safeZones.snapshot(),
+      scouts: this.scouts.snapshot(),
       // the map itself is data, not state: only which map this was, so a save from another map is refused
       map: this.map ? { version: this.map.version, hash: this.map.hash } : null,
       // map props are rebuilt from the map; only the test field's (placed by the rng) are stored
@@ -399,6 +421,8 @@ export class Sim {
     sim.initStory(Story.restore(snap.story), snap.marek ?? null, snap.safeZones ?? null);
     // a conversation saved at a node the dialogue data no longer has is closed, not left hanging
     if (sim.story.conversation && !sim.dialogue.node()) sim.story.conversation = null;
+    if (snap.scouts) sim.scouts = Scouts.restore(snap.scouts, sim);
+    else sim.scouts.advanceTo(sim, snap.tick);   // an older save: the patrols where a new game's would be now
     sim.events = [];
     if (sim.collider) {
       // a restored player inside a wall is moved out; one that is free keeps its mode (hysteresis state) as saved
@@ -407,6 +431,7 @@ export class Sim {
     }
     syncLight(sim);
     refreshTarget(sim);
+    sim.scouts.summarize(sim);
     return sim;
   }
 }

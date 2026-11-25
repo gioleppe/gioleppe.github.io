@@ -70,6 +70,7 @@ export function paintProjectile(ctx, item, x, y, height) {
  */
 export function collectItemViews(sim, view, out, sprites, scratch = [], alpha = 1) {
   for (const pr of sim.projectiles?.list ?? []) {
+    if (pr.kind !== 'throw') continue;   // arrows are drawn by ScoutRenderer.js
     const x = pr.prevX + (pr.x - pr.prevX) * alpha;
     const y = pr.prevY + (pr.y - pr.prevY) * alpha;
     const f = Math.max(0, Math.min(1, (pr.t - 1 + alpha) / pr.ticks));

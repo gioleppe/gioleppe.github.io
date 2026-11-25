@@ -18,6 +18,7 @@ import './ui/storyNotices.js';   // after the item HUD's notices: journal, craft
 import { JournalUI } from './ui/JournalUI.js';
 import { recipeViews } from './entities/Crafting.js';
 import { ImpactEffects, drawAimMarker, throwPreview } from './engine/ItemRenderer.js';
+import { ScoutOverlays } from './engine/ScoutRenderer.js';
 import { DialogueUI } from './ui/DialogueUI.js';
 
 const SEED = 1;
@@ -40,6 +41,8 @@ let loadError = '';
 const assets = new AssetManager();
 setActiveAssets(assets);   // the HUD, touch controls, map and emote bubbles draw from it
 const renderer = new Renderer({ sprites: assets, resonanceFx: new ResonanceFx() });
+// the scouts' bubbles and the silhouettes of hidden, watchful scouts, after the lighting pass (ScoutRenderer.js)
+ScoutOverlays.install(renderer);
 let camera = new Camera();
 const DEBUG = new URLSearchParams(location.search).has('debug');
 /** debug mode (src/engine/debug/, loaded only with ?debug): loop, input and drawing hooks; null otherwise */
@@ -181,6 +184,7 @@ async function loadGame() {
       debug.addPlaces((s) => (s.map ? s.map.entitiesOfType('landmark').map((l) => ({ id: l.id, label: l.name, x: l.x, y: l.y })) : []));
       import('./engine/debug/itemDebug.js').then((i) => i.registerItemDebug(debug)).catch((e) => console.error('item debug failed', e));
       import('./engine/debug/artDebug.js').then((a) => a.registerArtDebug(debug)).catch((e) => console.error('art debug failed', e));
+      import('./engine/debug/aiDebug.js').then((a) => a.registerAiDebug(debug)).catch((e) => console.error('ai debug failed', e));
       return import('./engine/debug/collisionLayers.js').then((c) => c.collisionLayers().forEach((l) => debug.addLayer(l)));
     }).catch((e) => console.error('debug mode failed to start', e));
   }
