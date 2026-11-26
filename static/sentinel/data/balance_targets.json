@@ -1,0 +1,12 @@
+{
+  "$comment": "Balance targets (TASKS.md V5) compared by tools/balance.mjs, and the playthrough budget (tools/playthrough.mjs). Tools only: the game never reads this file. Every target is provisional: starting values from TASKS.md, to be corrected against hand play in step 5.7.",
+  "budget": { "maxMinutes": 120, "maxDeaths": 6, "$comment": "a playthrough counts as completed when the ending fires within this many simulated minutes over all attempts and with at most this many deaths" },
+  "targets": [
+    { "id": "careful_completion", "metric": "completion.careful", "op": ">=", "value": 0.8, "tolerance": 0.05, "provisional": true, "note": "careful bot completes 80% or more (provisional, TASKS.md V5)" },
+    { "id": "average_completion", "metric": "completion.average", "op": "between", "value": [0.4, 0.6], "tolerance": 0.05, "provisional": true, "note": "average bot completes 40 to 60% (provisional)" },
+    { "id": "reckless_completion", "metric": "completion.reckless", "op": "<", "value": 0.15, "tolerance": 0.05, "provisional": true, "note": "reckless bot completes under 15% (provisional)" },
+    { "id": "first_ending_minutes", "metric": "minutes.median", "op": "between", "value": [25, 40], "tolerance": 3, "provisional": true, "note": "a first ending takes 25 to 40 minutes (median simulated minutes of completed runs, all profiles; provisional)" },
+    { "id": "region_death_share", "metric": "deaths.maxRegionShare", "op": "<=", "value": 0.4, "tolerance": 0.05, "provisional": true, "note": "no region causes more than 40% of all deaths (provisional)" },
+    { "id": "thirst_deaths", "metric": "deaths.thirstDrinkers", "op": "<=", "value": 0, "tolerance": 0, "provisional": true, "note": "no death by thirst for a bot that drinks when below 50 (provisional)" }
+  ]
+}
