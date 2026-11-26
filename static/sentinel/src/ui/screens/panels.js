@@ -8,6 +8,9 @@
 import { Panel } from './Panel.js';
 import { SCREEN_COLORS as C } from './theme.js';
 import { RESONANCE_STEPS, OPACITY_RANGE, stepList, stepValue } from './gameSettings.js';
+import { QUALITY_SETTINGS } from '../../engine/Quality.js';
+
+const QUALITY_LABELS = Object.freeze({ auto: 'Auto', high: 'High', low: 'Low' });
 import { slotLine, agoText, playTimeText } from './saveText.js';
 
 const pct = (v) => `${Math.round(v * 100)}%`;
@@ -59,6 +62,14 @@ export function settingsPanel(ui) {
       id: 'resonance', label: 'Resonance effects', kind: 'slider',
       value: () => { const v = Number(prefs.get('resonanceFx')); return v <= 0 ? 'Off' : pct(v); },
       onAdjust: (d) => prefs.set('resonanceFx', stepList(RESONANCE_STEPS, Number(prefs.get('resonanceFx')), d)),
+    },
+    {
+      id: 'quality', label: 'Graphics', kind: 'slider',
+      value: () => QUALITY_LABELS[prefs.get('quality')] ?? 'Auto',
+      onAdjust: (d) => {
+        const i = QUALITY_SETTINGS.indexOf(prefs.get('quality'));
+        prefs.set('quality', QUALITY_SETTINGS[Math.max(0, Math.min(QUALITY_SETTINGS.length - 1, (i < 0 ? 0 : i) + d))]);
+      },
     },
     toggle('shake', 'Screen shake', 'screenShake'),
     toggle('hints', 'Hints', 'hints'),

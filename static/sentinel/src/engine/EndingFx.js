@@ -21,12 +21,23 @@ export function flareState(sim, alpha = 0) {
   if (!sp) return null;
   const secs = sim.tuning.endings.signal.flareSeconds;
   const t = (sim.tick - s.lastFiredTick + alpha) / TICK_HZ;
-  if (t < 0 || t > secs) return null;
-  const k = t / secs;
-  // up fast, then hanging and drifting seaward while it burns down
-  const rise = Math.min(1, t / 1.2);
-  return { x: sp.x - 40 * k, y: sp.y - 30 - 150 * rise + 30 * k, k, intensity: 1 - k * k };
+  if (t < 0 || t > secs + FLARE.glowAfter) return null;
+  const k = Math.min(1, t / secs);
+  // step 5.6: a slower climb that stays on screen (the player stands at the signal point, the camera on them),
+  // then a hanging burn with a slow fall and a seaward drift; after it burns out, the amber glow over the ridge
+  // fades for a few seconds (burning false: no spark, only the light)
+  const rise = 1 - (1 - Math.min(1, t / FLARE.climbSeconds)) ** 2;
+  const fall = Math.max(0, t - FLARE.climbSeconds) * FLARE.fallPerSecond;
+  const burning = t <= secs;
+  const after = burning ? 1 : 1 - (t - secs) / FLARE.glowAfter;
+  return {
+    x: sp.x - 70 * k, y: sp.y - 24 - FLARE.apex * rise + fall, k, burning,
+    intensity: burning ? 1 - 0.6 * k * k : 0.4 * after,
+  };
 }
+
+/** the flare's picture: climb time and height above the signal point (px), fall speed while it hangs, glow after */
+export const FLARE = Object.freeze({ climbSeconds: 2.4, apex: 50, fallPerSecond: 4, glowAfter: 4 });
 
 /**
  * The boat and its light: { bx, by, sx, sy, on } or null. The boat comes in from the sea side from
@@ -72,7 +83,7 @@ export function installEndingFx(renderer) {
     const s = spotlightState(sim, alpha);
     const f = flareState(sim, alpha);
     ctx.save();
-    if (f) {
+    if (f?.burning) {
       const q = camera.worldToScreen(f.x, f.y);
       ctx.globalAlpha = 0.9 * f.intensity;
       ctx.fillStyle = '#fff0c0';

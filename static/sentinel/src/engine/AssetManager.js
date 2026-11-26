@@ -489,19 +489,80 @@ export class AssetManager {
     return c;
   }
 
-  /** draw one region with its pivot on (x, y); false if drawing failed (the sheet is then dropped) */
+  /**
+   * Draw one region with its pivot on (x, y); false if drawing failed (the sheet is then dropped). Step 5.6: one
+   * drawImage, no save/translate/scale/restore per sprite; a mirrored picture is drawn from a flipped copy of its
+   * sheet, made once (same pixels on whole-pixel positions: the flip is exact).
+   */
   paint(ctx, c, r, x, y) {
     try {
+      const dx = r.offX - r.pivotX + c.anchor[0];
+      const dy = y + r.offY - r.pivotY + c.anchor[1];
+      if (!c.mirror) {
+        ctx.drawImage(c.image, r.x, r.y, r.w, r.h, x + dx, dy, r.w, r.h);
+        return true;
+      }
+      const flipped = this.flippedSheet(c);
+      if (flipped) {
+        ctx.drawImage(flipped, flipped.width - r.x - r.w, r.y, r.w, r.h, x - dx - r.w, dy, r.w, r.h);
+        return true;
+      }
       ctx.save();
       ctx.translate(x, y);
-      if (c.mirror) ctx.scale(-1, 1);
-      ctx.drawImage(c.image, r.x, r.y, r.w, r.h, r.offX - r.pivotX + c.anchor[0], r.offY - r.pivotY + c.anchor[1], r.w, r.h);
+      ctx.scale(-1, 1);
+      ctx.drawImage(c.image, r.x, r.y, r.w, r.h, dx, dy - y, r.w, r.h);
+      ctx.restore();
       return true;
     } catch (e) {
       this.drop(c.sheet, e);
       return false;
-    } finally {
-      ctx.restore();
+    }
+  }
+
+  /** the sheet of a choice mirrored left to right, cached per sheet (null where no canvas can be made) */
+  flippedSheet(c) {
+    if (!this.flipped) this.flipped = new Map();
+    let f = this.flipped.get(c.sheet);
+    if (f !== undefined && f?.src === c.image) return f.canvas;
+    const img = c.image;
+    const w = img.naturalWidth || img.width;
+    const h = img.naturalHeight || img.height;
+    let canvas = null;
+    if (w > 0 && h > 0) {
+      if (typeof OffscreenCanvas !== 'undefined') canvas = new OffscreenCanvas(w, h);
+      else if (globalThis.document) canvas = Object.assign(globalThis.document.createElement('canvas'), { width: w, height: h });
+      const g = canvas?.getContext('2d');
+      if (g) {
+        g.translate(w, 0);
+        g.scale(-1, 1);
+        g.drawImage(img, 0, 0);
+      } else canvas = null;
+    }
+    this.flipped.set(c.sheet, { src: img, canvas });
+    return canvas;
+  }
+
+  /**
+   * Draw only the rows of a sprite between screen rows `top` and `bottom` (a swaying prop's slice), with one
+   * drawImage instead of a clip. Same pixels as clipping the whole sprite to that band on whole-pixel positions.
+   * @returns {boolean} false when it cannot (placeholder, mirrored): the caller clips instead
+   */
+  drawBand(ctx, kind, state, facing, x, y, time, variant, top, bottom) {
+    const c = this.pick(kind, state, facing, variant);
+    if (!c || c.mirror) return false;
+    const r = this.regionAt(c, time);
+    if (!r) return false;
+    const dx = x + r.offX - r.pivotX + c.anchor[0];
+    const dy = y + r.offY - r.pivotY + c.anchor[1];
+    const y0 = Math.max(dy, top);
+    const y1 = Math.min(dy + r.h, bottom);
+    if (y1 <= y0) return true;
+    try {
+      ctx.drawImage(c.image, r.x, r.y + (y0 - dy), r.w, y1 - y0, dx, y0, r.w, y1 - y0);
+      return true;
+    } catch (e) {
+      this.drop(c.sheet, e);
+      return false;
     }
   }
 

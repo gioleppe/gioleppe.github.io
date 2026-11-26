@@ -100,6 +100,8 @@ export class ResonanceFx {
     this.bufB = null;
     /** what the last frame drew, for the debug readout and tests */
     this.last = { vignette: 0, distortion: 0, rings: 0 };
+    /** graphics quality: the split-frame distortion pulses (Quality.js; the vignette and rings always draw) */
+    this.distortion = true;
     /** the lighting source: brighter monoliths near the player, and the pulse rings' light */
     this.lightSource = (sim, view, out) => this.addLights(sim, view, out);
   }
@@ -155,7 +157,7 @@ export class ResonanceFx {
     const w = camera.viewW;
     const h = camera.viewH;
     const d = distortionStrength(res.tier, res.value, time, fx, sim.tuning.resonance.tiers.agitatedAt);
-    if (d > 0) this.drawDistortion(ctx, w, h, d, time, fx);
+    if (d > 0 && this.distortion) this.drawDistortion(ctx, w, h, d, time, fx);
     const va = vignetteAlpha(res.tier, time, fx);
     if (va > 0.003) this.drawVignette(ctx, w, h, va);
   }

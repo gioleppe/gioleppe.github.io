@@ -85,7 +85,7 @@ function pixelLine(ctx, x1, y1, x2, y2, spacing) {
  *   the player on screen, to draw the throw line from; clampAim: where a throw aimed at a screen point lands (range
  *   and obstacles), so the line ends where the item will come down
  */
-export function drawTouchControls(ctx, input, { playerScreen = null, clampAim = null, lightOn = false, art = activeAssets() } = {}) {
+export function drawTouchControls(ctx, input, { playerScreen = null, clampAim = null, lightOn = false, armed = false, now = 0, art = activeAssets() } = {}) {
   if (!input.touchVisible) return;
   const L = input.layout;
   const op = input.cfg.opacity;
@@ -119,14 +119,17 @@ export function drawTouchControls(ctx, input, { playerScreen = null, clampAim = 
   if (art?.hasIcon('ui', 'sprint')) {
     const cx = input.joystick ? input.joystick.baseX : L.joystickRest.x;
     const cy = input.joystick ? input.joystick.baseY : L.joystickRest.y;
-    ctx.globalAlpha = input.joystick?.sprint ? 1 : input.joystick ? op.joystick : op.hint;
+    // step 5.6: the idle chevrons as visible as an idle button (they were reported too faint to find the ring)
+    ctx.globalAlpha = input.joystick?.sprint ? 1 : input.joystick ? op.joystick : Math.max(op.hint, op.idle);
     drawGlyph(ctx, art, 'sprint', cx, cy - j.ringRadius, glyphSize(j.ringRadius));
   }
 
   // thumb buttons: the bone glyphs hold on the dark idle disc and on the amber pressed/active one (ICONS.md)
   for (const b of L.buttons) {
     const pressed = input.isPressed(b.id);
-    const active = (b.id === 'crouch' && input.crouch) || (b.id === 'light' && lightOn);
+    // armed: the signal asks for its second press (2.5 s): the use button itself shows it, blinking amber
+    const armedNow = armed && b.id === 'use' && Math.floor(now / 250) % 2 === 0;
+    const active = (b.id === 'crouch' && input.crouch) || (b.id === 'light' && lightOn) || armedNow;
     const disabled = b.id === 'context' && !input.context;
     const alpha = pressed ? op.pressed : active ? op.active : disabled ? op.disabled : op.idle;
     ctx.globalAlpha = alpha;
@@ -135,6 +138,11 @@ export function drawTouchControls(ctx, input, { playerScreen = null, clampAim = 
     ctx.globalAlpha = Math.min(1, alpha + 0.25);
     ctx.fillStyle = active ? ACCENT : LIGHT;
     pixelRing(ctx, b.x, b.y, b.r, line);
+    if (armed && b.id === 'use') {
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = ACCENT;
+      pixelRing(ctx, b.x, b.y, b.r + line * 2, line);
+    }
     const glyph = buttonGlyph(b.id, input, lightOn);
     if (art?.hasIcon('ui', glyph)) {
       ctx.globalAlpha = disabled ? 0.45 : 1;

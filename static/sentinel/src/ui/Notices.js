@@ -77,14 +77,17 @@ export class Notices {
    * Draw the live lines centred on `cx`, the newest at the bottom resting on `bottom`.
    * @param {CanvasRenderingContext2D} ctx #ui context in logical pixels
    */
-  draw(ctx, cx, bottom, now = clock()) {
-    const lines = this.visible(now);
-    if (!lines.length) return;
+  draw(ctx, cx, bottom, now = clock(), maxW = Infinity) {
+    const shown = this.visible(now);
+    if (!shown.length) return;
     ctx.save();
     ctx.font = '6px ui-monospace, Consolas, monospace';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'bottom';
     const lh = 8;
+    // step 5.6: a line wider than the screen (a phone held upright) wraps on spaces instead of running off it
+    const lines = [];
+    for (const l of shown) for (const text of wrapText(l.text, maxW - 6, (s) => ctx.measureText(s).width)) lines.push({ ...l, text });
     lines.forEach((l, i) => {
       const y = Math.round(bottom - (lines.length - 1 - i) * lh);
       const w = Math.ceil(ctx.measureText(l.text).width) + 6;
@@ -100,6 +103,25 @@ export class Notices {
     });
     ctx.restore();
   }
+}
+
+/**
+ * Greedy word wrap: the words of `text` in lines no wider than `maxW` (a single longer word stays whole).
+ * @param {string} text
+ * @param {number} maxW
+ * @param {(s: string) => number} measure
+ * @returns {string[]}
+ */
+export function wrapText(text, maxW, measure) {
+  if (!(maxW > 0) || maxW === Infinity || measure(text) <= maxW) return [text];
+  const out = [];
+  let line = '';
+  for (const w of text.split(/ +/)) {
+    const next = line ? `${line} ${w}` : w;
+    if (line && measure(next) > maxW) { out.push(line); line = w; } else line = next;
+  }
+  if (line) out.push(line);
+  return out;
 }
 
 function clock() {

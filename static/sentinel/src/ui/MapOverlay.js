@@ -603,7 +603,9 @@ export class MapOverlay {
     ctx.font = '7px ui-monospace, Consolas, monospace';
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'left';
-    ctx.fillStyle = shifting ? C.forgotten : C.paperInk;
+    // embedded in the Journal the header sits on the Journal's dark page, not on the paper: light ink there (step 5.6:
+    // the dark ink was unreadable)
+    ctx.fillStyle = shifting ? C.forgotten : this.embedded ? '#e9e2cf' : C.paperInk;
     const fog = sim.fog;
     const share = fog ? fog.exploredFraction * 100 : 0;
     const pct = fog ? ` · ${share < 10 ? share.toFixed(1) : Math.round(share)}% charted` : '';
@@ -621,7 +623,7 @@ export class MapOverlay {
     // embedded in the Journal, its tab row has the close button
     this.buttons.close = this.embedded ? null : { x: x + w - bw, y: y - 2, w: bw, h: header + 4 };
     this.buttons.zoom = { x: x + w - (this.embedded ? 1 : 2) * bw - (this.embedded ? 0 : 2), y: y - 2, w: bw, h: header + 4 };
-    ctx.fillStyle = C.paperDim;
+    ctx.fillStyle = this.embedded ? '#b8b0a8' : C.paperDim;
     ctx.textAlign = 'right';
     ctx.fillText(parts.join('   '), this.buttons.zoom.x - 6, y + header / 2);
     for (const [k, label] of [['zoom', this.zoom ? '−' : '+'], ['close', '×']]) {

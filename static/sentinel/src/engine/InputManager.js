@@ -96,7 +96,7 @@ export class InputManager extends InputCore {
    *   player?: {x:number,y:number}|null, landing?: ((wx:number, wy:number) => ({x:number,y:number}|null))|null }} [ctx2]
    *   landing: where a throw aimed at a world point would come down (the drag-aim line ends there)
    */
-  draw(ctx, { camera = null, player = null, landing = null } = {}) {
+  draw(ctx, { camera = null, player = null, landing = null, armed = false, now = 0 } = {}) {
     if (this.modal) return;   // the dialogue box is open: the touch controls are hidden (and inert, see InputCore)
     const playerScreen = camera && player ? camera.worldToScreen(player.x, player.y) : null;
     const clampAim = camera && landing ? (sx, sy) => {
@@ -104,6 +104,6 @@ export class InputManager extends InputCore {
       const l = landing(w.x, w.y);
       return l ? camera.worldToScreen(l.x, l.y) : null;
     } : null;
-    drawTouchControls(ctx, this, { playerScreen, clampAim, lightOn: !!player?.lightOn });
+    drawTouchControls(ctx, this, { playerScreen, clampAim, lightOn: !!player?.lightOn, armed, now });
   }
 }

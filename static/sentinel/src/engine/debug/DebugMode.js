@@ -207,7 +207,7 @@ export class DebugMode {
   drawUi(ctx, alpha) {
     const { vp, safe } = this.host;
     this.panel.setViewport(vp, safe);
-    this.blockY = this.panel.m.y;
+    this.blockY = Math.max(this.panel.m.y, this.host.hudBottom ?? 0);
     if (this.sim) this.layers.drawUi(ctx, this.sim, vp, this.env(alpha));
     if (this.notice.text && this.now < this.notice.until) this.textBlock(ctx, [{ text: this.notice.text, color: COLORS.cursor }]);
     if (this.teleportArmed) this.textBlock(ctx, [{ text: 'tap or click where to teleport', color: COLORS.cursor }]);
