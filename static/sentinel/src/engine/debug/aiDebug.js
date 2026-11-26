@@ -12,7 +12,7 @@ import { viewPlayer } from '../../entities/ai/env.js';
 export const AI_COLORS = Object.freeze({
   cone: '#e9c46a', coneSeen: '#e76f51', presence: 'rgba(233, 196, 106, 0.5)', route: 'rgba(102, 194, 176, 0.55)',
   waypoint: '#66c2b0', path: '#90be6d', lk: '#f72585', spot: '#f4a261', heard: '#f4a261',
-  far: 'rgba(216, 210, 191, 0.5)',
+  far: 'rgba(216, 210, 191, 0.5)', truce: '#8ecae6', window: '#c77dff',
   state: { patrol: '#d8d2bf', investigate: '#e9c46a', search: '#f4a261', warn: '#ff9f1c', chase: '#e76f51' },
 });
 
@@ -201,7 +201,91 @@ export function registerAiDebug(debug) {
     },
   });
 
+  debug.addLayer({
+    id: 'ai-truce', label: 'Totems, truces, stand-down posts', group: 'ai', default: false,
+    drawWorld(ctx, sim, camera) {
+      const off = sim.scouts?.offerings;
+      if (!off) return;
+      ctx.lineWidth = 1;
+      for (const t of off.totems.values()) {
+        ctx.strokeStyle = off.inTruce(t.sector) ? AI_COLORS.truce : AI_COLORS.waypoint;
+        ring(ctx, camera, t.x, t.y, sim.tuning.ai.offering.standOffPx);
+      }
+      for (const s of visibleScouts(sim, camera, 900)) {
+        if (!s.route.sector || s.kind === 'gatherer') continue;
+        const p = off.postOf(sim, s);
+        ctx.strokeStyle = off.inTruce(s.route.sector) ? AI_COLORS.truce : AI_COLORS.far;
+        ring(ctx, camera, p.x, p.y, 4);
+        if (off.inTruce(s.route.sector)) ring(ctx, camera, p.x, p.y, sim.tuning.ai.offering.postPresencePx);
+        line(ctx, camera, p.x, p.y, p.x + p.dirX * 16, p.y + p.dirY * 16);
+      }
+    },
+    drawUi(ctx, sim, vp, env) {
+      const off = sim.scouts?.offerings;
+      if (!off) return;
+      const lines = [];
+      for (const [k, t] of Object.entries(off.truces)) lines.push({ text: `truce ${k} ${t.active ? `${Math.ceil((t.until - sim.tick) / 60)} s left` : `ended ${t.endReason ?? 'tide'}`} chain ${t.chain}`, color: t.active ? AI_COLORS.truce : COLORS.text });
+      for (const o of off.lying) lines.push({ text: `offering ${o.item} at ${o.totem} ${o.status}${o.scout ? ` by ${o.scout}` : ''}`, color: COLORS.text });
+      if (lines.length) env.textBlock(ctx, lines);
+    },
+  });
+
+  debug.addLayer({
+    id: 'ai-monolith', label: 'Monolith: pulse reach, windows, tolerance', group: 'ai', default: false,
+    drawWorld(ctx, sim, camera) {
+      const m = sim.tuning.ai.monolith;
+      if (!m) return;
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = AI_COLORS.far;
+      for (const z of sim.resonance?.pulses ?? []) ring(ctx, camera, z.x, z.y, m.pulseRadiusPx);
+      for (const s of visibleScouts(sim, camera, 300)) {
+        if (s.windowUntil >= sim.tick) { ctx.strokeStyle = AI_COLORS.window; ring(ctx, camera, s.x, s.y, 10); }
+        if (s.respectUntil > sim.tick) { ctx.strokeStyle = AI_COLORS.truce; ring(ctx, camera, s.x, s.y, 14); ring(ctx, camera, s.x, s.y, sim.tuning.ai.chase.tooCloseRadius); }
+      }
+    },
+    drawUi(ctx, sim, vp, env) {
+      const lines = [];
+      for (const z of sim.resonance?.pulses ?? []) {
+        const d = Math.hypot(z.x - sim.player.x, z.y - sim.player.y);
+        if (d < 2000) lines.push({ text: `pulse ${z.id} ${Math.round(d)}px next ${((z.interval - z.phase) / (1 + 2 * (sim.resonance.value / 100))).toFixed(1)}s`, color: COLORS.text });
+      }
+      for (const s of sim.scouts?.list ?? []) {
+        if (s.windowUntil >= sim.tick) lines.push({ text: `window ${s.id} ${((s.windowUntil - sim.tick) / 60).toFixed(1)}s`, color: AI_COLORS.window });
+        if (s.respectUntil > sim.tick) lines.push({ text: `respect ${s.id} ${((s.respectUntil - sim.tick) / 60).toFixed(1)}s (max ${((s.respectMax - sim.tick) / 60).toFixed(0)}s)`, color: AI_COLORS.truce });
+      }
+      if (lines.length) env.textBlock(ctx, lines);
+    },
+  });
+
+  debug.addLayer({
+    id: 'ai-gatherer', label: 'Gatherer: startle radius, notice reach, progress', group: 'ai', default: false,
+    drawWorld(ctx, sim, camera) {
+      const g = cheats.gatherer(sim);
+      const c = sim.tuning.ai.gatherer;
+      if (!g || g.phase === 'gone') return;
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = AI_COLORS.window;
+      ring(ctx, camera, g.x, g.y, c.startleRadiusPx);
+      ctx.strokeStyle = g.seen ? AI_COLORS.truce : AI_COLORS.far;
+      ring(ctx, camera, g.x, g.y, c.noticeMaxPx);
+      line(ctx, camera, g.x, g.y, g.x + g.dirX * 24, g.y + g.dirY * 24);
+    },
+    drawUi(ctx, sim, vp, env) {
+      const g = cheats.gatherer(sim);
+      if (!g) return;
+      const d = Math.round(Math.sqrt((g.x - sim.player.x) ** 2 + (g.y - sim.player.y) ** 2));
+      env.textBlock(ctx, [{ text: `gatherer ${g.phase} ${g.anim} ${d}px seen ${g.seen ? 'y' : 'n'} regard ${Math.round(g.awareness * 100)}% gift day ${g.giftDay}`, color: AI_COLORS.truce }]);
+    },
+  });
+
   const act = (id, label, run) => debug.addAction({ id, label, group: 'ai', run });
+  act('gatherer-meet', 'Gatherer: meet him (crouched, 130 px)', (sim) => cheats.meetGatherer(sim));
+  act('offer-give', 'Offering: a fish in hand', (sim) => cheats.giveOffering(sim, 'fish'));
+  let totemI = -1;
+  act('offer-totem', 'Offering: teleport to the next totem', (sim) => cheats.teleportToTotem(sim, ++totemI));
+  act('truce-start', 'Truce: start (sector of the nearest totem)', (sim) => cheats.startTruce(sim));
+  act('truce-end', 'Truce: end all', (sim) => cheats.endTruce(sim));
+  act('monolith-pulse', 'Monolith: pulse the nearest zone now', (sim) => cheats.forcePulse(sim));
   act('scout-spawn', 'Spawn a scout at the cursor', (sim, d) => {
     const m = d?.host?.input?.mouse ?? d?.lastPress;
     const w = m ? d.host.camera.screenToWorld(m.x, m.y) : { x: sim.player.x + 120, y: sim.player.y };

@@ -29,7 +29,7 @@ import { useFlareGun, storyItemsAfterStep } from '../entities/storyInteractions.
 import { Scouts } from '../entities/SentineleseAI.js';
 
 /** bumped whenever the snapshot shape changes; restore refuses other versions (migration arrives with saving, step 5.2) */
-export const SNAPSHOT_VERSION = 10;
+export const SNAPSHOT_VERSION = 11;
 /**
  * older versions restore can still read: 2 had no world (its clocks are rebuilt from the tick); 2 and 4 have no
  * player body (stamina and the rest start as in a new game) and no items (the fresh starting kit and the map's
@@ -37,9 +37,9 @@ export const SNAPSHOT_VERSION = 10;
  * Resonance (it starts at rest) and the fog (it starts unexplored); 2 to 7 have no story (a fresh one); 8 has no
  * read marks and no lore unlocked (the journal holds only what the dialogue added; `start` entries unlock on the
  * first step); 2 to 9 have no scouts (they are put on their routes where a new game's patrols would be at the
- * snapshot's tick)
+ * snapshot's tick); 10 has no offerings or truces (nothing lies at the totems, every patrol on its route)
  */
-const READABLE_VERSIONS = new Set([2, 4, 5, 6, 7, 8, 9, SNAPSHOT_VERSION]);
+const READABLE_VERSIONS = new Set([2, 4, 5, 6, 7, 8, 9, 10, SNAPSHOT_VERSION]);
 
 /**
  * Compiled dialogue trees from the loaded data files named `dialogue_<id>` (e.g. data.dialogue_marek).
@@ -210,6 +210,14 @@ export class Sim {
     this.interactTarget = null;
     /** @type {string|null} its context icon: 'hand' | 'eye' | 'speech' | 'offering' */
     this.interactIcon = null;
+  }
+
+  /**
+   * The truces of the coastal offering (step 4.4), per beach sector that has had one:
+   * { active, start, until, chain, endTick, endReason } (ticks). Read-only for the HUD, journal, music and bots.
+   */
+  get truces() {
+    return this.scouts.offerings.truces;
   }
 
   /** seconds simulated so far (derived from `tick`, so it never drifts) */

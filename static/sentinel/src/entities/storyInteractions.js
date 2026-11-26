@@ -1,4 +1,4 @@
-// The dinghy, the shipwreck's cabin hatch and the signal point (spec §5.1, §6.4, §8; step 4.7): the handlers that
+// The dinghy, the shipwreck's cabin hatch, the border totems and the signal point (spec §5.1, §6.4, §8; step 4.7): the handlers that
 // replace the stubs of Interactable.js, the flare gun's guard, and the bookkeeping of the wreck's finds.
 // Simulation side. Every number is in tuning.story.
 //
@@ -157,6 +157,18 @@ registerInteraction('hatch', {
     sim.story.flags.add('hatch_open');
     sim.events.push({ type: 'hatch_opened', id: t.id });
     return true;
+  },
+});
+
+// ---- the border totems (step 4.4) --------------------------------------------------------------------------------
+// Holding a fish, a coconut or a reef shell (catalog.canOffer), the totem takes it at its foot; pressing again before
+// a scout has lifted it takes it back; empty-handed, the totem is looked at. The rest is the scouts'
+// (ai/offering.js).
+
+registerInteraction('totem', {
+  icon: 'offering',
+  interact(sim, t) {
+    sim.scouts.offerings.interact(sim, t);
   },
 });
 

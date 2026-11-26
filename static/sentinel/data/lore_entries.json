@@ -160,6 +160,27 @@
       "text": "A shelf of rock above the east beach, worn smooth where people have sat. From here you see every boat that could come. They are still watching for one."
     },
 
+    {
+      "id": "offering_taken", "category": "note", "unlockedBy": "event:offering_accepted",
+      "title": "At the totem",
+      "text": "I left the fish at the foot of the post and walked back up the sand with my hands empty. One of them came out of the trees, looked at it a long time, and crouched over it.\nWhen it stood it turned to where I was and held its hand out, open, palm up. Then it went. I do not know what I said by leaving it, or what was said back. The beach was empty all through the next tide.\nMarek leaves fish at the totems. He never told me why, and I did not ask."
+    },
+
+    {
+      "id": "monolith_eye", "category": "note", "unlockedBy": "event:monolith_respect",
+      "title": "When the stone hummed",
+      "text": "It had seen me. The bow was coming up, and the ground under us gave one of those slow pulses you feel in the teeth. I do not know why I did it: I switched the light off.\nIt stopped. It looked at me a long while, past me, at the stone, and the bow came down. Then it simply watched me go.\nI think it was not my doing that it spared. I think I only stopped shouting while something else was speaking."
+    },
+
+    {
+      "id": "gatherer_herbs", "category": "note", "unlockedBy": "event:gatherer_gift",
+      "title": "In the mangroves",
+      "text": "An old one, alone, no bow, bent over the roots and pulling leaves. I kept low and kept still and did not go nearer. I do not know how long I watched him.\nHe knew I was there. He straightened, looked at me for a while, and put a bundle of leaves down in the mud between us. The open hand again. Then he went into the roots and I did not see him go.\nI do not know if the leaves were meant for me. They were still there when I stood up, so I took them. I wish I knew what I should have done in return. Perhaps nothing."
+    },
+
+    { "id": "hint_gatherer", "category": "objective", "unlockedBy": "event:gatherer_gift", "title": "The old one", "text": "In the mangroves an old one gathers alone. Low, still, nothing metal, not too near: then he does not run." },
+    { "id": "hint_monolith", "category": "objective", "unlockedBy": "event:monolith_respect", "title": "The pulse", "text": "When the stones pulse and one of them is watching me, I put out whatever I carry that hums." },
+    { "id": "hint_offering", "category": "objective", "unlockedBy": "event:offering_accepted", "title": "The posts", "text": "They take what is left at the posts. For a tide, that beach is let be." },
     { "id": "hint_tide", "category": "objective", "unlockedBy": ["entry:marek_warnings", "discover:reef_start"], "title": "The tide", "text": "Low water opens the reef to the wreck. Be off it before the turn." },
     { "id": "hint_metal", "category": "objective", "unlockedBy": "entry:marek_warnings", "title": "Metal", "text": "Near their paths, keep metal stowed and switch off anything that hums." },
     { "id": "hint_arrow", "category": "objective", "unlockedBy": "site:missionary_camp", "title": "Warnings", "text": "An arrow in the sand at my feet means go back. So I go back." },

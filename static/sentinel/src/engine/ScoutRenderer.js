@@ -4,6 +4,7 @@
 // bubbles are drawn from Renderer.afterLighting (ScoutOverlays.install), so they read at night: the bubbles
 // (Emotes.js, with their pop-in) are the scouts' only voice. Reads the simulation only.
 import { drawEmote } from './Emotes.js';
+import { ICON_SIZE } from './PlaceholderSprites.js';
 
 /** palette colours (assets/src/palette.gpl): bone shaft, rust head, basalt shadow */
 export const ARROW_COLORS = Object.freeze({ shaft: '#d2b07c', head: '#a8522b', fletch: '#e9e2cf', shadow: 'rgba(13, 11, 18, 0.3)', warn: '#e9e2cf' });
@@ -19,7 +20,7 @@ const ARROW_SIZE = Object.freeze({ w: 16, h: 16 });
  * @param {{x:number,y:number,w:number,h:number}|null} view
  * @param {Object[]} out appended to
  */
-export function collectScoutViews(sim, view, out, alpha = 1) {
+export function collectScoutViews(sim, view, out, alpha = 1, sprites = null) {
   const scouts = sim.scouts;
   if (!scouts) return out;
   const m = 64;
@@ -27,8 +28,13 @@ export function collectScoutViews(sim, view, out, alpha = 1) {
   for (const s of scouts.list) {
     const x = s.prevX + (s.x - s.prevX) * alpha;
     const y = s.prevY + (s.y - s.prevY) * alpha;
-    if (!inView(x, y)) continue;
-    out.push({ id: s.id, kind: 'sentinelese', state: s.anim, facing: s.facing, x, y });
+    if (!inView(x, y) || (s.kind === 'gatherer' && s.phase === 'gone')) continue;
+    out.push({ id: s.id, kind: s.kind === 'gatherer' ? 'gatherer' : 'sentinelese', state: s.anim, facing: s.facing, x, y });
+  }
+  // offerings lying at the totems (step 4.4): still, flat on the ground, no glint (not loot)
+  for (const o of scouts.offerings?.lying ?? []) {
+    if (o.status === 'taken' || !sprites || !inView(o.x, o.y)) continue;
+    out.push({ id: `offering_${o.totem}`, kind: 'offering', x: o.x, y: o.y, state: 'idle', facing: null, size: OFFERING_SIZE, flat: true, paint: (ctx, sx, sy) => paintOffering(ctx, sprites, o.item, sx, sy) });
   }
   for (const pr of sim.projectiles?.list ?? []) {
     if (pr.kind === 'throw') continue;   // thrown items are ItemRenderer's
@@ -46,6 +52,17 @@ export function collectScoutViews(sim, view, out, alpha = 1) {
     out.push({ id: `stuck_${a.tick}_${a.x}`, kind: 'arrow', x: a.x, y: a.y, state: 'idle', facing: null, size: ARROW_SIZE, paint: (ctx, sx, sy) => paintStuckArrow(ctx, sx, sy, a.dx, a.dy) });
   }
   return out;
+}
+
+const OFFERING_SIZE = Object.freeze({ w: 16, h: 18 });
+
+/** an offering at a totem's foot: the item's icon laid down, unmoving, with a soft shadow */
+export function paintOffering(ctx, sprites, item, x, y) {
+  ctx.fillStyle = ARROW_COLORS.shadow;
+  ctx.beginPath();
+  ctx.ellipse(x, y, 6, 2, 0, 0, Math.PI * 2);
+  ctx.fill();
+  sprites.drawIcon(ctx, 'items', item, x - ICON_SIZE / 2, y - ICON_SIZE + 2);
 }
 
 /** unit vector of a direction (for drawing only) */
@@ -91,7 +108,7 @@ export function bubbleFor(s, tick, suspicious) {
   if (e && (e.until < 0 || tick < e.until)) {
     return { name: e.name, alpha: 1, urgency: s.state === 'investigate' ? s.awareness : s.state === 'chase' ? 1 : 0.3 };
   }
-  if (s.state === 'patrol' && s.awareness > 0.05 && s.lod === 'near') {
+  if (s.kind !== 'gatherer' && s.state === 'patrol' && s.awareness > 0.05 && s.lod === 'near') {
     return { name: 'question', alpha: Math.min(1, 0.25 + (0.75 * s.awareness) / suspicious), urgency: s.awareness };
   }
   return null;
@@ -168,7 +185,8 @@ export class ScoutOverlays {
       if (x < view.x - 24 || x > view.x + view.w + 24 || y < view.y || y > view.y + view.h + 64) { this.shown.delete(s.id); continue; }
       const sx = Math.round(x) - camera.originX;
       const sy = Math.round(y) - camera.originY;
-      if ((s.awareness >= sus || s.state !== 'patrol') && occluded(sim, x, y, s.anim, sizeOf)) {
+      if (s.kind === 'gatherer' && s.phase === 'gone') { this.shown.delete(s.id); continue; }
+      if (s.kind !== 'gatherer' && (s.awareness >= sus || s.state !== 'patrol') && occluded(sim, x, y, s.anim, sizeOf)) {
         const before = ctx.globalAlpha;
         ctx.globalAlpha = before * SILHOUETTE_ALPHA;
         this.sprites.draw(ctx, 'sentinelese', s.anim, s.facing, sx, sy, time);

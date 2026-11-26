@@ -303,7 +303,7 @@ export class Renderer {
     }
     collectItemViews(sim, view ?? null, out, this.sprites, this.itemScratch, alpha);
     if (sim.marek) out.push(sim.marek.view());
-    collectScoutViews(sim, view ?? null, out, alpha);
+    collectScoutViews(sim, view ?? null, out, alpha, this.sprites);
     for (const v of this.extraViews) out.push(v);
     return out;
   }

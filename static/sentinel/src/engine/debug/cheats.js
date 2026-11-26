@@ -315,6 +315,96 @@ export function teleportNearestScout(sim, dist = 110) {
   return s.id;
 }
 
+// ---- the tolerant interactions (step 4.4) ----------------------------------------------------------------------
+
+/** an offering item (fish by default) in the player's hand */
+export function giveOffering(sim, id = 'fish') {
+  const inv = sim.inventory;
+  if (inv.slotOf(id) < 0 && inv.add(id, 1) < 1) return null;
+  inv.selected = inv.slotOf(id);
+  return id;
+}
+
+/** the map's border totems, in map order */
+export function totems(sim) {
+  return sim.map ? sim.map.entitiesOfType('totem') : [];
+}
+
+/** stand the player just south of border totem i (wraps), facing it; returns its id */
+export function teleportToTotem(sim, i) {
+  const list = totems(sim);
+  if (!list.length) return null;
+  const t = list[((i % list.length) + list.length) % list.length];
+  const at = { x: t.x, y: t.y + 18 };
+  if (sim.collider && !sim.collider.isPositionFree(at.x, at.y, sim.player.radius)) sim.collider.nearestFreePosition(at.x, at.y, sim.player.radius, 64, at);
+  teleportPlayer(sim, at.x, at.y);
+  return t.id;
+}
+
+/** the beach sector of the totem nearest the player */
+export function nearestSector(sim) {
+  let best = null;
+  let bd = Infinity;
+  for (const t of totems(sim)) {
+    const d = (t.x - sim.player.x) ** 2 + (t.y - sim.player.y) ** 2;
+    if (d < bd) { bd = d; best = t; }
+  }
+  return best?.sector ?? null;
+}
+
+/** start a truce in the nearest totem's sector (as if an offering had been accepted); returns the sector */
+export function startTruce(sim, sector = nearestSector(sim)) {
+  if (!sector) return null;
+  sim.scouts.offerings.forceTruce(sim, sim.scouts, sector);
+  return sector;
+}
+
+/** end the truce of the nearest totem's sector (or every truce) now */
+export function endTruce(sim, sector = null) {
+  const o = sim.scouts.offerings;
+  for (const k of Object.keys(o.truces)) if (!sector || k === sector) o.forceEnd(sim, sim.scouts, k);
+}
+
+/** the Mangrove Gatherer's record, or null */
+export function gatherer(sim) {
+  return sim.scouts?.list.find((s) => s.kind === 'gatherer') ?? null;
+}
+
+/**
+ * Bring the elder back now (if gone, at his route's start; his day's gift forgotten), crouched gathering for a
+ * while, turned towards a spot `dist` px south of him where the player is put, crouched. Returns his id.
+ */
+export function meetGatherer(sim, dist = 130) {
+  const g = gatherer(sim);
+  if (!g) return null;
+  const gs = sim.scouts.gatherers;
+  if (g.phase === 'gone' || g.phase === 'leave') gs.comeBack(sim.scouts, g);
+  g.giftDay = -1;
+  g.awareness = 0;
+  g.emote = null;
+  g.emoteQueue = [];
+  gs.setPhase(g, 'gather', sim.scouts.tick, 60);
+  g.anim = 'gather';
+  const at = { x: g.x, y: g.y + dist };
+  if (sim.collider && !sim.collider.isPositionFree(at.x, at.y, sim.player.radius)) sim.collider.nearestFreePosition(at.x, at.y, sim.player.radius, 64, at);
+  teleportPlayer(sim, at.x, at.y);
+  sim.scouts.face(g, at.x, at.y);
+  return g.id;
+}
+
+/** the anomaly zone nearest the player pulses at the end of the next step (Resonance's own timer is advanced) */
+export function forcePulse(sim) {
+  let best = null;
+  let bd = Infinity;
+  for (const z of sim.resonance?.pulses ?? []) {
+    const d = (z.x - sim.player.x) ** 2 + (z.y - sim.player.y) ** 2;
+    if (d < bd) { bd = d; best = z; }
+  }
+  if (!best) return null;
+  best.phase = best.interval;
+  return best.id;
+}
+
 // ---- story and dialogue (step 4.5) ---------------------------------------------------------------------------
 
 /** set (on) or clear a story flag; returns whether it is now set */
