@@ -23,9 +23,10 @@ export class Endings {
     return this.dinghy.afloat || this.dinghy.phase === 'away' || this.signal.inSequence;
   }
 
-  /** the scouts do not stand down after a hit (the peak's minute) */
+  /** the scouts do not stand down after a hit: the peak's minute, and a boat leaving (step 5.7: they shoot a boat going
+   * out for as long as it is in range, as they never warn it; a wounded player on foot is still let go) */
   get noStandDown() {
-    return this.signal.holdoutActive;
+    return this.signal.holdoutActive || this.dinghy.afloat;
   }
 
   /** the player is in the boat (Player.update is replaced by the oars) */

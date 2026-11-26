@@ -11,7 +11,7 @@
     },
     {
       "id": "patched_dinghy", "name": "Patched dinghy",
-      "ingredients": [{ "item": "waterproof_tarp", "n": 1 }, { "item": "paracord", "n": 1 }, { "item": "driftwood", "n": 1 }],
+      "ingredients": [{ "item": "waterproof_tarp", "n": 1 }, { "item": "paracord", "n": 2 }, { "item": "driftwood", "n": 3 }],
       "effect": "dinghy_repaired",
       "requires": { "recipeKnown": true, "at": "dinghy" },
       "maxCrafts": 1,

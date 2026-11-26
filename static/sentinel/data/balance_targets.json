@@ -7,6 +7,10 @@
     { "id": "reckless_completion", "metric": "completion.reckless", "op": "<", "value": 0.15, "tolerance": 0.05, "provisional": true, "note": "reckless bot completes under 15% (provisional)" },
     { "id": "first_ending_minutes", "metric": "minutes.median", "op": "between", "value": [25, 40], "tolerance": 3, "provisional": true, "note": "a first ending takes 25 to 40 minutes (median simulated minutes of completed runs, all profiles; provisional)" },
     { "id": "region_death_share", "metric": "deaths.maxRegionShare", "op": "<=", "value": 0.4, "tolerance": 0.05, "provisional": true, "note": "no region causes more than 40% of all deaths (provisional)" },
+    { "id": "careful_first_try", "metric": "firstTry.careful", "op": ">=", "value": 0.5, "tolerance": 0.05, "provisional": true, "note": "step 5.7: completion saturates with 6 retries, so also: a careful bot finishes with no death in half its runs or more (provisional)" },
+    { "id": "careful_deaths_per_completed", "metric": "deathsPerCompletedBy.careful", "op": "<=", "value": 1, "tolerance": 0.2, "provisional": true, "note": "step 5.7: a careful bot that completes died at most once on average (provisional)" },
+    { "id": "average_first_try", "metric": "firstTry.average", "op": "between", "value": [0.15, 0.35], "tolerance": 0.05, "provisional": true, "note": "step 5.7: an average bot finishes with no death in 15 to 35% of its runs: it completes, but pays for it (provisional)" },
+    { "id": "average_deaths_per_completed", "metric": "deathsPerCompletedBy.average", "op": "between", "value": [1, 3], "tolerance": 0.3, "provisional": true, "note": "step 5.7: an average bot that completes died one to three times on average (provisional)" },
     { "id": "thirst_deaths", "metric": "deaths.thirstDrinkers", "op": "<=", "value": 0, "tolerance": 0, "provisional": true, "note": "no death by thirst for a bot that drinks when below 50 (provisional)" }
   ]
 }
