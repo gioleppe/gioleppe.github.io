@@ -90,6 +90,17 @@ const BITMAPS = {
     '.#######.',
     '.........',
   ],
+  pause: [
+    '.........',
+    '..##.##..',
+    '..##.##..',
+    '..##.##..',
+    '..##.##..',
+    '..##.##..',
+    '..##.##..',
+    '.........',
+    '.........',
+  ],
   journal: [
     '.###.###.',
     '#...#...#',
@@ -139,6 +150,7 @@ export const TOUCH_ICONS = Object.freeze({
   light: (ctx, cx, cy, size) => drawBitmap(ctx, BITMAPS.light, cx, cy, size),
   inventory: (ctx, cx, cy, size) => drawBitmap(ctx, BITMAPS.inventory, cx, cy, size),
   journal: (ctx, cx, cy, size) => drawBitmap(ctx, BITMAPS.journal, cx, cy, size),
+  pause: (ctx, cx, cy, size) => drawBitmap(ctx, BITMAPS.pause, cx, cy, size),
 });
 
 /** the bitmaps, for tests (every row the same width, square) */

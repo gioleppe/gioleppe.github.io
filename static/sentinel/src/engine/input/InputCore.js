@@ -17,7 +17,7 @@ const DIRECTION_CODES = {};
 for (const [code, action] of Object.entries(KEY_BINDINGS)) if (HELD_ACTIONS.includes(action)) (DIRECTION_CODES[action] ??= []).push(code);
 
 /** touch button -> the action it fires on press ('use' fires on release, see pointerUp) */
-const BUTTON_ACTIONS = { context: 'interact', crouch: 'crouch', light: 'toggleLight', journal: 'openJournal', inventory: 'openInventory' };
+const BUTTON_ACTIONS = { context: 'interact', crouch: 'crouch', light: 'toggleLight', journal: 'openJournal', inventory: 'openInventory', pause: 'pause' };
 
 const noUi = () => Object.fromEntries(UI_ACTIONS.map((a) => [a, false]));
 

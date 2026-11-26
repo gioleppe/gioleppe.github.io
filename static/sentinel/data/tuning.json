@@ -532,5 +532,42 @@
     "wheelStep": 24,
     "keyStep": 20,
     "mapKeyPan": 24
+  },
+  "screens": {
+    "$comment": "src/ui/Screens.js and src/ui/screens/ (presentation, step 5.1). Logical pixels unless named Css. rowHeight: a menu row with a mouse, touchRowCss the least it is on a touch screen (but at most maxRowFraction of the height, for very short windows); detailHeight: the extra second line of a row (detailPx text); panelWidth / settingsWidth / slotsWidth: the widest a panel gets. title: the island behind the title (a landmark to drift along, driftAmplitude px each way over driftPeriodSeconds, at hour of the first day; the castaway is moved to hidePlayerAt, out of shot), the name's sizes, the menu's width and the most room between parts. opening: one line every lineSeconds (each fading in over lineFade), held holdSeconds, then the world fades in over fadeSeconds. gameOver: delaySeconds after death before it shows, the dim (to dimAlpha over dimSeconds, tinted by cause), input ignored for inputLockSeconds.",
+    "margin": 8,
+    "padding": 7,
+    "fontPx": 8,
+    "detailPx": 7,
+    "titlePx": 9,
+    "lineHeight": 10,
+    "rowHeight": 15,
+    "touchRowCss": 40,
+    "maxRowFraction": 0.14,
+    "detailHeight": 9,
+    "panelWidth": 200,
+    "settingsWidth": 230,
+    "slotsWidth": 260,
+    "title": { "anchor": "crash_site", "hidePlayerAt": "signal_peak", "hour": 6.6, "offsetY": 70, "driftAmplitude": 220, "driftPeriodSeconds": 90, "titleSmallPx": 9, "titleLargePx": 20, "menuWidth": 200, "gap": 16 },
+    "opening": { "lineSeconds": 2.2, "lineFade": 0.7, "holdSeconds": 1.6, "fadeSeconds": 1.6, "textPx": 10 },
+    "gameOver": { "delaySeconds": 1.6, "dimSeconds": 1.6, "dimAlpha": 0.78, "inputLockSeconds": 1.2, "titlePx": 14, "menuWidth": 170,
+      "tones": { "arrow": "#2a100c", "bleed": "#2a100c", "drowning": "#061620", "thirst": "#2a2010", "debug": "#0d0b12", "default": "#0d0b12" } }
+  },
+  "hints": {
+    "$comment": "src/ui/screens/Hints.js (presentation, step 5.1): at most three one-line hints, each once per profile. seconds shown (the last fadeSeconds fading); move: after moveDelaySeconds of play if the player has not moved moveDoneDistance px; crouch: standing within crouchRadius px of cover (checked every crouchCheckSeconds); the line sits offsetY px under the tide widget.",
+    "seconds": 7,
+    "fadeSeconds": 1,
+    "moveDelaySeconds": 2.5,
+    "moveDoneDistance": 48,
+    "crouchRadius": 24,
+    "crouchCheckSeconds": 0.5,
+    "fontPx": 8,
+    "offsetY": 18
+  },
+  "save": {
+    "$comment": "Saving (step 5.2): src/sim/saveRules.js (the safety table, also used by bots and the save audit) and src/engine/Autosave.js. autosaveMinutes: an autosave every so many minutes of play (ticks), taken at the next safe moment; investigateRefuseRadius: a scout in INVESTIGATE within this many px of the player refuses a save (more than its sight and hearing); nearLandmark: a save names the nearest landmark within this many px.",
+    "autosaveMinutes": 3,
+    "investigateRefuseRadius": 480,
+    "nearLandmark": 320
   }
 }
