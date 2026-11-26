@@ -7,12 +7,12 @@
 //
 // Right thumb cluster, anchored at the bottom-right corner of the safe area: the context action (largest) in
 // the corner, and use/throw, light and crouch on an arc around it from left to top. Top-right bar: journal in
-// the corner, inventory to its left. The left half (minus the bar) belongs to the floating joystick.
+// the corner, inventory to its left, pause under the journal. The left half (minus the bar) belongs to the joystick.
 
 /** ids of the round thumb buttons, in arc order after the corner one */
 export const BUTTON_IDS = Object.freeze(['context', 'use', 'light', 'crouch']);
-/** ids of the top-right bar icons, right to left */
-export const BAR_IDS = Object.freeze(['journal', 'inventory']);
+/** ids of the top-right bar icons: right to left, then pause below the corner one */
+export const BAR_IDS = Object.freeze(['journal', 'inventory', 'pause']);
 
 /**
  * @typedef {Object} TouchLayout
@@ -62,7 +62,17 @@ export function layoutTouchControls(view, safe, cfg) {
 
   const bs = u(b.barSize);
   const bg = u(b.barGap);
-  const bar = BAR_IDS.map((id, i) => ({ id, x: right - margin - bs - i * (bs + bg), y: safeRect.y + margin, w: bs, h: bs }));
+  // journal and inventory in a row; pause under the journal (a third in the row would reach the compass on small
+  // phones), or under the inventory when the thumb buttons reach up there; only a very short window puts it in the row
+  const inRow = (i) => ({ x: right - margin - bs - i * (bs + bg), y: safeRect.y + margin, w: bs, h: bs });
+  const below = (col) => ({ ...inRow(col), y: safeRect.y + margin + bs + bg });
+  const hitsButton = (r) => buttons.some((b) => {
+    const dx = Math.max(r.x - b.x, 0, b.x - (r.x + r.w));
+    const dy = Math.max(r.y - b.y, 0, b.y - (r.y + r.h));
+    return dx * dx + dy * dy < b.r * b.r;
+  });
+  const pausePlace = (i) => [below(0), below(1)].find((r) => !hitsButton(r)) ?? inRow(i);
+  const bar = BAR_IDS.map((id, i) => ({ id, ...(id === 'pause' ? pausePlace(i) : inRow(i)) }));
 
   const j = cfg.joystick;
   const joystick = {

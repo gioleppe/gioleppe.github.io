@@ -8,9 +8,9 @@
 import { tideWidget } from './hud/TideWidget.js';
 import { barsWidget } from './hud/Bars.js';
 import { hotbarWidget, noticesWidget } from './hud/Hotbar.js';
-import { deathNotice } from './hud/DeathNotice.js';
 import { compassWidget } from './hud/Compass.js';
 import { awarenessWidget } from './hud/Awareness.js';
+import { savedMarkWidget } from './screens/savedMark.js';
 
 export { HUD_COLORS, TIDE_WIDGET, clockText, tideReadout, tideWidgetRect, drawTideWidget } from './hud/TideWidget.js';
 
@@ -22,7 +22,7 @@ export const WIDGETS = [
   noticesWidget,
   compassWidget,
   awarenessWidget,
-  deathNotice,   // last: it covers the rest
+  savedMarkWidget,   // the "saved" mark after a save (step 5.2)
 ];
 
 /**

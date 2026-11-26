@@ -20,6 +20,20 @@ import { recipeViews } from './entities/Crafting.js';
 import { ImpactEffects, drawAimMarker, throwPreview } from './engine/ItemRenderer.js';
 import { ScoutOverlays } from './engine/ScoutRenderer.js';
 import { DialogueUI } from './ui/DialogueUI.js';
+import { Notices } from './ui/Notices.js';
+import { Screens } from './ui/Screens.js';
+import { TitleScreen } from './ui/screens/TitleScreen.js';
+import { OpeningScreen } from './ui/screens/OpeningScreen.js';
+import { registerGameScreens } from './ui/screens/GameScreens.js';
+import { TitleBackdrop } from './ui/screens/TitleBackdrop.js';
+import { GameSettings } from './ui/screens/gameSettings.js';
+import { audioAdapter } from './ui/screens/audioAdapter.js';
+import { Hints } from './ui/screens/Hints.js';
+import { saveSummary } from './sim/saveRules.js';
+import { SaveStore } from './engine/SaveStore.js';
+import { Autosave } from './engine/Autosave.js';
+import { attachSaving } from './ui/screens/saveSession.js';
+import { flashSaved } from './ui/screens/savedMark.js';
 
 const SEED = 1;
 
@@ -116,6 +130,7 @@ async function loadBuild() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const build = await res.json();
     buildLabel = `v${build.version} ${build.commit}`;
+    if (saveStore) saveStore.gameVersion = buildLabel;
   } catch {
     buildLabel = 'dev';
   }
@@ -140,11 +155,9 @@ async function loadGame() {
     ]);
     const map = mapJson ? IslandMap.fromJSON(mapJson, tuning) : null;
     renderer.terrainAt = map ? (c, r) => map.terrainAt(c, r) : testFieldTerrain;
-    sim = new Sim({ map, tuning, data: { items, dialogue_marek: dialogueMarek, lore_entries: lore, recipes }, seed: SEED });
+    game = { map, tuning, data: { items, dialogue_marek: dialogueMarek, lore_entries: lore, recipes } };
     camera = new Camera(tuning.camera);
     camera.setViewport(vp.logicalWidth, vp.logicalHeight);
-    camera.setBounds(sim.bounds);
-    camera.snapTo(sim.player.x, sim.player.y);
     input = new InputManager({ tuning, surface: uiCanvas });
     input.setViewport(vp, safe);
     // the island map lives in the Journal's Map tab, which forwards its input to it
@@ -152,11 +165,20 @@ async function loadGame() {
     itemHud = installItemHud({ input, assets, tuning });
     // after the item HUD, so the dialogue's hit regions sit on top of the hotbar's
     dialogueUi = new DialogueUI({ input, assets, tuning });
-    journalUi = new JournalUI({ input, assets, tuning, map: mapOverlay, recipes: (s) => recipeViews(s), onCraft: () => { craftTickPending = true; } });
-    journalUi.attach({ surface: uiCanvas });
+    prefs = new GameSettings({ tuning });
+    prefs.apply({ input });
+    hints = new Hints({ prefs, cfg: tuning.hints });
+    titleBackdrop = new TitleBackdrop({ makeSim: freshSim, tuning });
+    // a run exists from the start (debug tools and the smoke check read it); the title shows until one is chosen
+    useSim(freshSim(), 'boot');
+    setupScreens(tuning);
     framesAtLoad = framesRun;
     if (DEBUG) {
-      window.__game = { get sim() { return sim; }, get camera() { return camera; }, input, assets, renderer, itemHud, mapOverlay, get dialogueUi() { return dialogueUi; }, get journalUi() { return journalUi; } };
+      window.__game = {
+        get sim() { return sim; }, get camera() { return camera; }, input, assets, renderer, itemHud, mapOverlay,
+        get dialogueUi() { return dialogueUi; }, get journalUi() { return journalUi; }, screens, prefs, session: sessionApi,
+        get saves() { return saveStore; }, get autosave() { return autosave; },
+      };
     }
   } catch (e) {
     loadError = `could not load the game data (${e.message})`;
@@ -171,7 +193,8 @@ async function loadGame() {
     ]).then(([m, w, pd, r]) => {
       debug = m.installDebug({
         get sim() { return sim; },
-        setSim(s) { sim = s; camera.setBounds(s.bounds); camera.snapTo(s.player.x, s.player.y); },
+        // a debug restore, restart or scenario takes the one re-pointing path and goes straight into the game
+        setSim(s) { useSim(s, 'debug'); enterGame(); },
         get camera() { return camera; }, get input() { return input; }, get vp() { return vp; }, get safe() { return safe; },
         assets, renderer, stepper, tick, uiCanvas,
       });
@@ -185,9 +208,127 @@ async function loadGame() {
       import('./engine/debug/itemDebug.js').then((i) => i.registerItemDebug(debug)).catch((e) => console.error('item debug failed', e));
       import('./engine/debug/artDebug.js').then((a) => a.registerArtDebug(debug)).catch((e) => console.error('art debug failed', e));
       import('./engine/debug/aiDebug.js').then((a) => a.registerAiDebug(debug)).catch((e) => console.error('ai debug failed', e));
+      import('./engine/debug/saveDebug.js').then((s) => s.registerSaveDebug(debug, { store: saveStore, autosave, session: sessionApi })).catch((e) => console.error('save debug failed', e));
       return import('./engine/debug/collisionLayers.js').then((c) => c.collisionLayers().forEach((l) => debug.addLayer(l)));
     }).catch((e) => console.error('debug mode failed to start', e));
   }
+}
+
+// ---- the run: one re-pointing path, the screens ---------------------------------------------------------
+
+/** @type {{ map: Object|null, tuning: Object, data: Object }|null} the loaded data every Sim is built from */
+let game = null;
+/** @type {Screens|null} title, opening, game, pause, game over, ending (ui/Screens.js) */
+let screens = null;
+/** @type {GameSettings|null} the player's preferences */
+let prefs = null;
+/** @type {Hints|null} */
+let hints = null;
+/** @type {TitleBackdrop|null} */
+let titleBackdrop = null;
+/** @type {SaveStore|null} player saves in localStorage */
+let saveStore = null;
+/** @type {Autosave|null} when autosaves are written */
+let autosave = null;
+/** @type {(() => void)|null} removes the Journal's pointer listeners */
+let detachJournal = null;
+/**
+ * The sound (the audio step builds it and assigns it here); the screens reach it through this adapter, which
+ * copes with it being absent.
+ * @type {Object|null}
+ */
+let audio = null;
+const audioPort = audioAdapter(() => audio);
+
+/** a new run on the loaded island */
+function freshSim(seed = SEED) {
+  return new Sim({ ...game, seed });
+}
+
+/**
+ * Make `s` the running game. Every way a run starts goes through here (boot, New Game, Continue, Load, Retry, a
+ * debug restore): camera, input, the Journal, the dialogue box, notices, hints and the loop all follow the new Sim.
+ * @param {Sim} s
+ * @param {string} why
+ */
+function useSim(s, why) {
+  sim = s;
+  camera.setBounds(s.bounds);
+  camera.snapTo(s.player.x, s.player.y);
+  input.releaseAll();
+  input.setCrouch(s.player.stance === 'crouch');
+  // the Journal remembers what was opened in this run: a new run gets a fresh one
+  journalUi?.close();
+  detachJournal?.();
+  journalUi = new JournalUI({ input, assets, tuning: game.tuning, map: mapOverlay, recipes: (x) => recipeViews(x), onCraft: () => { craftTickPending = true; } });
+  detachJournal = journalUi.attach({ surface: uiCanvas });
+  if (dialogueUi?.open) dialogueUi.close();
+  if (itemHud) itemHud.notices = new Notices();
+  impactFx.puffs = [];
+  craftTickPending = false;
+  hints?.reset(s);
+  autosave?.reset(s);
+  stepper.reset();
+  onSimChanged?.(s, why);
+}
+/** later hooks (saving) on a new run */
+let onSimChanged = null;
+
+/** into the plain game, from wherever the screens are */
+function enterGame() {
+  if (!screens) return;
+  if (screens.currentId === 'game') screens.closeAllPanels();
+  else screens.show('game');
+}
+
+/** what the screens may ask of the page */
+const sessionApi = {
+  sim: () => sim,
+  now: () => Date.now(),
+  saving: false,
+  savingNote: null,
+  summary: () => (sim ? saveSummary(sim) : null),
+  newGame() {
+    useSim(freshSim(), 'new');
+    screens.show('opening');
+  },
+  retry() {
+    useSim(freshSim(), 'retry');
+    screens.show('opening', { fadeOnly: true });
+    return { ok: true };
+  },
+  quitToTitle({ dryRun = false } = {}) {
+    if (dryRun) return { ok: false, refused: null };
+    screens.show('title');
+    return { ok: true };
+  },
+  resetAllData() { prefs.resetAll(); audioPort.resetVolumes(); },
+};
+
+function setupScreens(tuning) {
+  const touch = () => !!input?.touchVisible || !!globalThis.matchMedia?.('(pointer: coarse)')?.matches;
+  screens = new Screens({
+    input, cfg: tuning.screens, audio: audioPort, isTouch: touch, now: () => performance.now(),
+    onChange: (id, from) => {
+      if (id === 'game') stepper.reset();
+      if (id === 'game' && from === 'opening') sessionApi.startAutosave?.();   // a new run's first autosave, at the crash site
+    },
+  });
+  const ui = { screens, actions: sessionApi, prefs, audio: audioPort };
+  saveStore = new SaveStore({ gameVersion: buildLabel || 'dev' });
+  autosave = new Autosave({
+    store: saveStore, cfg: tuning.save,
+    onSaved: (r) => flashSaved(performance.now() / 1000, r.ok ? {} : { ok: false, text: r.code === 'quota' ? 'storage full: not saved' : 'saving unavailable' }),
+  });
+  autosave.reset(sim);
+  attachSaving(sessionApi, { getSim: () => sim, useSim, enterGame, freshSim, screens, ui, game, restore: (snap, ctx) => Sim.restore(snap, ctx), store: saveStore, autosave });
+  screens.register('title', new TitleScreen(ui));
+  screens.register('opening', new OpeningScreen(ui));
+  registerGameScreens(screens, ui);
+  screens.attach({ surface: uiCanvas });
+  // ?debug&play skips the title (tools and quick testing); otherwise every visit starts at the title
+  if (DEBUG && new URLSearchParams(location.search).has('play')) screens.show('game');
+  else screens.show('title');
 }
 
 window.__smoke = () => {
@@ -209,18 +350,19 @@ let journalUi = null;
 /** Make was pressed in the Journal: one tick runs at once (the world is paused) to carry the craft command */
 let craftTickPending = false;
 
-/** a screen that stops the world is open (the Journal; later the pause menu): no ticks run */
+/** a screen that stops the world is open (the Journal, the title, the pause menu, the game over...): no ticks run */
 function uiPaused() {
-  return !!journalUi?.isOpen;
+  return !!journalUi?.isOpen || !!screens?.pausesWorld;
 }
 
-/** the presentation-only actions of this frame: open and close the Journal */
+/** the presentation-only actions of this frame: open and close the Journal, pause */
 function handleUiActions() {
   const ui = input?.takeUiActions();
   if (!ui || !sim || !journalUi) return;
   if (ui.openJournal) journalUi.toggle(sim);
   else if (ui.openInventory) journalUi.toggle(sim, 'recipes');   // the inventory is the hotbar; I shows what it can make
   else if (ui.pause && journalUi.isOpen) journalUi.close();
+  else if (ui.pause && screens?.inGame && !sim.over) screens.show('pause');
 }
 /** @type {DialogueUI|null} Marek's dialogue box; null until the tuning has loaded */
 let dialogueUi = null;
@@ -236,9 +378,11 @@ function tick() {
   ticksRun++;
   debug?.afterStep(inp);
   // events must be read after every tick: the next step replaces the list
-  for (const e of sim.events) if (e.type === 'shake') camera.addShake(e.amount);
+  if (prefs?.shake !== false) for (const e of sim.events) if (e.type === 'shake') camera.addShake(e.amount);
   itemHud?.onStep(sim);
   impactFx.onStep(sim);
+  hints?.onStep(sim);
+  autosave?.onStep(sim);   // at safe moments only (saveRules.canSave)
 }
 
 function drawWorld(alpha, elapsed) {
@@ -247,6 +391,7 @@ function drawWorld(alpha, elapsed) {
     worldCtx.fillRect(0, 0, vp.logicalWidth, vp.logicalHeight);
     return;
   }
+  if (screens?.world === 'title') { titleBackdrop.draw(worldCtx, renderer, vp, elapsed); return; }
   const p = sim.player;
   // during a conversation the camera frames player and speaker above the dialogue box
   const focus = dialogueUi?.cameraFocus(sim, camera.viewH);
@@ -277,16 +422,19 @@ function drawUi() {
     ctx.fillText(buildLabel, vp.uiLogicalWidth - safe.right - 3, vp.uiLogicalHeight - safe.bottom - 2);
   }
   const talking = !!dialogueUi?.open;
-  if (sim && !sim.over && !talking) itemHud?.drawPrompt(ctx, sim, camera);
-  if (sim) {
+  const hud = !screens || screens.hud;
+  if (hud && sim && !sim.over && !talking && screens?.inGame !== false) itemHud?.drawPrompt(ctx, sim, camera);
+  if (sim && hud) {
     // the HUD dims while the dialogue box is open (ctx.filter; where a browser lacks it the HUD stays bright)
     if (talking) ctx.filter = `brightness(${sim.tuning.dialogue.hudDim})`;
     drawHud(ctx, sim, vp, safe, { time: performance.now() / 1000, reserve: hudReserve() });
     ctx.filter = 'none';
+    if (screens?.inGame) hints?.draw(ctx, vp, safe, { touch: !!input?.touchVisible });
   }
-  if (input && sim) input.draw(ctx, { camera, player: sim.player, landing: (wx, wy) => throwPreview(sim, wx, wy) });
-  if (talking) dialogueUi.draw(ctx, vp, safe, performance.now());
+  if (input && sim && hud) input.draw(ctx, { camera, player: sim.player, landing: (wx, wy) => throwPreview(sim, wx, wy) });
+  if (talking && hud) dialogueUi.draw(ctx, vp, safe, performance.now());
   if (journalUi?.isOpen) journalUi.draw(ctx, vp, safe, sim, performance.now());
+  screens?.draw(ctx, vp, safe, performance.now());
   if (loadError) {
     ctx.font = '8px ui-monospace, Consolas, monospace';
     ctx.textAlign = 'center';
@@ -307,7 +455,8 @@ function frame(now) {
   rafId = requestAnimationFrame(frame);
   const elapsed = lastTime === null ? 0 : (now - lastTime) / 1000;
   lastTime = now;
-  handleUiActions();   // the pause menu arrives in a later step; until then that press only closes the Journal
+  handleUiActions();   // Journal, inventory, pause
+  screens?.update(Math.min(elapsed, 0.25), now);
   if (uiPaused()) {
     stepper.reset();   // the world waits; on closing it resumes from now, without catch-up ticks
     if (craftTickPending) { craftTickPending = false; tick(); }   // a Make: exactly one tick, carrying the command
@@ -316,6 +465,8 @@ function frame(now) {
   framesRun++;
   if (sim) itemHud?.frame(sim);
   if (sim) dialogueUi?.sync(sim, elapsed);
+  if (sim && screens?.inGame && !journalUi?.isOpen && !dialogueUi?.open) hints?.frame(sim, Math.min(elapsed, 0.25), { journalOpen: false });
+  else if (journalUi?.isOpen) hints?.frame(sim, 0, { journalOpen: true });
   drawWorld(stepper.alpha, elapsed);
   drawUi();
 }
@@ -333,7 +484,17 @@ function stop() {
 }
 
 // a hidden tab stops simulating; on return it resumes where it was instead of fast-forwarding
-document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { autosaveOnLeave(); stop(); } else start();
+});
+// the tab is closed or dropped (mobile browsers evict hidden tabs): autosave, if this moment is safe; if it is not,
+// the last autosave (always taken at a safe moment) is what Continue will find
+window.addEventListener('pagehide', () => autosaveOnLeave());
+
+function autosaveOnLeave() {
+  if (!screens || !sim) return;
+  if (screens.currentId === 'game' || screens.currentId === 'pause') sessionApi.hiddenAutosave?.();
+}
 
 applyViewport();
 loadBuild();
