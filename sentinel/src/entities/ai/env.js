@@ -66,12 +66,16 @@ export function viewPlayer(sim, ai, cheats, inlandRegions, out = {}) {
   out.vy = (p.y - p.prevY) / DT;
   out.hidden = p.dead || cheats.invisible === true;
   let amb = sim.world ? ambientVisibility(sim.world, t) : 1;
+  const sky = amb;
   if (p.lightOn && amb < ai.sight.flashlightVisibility) amb = ai.sight.flashlightVisibility;
   out.ambient = amb;
   out.inCover = p.inCover;
   const stance = p.stance === 'crouch' && !p.inCover ? ai.sight.crouchFactor : 1;
   const res = resonanceDetection(sim);
-  out.rangeFactor = p.visibilityFactor * amb * res * stance;
+  // a boat on the open water in daylight (step 5.7): a silhouette on the bright sea, nothing to hide behind; not at
+  // night, at dusk or in a squall (the sky's light below ai.sight.boatMinLight), whatever light the player carries
+  const boat = sim.endings?.fleeing === true && sky >= (ai.sight.boatMinLight ?? 1) ? ai.sight.boatRangeFactor ?? 1 : 1;
+  out.rangeFactor = p.visibilityFactor * amb * res * stance * boat;
   out.presenceFactor = p.visibilityFactor * res * stance;
   out.region = sim.map ? sim.map.regionAtWorld(p.x, p.y) : null;
   out.inland = out.region !== null && inlandRegions.has(out.region);

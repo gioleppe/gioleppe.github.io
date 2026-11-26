@@ -338,6 +338,9 @@
       "alertRangeMultiplier": 1.25,
       "$alertRangeMultiplier": "a scout in WARN, CHASE or SEARCH looks harder",
       "flashlightVisibility": 0.9,
+      "boatRangeFactor": 2,
+      "boatMinLight": 0.95,
+      "$boatRangeFactor": "step 5.7: the player in the dinghy, leaving, is seen this much further in daylight (a boat on the bright sea, no cover), only while the sky's light (src/world/visibility.js, before any flashlight) is at least boatMinLight: the night, dusk and squalls hide a boat as they hide a walker",
       "$flashlightVisibility": "a lit flashlight: the light factor is at least this (a torch at night gives the player away)"
     },
     "awareness": {
@@ -657,13 +660,13 @@
       "dragNoiseSeconds": 0.5,
       "towLength": 26,
       "settleSeconds": 1.5,
-      "rowSpeed": 50,
+      "rowSpeed": 40,
       "pullMultiplier": 1.6,
       "turnRate": 3,
       "rowStaminaPerSecond": 0,
       "pullStaminaPerSecond": 9,
       "boatRadius": 14,
-      "passageLinePx": 72,
+      "passageLinePx": 240,
       "tidalMarginTiles": 20,
       "rowNoiseRadius": 60
     },

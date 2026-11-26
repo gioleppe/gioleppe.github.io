@@ -9,8 +9,9 @@
 //   | code            | refused while                                                    | reason shown to the player                 |
 //   | --------------- | ---------------------------------------------------------------- | ------------------------------------------ |
 //   | over            | the run is lost (`sim.over`) or the player is dead                | The run is over.                           |
-//   | ending          | an ending sequence runs (in the dinghy from     | Not now: there is no stopping halfway.     |
-//   |                 | boarding on; a window on the peak after the    |                                            |
+//   | ending          | an ending sequence runs (dragging the dinghy,   | Not now: there is no stopping halfway.     |
+//   |                 | step 5.7, and in it from boarding on; a window  |                                            |
+//   |                 | on the peak after the                           |                                            |
 //   |                 | flare) or an ending was reached                 |                                            |
 //   | chase           | a scout is in CHASE (`sim.threat.level` or any scout's state)      | Not while they are chasing you.            |
 //   | warn            | a scout is in WARN                                                 | Not while you are being warned off.        |
@@ -109,7 +110,7 @@ export function onFloodingGround(sim) {
  */
 export const SAVE_RULES = Object.freeze([
   { code: 'over', reason: 'The run is over.', test: (sim) => !!sim.over || !!sim.player?.dead },
-  { code: 'ending', reason: 'Not now: there is no stopping halfway.', test: (sim) => !!sim.ending || sim.endings?.inSequence === true },
+  { code: 'ending', reason: 'Not now: there is no stopping halfway.', test: (sim) => !!sim.ending || sim.endings?.inSequence === true || sim.endings?.dinghy?.dragging === true },
   { code: 'chase', reason: 'Not while they are chasing you.', test: (sim) => threatLevel(sim) === 'chase' },
   { code: 'warn', reason: 'Not while you are being warned off.', test: (sim) => threatLevel(sim) === 'warn' },
   { code: 'search', reason: 'Not while they are searching for you.', test: (sim) => threatLevel(sim) === 'search' },

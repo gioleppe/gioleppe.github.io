@@ -54,9 +54,12 @@ export function objectives(sim) {
   const repaired = f('dinghy_repaired');
   const looked = f('dinghy_inspected') || st.recipes.has('patched_dinghy');
   const boatSteps = [step('dinghy', looked || repaired, repaired, 'Patch the dinghy at the crash site')];
+  // how many of each part: read from the patched_dinghy recipe (data), 1 when a test runs without recipes
+  const recipe = sim.recipeBook?.get?.('patched_dinghy');
   for (const p of BOAT_PARTS) {
     const have = count(sim, p.item);
-    boatSteps.push(step(p.item, looked || repaired || have > 0, repaired || have >= 1, p.text, repaired ? null : { have: Math.min(have, 1), need: 1 }));
+    const need = recipe?.ingredients.find((g) => g.item === p.item)?.n ?? 1;
+    boatSteps.push(step(p.item, looked || repaired || have > 0, repaired || have >= need, p.text, repaired ? null : { have: Math.min(have, need), need }));
   }
   boatSteps.push(step('launch', repaired || j('hint_high_water'), f('dinghy_launched'), 'Launch on the high water, over the outer reef'));
 

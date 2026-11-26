@@ -69,13 +69,13 @@
     {
       "id": "recipe_patched_dinghy", "category": "recipe", "unlockedBy": "recipe:patched_dinghy",
       "title": "Patching the dinghy",
-      "text": "The tarp over the split, folded twice and lashed around the hull with cord; a length of driftwood braced across inside to hold the shape.\nIt will not be pretty. It only has to float as far as the passage, and a long way past it."
+      "text": "The tarp over the split, folded twice and lashed around the hull with two lengths of cord, one each way; three lengths of driftwood braced across inside, a keel and two thwarts, to hold the shape.\nIt will not be pretty. It only has to float as far as the passage, and a long way past it."
     },
 
     {
       "id": "dinghy_plan", "category": "note", "unlockedBy": "event:dinghy_inspected",
       "title": "The dinghy",
-      "text": "Grey rubber, one chamber split along a seam, the floor still sound. With a tarp across the split, cord to lash it and a length of wood to hold the shape, it would float.\nIt would have to wait for high water to get over the reef."
+      "text": "Grey rubber, one chamber split along a seam, the floor still sound. With a tarp across the split, two lengths of cord to lash it and three of wood to hold the shape, it would float. One coil of cord will not go round it twice.\nIt would have to wait for high water to get over the reef."
     },
     {
       "id": "hatch_plan", "category": "note", "unlockedBy": "event:hatch_inspected",
