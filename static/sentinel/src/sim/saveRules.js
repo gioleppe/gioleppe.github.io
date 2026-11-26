@@ -9,6 +9,9 @@
 //   | code            | refused while                                                    | reason shown to the player                 |
 //   | --------------- | ---------------------------------------------------------------- | ------------------------------------------ |
 //   | over            | the run is lost (`sim.over`) or the player is dead                | The run is over.                           |
+//   | ending          | an ending sequence runs (in the dinghy from     | Not now: there is no stopping halfway.     |
+//   |                 | boarding on; a window on the peak after the    |                                            |
+//   |                 | flare) or an ending was reached                 |                                            |
 //   | chase           | a scout is in CHASE (`sim.threat.level` or any scout's state)      | Not while they are chasing you.            |
 //   | warn            | a scout is in WARN                                                 | Not while you are being warned off.        |
 //   | search          | a scout is in SEARCH                                               | Not while they are searching for you.      |
@@ -106,6 +109,7 @@ export function onFloodingGround(sim) {
  */
 export const SAVE_RULES = Object.freeze([
   { code: 'over', reason: 'The run is over.', test: (sim) => !!sim.over || !!sim.player?.dead },
+  { code: 'ending', reason: 'Not now: there is no stopping halfway.', test: (sim) => !!sim.ending || sim.endings?.inSequence === true },
   { code: 'chase', reason: 'Not while they are chasing you.', test: (sim) => threatLevel(sim) === 'chase' },
   { code: 'warn', reason: 'Not while you are being warned off.', test: (sim) => threatLevel(sim) === 'warn' },
   { code: 'search', reason: 'Not while they are searching for you.', test: (sim) => threatLevel(sim) === 'search' },
@@ -134,7 +138,9 @@ export function canSave(sim, cfg = sim?.tuning?.save ?? {}) {
 }
 
 /** story events that complete a step of an escape plan (an autosave follows, once the moment is safe) */
-export const STORY_SAVE_EVENTS = Object.freeze(['dinghy_repaired', 'hatch_opened', 'crafted']);
+// signal_confirm: the first press of the flare gun at the peak is a safe moment by construction (endings/signal.js
+// asks canSave first); TASKS.md 5.4 wants the autosave there, just before the signal is fired
+export const STORY_SAVE_EVENTS = Object.freeze(['dinghy_repaired', 'hatch_opened', 'crafted', 'signal_confirm']);
 
 /**
  * Why this step's events call for an autosave, or null: entering a safe zone (Marek's clearing), picking up a key

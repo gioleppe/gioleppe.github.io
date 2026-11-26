@@ -84,6 +84,8 @@ export class Collider {
       const v = typeof propCfg[kind]?.blocksSight === 'boolean' ? propCfg[kind].blocksSight : sightCfg[kind];
       if (typeof v === 'boolean') this.sightByKind.set(kind, v);
     }
+    /** @type {Set<string>} ids of props moved off their map place (see propIsSolid) */
+    this.moved = new Set();
     // scratch, so no query allocates
     this.props = [];
     this.cx = 0; this.cy = 0;           // working position of resolve()
@@ -94,6 +96,9 @@ export class Collider {
 
   /** @returns {boolean} the prop stops movement */
   propIsSolid(p) {
+    // a prop that has left its map place (the dragged dinghy, step 5.3) no longer blocks there; derived from the
+    // simulation's state by its owner (endings/dinghy.js sync), never state of its own
+    if (this.moved.size > 0 && this.moved.has(p.id)) return false;
     return p.radius > 0 || p.blocker === true;
   }
 

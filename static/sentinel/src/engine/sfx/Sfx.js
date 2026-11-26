@@ -113,6 +113,16 @@ export const HANDLERS = {
   offeringAccepted(s) { s.play('release', { gain: 0.45 }); },
   gathererGift(s, e, L) { s.playAt('drop', e, L, { gain: 0.45 }); },
   gathererStartled(s, e, L) { s.playAt('cloth', e, L, { gain: 0.9 }); },
+  // the endings (steps 5.3, 5.4): restrained; the music carries the minute on the peak and the two ending cues.
+  // Built from the existing voices until the sound step gives them their own.
+  dinghyDrag(s, e, L) { s.playAt('cloth', e, L, { gain: 0.9 }); },         // rubber taken up off the sand
+  dinghyAfloat(s) { s.play('step_wade'); s.play('swim_stroke', { at: s.now + 0.25, gain: 0.7 }); },
+  dinghyBeached(s) { s.play('step_wade', { gain: 0.8 }); },
+  dinghyPassage(s) { s.play('release', { gain: 0.5 }); },                  // out past the breakers: a held breath let go
+  signalFired(s) { s.play('thunder', { gain: 0.35, near: 0.6 }); },       // the flare's thump and hiss
+  beaconOn(s) { s.play('electric'); },
+  boatArrives(s) { s.play('thunder', { gain: 0.2, near: 0.05, pan: -0.5 }); },   // a far engine
+  spotlight(s) { s.play('tier_swell', { gain: 0.6 }); },
 };
 
 export class Sfx {

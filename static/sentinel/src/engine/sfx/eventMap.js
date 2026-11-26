@@ -109,6 +109,27 @@ export const SFX_EVENTS = Object.freeze({
   gatherer_gift: 'gathererGift',        // something set down near the player, softly, where it lies
   gatherer_startled: 'gathererStartled', // a rustle of leaves where the gatherer was
   gatherer_left: SILENT,
+
+  // the endings (steps 5.3, 5.4). The drag's and the oars' sounds are the noises they make (sim.noise: kind 'drag',
+  // 'oars'); the minute on the peak is the holdout music (audio.holdout), so its ticks and waves are silent here.
+  dinghy_drag_start: 'dinghyDrag',
+  dinghy_drag_stop: SILENT,
+  dinghy_afloat: 'dinghyAfloat',
+  dinghy_beached: 'dinghyBeached',
+  dinghy_passage: 'dinghyPassage',
+  ending: SILENT,                       // the ending cue (setScreen ending_dinghy / ending_rescue)
+  signal_confirm: 'confirm',
+  signal_refused: 'deny',
+  signal_fired: 'signalFired',
+  beacon_on: 'beaconOn',
+  beacon_window: SILENT,
+  holdout_start: SILENT,                // audio.holdout.start()
+  holdout_wave: SILENT,
+  holdout_tick: SILENT,
+  boat_arrives: 'boatArrives',
+  spotlight_sweep: 'spotlight',
+  rescued: SILENT,
+  boat_missed: SILENT,
 });
 
 /** the Sentinelese' events */

@@ -626,6 +626,7 @@ export class Scouts {
    * @returns {'metal'|'resonance'|'inland'|'too_close'|'warned_before'|null}
    */
   attackReason(s, P) {
+    if (P.fleeing) return 'boat';   // step 5.3: a boat leaving is shot at, not warned
     if (P.provokes) return 'metal';
     if (P.escalate) return 'resonance';
     if (P.inland) return 'inland';
@@ -688,6 +689,7 @@ export class Scouts {
       return;
     }
     s.anim = 'warn_bow';
+    if (P.fleeing) { this.endWarn(sim, s, 'boat'); this.chase(sim, s, 'boat', P); return; }
     if (P.provokes) { this.endWarn(sim, s, 'metal'); this.chase(sim, s, 'metal', P); return; }
     if (P.escalate) { this.endWarn(sim, s, 'resonance'); this.chase(sim, s, 'resonance', P); return; }
     if (s.seen && (d <= s.warnD0 - w.advanceMargin || d <= near)) { this.endWarn(sim, s, 'advanced'); this.chase(sim, s, 'advanced', P); return; }
@@ -1061,6 +1063,7 @@ export class Scouts {
     const fled = !s.seen || s.dist >= s.hitD0 + this.ai.warn.backoffMargin;
     s.hitD0 = -1;
     if (!fled || !this.ai.arrow.driveOffAfterHit) return;
+    if (sim.endings?.noStandDown === true) return;   // the peak's minute (step 5.4): they do not give up there
     const w = this.ai.warn;
     this.setState(sim, s, 'warn', 'driven_off');
     s.phase = 'lower';

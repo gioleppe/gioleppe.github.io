@@ -26,6 +26,7 @@ import { Screens } from './ui/Screens.js';
 import { TitleScreen } from './ui/screens/TitleScreen.js';
 import { OpeningScreen } from './ui/screens/OpeningScreen.js';
 import { registerGameScreens } from './ui/screens/GameScreens.js';
+import { installEndingFx } from './engine/EndingFx.js';
 import { TitleBackdrop } from './ui/screens/TitleBackdrop.js';
 import { GameSettings } from './ui/screens/gameSettings.js';
 import { audioAdapter } from './ui/screens/audioAdapter.js';
@@ -58,6 +59,8 @@ setActiveAssets(assets);   // the HUD, touch controls, map and emote bubbles dra
 const renderer = new Renderer({ sprites: assets, resonanceFx: new ResonanceFx() });
 // the scouts' bubbles and the silhouettes of hidden, watchful scouts, after the lighting pass (ScoutRenderer.js)
 ScoutOverlays.install(renderer);
+// the endings' flare, patrol boat and spotlight (steps 5.3, 5.4): lights and a beam (EndingFx.js)
+installEndingFx(renderer);
 let camera = new Camera();
 const DEBUG = new URLSearchParams(location.search).has('debug');
 /** debug mode (src/engine/debug/, loaded only with ?debug): loop, input and drawing hooks; null otherwise */
@@ -214,6 +217,7 @@ async function loadGame() {
       import('./engine/debug/itemDebug.js').then((i) => i.registerItemDebug(debug)).catch((e) => console.error('item debug failed', e));
       import('./engine/debug/artDebug.js').then((a) => a.registerArtDebug(debug)).catch((e) => console.error('art debug failed', e));
       import('./engine/debug/aiDebug.js').then((a) => a.registerAiDebug(debug)).catch((e) => console.error('ai debug failed', e));
+      import('./engine/debug/endingsDebug.js').then((m) => m.registerEndingsDebug(debug)).catch((e) => console.error('endings debug failed', e));
       import('./engine/debug/audioDebug.js').then((a) => a.registerAudioDebug(debug, gameAudio)).catch((e) => console.error('audio debug failed', e));
       import('./engine/debug/saveDebug.js').then((s) => s.registerSaveDebug(debug, { store: saveStore, autosave, session: sessionApi })).catch((e) => console.error('save debug failed', e));
       return import('./engine/debug/collisionLayers.js').then((c) => c.collisionLayers().forEach((l) => debug.addLayer(l)));
@@ -390,7 +394,16 @@ function tick() {
   itemHud?.onStep(sim);
   impactFx.onStep(sim);
   hints?.onStep(sim);
-  autosave?.onStep(sim);   // at safe moments only (saveRules.canSave)
+  autosave?.onStep(sim);   // at safe moments only (saveRules.canSave); signal_confirm asks for one (step 5.4)
+  endingAudio(sim);
+}
+
+/** the Signal Peak minute's music (steps 5.4; the audio agent's holdout cue), through the optional adapter */
+function endingAudio(s) {
+  for (const e of s.events) {
+    if (e.type === 'holdout_start') audioPort.holdout?.(true);
+    else if (e.type === 'spotlight_sweep' || e.type === 'boat_missed' || e.type === 'player_died' || e.type === 'ending') audioPort.holdout?.(false);
+  }
 }
 
 function drawWorld(alpha, elapsed) {

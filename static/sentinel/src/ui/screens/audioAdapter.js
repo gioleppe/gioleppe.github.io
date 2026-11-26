@@ -47,6 +47,11 @@ export function audioAdapter(source) {
       const a = get();
       if (a?.setScreen) call(() => a.setScreen(name));
     },
+    /** the Signal Peak minute's music (step 5.4): audio.holdout.start() / stop() when the audio has them */
+    holdout(on) {
+      const a = get();
+      if (a?.holdout) call(() => (on ? a.holdout.start?.() : a.holdout.stop?.()));
+    },
     /** back to the default volumes (reset all data) */
     resetVolumes() {
       for (const b of AUDIO_BUSES) this.setVolume(b, DEFAULT_VOLUMES[b] ?? 0.8);

@@ -58,7 +58,7 @@ export function objectives(sim) {
     const have = count(sim, p.item);
     boatSteps.push(step(p.item, looked || repaired || have > 0, repaired || have >= 1, p.text, repaired ? null : { have: Math.min(have, 1), need: 1 }));
   }
-  boatSteps.push(step('launch', repaired || j('hint_high_water'), false, 'Launch on the high water, over the outer reef'));
+  boatSteps.push(step('launch', repaired || j('hint_high_water'), f('dinghy_launched'), 'Launch on the high water, over the outer reef'));
 
   // ---- the signal (Win B, spec §8) ----
   const open = f('hatch_open');
@@ -72,7 +72,7 @@ export function objectives(sim) {
     step('low_tide', hatchKnown || j('marek_warnings'), open, 'Cross the reef at low water'),
     step('radio_battery', open || has(sim, 'radio_battery'), has(sim, 'radio_battery'), 'The radio battery'),
     step('flare_gun', open || has(sim, 'flare_gun'), flares > 0, 'The flare gun, loaded', has(sim, 'flare_gun') ? { have: flares, need: 1 } : null),
-    step('peak', peakKnown, false, 'A high place to signal from: Signal Peak'),
+    step('peak', peakKnown, f('signal_fired'), 'A high place to signal from: Signal Peak'),
   ];
 
   const plans = [

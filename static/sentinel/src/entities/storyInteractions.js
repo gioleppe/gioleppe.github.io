@@ -9,7 +9,7 @@
 //     again breaks it off and nothing is spent; on completion the three are spent (Inventory.spend, purpose
 //     dinghy_repair), story flag dinghy_repaired, interactable flag `repaired`, event dinghy_repaired { id, spent }
 //     (Marek listens for it) and the prop draws as `dinghy_patched` (propKind);
-//   - repaired: event dinghy_waits { id, highTide } (the launch and the ending are step 5.3's).
+//   - repaired: the launch (step 5.3, src/sim/endings/dinghy.js): below the launch tide dinghy_waits, else the drag.
 // The hatch (action `hatch`, the map's `wreck_hatch`, also the container of the cabin's loot):
 //   - closed, no crowbar: plan_signal + hatch_inspected, event hatch_inspected ("it will not move by hand");
 //   - closed, crowbar carried (held or stowed): a pry channel of tuning.story.prySeconds that is loud (a noise of
@@ -20,7 +20,8 @@
 // The signal point (action `signal_point`): looking sets plan_signal and signal_point_seen (event
 //   signal_point_inspected). Firing is step 5.4's.
 // The flare gun: `useItem` with it in hand never fires it anywhere but within tuning.story.signalRadius of the signal
-//   point (event flare_refused { reason: 'not_here' | 'empty' }); there it raises flare_ready { flares } for step 5.4.
+//   point (event flare_refused { reason: 'not_here' | 'empty' }); there step 5.4 (src/sim/endings/signal.js) asks
+//   for a confirm (flare_ready, signal_confirm) and fires on the second press.
 //   The gun from the wreck holds tuning.story.flareGunRounds; the Cartographer's pouch adds flarePouchRounds (story
 //   counters flare_gun_rounds / flare_pouch_rounds, set the first time each is taken).
 import { registerInteraction, startChannel, lootContainer } from './Interactable.js';
@@ -63,9 +64,13 @@ function hasDinghyParts(sim) {
 
 registerInteraction('dinghy', {
   icon: (sim) => (dinghyRepaired(sim) || hasDinghyParts(sim) ? 'hand' : 'eye'),
+  // dragged or afloat it is not a target (the interact press lets go / is the oars' business: endings/dinghy.js)
+  canInteract: (sim) => !sim.endings || sim.endings.dinghy.phase === 'rest',
   interact(sim, t) {
     if (dinghyRepaired(sim)) {
-      sim.events.push({ type: 'dinghy_waits', id: t.id, highTide: sim.world?.tideState === 'high' });
+      // step 5.3: below the launch tide `dinghy_waits`, at it the drag to the water starts
+      if (sim.endings) sim.endings.dinghy.interact(sim, t);
+      else sim.events.push({ type: 'dinghy_waits', id: t.id, highTide: sim.world?.tideState === 'high' });
       return;
     }
     const flags = sim.story.flags;
@@ -212,7 +217,9 @@ export function useFlareGun(sim) {
     sim.events.push({ type: 'flare_refused', reason: 'empty' });
     return;
   }
-  sim.events.push({ type: 'flare_ready', flares });
+  // step 5.4: the confirm, the autosave moment and the firing (endings/signal.js)
+  if (sim.endings) sim.endings.signal.use(sim);
+  else sim.events.push({ type: 'flare_ready', flares });
 }
 
 /**

@@ -79,5 +79,7 @@ export function viewPlayer(sim, ai, cheats, inlandRegions, out = {}) {
   out.provokes = !!inv && (inv.holdingMetalOrElectronics || inv.carriesActiveElectronics);
   out.escalate = resonanceEscalates(sim);
   out.safe = inSafeZone(sim, p.x, p.y);
+  // in the dinghy, leaving (step 5.3): a boat going out is shot at, never warned
+  out.fleeing = sim.endings?.fleeing === true;
   return out;
 }

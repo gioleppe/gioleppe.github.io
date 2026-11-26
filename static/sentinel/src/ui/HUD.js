@@ -6,6 +6,7 @@
 // hotbar bottom centre (raised above the touch controls when they show), notices above it; the touch controls
 // own the top-right bar and the bottom corners.
 import { tideWidget } from './hud/TideWidget.js';
+import { beaconWidget } from './hud/Beacon.js';
 import { barsWidget } from './hud/Bars.js';
 import { hotbarWidget, noticesWidget } from './hud/Hotbar.js';
 import { compassWidget } from './hud/Compass.js';
@@ -17,6 +18,7 @@ export { HUD_COLORS, TIDE_WIDGET, clockText, tideReadout, tideWidgetRect, drawTi
 /** in draw order */
 export const WIDGETS = [
   tideWidget,
+  beaconWidget,   // over the tide widget during the minute on Signal Peak (step 5.4)
   barsWidget,
   hotbarWidget,
   noticesWidget,
