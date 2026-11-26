@@ -57,6 +57,8 @@ const PROP_REACH_BELOW = 160;
 const PROP_REACH_SIDE = 64;
 /** how far above the view a prop's anchor may be while its base (drawn under the anchor) still reaches into it */
 const PROP_REACH_ABOVE = 16;
+/** the rower in the dinghy: the boat drawn `sink` px below the player's feet, its near `front` rows over the legs */
+const ROWER = Object.freeze({ sink: 9, front: 13 });
 /** horizontal slices a swaying sprite is drawn in */
 export const SWAY_SLICES = 4;
 
@@ -190,7 +192,9 @@ export class Renderer {
     this.sprites = sprites;
     this.terrainAt = terrainAt;
     /** what the last frame processed, for debug overlays and tests */
-    this.stats = { tiles: 0, entities: 0, drawn: 0, flat: 0, renderMs: 0, renderAvgMs: 0 };
+    this.stats = { tiles: 0, entities: 0, drawn: 0, flat: 0, renderMs: 0, renderAvgMs: 0, passes: { ground: 0, entities: 0, weather: 0, lighting: 0, overlays: 0, resonance: 0 } };
+    /** drawing knobs of the graphics quality (Quality.js QUALITY_LEVELS; main.js sets them every frame) */
+    this.quality = { sway: true, shadows: true };
     /** reused by the map's prop query every frame */
     this.propScratch = [];
     /** the island's ground under the tide: flooding, shoreline, water animation */
@@ -222,28 +226,36 @@ export class Renderer {
    */
   render(ctx, sim, camera, { alpha = 1, time = sim.time } = {}) {
     const t0 = now();
+    const P = this.stats.passes;
     ctx.imageSmoothingEnabled = false;
     ctx.fillStyle = '#0b1416';
     ctx.fillRect(0, 0, camera.viewW, camera.viewH);
     this.drawGround(ctx, camera, sim.bounds, sim, time);
     drawFootprints(ctx, sim, camera);
+    let t = now();
+    P.ground = t - t0;
 
     const all = this.collectEntities(sim, alpha, camera.visibleRect());
     const visible = cullAndSort(all, camera.visibleRect(), (k, s, v) => this.sprites.size(k, s, v));
-    const sway = this.swayContext(sim, alpha);
+    const sway = this.quality.sway ? this.swayContext(sim, alpha) : null;
     // ground decals first, so nothing standing "behind" a spring or a pickup is hidden by it
     const { flat, upright } = splitFlat(visible, this.flatScratch, this.uprightScratch);
     for (const e of flat) this.drawEntity(ctx, e, camera, time, null);
     for (const e of upright) this.drawEntity(ctx, e, camera, time, sway);
+    P.entities = -t + (t = now());
     if (this.weather && sim.world) {
       const map = sim.map;
       this.weather.draw(ctx, sim, camera, time, map ? (tx, ty) => isWaterClass(waterAt(map, sim.world, tx, ty)) : null);
     }
+    P.weather = -t + (t = now());
     this.lighting?.draw(ctx, sim, camera, { time, alpha });
+    P.lighting = -t + (t = now());
     drawNoiseRings(ctx, sim, camera, time);   // after the darkness: a loud noise is a signal, readable at night too
     // signals that must read at night (emote bubbles, Emotes.js): (ctx, sim, camera, { time, alpha })
     for (const fn of this.afterLighting) fn(ctx, sim, camera, { time, alpha });
+    P.overlays = -t + (t = now());
     this.resonanceFx?.draw(ctx, sim, camera, { time, alpha });   // last: its vignette tints the edges over everything
+    P.resonance = now() - t;
     this.stats.entities = all.length;
     this.stats.drawn = visible.length;
     this.stats.flat = flat.length;
@@ -309,15 +321,45 @@ export class Renderer {
       // the player sits in it (the wading frame cuts the legs at the waterline)
       const pos = dinghy.pos(sim);
       const afloat = dinghy.phase === 'afloat' || dinghy.phase === 'away';
-      const x = afloat ? out[0].x : pos.x;
-      const y = afloat ? out[0].y - 0.01 : pos.y;
-      out.push({ id: 'dinghy_moved', kind: 'dinghy_patched', x, y, state: 'idle', facing: null, variant: 0, phase: 0, flat: false });
+      if (afloat) out.push(...this.rowerViews(out[0]));
+      else out.push({ id: 'dinghy_moved', kind: 'dinghy_patched', x: pos.x, y: pos.y, state: 'idle', facing: null, variant: 0, phase: 0, flat: false });
     }
     collectItemViews(sim, view ?? null, out, this.sprites, this.itemScratch, alpha);
     if (sim.marek) out.push(sim.marek.view());
     collectScoutViews(sim, view ?? null, out, alpha, this.sprites);
     for (const v of this.extraViews) out.push(v);
     return out;
+  }
+
+  /**
+   * The rower (step 5.6 polish): there is no sitting frame, so the player is drawn in the crouch frame sitting in
+   * the middle of the boat, the boat behind it, and the boat's near gunwale drawn again over the legs, so the
+   * player reads as sitting in it. Mutates the player view; returns the boat's two views.
+   * @param {EntityView} pv the player's view (out[0])
+   */
+  rowerViews(pv) {
+    pv.state = 'crouch';
+    pv.water = null;
+    pv.alpha = 1;
+    const sprites = this.sprites;
+    const sink = ROWER.sink;
+    const size = { w: 64, h: 40 };
+    const hull = (ctx, x, y, time) => {
+      drawWaterRing(ctx, x, y + sink, time, 'swim');
+      sprites.draw(ctx, 'dinghy_patched', 'idle', null, x, y + sink, time, 0);
+    };
+    const gunwale = (ctx, x, y, time) => {
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(x - 40, y + sink - ROWER.front, 80, ROWER.front + 4);
+      ctx.clip();
+      sprites.draw(ctx, 'dinghy_patched', 'idle', null, x, y + sink, time, 0);
+      ctx.restore();
+    };
+    return [
+      { id: 'dinghy_moved', kind: 'dinghy_patched', x: pv.x, y: pv.y - 0.01, state: 'idle', facing: null, size, paint: hull },
+      { id: 'dinghy_gunwale', kind: 'dinghy_patched', x: pv.x, y: pv.y + 0.01, state: 'idle', facing: null, size, paint: gunwale },
+    ];
   }
 
   /** what foliage sway needs this frame, or null when there is no wind to show */
@@ -341,7 +383,7 @@ export class Renderer {
     if (e.phase) time += e.phase;
     const size = this.sprites.size(e.kind, e.state, v);
     if (e.water) drawWaterRing(ctx, x, y, time, e.water);
-    else if (size.shadow !== 0 && !e.flat) this.drawShadow(ctx, x, y, size.shadow ?? size.w);
+    else if (size.shadow !== 0 && !e.flat) this.drawShadow(ctx, x, y, size.shadow ?? size.w, this.quality.shadows);
     if (e.alpha !== undefined && e.alpha < 1) {
       const before = ctx.globalAlpha;
       ctx.globalAlpha = before * e.alpha;
@@ -360,6 +402,8 @@ export class Renderer {
           // the bottom slice also covers anything drawn below the anchor
           const top = k === SWAY_SLICES - 1 ? y - size.h - 8 : y - (k + 1) * sliceH;
           const bottom = k === 0 ? y + 8 : y - k * sliceH;
+          // one drawImage of the slice's rows where the sprite source can (AssetManager.drawBand), else a clip
+          if (this.sprites.drawBand?.(ctx, e.kind, e.state, e.facing, x + off[k], y, time, v, top, bottom)) continue;
           ctx.save();
           ctx.beginPath();
           ctx.rect(x - reach, top, reach * 2, bottom - top);
@@ -374,9 +418,17 @@ export class Renderer {
   }
 
   /** a soft oval: a wide faint ring around a darker core */
-  drawShadow(ctx, x, y, spriteW) {
+  drawShadow(ctx, x, y, spriteW, soft = true) {
     const rx = Math.max(4, Math.round(spriteW * 0.4));
     const ry = Math.max(2, Math.round(rx * 0.4));
+    if (!soft) {
+      // low quality: the core only, one path
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+      ctx.beginPath();
+      ctx.ellipse(x, y, rx * 0.8, ry * 0.8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      return;
+    }
     ctx.fillStyle = 'rgba(0, 0, 0, 0.16)';
     ctx.beginPath();
     ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);

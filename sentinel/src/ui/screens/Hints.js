@@ -3,9 +3,10 @@
 // hints were shown is kept in the preferences; Settings → Hints turns them off.
 import { SCREEN_COLORS as C, font, ellipsize, measurer } from './theme.js';
 import { tideWidgetRect } from '../hud/TideWidget.js';
+import { wrapText } from '../Notices.js';
 
 export const HINTS = Object.freeze({
-  move: { keys: 'WASD or the arrow keys to move. Shift to run.', touch: 'Drag with your left thumb to move.' },
+  move: { keys: 'WASD or the arrow keys to move. Shift to run.', touch: 'Drag with your left thumb to move; push to the outer ring to run.' },
   crouch: { keys: 'C to crouch. Crouched in tall grass, you are hard to see.', touch: 'Crouch in tall grass and you are hard to see.' },
   journal: { keys: 'Something new in the journal: Tab or J.', touch: 'Something new in the journal: the book, top right.' },
 });
@@ -107,18 +108,20 @@ export class Hints {
     ctx.font = font(cfg.fontPx);
     const m = measurer(ctx);
     const maxW = vp.uiLogicalWidth - (safe.left || 0) - (safe.right || 0) - 16;
-    const t = ellipsize(text, maxW - 12, m);
-    const w = Math.ceil(m(t)) + 12;
+    // step 5.6: wrapped on a narrow screen (at most three lines, the last shortened if it must be)
+    const rows = wrapText(text, maxW - 12, m).slice(0, 3).map((r) => ellipsize(r, maxW - 12, m));
+    const w = Math.ceil(Math.max(...rows.map(m))) + 12;
+    const lh = cfg.fontPx + 2;
     const x = Math.round(vp.uiLogicalWidth / 2 - w / 2);
     const y = tide.y + tide.h + cfg.offsetY;
     ctx.globalAlpha = alpha * 0.8;
     ctx.fillStyle = C.ink;
-    ctx.fillRect(x, y, w, cfg.fontPx + 6);
+    ctx.fillRect(x, y, w, rows.length * lh + 4);
     ctx.globalAlpha = alpha;
     ctx.fillStyle = C.bone;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(t, Math.round(vp.uiLogicalWidth / 2), y + (cfg.fontPx + 6) / 2 + 0.5);
+    rows.forEach((r, i) => ctx.fillText(r, Math.round(vp.uiLogicalWidth / 2), y + 2 + i * lh + lh / 2 + 0.5));
     ctx.restore();
   }
 }

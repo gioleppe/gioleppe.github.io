@@ -29,23 +29,27 @@ const C = Object.freeze({
  */
 export function hotbarLayout(view, safe, touch = null) {
   const { slots, slot, gap, margin, clear } = HOTBAR;
-  const w = slots * slot + (slots - 1) * gap;
   const left = safe?.left || 0;
   const right = view.width - (safe?.right || 0);
+  // a window too narrow for one row (a phone held upright) gets two or more rows (step 5.6)
+  const cols = Math.max(1, Math.min(slots, Math.floor((right - left - 4 + gap) / (slot + gap))));
+  const rows = Math.ceil(slots / cols);
+  const w = cols * slot + (cols - 1) * gap;
+  const h = rows * slot + (rows - 1) * gap;
   const x = Math.round((left + right - w) / 2);
-  let y = Math.round(view.height - (safe?.bottom || 0) - margin - slot);
+  let y = Math.round(view.height - (safe?.bottom || 0) - margin - h);
   if (touch) {
     const circles = touch.buttons.map((b) => ({ x: b.x, y: b.y, r: b.r }));
     circles.push({ x: touch.joystickRest.x, y: touch.joystickRest.y, r: touch.joystick.ringRadius });
     for (const c of circles) {
       const nx = Math.max(x, Math.min(x + w, c.x));
       if (Math.abs(nx - c.x) >= c.r + clear) continue;   // beside the bar: no conflict
-      if (y > c.y - c.r - clear - slot) y = Math.floor(c.y - c.r - clear - slot);
+      if (y > c.y - c.r - clear - h) y = Math.floor(c.y - c.r - clear - h);
     }
   }
   const rects = [];
-  for (let i = 0; i < slots; i++) rects.push({ x: x + i * (slot + gap), y, w: slot, h: slot });
-  return { x, y, w, h: slot, slots: rects };
+  for (let i = 0; i < slots; i++) rects.push({ x: x + (i % cols) * (slot + gap), y: y + Math.floor(i / cols) * (slot + gap), w: slot, h: slot });
+  return { x, y, w, h, slots: rects };
 }
 
 // ---- notices for item events -------------------------------------------------------------------------------
@@ -82,6 +86,27 @@ export function promptLabel(sim, target) {
     case 'totem': return 'Totem';
     default: return target.action.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase());
   }
+}
+
+/**
+ * Top of the desktop prompt (step 5.6): above a standing figure (48 px) for sites and people, just above the item
+ * for pickups; but never over the player: a prompt that would cover the player's sprite (a pickup at their feet)
+ * goes above their head instead.
+ * @param {{ action: string }} t the target
+ * @param {{x:number,y:number}} s the target on screen
+ * @param {{x:number,y:number}|null} p the player's feet on screen
+ * @param {number} w @param {number} h the prompt's size
+ * @param {number} [gapAbove] how far above the target a site's prompt sits (66 with art, 40 without)
+ */
+export function promptTop(t, s, p, w, h, gapAbove = 66, gapPickup = 38) {
+  let y = Math.round(s.y - (t.action === 'pickup' ? gapPickup : gapAbove));
+  if (p) {
+    const PLAYER = { halfW: 10, h: 50 };
+    const overlapX = Math.abs(s.x - p.x) < w / 2 + PLAYER.halfW;
+    const overlapY = y < p.y && y + h > p.y - PLAYER.h;
+    if (overlapX && overlapY) y = Math.min(y, Math.round(p.y - PLAYER.h - h - 2));
+  }
+  return y;
 }
 
 let active = null;
@@ -126,6 +151,7 @@ export class ItemHud {
     this.sim = sim;
     const touch = this.input.touchVisible ? this.input.layout : null;
     const L = (this.layout = hotbarLayout({ width: vp.uiLogicalWidth, height: vp.uiLogicalHeight }, safe, touch));
+    this.noticeW = vp.uiLogicalWidth - (safe?.left || 0) - (safe?.right || 0) - 8;
     const inv = sim.inventory;
     if (!inv) return;
     ctx.save();
@@ -175,12 +201,22 @@ export class ItemHud {
     }
     // the name of what is in hand, just above the bar
     const held = inv.held;
+    ctx.font = '6px ui-monospace, Consolas, monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
     if (held) {
-      ctx.font = '6px ui-monospace, Consolas, monospace';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'bottom';
       ctx.fillStyle = C.text;
       ctx.fillText(nameOf(sim, held.id), L.x + L.w / 2, L.y - 1);
+    } else if (inv.slots.some(Boolean)) {
+      // step 5.6: say so when nothing is in hand (holding metal provokes the scouts; tapping the selected slot again
+      // empties the hands)
+      const tw = Math.ceil(ctx.measureText('empty hands').width) + 6;
+      ctx.globalAlpha = 0.7;
+      ctx.fillStyle = C.ink;
+      ctx.fillRect(Math.round(L.x + L.w / 2 - tw / 2), L.y - 8, tw, 7);
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = C.text;
+      ctx.fillText('empty hands', L.x + L.w / 2, L.y - 1);
     }
     ctx.restore();
   }
@@ -212,7 +248,7 @@ export class ItemHud {
   drawNotices(ctx, sim) {
     const L = this.layout;
     if (!L) return;
-    this.notices.draw(ctx, L.x + L.w / 2, L.y - (sim.inventory?.held ? 9 : 2));
+    this.notices.draw(ctx, L.x + L.w / 2, L.y - (sim.inventory?.held || sim.inventory?.slots?.some(Boolean) ? 9 : 2), undefined, this.noticeW ?? Infinity);
   }
 
   /**
@@ -226,7 +262,7 @@ export class ItemHud {
     const label = promptLabel(sim, t);
     const glyph = CONTEXT_GLYPHS[sim.interactIcon ?? 'hand'] ?? 'hand';
     if (this.assets?.hasIcon?.('ui', glyph)) {
-      this.drawPromptArt(ctx, s, t, label, glyph);
+      this.drawPromptArt(ctx, s, t, label, glyph, camera.worldToScreen(sim.player.x, sim.player.y));
       return;
     }
     ctx.save();
@@ -235,7 +271,7 @@ export class ItemHud {
     const w = 7 + 10 + tw + 4;
     const h = 10;
     const x = Math.round(s.x - w / 2);
-    const y = Math.round(s.y - (t.action === 'pickup' ? 32 : 40));
+    const y = promptTop(t, s, camera.worldToScreen(sim.player.x, sim.player.y), w, h, 40, 32);
     ctx.globalAlpha = 0.8;
     ctx.fillStyle = C.ink;
     ctx.fillRect(x, y, w, h);
@@ -254,15 +290,14 @@ export class ItemHud {
   }
 
   /** the prompt on the dark plate: an amber key chip, the context glyph (24 px art at half size) and the label */
-  drawPromptArt(ctx, s, t, label, glyph) {
+  drawPromptArt(ctx, s, t, label, glyph, player = null) {
     ctx.save();
     ctx.font = '6px ui-monospace, Consolas, monospace';
     const tw = Math.ceil(ctx.measureText(label).width);
     const h = 16;
     const w = 26 + tw + 6;
     const x = Math.round(s.x - w / 2);
-    // above a standing figure (48 px) for sites and people, just above the item for pickups
-    const y = Math.round(s.y - (t.action === 'pickup' ? 38 : 66));
+    const y = promptTop(t, s, player, w, h);
     drawDarkPanel(ctx, x, y, w, h, this.assets);
     ctx.fillStyle = C.ink;
     ctx.fillRect(x + 3, y + 3, 9, 10);

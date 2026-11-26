@@ -5,6 +5,7 @@
 // top-right bar.
 import { activeAssets } from '../../engine/AssetManager.js';
 import { drawDarkPanel } from './uiArt.js';
+import { BARS } from './Bars.js';
 
 /** palette colours used here (assets/src/palette.gpl names) */
 export const HUD_COLORS = Object.freeze({
@@ -56,7 +57,15 @@ export function tideReadout(world) {
 export function tideWidgetRect(vp, safe) {
   const left = safe.left || 0;
   const right = vp.uiLogicalWidth - (safe.right || 0);
-  return { x: Math.round((left + right - TIDE_WIDGET.w) / 2), y: Math.round((safe.top || 0) + TIDE_WIDGET.top), w: TIDE_WIDGET.w, h: TIDE_WIDGET.h };
+  const x = Math.round((left + right - TIDE_WIDGET.w) / 2);
+  // step 5.6: a window too narrow for it between the bars and the top-right buttons (a phone held upright) puts it
+  // under the bars, at the left, instead of on top of them
+  const barsRight = left + BARS.x + BARS.iconW + BARS.gap + BARS.barW + 4;
+  if (x < barsRight) {
+    const below = (safe.top || 0) + BARS.top + BARS.slots * BARS.rowH + BARS.marksH + 4;
+    return { x: Math.round(left + BARS.x), y: Math.round(below), w: TIDE_WIDGET.w, h: TIDE_WIDGET.h };
+  }
+  return { x, y: Math.round((safe.top || 0) + TIDE_WIDGET.top), w: TIDE_WIDGET.w, h: TIDE_WIDGET.h };
 }
 
 /** a filled disc of whole pixels */

@@ -36,6 +36,8 @@ import { SaveStore } from './engine/SaveStore.js';
 import { Autosave } from './engine/Autosave.js';
 import { attachSaving } from './ui/screens/saveSession.js';
 import { flashSaved } from './ui/screens/savedMark.js';
+import { QualityGovernor } from './engine/Quality.js';
+import { barsRect } from './ui/hud/Bars.js';
 
 const SEED = 1;
 
@@ -72,6 +74,10 @@ const gameAudio = new GameAudio();
 gameAudio.attachUnlock(window);
 /** dust and splash where thrown things land */
 const impactFx = new ImpactEffects();
+/** graphics quality: the Settings choice and, in Auto, the governor that follows the frame times (Quality.js) */
+const quality = new QualityGovernor();
+/** the world picture is still while a menu or the Journal pauses it: drawn once, then left alone (step 5.6) */
+let worldStill = false;
 /** liveness counters for window.__smoke */
 let framesRun = 0;
 let ticksRun = 0;
@@ -109,6 +115,7 @@ function applyViewport() {
     bottom: parseFloat(cs.paddingBottom), left: parseFloat(cs.paddingLeft),
   }, vp.scale);
   input?.setViewport(vp, safe);
+  worldStill = false;
 }
 
 let resizeQueued = false;
@@ -145,10 +152,16 @@ async function loadBuild() {
 
 // ---- data -----------------------------------------------------------------------------------------------
 
+/** the data files of the first load, for the loading line (step 5.6): asked and arrived */
+const loading = { asked: 0, done: 0 };
+
 async function fetchJson(url) {
+  loading.asked++;
   const res = await fetch(url, { cache: 'no-cache' });   // relative URL: the game is served from a subpath
   if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
-  return res.json();
+  const json = await res.json();
+  loading.done++;
+  return json;
 }
 
 async function loadGame() {
@@ -175,18 +188,20 @@ async function loadGame() {
     // after the item HUD, so the dialogue's hit regions sit on top of the hotbar's
     dialogueUi = new DialogueUI({ input, assets, tuning });
     prefs = new GameSettings({ tuning });
-    prefs.apply({ input });
+    prefs.apply({ input, quality });
     hints = new Hints({ prefs, cfg: tuning.hints });
     titleBackdrop = new TitleBackdrop({ makeSim: freshSim, tuning });
     // a run exists from the start (debug tools and the smoke check read it); the title shows until one is chosen
     useSim(freshSim(), 'boot');
     setupScreens(tuning);
     framesAtLoad = framesRun;
+    // cold-start marks for tools/perf.mjs --coldstart (ms since navigation): the data in, the title/game shown
+    window.__bootTimes = { data: performance.now(), title: performance.now() };
     if (DEBUG) {
       window.__game = {
         get sim() { return sim; }, get camera() { return camera; }, audio: gameAudio, input, assets, renderer, itemHud, mapOverlay,
         get dialogueUi() { return dialogueUi; }, get journalUi() { return journalUi; }, screens, prefs, session: sessionApi,
-        get saves() { return saveStore; }, get autosave() { return autosave; },
+        get saves() { return saveStore; }, get autosave() { return autosave; }, quality,
       };
     }
   } catch (e) {
@@ -205,6 +220,8 @@ async function loadGame() {
         // a debug restore, restart or scenario takes the one re-pointing path and goes straight into the game
         setSim(s) { useSim(s, 'debug'); enterGame(); },
         get camera() { return camera; }, get input() { return input; }, get vp() { return vp; }, get safe() { return safe; },
+        // the readout column starts below the HUD bars and status icons (step 5.6: it used to cover them)
+        get hudBottom() { const r = barsRect(vp, safe, hudReserve()); return r.y + r.h + 2; },
         assets, renderer, stepper, tick, uiCanvas,
       });
       w.registerWorldDebug(debug);
@@ -412,16 +429,46 @@ function drawWorld(alpha, elapsed) {
     worldCtx.fillRect(0, 0, vp.logicalWidth, vp.logicalHeight);
     return;
   }
-  if (screens?.world === 'title') { titleBackdrop.draw(worldCtx, renderer, vp, elapsed); return; }
+  if (screens?.world === 'title') { worldStill = false; titleBackdrop.draw(worldCtx, renderer, vp, elapsed); return; }
+  // paused by the Journal or a menu, the sim clock (which drives every world animation) stands still: the last
+  // picture stays on the canvas instead of being drawn again every frame (a resize clears it: applyViewport)
+  const still = uiPaused() && !craftTickPending;
+  if (still && worldStill) return;
+  worldStill = still;
   const p = sim.player;
   // during a conversation the camera frames player and speaker above the dialogue box
   const focus = dialogueUi?.cameraFocus(sim, camera.viewH);
   if (focus) camera.update(elapsed, focus.x, focus.y);
   else camera.update(elapsed, p.prevX + (p.x - p.prevX) * alpha, p.prevY + (p.y - p.prevY) * alpha);
+  applyQuality();
   renderer.render(worldCtx, sim, camera, { alpha, time: sim.time });
   impactFx.draw(worldCtx, camera, sim.time);
   if (input && !input.touchVisible) drawAimMarker(worldCtx, sim, camera, input.mouse);
   debug?.drawWorld(worldCtx, alpha);
+}
+
+/** the drawing knobs of the quality level in force */
+function applyQuality() {
+  const f = quality.flags;
+  renderer.quality = f;
+  if (renderer.lighting) renderer.lighting.scale = f.lightingScale;
+  if (renderer.weather) renderer.weather.density = f.rainScale;
+  if (renderer.resonanceFx) renderer.resonanceFx.distortion = f.distortion;
+}
+
+/**
+ * Darken everything drawn on the #ui canvas so far to `k` of its brightness, keeping its alpha: black at 1 - k
+ * composited source-atop is exactly ctx.filter brightness(k), which mobile Safari draws slowly or not at all.
+ * Called right after the HUD, so only the HUD dims (while the dialogue box is open).
+ */
+function dimDrawn(ctx, k) {
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.globalCompositeOperation = 'source-atop';
+  ctx.globalAlpha = Math.max(0, Math.min(1, 1 - k));
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  ctx.restore();
 }
 
 /** room the HUD leaves for debug mode's tab at the top-left (nothing without ?debug) */
@@ -435,6 +482,16 @@ function drawUi() {
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, uiCanvas.width, uiCanvas.height);
   ctx.setTransform(vp.uiScale, 0, 0, vp.uiScale, 0, 0);
+  const talking = !!dialogueUi?.open;
+  const hud = !screens || screens.hud;
+  if (hud && sim && !sim.over && !talking && screens?.inGame !== false) itemHud?.drawPrompt(ctx, sim, camera);
+  if (sim && hud) {
+    drawHud(ctx, sim, vp, safe, { time: performance.now() / 1000, reserve: hudReserve() });
+    // the HUD dims while the dialogue box is open (the canvas holds only the HUD yet: see dimDrawn)
+    if (talking) dimDrawn(ctx, sim.tuning.dialogue.hudDim);
+    // not over a conversation: the hints name controls the dialogue box hides
+    if (screens?.inGame && !talking) hints?.draw(ctx, vp, safe, { touch: !!input?.touchVisible });
+  }
   if (buildLabel) {
     ctx.font = '6px ui-monospace, Consolas, monospace';
     ctx.textAlign = 'right';
@@ -442,20 +499,23 @@ function drawUi() {
     ctx.fillStyle = 'rgba(216, 210, 191, 0.45)';
     ctx.fillText(buildLabel, vp.uiLogicalWidth - safe.right - 3, vp.uiLogicalHeight - safe.bottom - 2);
   }
-  const talking = !!dialogueUi?.open;
-  const hud = !screens || screens.hud;
-  if (hud && sim && !sim.over && !talking && screens?.inGame !== false) itemHud?.drawPrompt(ctx, sim, camera);
-  if (sim && hud) {
-    // the HUD dims while the dialogue box is open (ctx.filter; where a browser lacks it the HUD stays bright)
-    if (talking) ctx.filter = `brightness(${sim.tuning.dialogue.hudDim})`;
-    drawHud(ctx, sim, vp, safe, { time: performance.now() / 1000, reserve: hudReserve() });
-    ctx.filter = 'none';
-    if (screens?.inGame) hints?.draw(ctx, vp, safe, { touch: !!input?.touchVisible });
+  if (input && sim && hud) {
+    // the signal waiting for its confirming second press (endings/signal.js armedUntil): the use button shows it
+    const armed = (sim.endings?.signal?.armedUntil ?? -1) >= sim.tick;
+    input.draw(ctx, { camera, player: sim.player, landing: (wx, wy) => throwPreview(sim, wx, wy), armed, now: performance.now() });
   }
-  if (input && sim && hud) input.draw(ctx, { camera, player: sim.player, landing: (wx, wy) => throwPreview(sim, wx, wy) });
   if (talking && hud) dialogueUi.draw(ctx, vp, safe, performance.now());
   if (journalUi?.isOpen) journalUi.draw(ctx, vp, safe, sim, performance.now());
   screens?.draw(ctx, vp, safe, performance.now());
+  if (!sim && !loadError) {
+    // a slow network: say the game is coming, with the share of the data files in so far
+    ctx.font = '8px ui-monospace, Consolas, monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'rgba(216, 210, 191, 0.7)';
+    const n = Math.max(6, loading.asked);
+    ctx.fillText(`Loading the island… ${Math.round((100 * loading.done) / n)}%`, vp.uiLogicalWidth / 2, vp.uiLogicalHeight / 2);
+  }
   if (loadError) {
     ctx.font = '8px ui-monospace, Consolas, monospace';
     ctx.textAlign = 'center';
@@ -484,6 +544,7 @@ function frame(now) {
   } else if (debug) debug.advance(elapsed, tick, now);   // pause, step and speed live in debug mode
   else stepper.advance(elapsed, tick);
   framesRun++;
+  quality.frame(elapsed * 1000, now);
   if (sim) itemHud?.frame(sim);
   if (sim) dialogueUi?.sync(sim, elapsed);
   if (sim) gameAudio.frame(sim, { paused: uiPaused(), journal: !!journalUi?.isOpen });

@@ -198,6 +198,8 @@ export class Lighting {
     /** extra light sources registered by later steps */
     this.sources = [];
     this.lights = [];
+    /** graphics quality: the darkness canvas at tuning.lighting.resolution times this (Quality.js) */
+    this.scale = 1;
     /** what the last frame used, for the debug readout */
     this.last = { ambient: { r: 0, g: 0, b: 0, darkness: 0 }, lights: 0, ms: 0 };
   }
@@ -239,8 +241,8 @@ export class Lighting {
     const ox = camera.originX;
     const oy = camera.originY;
 
-    if (amb.darkness > 0.002 && this.ensureCanvas(camera.viewW, camera.viewH, cfg.resolution)) {
-      const res = cfg.resolution;
+    const res = cfg.resolution * this.scale;
+    if (amb.darkness > 0.002 && this.ensureCanvas(camera.viewW, camera.viewH, res)) {
       const lc = this.lctx;
       const { width: lw, height: lh } = this.canvas;
       lc.globalCompositeOperation = 'source-over';

@@ -115,6 +115,8 @@ export class WeatherFx {
     this.veil = null;
     this.veilKey = '';
     this.last = { drops: 0, splashes: 0 };
+    /** graphics quality: the share of the drops drawn (Quality.js) */
+    this.density = 1;
   }
 
   /**
@@ -165,7 +167,7 @@ export class WeatherFx {
     }
 
     // streaks: 1 px wide, stepped two pixels at a time along the slant, so they stay on whole pixels
-    const n = dropCount(cfg, intensity);
+    const n = Math.round(dropCount(cfg, intensity) * this.density);
     for (let pass = 0; pass < 2; pass++) {
       ctx.fillStyle = pass ? C.dropDim : C.drop;
       ctx.globalAlpha = pass ? 0.55 : 0.7;

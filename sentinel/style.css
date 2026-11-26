@@ -56,11 +56,12 @@ body { position: fixed; inset: 0; }
   padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
 }
 
-/* Landscape is preferred, portrait still plays: a quiet hint that fades after a while and never blocks input. */
+/* Landscape is preferred, portrait still plays: a quiet hint that fades out after a while and never blocks input.
+   Step 5.6: below the HUD (it covered the bars and the tide widget) and gone once faded, not left at a quarter. */
 #rotate-hint {
   display: none;
   position: fixed;
-  top: calc(env(safe-area-inset-top, 0px) + 10px);
+  top: 32%;
   left: 50%;
   transform: translateX(-50%);
   max-width: calc(100vw - 32px);
@@ -81,7 +82,7 @@ body { position: fixed; inset: 0; }
 
 @keyframes hint-fade {
   0%, 70% { opacity: 1; }
-  100% { opacity: 0.25; }
+  100% { opacity: 0; visibility: hidden; }
 }
 
 .noscript { position: fixed; inset: 0; display: grid; place-items: center; margin: 0; }

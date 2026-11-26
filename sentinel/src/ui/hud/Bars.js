@@ -6,7 +6,8 @@
 // - stamina shows the thirst cap: the trough above the cap is checkered (locked), with a bone mark at the cap
 // - a bar below BAR_LOW of its maximum (hydration: below the stamina-cap threshold) pulses
 // - status icons: crouching or in cover, wet (wading, swimming; blinking when drowning), bleeding, thirsty, light on,
-//   noise (1-3 arcs), metal or electronics in hand; limping has no icon and stays a small text chip
+//   noise (1-3 arcs), metal or electronics in hand; limping has no art and is drawn procedurally
+//   in the same 8 x 8 style (LIMP_ICON)
 
 import { drawResonanceBar } from './ResonanceBar.js';
 import { activeAssets } from '../../engine/AssetManager.js';
@@ -101,7 +102,7 @@ export function statusMarks(player, tuning = null, inventory = null) {
   const arcs = noiseArcs(player.noiseRadius);
   if (arcs) out.push({ id: 'noise', label: `NOISE ${arcs}`, color: C.frame, icon: `status_noise_${arcs}` });
   if (inventory?.holdingMetalOrElectronics) out.push({ id: 'metal', label: 'METAL', color: C.frame, icon: 'status_metal' });
-  if (player.limpTicks > 0) out.push({ id: 'limp', label: 'LIMP', color: C.frame, icon: null });
+  if (player.limpTicks > 0) out.push({ id: 'limp', label: 'LIMP', color: C.frame, icon: null, procIcon: 'limp' });
   return out;
 }
 
@@ -211,6 +212,32 @@ export function drawBars(ctx, rect, bars, marks, time, art = activeAssets()) {
   ctx.restore();
 }
 
+/** limping, 8 x 8 (no status_limp art): a bent leg and foot in bone on an ink outline, a rust mark of pain */
+const LIMP_ICON = Object.freeze([
+  '.kkk....',
+  '.kbk....',
+  '..kbk...',
+  '..kbk.r.',
+  '.kbk.rrr',
+  '.kbk..r.',
+  'kbbbk...',
+  'kkkkk...',
+]);
+const LIMP_COLORS = Object.freeze({ k: BAR_COLORS.ink, b: BAR_COLORS.text, r: '#e76f51' });
+
+/** an icon of LIMP_ICON's kind at (x, y), runs of one colour per row */
+export function drawProcIcon(ctx, rows, colors, x, y) {
+  rows.forEach((row, dy) => {
+    let start = 0;
+    for (let dx = 1; dx <= row.length; dx++) {
+      if (row[dx] === row[start]) continue;
+      const col = colors[row[start]];
+      if (col) { ctx.fillStyle = col; ctx.fillRect(x + start, y + dy, dx - start, 1); }
+      start = dx;
+    }
+  });
+}
+
 /** the status icons left to right, 10 px apart; text chips for what has no icon (or while the sheet loads) */
 export function drawStatusLine(ctx, x0, y, marks, time, art = null) {
   if (!marks.length) return;
@@ -219,6 +246,11 @@ export function drawStatusLine(ctx, x0, y, marks, time, art = null) {
   for (const m of marks) {
     if (m.icon && art?.hasIcon('ui', m.icon)) {
       if (!(m.blink && Math.floor(time * 4) % 2 === 1)) art.drawIcon(ctx, 'ui', m.icon, x, y);
+      x += BARS.markStep;
+      continue;
+    }
+    if (m.procIcon === 'limp') {
+      drawProcIcon(ctx, LIMP_ICON, LIMP_COLORS, x, y);
       x += BARS.markStep;
       continue;
     }

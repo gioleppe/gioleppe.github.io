@@ -6,11 +6,12 @@
 //   hintsSeen     ids   hints already shown on this profile
 //   touchOpacity  0.4..1.6  scale of the touch controls' opacity
 //   endingsSeen   ids   the endings reached on this profile ('dinghy', 'rescue'; EndingScreen.js)
+//   quality       'auto' | 'high' | 'low'  graphics quality (engine/Quality.js; Auto drops effects while frames are slow)
 // Volumes are not stored here: the audio keeps its own (through the audio adapter).
 import { Settings } from '../../engine/Settings.js';
 
 export const PREFS_KEY = 'sentinel.prefs.v1';
-export const PREF_DEFAULTS = Object.freeze({ resonanceFx: 1, screenShake: true, hints: true, hintsSeen: [], touchOpacity: 1, endingsSeen: [] });
+export const PREF_DEFAULTS = Object.freeze({ resonanceFx: 1, screenShake: true, hints: true, hintsSeen: [], touchOpacity: 1, endingsSeen: [], quality: 'auto' });
 export const RESONANCE_STEPS = Object.freeze([0, 0.25, 0.5, 0.75, 1]);
 export const OPACITY_RANGE = Object.freeze({ min: 0.4, max: 1.6, step: 0.2 });
 /** every key of the game in storage starts so; debug snapshots (sentinel.debug.*) are not player data */
@@ -47,6 +48,8 @@ export class GameSettings {
       opacity: { ...(tuning?.input?.opacity ?? {}) },
     };
     this.input = null;
+    /** @type {import('../../engine/Quality.js').QualityGovernor|null} */
+    this.quality = null;
   }
 
   get(name) { return this.store.get(name); }
@@ -63,8 +66,10 @@ export class GameSettings {
    * the touch controls' opacity. Presentation tuning only: the simulation never reads these blocks.
    * @param {{ input?: Object }} [targets]
    */
-  apply({ input = this.input } = {}) {
+  apply({ input = this.input, quality = this.quality } = {}) {
     this.input = input;
+    this.quality = quality;
+    quality?.setSetting(String(this.get('quality')));
     const fx = this.tuning?.resonanceFx;
     if (fx) fx.intensity = round2(this.base.resonanceIntensity * Number(this.get('resonanceFx')));
     if (input?.cfg) {
