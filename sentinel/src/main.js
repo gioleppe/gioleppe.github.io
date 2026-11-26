@@ -20,6 +20,7 @@ import { recipeViews } from './entities/Crafting.js';
 import { ImpactEffects, drawAimMarker, throwPreview } from './engine/ItemRenderer.js';
 import { ScoutOverlays } from './engine/ScoutRenderer.js';
 import { DialogueUI } from './ui/DialogueUI.js';
+import { GameAudio } from './engine/GameAudio.js';
 import { Notices } from './ui/Notices.js';
 import { Screens } from './ui/Screens.js';
 import { TitleScreen } from './ui/screens/TitleScreen.js';
@@ -63,6 +64,9 @@ const DEBUG = new URLSearchParams(location.search).has('debug');
 let debug = null;
 /** @type {import('./ui/hud/Hotbar.js').ItemHud|null} hotbar, item notices and the interaction prompt */
 let itemHud = null;
+/** music, sound effects and ambience: silent until the first key or touch starts the audio context */
+const gameAudio = new GameAudio();
+gameAudio.attachUnlock(window);
 /** dust and splash where thrown things land */
 const impactFx = new ImpactEffects();
 /** liveness counters for window.__smoke */
@@ -153,6 +157,8 @@ async function loadGame() {
       fetchJson('data/tuning.json'), useMap ? fetchJson('data/island_map.json') : null, fetchJson('data/items.json'), fetchJson('data/dialogue_marek.json'),
       fetchJson('data/lore_entries.json'), fetchJson('data/recipes.json'),
     ]);
+    gameAudio.configure(tuning);
+    gameAudio.load(fetchJson);   // not awaited: the game never waits for its music
     const map = mapJson ? IslandMap.fromJSON(mapJson, tuning) : null;
     renderer.terrainAt = map ? (c, r) => map.terrainAt(c, r) : testFieldTerrain;
     game = { map, tuning, data: { items, dialogue_marek: dialogueMarek, lore_entries: lore, recipes } };
@@ -175,7 +181,7 @@ async function loadGame() {
     framesAtLoad = framesRun;
     if (DEBUG) {
       window.__game = {
-        get sim() { return sim; }, get camera() { return camera; }, input, assets, renderer, itemHud, mapOverlay,
+        get sim() { return sim; }, get camera() { return camera; }, audio: gameAudio, input, assets, renderer, itemHud, mapOverlay,
         get dialogueUi() { return dialogueUi; }, get journalUi() { return journalUi; }, screens, prefs, session: sessionApi,
         get saves() { return saveStore; }, get autosave() { return autosave; },
       };
@@ -208,6 +214,7 @@ async function loadGame() {
       import('./engine/debug/itemDebug.js').then((i) => i.registerItemDebug(debug)).catch((e) => console.error('item debug failed', e));
       import('./engine/debug/artDebug.js').then((a) => a.registerArtDebug(debug)).catch((e) => console.error('art debug failed', e));
       import('./engine/debug/aiDebug.js').then((a) => a.registerAiDebug(debug)).catch((e) => console.error('ai debug failed', e));
+      import('./engine/debug/audioDebug.js').then((a) => a.registerAudioDebug(debug, gameAudio)).catch((e) => console.error('audio debug failed', e));
       import('./engine/debug/saveDebug.js').then((s) => s.registerSaveDebug(debug, { store: saveStore, autosave, session: sessionApi })).catch((e) => console.error('save debug failed', e));
       return import('./engine/debug/collisionLayers.js').then((c) => c.collisionLayers().forEach((l) => debug.addLayer(l)));
     }).catch((e) => console.error('debug mode failed to start', e));
@@ -233,11 +240,11 @@ let autosave = null;
 /** @type {(() => void)|null} removes the Journal's pointer listeners */
 let detachJournal = null;
 /**
- * The sound (the audio step builds it and assigns it here); the screens reach it through this adapter, which
- * copes with it being absent.
+ * The sound; the screens reach it through this adapter (volumes, mute, and setScreen with the screen ids, which
+ * GameAudio maps to its music: pause keeps the game's, opening keeps the title's).
  * @type {Object|null}
  */
-let audio = null;
+const audio = gameAudio;
 const audioPort = audioAdapter(() => audio);
 
 /** a new run on the loaded island */
@@ -378,6 +385,7 @@ function tick() {
   ticksRun++;
   debug?.afterStep(inp);
   // events must be read after every tick: the next step replaces the list
+  gameAudio.onStep(sim);
   if (prefs?.shake !== false) for (const e of sim.events) if (e.type === 'shake') camera.addShake(e.amount);
   itemHud?.onStep(sim);
   impactFx.onStep(sim);
@@ -465,6 +473,7 @@ function frame(now) {
   framesRun++;
   if (sim) itemHud?.frame(sim);
   if (sim) dialogueUi?.sync(sim, elapsed);
+  if (sim) gameAudio.frame(sim, { paused: uiPaused(), journal: !!journalUi?.isOpen });
   if (sim && screens?.inGame && !journalUi?.isOpen && !dialogueUi?.open) hints?.frame(sim, Math.min(elapsed, 0.25), { journalOpen: false });
   else if (journalUi?.isOpen) hints?.frame(sim, 0, { journalOpen: true });
   drawWorld(stepper.alpha, elapsed);

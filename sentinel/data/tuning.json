@@ -533,6 +533,22 @@
     "keyStep": 20,
     "mapKeyPan": 24
   },
+  "audio": {
+    "$comment": "Presentation only (src/engine/GameAudio.js, src/engine/music/, src/engine/sfx/; steps Mu3 and 5.5): nothing here touches the simulation. director: the music director's feel numbers (src/engine/music/director.js header): meridianAnomaly = anomaly strength from which the Meridian music plays anywhere; squallThin = weather intensity from which optional layers drop; squallDuck = region track drop at a full squall; dialogueDuck / pauseDuck = music level under dialogue / the Journal; pauseTone = low-pass (Hz) on the music under the Journal; openSeaGain = the thin coast far out. threat: hysteresis of the tension stack in simulation seconds (hold = least time at a level before it may drop; release = how long the raw level must stay lower; tail = SEARCH after WARN/CHASE end). musicDirector: seconds (src/engine/music/MusicDirector.js).",
+    "director": { "meridianAnomaly": 0.6, "squallThin": 0.35, "squallDuck": 0.25, "dialogueDuck": 0.55, "pauseDuck": 0.4, "pauseTone": 3000, "openSeaGain": 0.6 },
+    "threat": { "hold": { "investigate": 3, "search": 3, "warn": 4, "chase": 6 }, "release": 1.5, "tail": 6 },
+    "sfx": {
+      "$comment": "src/engine/sfx/ (step 5.5). levels: dB of each category bus under the sfx bus (amb = ambience beds and their grains; player = footsteps, breath, heart; world = items, impacts, work; ui; alert = the Sentinelese). beds: dB trim of each ambience bed at level 1; rainDrips = drips per second in a full squall; birds = bird chirp level; thunderEvery = seconds between rolls in a strong squall. footstepRef: the noise radius (world px) at which a footstep plays at full level (gain is linear in the radius, so steps sound as loud as the scouts hear them). duck: side-chain dip of music and ambience under loud one-shots. pauseAmbience: ambience level under the Journal. spottedRearmSeconds: calm needed before the spotted stinger can sound again.",
+      "levels": { "amb": 0, "player": 0, "world": -4, "ui": -14, "alert": -6 },
+      "beds": { "surf": -5, "wind": -14, "rain": -15, "rainDrips": 7, "jungleDay": -16, "birds": 0.25, "jungleNight": -20, "mangrove": -14, "hum": -20, "thunderEvery": [25, 70] },
+      "maxVoices": 28,
+      "footstepRef": 220,
+      "duck": { "attack": 0.03, "hold": 0.25, "release": 0.8, "maxDb": 9 },
+      "pauseAmbience": 0.5,
+      "spottedRearmSeconds": 10
+    },
+    "musicDirector": { "minInterval": 0.25, "regionDwell": 1.5, "trackFade": 3, "stopFade": 4, "fastStopFade": 0.8, "layerFade": 4, "gainFade": 2, "paramRamp": 3, "duckRamp": 0.4, "toneRamp": 1.5 }
+  },
   "screens": {
     "$comment": "src/ui/Screens.js and src/ui/screens/ (presentation, step 5.1). Logical pixels unless named Css. rowHeight: a menu row with a mouse, touchRowCss the least it is on a touch screen (but at most maxRowFraction of the height, for very short windows); detailHeight: the extra second line of a row (detailPx text); panelWidth / settingsWidth / slotsWidth: the widest a panel gets. title: the island behind the title (a landmark to drift along, driftAmplitude px each way over driftPeriodSeconds, at hour of the first day; the castaway is moved to hidePlayerAt, out of shot), the name's sizes, the menu's width and the most room between parts. opening: one line every lineSeconds (each fading in over lineFade), held holdSeconds, then the world fades in over fadeSeconds. gameOver: delaySeconds after death before it shows, the dim (to dimAlpha over dimSeconds, tinted by cause), input ignored for inputLockSeconds.",
     "margin": 8,
