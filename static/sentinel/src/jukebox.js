@@ -65,6 +65,7 @@ function buildMix() {
   box.append(
     slider({ label: 'Master', min: 0, max: 1, step: 0.01, value: audio.getVolume('master'), format: pct, onInput: (v) => audio.setVolume('master', v) }),
     slider({ label: 'Music', min: 0, max: 1, step: 0.01, value: audio.getVolume('music'), format: pct, onInput: (v) => audio.setVolume('music', v) }),
+    slider({ label: 'Effects', min: 0, max: 1, step: 0.01, value: audio.getVolume('sfx'), format: pct, onInput: (v) => audio.setVolume('sfx', v) }),
     slider({ label: 'Brightness', min: -2400, max: 1200, step: 50, value: 0, format: (v) => `${v}c`, onInput: (v) => { globals.brightness = v; music?.setParam('brightness', v, { ramp: 0.3 }); } }),
     slider({ label: 'Detune', min: -100, max: 100, step: 1, value: 0, format: (v) => `${v}c`, onInput: (v) => { globals.detune = v; music?.setParam('detune', v, { ramp: 0.5 }); } }),
     slider({ label: 'Reverb', min: 0, max: 2, step: 0.05, value: 1, format: pct, onInput: (v) => { globals.reverb = v; music?.setParam('reverb', v, { ramp: 0.3 }); } }),
@@ -97,6 +98,7 @@ const isPlaying = (id) => Boolean(music?.current.some((t) => t.id === id));
  */
 async function play(id, { over = false } = {}) {
   await audio.unlock();
+  stopGameStates();
   if (!ensureMusic()) { render(); return; }
   const oneShot = scores.get(id).loop === false;
   music.play(id, { fade: over ? 2 : 1.5, exclusive: !over, quantise: !oneShot });
@@ -254,12 +256,102 @@ function drawMeter() {
   requestAnimationFrame(drawMeter);
 }
 
+
+// ---- game states: the music director and the ambience as the game drives them ---------------------------------
+// Pick a state; the director's mix (src/engine/music/director.js) and the ambience beds follow it through exactly
+// the game's code (GameAudio.createAudioRig). Starting it stops the tracks played above, and the other way round.
+
+const gs = { screen: 'game', region: 'southern_cove', daylight: 1, weather: 0, wind: 0.25, tide: 'rising', tideHeight: 0.5,
+  tier: 'quiet', value: 5, threat: 'none', dialogue: false, paused: false, inSafeZone: false, holdout: false, coastNear: 0.7 };
+let rig = null;
+let rigTimer = 0;
+let holdoutAt = 0;
+let tuning = null;
+
+function gameRecord() {
+  return {
+    screen: gs.screen, region: gs.region, anomaly: 0, inSafeZone: gs.inSafeZone, daylight: gs.daylight,
+    dayPhase: gs.daylight > 0.5 ? 'day' : 'night', weather: gs.weather, wind: Math.max(gs.wind, 0.85 * gs.weather), tide: gs.tide,
+    tideHeight: gs.tideHeight, resonance: { tier: gs.tier, value: gs.value }, threat: gs.threat, dialogue: gs.dialogue,
+    paused: gs.paused, holdout: gs.holdout ? { elapsed: (performance.now() - holdoutAt) / 1000 } : null, coastNear: gs.coastNear,
+  };
+}
+
+async function startGameStates() {
+  await audio.unlock();
+  if (audio.state !== 'running' || rig) return;
+  music?.stop({ fade: 1 });
+  tuning ??= await (await fetch('data/tuning.json')).json();
+  const { createAudioRig } = await import('./engine/GameAudio.js');
+  const { mixFor } = await import('./engine/music/director.js');
+  const { directorConfig } = await import('./engine/GameAudio.js');
+  rig = createAudioRig({ ctx: audio.context, buses: audio.buses, scores: [...scores.values()].filter((s) => s.id !== 'test_tones'), tuning });
+  const dcfg = directorConfig(tuning);
+  rigTimer = setInterval(() => {
+    const r = gameRecord();
+    const mix = mixFor(r, dcfg);
+    rig.frame(mix, r, null, 0);
+    $('gs-mix').textContent = `${Object.entries(mix.tracks).map(([id, t]) => `${id}@${t.gain}${t.section ? `/${t.section}` : ''}`).join(' ') || '(silence)'} · duck ${mix.duck} · tone ${mix.tone} Hz · detune ${mix.params.detune} · brightness ${mix.params.brightness} · reverb ${mix.params.reverb}`;
+  }, 50);
+}
+
+function stopGameStates() {
+  if (!rig) return;
+  clearInterval(rigTimer);
+  const r = rig;
+  rig = null;
+  r.music.stop({ fade: 1.5 });
+  r.sfx.ambience.update({ surf: 0, wind: 0, rain: 0, jungleDay: 0, jungleNight: 0, mangrove: 0, hum: 0, humInstability: 0, surfRate: 1, thunder: false });
+  setTimeout(() => r.dispose(), 6000);
+}
+
+function buildGameStates() {
+  const box = el('div', { className: 'controls' });
+  const pick = (label, key, options) => {
+    const sel = el('select', { 'aria-label': label });
+    for (const o of options) sel.append(el('option', { value: o, textContent: o }));
+    sel.value = gs[key];
+    sel.addEventListener('change', () => { gs[key] = sel.value; if (key === 'region') gs.coastNear = ['southern_cove', 'coast', 'reef', 'shipwreck', 'open_sea'].includes(sel.value) ? 0.7 : 0.05; });
+    return el('label', { className: 'combo-label' }, `${label} `, sel);
+  };
+  const check = (label, key, after) => {
+    const c = el('input', { type: 'checkbox', checked: gs[key] });
+    c.addEventListener('change', () => { gs[key] = c.checked; after?.(); });
+    return el('label', { className: 'check' }, c, label);
+  };
+  const num = (label, key, min, max, step) => slider({ label, min, max, step, value: gs[key], onInput: (v) => { gs[key] = v; } });
+  box.append(
+    pick('Screen', 'screen', ['title', 'game', 'gameover', 'ending_dinghy', 'ending_rescue']),
+    pick('Region', 'region', ['southern_cove', 'coast', 'western_mangroves', 'interior_jungle', 'quiet_meridian', 'reef', 'shipwreck', 'signal_peak', 'open_sea']),
+    pick('Resonance', 'tier', ['quiet', 'humming', 'agitated']),
+    pick('Threat', 'threat', ['none', 'investigate', 'warn', 'chase', 'search']),
+    pick('Tide', 'tide', ['low', 'rising', 'high', 'falling']),
+    num('Daylight', 'daylight', 0, 1, 0.05), num('Squall', 'weather', 0, 1, 0.05), num('Wind', 'wind', 0, 1, 0.05),
+    num('Resonance value', 'value', 0, 100, 1),
+    check("Marek's clearing", 'inSafeZone'), check('Dialogue', 'dialogue'), check('Journal open', 'paused'),
+    check('Holdout (from now)', 'holdout', () => { holdoutAt = performance.now(); }),
+  );
+  const go = el('button', { className: 'btn primary', type: 'button', textContent: 'Play the game state' });
+  go.addEventListener('click', startGameStates);
+  const halt = el('button', { className: 'btn', type: 'button', textContent: 'Stop' });
+  halt.addEventListener('click', stopGameStates);
+  const sfxSel = el('select', { 'aria-label': 'Sound effect' });
+  const fire = el('button', { className: 'btn', type: 'button', textContent: 'Fire' });
+  import('./engine/sfx/sounds.js').then(({ SOUND_NAMES }) => { for (const n of SOUND_NAMES) sfxSel.append(el('option', { value: n, textContent: n })); });
+  fire.addEventListener('click', async () => { await startGameStates(); rig?.sfx.play(sfxSel.value, { pan: 0 }); });
+  const section = el('section', { className: 'panel', id: 'game-states' },
+    el('h2', { textContent: 'Game states (the music director and the ambience)' }),
+    el('div', { className: 'combo' }, go, halt, el('label', { className: 'combo-label' }, 'Sound ', sfxSel), fire),
+    box, el('p', { className: 'track-meta', id: 'gs-mix', textContent: 'not playing' }));
+  $('jukebox').insertBefore(section, $('jukebox').querySelector('section:last-of-type'));
+}
 // ---- start -------------------------------------------------------------------------------------------
 
 $('unlock').addEventListener('click', async () => { await audio.unlock(); ensureMusic(); render(); });
 audio.onChange(() => { ensureMusic(); render(); });
 setInterval(render, 250);
 buildMix();
+buildGameStates();
 render();
 requestAnimationFrame(drawMeter);
 
@@ -286,4 +378,4 @@ window.__smoke = async () => {
   await loaded;
   return { ok: !loadError, details: { audio: audio.state, tracks: scores.size, unlockShown: !$('unlock').hidden, error: loadError } };
 };
-window.__jukebox = { audio, scores, play, stop, get music() { return music; }, ensureMusic, loaded };
+window.__jukebox = { audio, scores, play, stop, get music() { return music; }, ensureMusic, loaded, gs, startGameStates, stopGameStates, get rig() { return rig; } };
