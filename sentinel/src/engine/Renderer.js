@@ -294,12 +294,24 @@ export class Renderer {
       ? sim.map.propsInRect(view.x - PROP_REACH_SIDE, view.y - PROP_REACH_ABOVE, view.x + view.w + PROP_REACH_SIDE, view.y + view.h + PROP_REACH_BELOW, this.propScratch)
       : sim.props;
     const kinds = sim.tuning?.props ?? {};
+    const dinghy = sim.endings?.dinghy;
+    const moved = !!dinghy?.moved;
     for (const prop of props) {
+      if (moved && prop.id === 'dinghy') continue;   // drawn where it lies now (below)
       // propKind: a prop whose look follows the story (the patched dinghy, step 4.7)
       const kind = propKind(sim, prop);
       const view = propView(prop, kinds[kind]);
       view.kind = kind;
       out.push(view);
+    }
+    if (moved) {
+      // the dinghy dragged or afloat (step 5.3): the patched dinghy where it is; afloat, just behind the rower so
+      // the player sits in it (the wading frame cuts the legs at the waterline)
+      const pos = dinghy.pos(sim);
+      const afloat = dinghy.phase === 'afloat' || dinghy.phase === 'away';
+      const x = afloat ? out[0].x : pos.x;
+      const y = afloat ? out[0].y - 0.01 : pos.y;
+      out.push({ id: 'dinghy_moved', kind: 'dinghy_patched', x, y, state: 'idle', facing: null, variant: 0, phase: 0, flat: false });
     }
     collectItemViews(sim, view ?? null, out, this.sprites, this.itemScratch, alpha);
     if (sim.marek) out.push(sim.marek.view());

@@ -621,7 +621,8 @@
     "title": { "anchor": "crash_site", "hidePlayerAt": "signal_peak", "hour": 6.6, "offsetY": 70, "driftAmplitude": 220, "driftPeriodSeconds": 90, "titleSmallPx": 9, "titleLargePx": 20, "menuWidth": 200, "gap": 16 },
     "opening": { "lineSeconds": 2.2, "lineFade": 0.7, "holdSeconds": 1.6, "fadeSeconds": 1.6, "textPx": 10 },
     "gameOver": { "delaySeconds": 1.6, "dimSeconds": 1.6, "dimAlpha": 0.78, "inputLockSeconds": 1.2, "titlePx": 14, "menuWidth": 170,
-      "tones": { "arrow": "#2a100c", "bleed": "#2a100c", "drowning": "#061620", "thirst": "#2a2010", "debug": "#0d0b12", "default": "#0d0b12" } }
+      "tones": { "arrow": "#2a100c", "bleed": "#2a100c", "drowning": "#061620", "thirst": "#2a2010", "debug": "#0d0b12", "default": "#0d0b12" } },
+    "ending": { "$comment": "src/ui/screens/EndingScreen.js (steps 5.3, 5.4): shown delaySeconds after the ending is reached; the world fades to the ending's tone (dimAlpha) over fadeSeconds, the lines come one every lineSeconds, input ignored for inputLockSeconds.", "delaySeconds": 1.2, "fadeSeconds": 2.5, "dimAlpha": 0.85, "lineSeconds": 1.4, "inputLockSeconds": 2, "titlePx": 14, "figureRowHeight": 20, "gap": 5, "menuWidth": 170 }
   },
   "hints": {
     "$comment": "src/ui/screens/Hints.js (presentation, step 5.1): at most three one-line hints, each once per profile. seconds shown (the last fadeSeconds fading); move: after moveDelaySeconds of play if the player has not moved moveDoneDistance px; crouch: standing within crouchRadius px of cover (checked every crouchCheckSeconds); the line sits offsetY px under the tide widget.",
@@ -639,5 +640,52 @@
     "autosaveMinutes": 3,
     "investigateRefuseRadius": 480,
     "nearLandmark": 320
+  },
+  "endings": {
+    "$comment": "Steps 5.3 and 5.4 (src/sim/endings/). World px, seconds, per-second rates.",
+    "dinghy": {
+      "$comment": "Win A. launchTide: the tide height from which the repaired dinghy can be dragged and launched; at 0.7 deep water stands one tile off dinghy_launch (shallow at 0.6) and the window is about 133 s of the 360 s cycle around high water. dragSpeedFactor: walking speed while dragging (no crouch, no sprint); dragNoiseRadius: rubber dragged over sand, a noise every dragNoiseSeconds while moving. towLength: the dinghy trails this far behind. Boarding happens when the player reaches water of class boardClass with the dinghy in tow (settleSeconds of no rowing). Afloat: rowSpeed / pullMultiplier (sprint) px/s, turnRate (fraction of the heading turned per second toward the input), rowStaminaPerSecond / pullStaminaPerSecond drained, boatRadius for the collider; the boat floats on base deep_water (the cove's deep water: the outer reef's only gap is the passage) and, more than tidalMarginTiles north of the passage inside the cove, on water the tide stands deep over. passageLinePx: the ending fires once the boat is this far south of outer_reef_passage. rowNoiseRadius: oars (a small noise every dragNoiseSeconds while rowing).",
+      "launchTide": 0.7,
+      "dragSpeedFactor": 0.45,
+      "dragNoiseRadius": 150,
+      "dragNoiseSeconds": 0.5,
+      "towLength": 26,
+      "settleSeconds": 1.5,
+      "rowSpeed": 50,
+      "pullMultiplier": 1.6,
+      "turnRate": 3,
+      "rowStaminaPerSecond": 0,
+      "pullStaminaPerSecond": 9,
+      "boatRadius": 14,
+      "passageLinePx": 72,
+      "tidalMarginTiles": 20,
+      "rowNoiseRadius": 60
+    },
+    "signal": {
+      "$comment": "Win B. confirmSeconds: the second press of the flare gun at the signal point must come within this window (the first asks for confirmation and is when the page autosaves). holdoutSeconds: spec §8, 60. resonanceValue: spec §8, 100. convergeRadius: scouts within this of the signal point are called, plus every scout of peakRoutes; at most maxCalled (nearest first), released in waves of waveSize every waveSeconds, at most plateauCap hunting at once. reorderSeconds: how often a called scout that gave up is sent back to search the plateau. approachPx: farther than this from the signal point a called scout comes at a run (CHASE towards the peak, kept running); nearer, one that has not seen the player slows to a SEARCH of the plateau with its awareness back to suspicious. trackChance / nightTrackChance: how often a search order is drawn to within searchScatterPx / nightSearchScatterPx of where the player is (the flare's light, sounds on bare rock) rather than to one of the plateau's places. nightPlateauCap: plateauCap at night. plateauRadius: the player counts as on the plateau inside the signal_peak region or this close to the signal point. boatArriveSecond: the engine is heard at this second of a window; extractSeconds: the spotlight sweep before the extraction. beaconIntervalSeconds: a boat returns this long after a missed window (another flare fired at the point starts a window at once). flareSeconds: how long the flare burns in the sky (picture). spotlight: offset of the boat from the signal point (sea side) and the sweep's half-width, for the picture.",
+      "confirmSeconds": 2.5,
+      "holdoutSeconds": 60,
+      "resonanceValue": 100,
+      "convergeRadius": 1800,
+      "peakRoutes": ["peak_south", "peak_east", "peak_base"],
+      "maxCalled": 6,
+      "waveSize": 2,
+      "firstWaveSeconds": 5,
+      "waveSeconds": 10,
+      "plateauCap": 3,
+      "nightPlateauCap": 2,
+      "reorderSeconds": 1,
+      "approachPx": 260,
+      "trackChance": 0.07,
+      "nightTrackChance": 0.06,
+      "searchScatterPx": 240,
+      "nightSearchScatterPx": 320,
+      "plateauRadius": 380,
+      "boatArriveSecond": 50,
+      "extractSeconds": 4,
+      "beaconIntervalSeconds": 180,
+      "flareSeconds": 6,
+      "spotlight": { "offsetX": -700, "offsetY": -260, "sweepPx": 260, "radius": 90 }
+    }
   }
 }

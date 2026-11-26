@@ -5,11 +5,12 @@
 //   hints         bool  the three one-line first-time hints
 //   hintsSeen     ids   hints already shown on this profile
 //   touchOpacity  0.4..1.6  scale of the touch controls' opacity
+//   endingsSeen   ids   the endings reached on this profile ('dinghy', 'rescue'; EndingScreen.js)
 // Volumes are not stored here: the audio keeps its own (through the audio adapter).
 import { Settings } from '../../engine/Settings.js';
 
 export const PREFS_KEY = 'sentinel.prefs.v1';
-export const PREF_DEFAULTS = Object.freeze({ resonanceFx: 1, screenShake: true, hints: true, hintsSeen: [], touchOpacity: 1 });
+export const PREF_DEFAULTS = Object.freeze({ resonanceFx: 1, screenShake: true, hints: true, hintsSeen: [], touchOpacity: 1, endingsSeen: [] });
 export const RESONANCE_STEPS = Object.freeze([0, 0.25, 0.5, 0.75, 1]);
 export const OPACITY_RANGE = Object.freeze({ min: 0.4, max: 1.6, step: 0.2 });
 /** every key of the game in storage starts so; debug snapshots (sentinel.debug.*) are not player data */

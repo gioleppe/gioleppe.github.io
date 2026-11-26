@@ -1,18 +1,18 @@
-// The in-game screens (step 5.1): the plain game, the pause menu, the game over and a placeholder ending.
+// The in-game screens (step 5.1): the plain game, the pause menu, the game over; the ending is EndingScreen.js.
 //
 // game      nothing drawn; watches for the run being lost and, after a short beat that lets the death be seen,
-//           shows the game over
+//           shows the game over; and for an ending reached (sim.ending, steps 5.3 / 5.4): the ending screen
 // pause     Resume, Save, Load, Settings, Quit to Title over the dimmed, stopped world (Esc / P / the touch pause
 //           button). Save shows why it is refused ("Not while they are searching for you").
 // gameover  spec §8: the screen dims to the cause's tone; days survived and distance travelled; Retry (the newest
 //           save, else a new game), Load, Title. Input is ignored for a moment so a held key cannot skip it.
-// ending    a placeholder for steps 5.3 / 5.4, which register their own: screens.register('ending', screen) and
-//           screens.show('ending', { kind })
+// ending    EndingScreen.js (steps 5.3 / 5.4): screens.show('ending', { kind })
 import { Panel } from './Panel.js';
 import { Menu, menuHeight } from './Menu.js';
 import { SCREEN_COLORS as C, font, safeArea, rowHeight, TITLE_FONT, wrapText, measurer } from './theme.js';
 import { settingsPanel, slotsPanel, confirmPanel, messagePanel } from './panels.js';
 import { slotLine, agoText, playTimeText } from './saveText.js';
+import { EndingScreen } from './EndingScreen.js';
 
 export class GameScreen {
   constructor(ui) {
@@ -21,12 +21,20 @@ export class GameScreen {
     this.world = 'game';
     this.hud = true;
     this.deadFor = 0;
+    this.endedFor = 0;
   }
 
-  enter() { this.deadFor = 0; }
+  enter() { this.deadFor = 0; this.endedFor = 0; }
 
   update(dt, now, screens) {
     const sim = this.ui.actions.sim();
+    if (sim?.ending && !sim.over) {
+      // a way out (steps 5.3, 5.4): a beat to see the boat clear the reef or the light settle, then the ending
+      this.endedFor += dt;
+      if (this.endedFor >= screens.cfg.ending.delaySeconds) screens.show('ending', { kind: sim.ending.kind });
+      return;
+    }
+    this.endedFor = 0;
     if (!sim?.over) { this.deadFor = 0; return; }
     this.deadFor += dt;
     if (this.deadFor >= screens.cfg.gameOver.delaySeconds) screens.show('gameover', { over: sim.over });
@@ -258,35 +266,7 @@ export class GameOverScreen {
   }
 }
 
-/** a stand-in until steps 5.3 / 5.4 register their endings */
-export class EndingScreen {
-  constructor(ui) {
-    this.ui = ui;
-    this.pausesWorld = true;
-    this.world = 'game';
-    this.hud = false;
-    this.panel = null;
-  }
-
-  enter(params = {}, screens) {
-    const text = params.kind === 'signal' ? 'The patrol boat\'s light found you on the peak.' : 'The island fell away behind you.';
-    this.panel = new Panel({ id: 'ending', title: 'You got away', text, align: 'center', items: [{ id: 'title', label: 'Title', onSelect: () => screens.show('title') }] });
-  }
-
-  onKey(code, repeat) { return this.panel.onKey(code, repeat); }
-
-  handlePointer(ev) { return this.panel.handlePointer(ev); }
-
-  draw(ctx, vp, safe, now, screens) {
-    ctx.save();
-    ctx.fillStyle = 'rgba(13, 11, 18, 0.8)';
-    ctx.fillRect(0, 0, vp.uiLogicalWidth, vp.uiLogicalHeight);
-    ctx.restore();
-    this.panel.draw(ctx, vp, safe, screens.cfg, { touch: screens.isTouch() });
-  }
-}
-
-/** the four standard screens plus the placeholder ending, registered on a Screens */
+/** the four standard screens and the ending (EndingScreen.js), registered on a Screens */
 export function registerGameScreens(screens, ui) {
   screens.register('game', new GameScreen(ui));
   screens.register('pause', new PauseScreen(ui));

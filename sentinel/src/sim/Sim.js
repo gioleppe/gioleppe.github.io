@@ -27,9 +27,10 @@ import { loreBook, loreAfterStep, applyJournalCommands, unlockStartEntries } fro
 import { recipeBook, craft, craftFromHand } from '../entities/Crafting.js';
 import { useFlareGun, storyItemsAfterStep } from '../entities/storyInteractions.js';   // also registers the dinghy, hatch and signal point
 import { Scouts } from '../entities/SentineleseAI.js';
+import { Endings } from './endings/Endings.js';
 
 /** bumped whenever the snapshot shape changes; restore refuses other versions (migration arrives with saving, step 5.2) */
-export const SNAPSHOT_VERSION = 11;
+export const SNAPSHOT_VERSION = 12;
 /**
  * older versions restore can still read: 2 had no world (its clocks are rebuilt from the tick); 2 and 4 have no
  * player body (stamina and the rest start as in a new game) and no items (the fresh starting kit and the map's
@@ -37,9 +38,10 @@ export const SNAPSHOT_VERSION = 11;
  * Resonance (it starts at rest) and the fog (it starts unexplored); 2 to 7 have no story (a fresh one); 8 has no
  * read marks and no lore unlocked (the journal holds only what the dialogue added; `start` entries unlock on the
  * first step); 2 to 9 have no scouts (they are put on their routes where a new game's patrols would be at the
- * snapshot's tick); 10 has no offerings or truces (nothing lies at the totems, every patrol on its route)
+ * snapshot's tick); 10 has no offerings or truces (nothing lies at the totems, every patrol on its route); 10 and 11
+ * have no endings (nothing launched, nothing fired: fresh ones)
  */
-const READABLE_VERSIONS = new Set([2, 4, 5, 6, 7, 8, 9, 10, SNAPSHOT_VERSION]);
+const READABLE_VERSIONS = new Set([2, 4, 5, 6, 7, 8, 9, 10, 11, SNAPSHOT_VERSION]);
 
 /**
  * Compiled dialogue trees from the loaded data files named `dialogue_<id>` (e.g. data.dialogue_marek).
@@ -139,6 +141,10 @@ export class Sim {
      * distance travelled in metres
      */
     this.over = null;
+    /** the escapes in progress (steps 5.3, 5.4: endings/Endings.js) */
+    this.endings = new Endings();
+    /** @type {Object|null} set when an ending is reached (Endings.finish): { kind: 'dinghy'|'rescue', ... } */
+    this.ending = null;
     /** what the player borrows from the world each tick (reused, not state; refreshed every step) */
     this.playerEnv = {
       tuning, dt: DT, tick: 0, bounds: this.bounds, move: this.moveEnv, world: this.world,
@@ -269,7 +275,8 @@ export class Sim {
    */
   step(input) {
     this.events = [];
-    const inp = sanitizeInput(input);
+    // once an ending is reached the player is out of the world's hands: no more input
+    const inp = sanitizeInput(this.ending ? null : input);
     if (this.dialogue.active) {
       // A conversation pauses everything: tide, day, weather, player, scouts. The tension of the game is
       // stealth, not reading speed. Only the conversation advances (hotbar n = choose n, interact = advance),
@@ -293,8 +300,14 @@ export class Sim {
     pe.props = this.props;
     pe.noise = this.noise;
     pe.footprints = this.footprints;
-    this.player.update(inp, pe);
+    // the dinghy (step 5.3): dragging slows the input; afloat, the oars replace the player's own movement
+    this.endings.beforePlayer(this, inp);
+    if (this.endings.ridesBoat) this.endings.dinghy.row(this, inp, pe);
+    else this.player.update(inp, pe);
+    this.endings.afterPlayer(this);
     this.stepItems(inp);
+    // the peak's minute (step 5.4) gives its orders before the scouts act on them
+    this.endings.beforeScouts(this);
     // the scouts after the player, the items and the projectiles (they see this tick's world, and an arrow hit
     // this tick is in this tick's events and death check); before Resonance, so they read the tier of the tick
     // before, as everything else that reads it does. After the run is over they stand down.
@@ -312,6 +325,7 @@ export class Sim {
     loreAfterStep(this);   // after Marek's hooks: their flags can unlock entries
     this.updateMarek();
     this.checkOver();
+    this.endings.afterStep(this);
     this.tick++;
   }
 
@@ -391,6 +405,8 @@ export class Sim {
       marek: this.marek ? this.marek.snapshot() : null,
       safeZones: this.safeZones.snapshot(),
       scouts: this.scouts.snapshot(),
+      endings: this.endings.snapshot(),
+      ending: this.ending ? { ...this.ending } : null,
       // the map itself is data, not state: only which map this was, so a save from another map is refused
       map: this.map ? { version: this.map.version, hash: this.map.hash } : null,
       // map props are rebuilt from the map; only the test field's (placed by the rng) are stored
@@ -431,6 +447,9 @@ export class Sim {
     if (sim.story.conversation && !sim.dialogue.node()) sim.story.conversation = null;
     if (snap.scouts) sim.scouts = Scouts.restore(snap.scouts, sim);
     else sim.scouts.advanceTo(sim, snap.tick);   // an older save: the patrols where a new game's would be now
+    sim.endings = Endings.restore(snap.endings);
+    sim.ending = snap.ending ? { ...snap.ending } : null;
+    sim.endings.dinghy.sync(sim);   // the dinghy's interactable where the dinghy lies
     sim.events = [];
     if (sim.collider) {
       // a restored player inside a wall is moved out; one that is free keeps its mode (hysteresis state) as saved
