@@ -311,6 +311,12 @@
       "maxStates": 200000,
       "pickupSpacingPx": 16,
       "interactableSpacingPx": 36
+    },
+    "exposure": {
+      "$comment": "Patrol exposure (tools/audit/exposure.mjs, softlock check 7 with the real AI): seconds of patrols simulated (the longest ping-pong cycle is about 310 s); maxShare: a place the player must reach is flagged when a scout has it in its field of view (range, clear line, by day, standing) for more than this share of the time (no patrol settles on it). launchBand: the dinghy launch must be watched within this band (the dinghy ending is a launch while evading coastal patrols: watched part of the time, with gaps a patient player can use).",
+      "seconds": 900,
+      "maxShare": 0.45,
+      "launchBand": [0.2, 0.4]
     }
   },
   "ai": {
