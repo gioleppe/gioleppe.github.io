@@ -19,6 +19,9 @@ const FIELDS = Object.freeze([
   'warnD0', 'hitD0', 'warnedUntil', 'cooldownUntil', 'drawEnd', 'chaseTick', 'whistleReady', 'recruitedBy',
   'spots', 'spotI', 'searchEnd', 'baseX', 'baseY', 'fixedFacing',
   'emote', 'emoteQueue',
+  'taskId', 'taskX', 'taskY', 'taskS', 'taskDirX', 'taskDirY',
+  'loosed', 'windowUntil', 'windowZone', 'respectUntil', 'respectMax', 'respectReady',
+  'kind', 'giftDay', 'goneDay', 'goneUntil',
 ]);
 
 /**
@@ -32,6 +35,9 @@ const DEFAULTS = Object.freeze({
   repathAt: 0, blockedTicks: 0, lkX: 0, lkY: 0, lkVX: 0, lkVY: 0, lastSeenTick: -1, lostTick: -1, warnD0: 0, hitD0: -1,
   warnedUntil: -1, cooldownUntil: 0, drawEnd: 0, chaseTick: 0, whistleReady: 0, recruitedBy: null,
   spots: [], spotI: 0, searchEnd: 0, fixedFacing: false, emote: null, emoteQueue: [],
+  taskId: null, taskX: 0, taskY: 0, taskS: 0, taskDirX: 0, taskDirY: 1,
+  loosed: false, windowUntil: -1, windowZone: null, respectUntil: -1, respectMax: -1, respectReady: 0,
+  kind: 'scout', giftDay: -1, goneDay: -1, goneUntil: -1,
 });
 const isDefault = (k, v) => {
   if (!(k in DEFAULTS)) return false;
@@ -71,7 +77,7 @@ export class Scout {
 
     /** @type {ScoutState} */
     this.state = 'patrol';
-    /** sub-state: patrol walk|pause|return, investigate go|look, search go|look, warn shout|draw|hold|lower, chase run|draw */
+    /** sub-state: patrol walk|pause|return (and the tolerant tasks of ai/offering.js: offer_* and stand_*), investigate go|look, search go|look, warn shout|draw|hold|lower, chase run|draw */
     this.phase = 'walk';
     this.stateTick = 0;
     this.phaseTick = 0;
@@ -158,6 +164,36 @@ export class Scout {
     /** @type {Array<[string, number]>} emotes to show next: [name, ticks (-1 = for the rest of the state)] */
     this.emoteQueue = [];
 
+    // a tolerant task (step 4.4, ai/offering.js): the offering it walks to (totem id) or the truce it keeps
+    // (sector), the point it goes to (the offering, its stand-down post), the route distance of the post's
+    // waypoint, and the way it faces there
+    this.taskId = null;
+    this.taskX = 0;
+    this.taskY = 0;
+    this.taskS = 0;
+    this.taskDirX = 0;
+    this.taskDirY = 1;
+
+    // respecting the monolith (step 4.4, ai/monolith.js)
+    /** a lethal arrow has been loosed in this chase (then the gesture is too late) */
+    this.loosed = false;
+    /** until this tick a pulse it saw with the player in view leaves room for the gesture; and that zone */
+    this.windowUntil = -1;
+    this.windowZone = null;
+    /** the tolerance: until this tick (refreshed while the player is in sight), never past respectMax */
+    this.respectUntil = -1;
+    this.respectMax = -1;
+    /** no new tolerance before this tick */
+    this.respectReady = 0;
+
+    // the Mangrove Gatherer (step 4.4, ai/gatherer.js) is this record with kind 'gatherer'
+    /** 'scout' | 'gatherer' */
+    this.kind = 'scout';
+    /** the day he last left herbs, the day he slipped away for, the tick a startled elder comes back */
+    this.giftDay = -1;
+    this.goneDay = -1;
+    this.goneUntil = -1;
+
     /** collider scratch (not state) */
     this.contact = makeContact();
   }
@@ -174,6 +210,7 @@ export class Scout {
    */
   static restore(o, route) {
     const s = new Scout({ id: o.id, route, routeId: o.routeId, radius: o.radius });
+    s.kind = o.kind ?? 'scout';
     for (const k of FIELDS) if (o[k] !== undefined) s[k] = copy(o[k]);
     return s;
   }

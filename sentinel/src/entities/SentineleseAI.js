@@ -31,6 +31,9 @@
 //   scout_draw { id, warning }   arrow_fired { id, scout, warning }   arrow_land { id, scout, warning, x, y }
 //   arrow_hit { id, scout, amount }   whistle { id, x, y, recruits }   chase_lost { id, x, y }   warn_end { id, outcome }
 // and sim.threat = { level, nearest, nearestId, count } for the HUD and the music.
+// Step 4.4 adds the tolerant interactions: the coastal offering and its truces (ai/offering.js: errands are patrol
+// phases offer_* and stand_*, calm to sim.threat) and respecting the monolith (ai/monolith.js: a patrol phase
+// `respect`, then respectUntil, during which the scout neither warns nor hunts the player).
 import { DT, TICK_HZ } from '../sim/constants.js';
 import { Route, routesOf, hash01 } from './ai/Route.js';
 import { Scout, SCOUT_STATES } from './ai/Scout.js';
@@ -39,6 +42,9 @@ import { look, fillRate, hear, spotFootprint, nextFootprint } from './ai/percept
 import { stepToward, planPath, lineOfWalk, scoutMayStand } from './ai/navigation.js';
 import { fireWarningArrow, fireLethalArrow, sweepArrows } from './ai/combat.js';
 import { facingFor } from './Player.js';
+import { Offerings, onTask, keepingTruce } from './ai/offering.js';
+import { MonolithRespect, respecting } from './ai/monolith.js';
+import { Gatherers } from './ai/gatherer.js';
 
 export { SCOUT_STATES, Scout, Route };
 
@@ -98,6 +104,12 @@ export class Scouts {
     /** per-tick cost of the last update, in path nodes expanded (the presentation measures time) */
     this.lastNodes = 0;
     this.view = { inShape: false, seen: false, d: 0, range: 0, centrality: 0 };
+    /** the coastal offering and the truces (step 4.4, ai/offering.js) */
+    this.offerings = new Offerings(sim);
+    /** respecting the monolith (step 4.4, ai/monolith.js) */
+    this.monolith = new MonolithRespect(sim);
+    /** the Mangrove Gatherer (step 4.4, ai/gatherer.js): a record in `list` with kind 'gatherer' */
+    this.gatherers = new Gatherers(sim);
     this.P = {};
     this.tmp = { x: 0, y: 0 };
     this.tick = 0;
@@ -124,6 +136,7 @@ export class Scouts {
         this.list.push(s);
       }
     }
+    this.gatherers.spawn(sim, this, Scout);
   }
 
   /**
@@ -135,6 +148,7 @@ export class Scouts {
    */
   advanceTo(sim, tick) {
     for (const s of this.list) {
+      if (s.kind === 'gatherer') continue;   // he starts at home
       let t = 0;
       let firstArrival = -1;
       let skipped = false;
@@ -216,6 +230,11 @@ export class Scouts {
     return s;
   }
 
+  /** @returns {boolean} the patrols of a beach sector stand down after an offering (step 4.4) */
+  inTruce(sector) {
+    return this.offerings.inTruce(sector);
+  }
+
   /** @returns {Scout|null} */
   byId(id) {
     return this.list.find((s) => s.id === id) ?? null;
@@ -226,6 +245,7 @@ export class Scouts {
     let best = null;
     let bd = Infinity;
     for (const s of this.list) {
+      if (s.kind === 'gatherer') continue;
       const d = (s.x - x) * (s.x - x) + (s.y - y) * (s.y - y);
       if (d < bd) { bd = d; best = s; }
     }
@@ -237,6 +257,7 @@ export class Scouts {
    * about the player's position, WARN and CHASE against the player, PATROL back to its route.
    */
   force(sim, s, state) {
+    if (s.kind === 'gatherer') return;   // he has none of these states
     const P = viewPlayer(sim, this.ai, this.cheats, this.inland, {});
     this.tick = sim.tick;
     const dx = P.x - s.x;
@@ -278,7 +299,7 @@ export class Scouts {
     if (sim.player.dead) {
       // the run is over: bows come down, every scout shrugs and walks back to its route; nothing more is loosed
       for (const s of this.list) {
-        if (s.state !== 'patrol') {
+        if (s.kind !== 'gatherer' && s.state !== 'patrol') {
           if (s.lod === 'far') this.wake(sim, s);
           this.backToRoute(sim, s, 'ellipsis');
         }
@@ -286,19 +307,29 @@ export class Scouts {
     }
     this.shooters = 0;
     for (const s of this.list) if (s.state === 'chase' && s.phase === 'draw') this.shooters += 1;
+    this.offerings.update(sim, this, P);
+    this.monolith.update(sim, this, P);
     const near2 = ai.lod.nearRadius * ai.lod.nearRadius;
     const far2 = ai.lod.farRadius * ai.lod.farRadius;
     for (const s of this.list) {
+      if (s.kind === 'gatherer') { this.gatherers.step(sim, this, s, P); continue; }
       s.prevX = s.x;
       s.prevY = s.y;
       const dx = P.x - s.x;
       const dy = P.y - s.y;
       const d2 = dx * dx + dy * dy;
-      const busy = s.state !== 'patrol' || s.phase === 'return';
+      const busy = s.state !== 'patrol' || (s.phase !== 'walk' && s.phase !== 'pause');
       if (s.lod === 'far' && (d2 < near2 || busy)) this.wake(sim, s);
       else if (s.lod === 'near' && !busy && d2 > far2) this.sleep(s);
       if (s.lod === 'far') {
         this.patrolStep(sim, s, false);
+        continue;
+      }
+      if (onTask(s) && this.offerings.step(sim, this, s, P)) { this.updateEmote(s); continue; }
+      if (s.state === 'patrol' && s.phase === 'respect') {
+        this.sense(sim, s, P);
+        this.monolith.step(sim, this, s, P);
+        this.updateEmote(s);
         continue;
       }
       this.sense(sim, s, P);
@@ -483,15 +514,16 @@ export class Scouts {
       s.lkVY = P.vy;
       const a = s.awareness + fillRate(ai.awareness, v.d, v.range, v.centrality, alert) * DT;
       s.awareness = a > 1 ? 1 : a;
+      if (respecting(s, this.tick)) s.awareness = 0;   // it watches the player pass, and lets them
     } else if (s.state !== 'chase') {
       const a = s.awareness - ai.awareness.drainPerSecond * DT;
       s.awareness = a < 0 ? 0 : a;
     }
     if (!this.cheats.deaf) {
       const n = hear(sim, s);
-      if (n) this.onNoise(sim, s, n, P);
+      if (n && !(n.sourceId === 'player' && respecting(s, this.tick))) this.onNoise(sim, s, n, P);
     }
-    if ((s.state === 'patrol' || s.state === 'investigate' || s.state === 'search') && (this.tick + s.n) % ticks(ai.footprints.scanSeconds) === 0) {
+    if ((s.state === 'patrol' || s.state === 'investigate' || s.state === 'search') && !respecting(s, this.tick) && (this.tick + s.n) % ticks(ai.footprints.scanSeconds) === 0) {
       const fp = spotFootprint(sim, s, ai);
       if (fp) this.onFootprint(sim, s, fp, P);
     }
@@ -611,6 +643,7 @@ export class Scouts {
     s.path = null;
     s.blockedTicks = 0;
     s.hitD0 = -1;
+    s.loosed = false;
     s.emote = null;
     s.emoteQueue = [];
     if (from !== to) sim.events.push({ type: 'scout_state', id: s.id, from, to, reason });
@@ -725,7 +758,7 @@ export class Scouts {
       const r2 = ai.chase.whistleRadius * ai.chase.whistleRadius;
       const recruits = [];
       for (const o of this.list) {
-        if (o === s || o.state === 'chase') continue;
+        if (o === s || o.kind === 'gatherer' || o.state === 'chase' || keepingTruce(o) || respecting(o, this.tick)) continue;   // a truce kept is kept, and a gesture seen
         const dx = o.x - s.x;
         const dy = o.y - s.y;
         if (dx * dx + dy * dy <= r2) recruits.push(o);
@@ -883,6 +916,7 @@ export class Scouts {
       s.phase = 'run';
       if (s.seen && !P.safe && s.dist <= a.maxRange) {
         const p = fireLethalArrow(sim, s, P, ai);
+        s.loosed = true;
         sim.events.push({ type: 'arrow_fired', id: p.id, scout: s.id, warning: false });
         s.cooldownUntil = this.tick + ticks(a.cooldownSeconds);
       } else s.cooldownUntil = this.tick + ticks(a.retrySeconds);
@@ -1063,6 +1097,7 @@ export class Scouts {
     let watcher = null;
     let nearN = 0;
     for (const s of this.list) {
+      if (s.kind === 'gatherer') continue;   // never a threat, never watching for the eye
       if (s.lod === 'near') nearN += 1;
       const dx = s.x - P.x;
       const dy = s.y - P.y;
@@ -1091,6 +1126,8 @@ export class Scouts {
       cheats: { ...this.cheats },
       list: this.list.map((s) => s.snapshot()),
       stuck: this.stuck.map((a) => ({ ...a })),
+      offerings: this.offerings.snapshot(),
+      monolith: this.monolith.snapshot(),
     };
   }
 
@@ -1112,6 +1149,10 @@ export class Scouts {
       return Scout.restore(o, route);
     });
     sc.stuck = snap.stuck.map((a) => ({ ...a }));
+    sc.offerings.restore(snap.offerings);
+    sc.monolith.restore(snap.monolith);
+    // a save from before the elder: he is at home on his route
+    if (!sc.list.some((s) => s.kind === 'gatherer')) sc.gatherers.spawn(sim, sc, Scout);
     return sc;
   }
 }
